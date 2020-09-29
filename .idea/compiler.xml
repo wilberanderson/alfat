@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="ALFAT" options="--add-exports java.desktop/com.sun.media.sound=ALL-UNNAMED" />
+      <module name="support" options="--add-exports java.desktop/com.sun.media.sound=ALL-UNNAMED" />
+    </option>
+  </component>
+</project>
