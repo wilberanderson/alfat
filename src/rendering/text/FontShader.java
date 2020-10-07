@@ -5,6 +5,7 @@ import main.GeneralSettings;
 import rendering.shaders.uniforms.UniformFloat;
 import rendering.shaders.uniforms.UniformVec2;
 import rendering.shaders.uniforms.UniformVec3;
+import rendering.shaders.uniforms.UniformVec4;
 
 public class FontShader extends ShaderProgram{
 
@@ -16,12 +17,12 @@ public class FontShader extends ShaderProgram{
 	protected UniformFloat width = new UniformFloat("width");
 	protected UniformFloat edge = new UniformFloat("edge");
 	protected UniformFloat borderWidth = new UniformFloat("borderWidth");
-	protected  UniformFloat borderEdge = new UniformFloat("borderEdge");
-
+	protected UniformFloat borderEdge = new UniformFloat("borderEdge");
+	protected UniformVec4 positionBounds = new UniformVec4("positionBounds");
 
 	public FontShader() {
 		super(GeneralSettings.FONT_VERTEX, GeneralSettings.FONT_FRAGMENT, "position", "textureCoords");
-		super.storeAllUniformLocations(color, outlineColor, translation, offset, width, edge, borderWidth, borderEdge);
+		super.storeAllUniformLocations(color, outlineColor, translation, offset, width, edge, borderWidth, borderEdge, positionBounds);
 	}
 
 

@@ -1,5 +1,6 @@
 package fontMeshCreator;
 
+import gui.GUIText;
 import utils.MyFile;
 
 /**

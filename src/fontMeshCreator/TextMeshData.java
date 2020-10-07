@@ -9,10 +9,12 @@ public class TextMeshData {
 	
 	private float[] vertexPositions;
 	private float[] textureCoords;
+	private float[] characterEdges;
 	
-	protected TextMeshData(float[] vertexPositions, float[] textureCoords){
+	protected TextMeshData(float[] vertexPositions, float[] textureCoords, float[] characterEdges){
 		this.vertexPositions = vertexPositions;
 		this.textureCoords = textureCoords;
+		this.characterEdges = characterEdges;
 	}
 
 	public float[] getVertexPositions() {
@@ -27,4 +29,7 @@ public class TextMeshData {
 		return vertexPositions.length/2;
 	}
 
+	public float[] getCharacterEdges(){
+		return characterEdges;
+	}
 }

@@ -43,6 +43,10 @@ public class Line {
 		words.add(word);
 	}
 
+	protected void addSpaces(int numberOfSpaces){
+		currentLineLength += numberOfSpaces * spaceSize;
+	}
+
 	/**
 	 * @return The max length of the line.
 	 */

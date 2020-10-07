@@ -1,6 +1,6 @@
 package main;
 import fontMeshCreator.FontType;
-import fontMeshCreator.GUIText;
+import gui.Cursor;
 import gui.TextBox;
 import loaders.*;
 import org.lwjgl.glfw.*;
@@ -24,27 +24,33 @@ public class EngineTester {
     private long window;
     private RenderEngine engine;
 
+    /**
+     * Used for all operations of the program
+     *  - Initializes all relevant objects
+     *  - Enters the main loop
+     *  - If an exception occurs in the main loop the crash method is called
+     */
     public void run() {
 
         init();
-        loop();
-
-        // Free the window callbacks and destroy the window
-        Callbacks.glfwFreeCallbacks(window);
-        GLFW.glfwDestroyWindow(window);
-
-        // Terminate GLFW and free the error callback
-        GLFW.glfwTerminate();
         try {
-            GLFW.glfwSetErrorCallback(null).free();
-        }catch(NullPointerException e){
+            loop();
+        }catch(Exception e){
             e.printStackTrace();
+            crash();
         }
-        Loader.cleanUp();
-        engine.close();
+
     }
 
+    /**
+     * Initializes basic one time tasks
+     *  - Creates the window
+     *  - Initializes the openGL context
+     *  - Updates the icon on taskbar and the window
+     *
+     */
     private void init() {
+        //********************************Create the window************************************
         // Setup an error callback. The default implementation
         // will print the error message in System.err.
         GLFWErrorCallback.createPrint(System.err).set();
@@ -83,11 +89,15 @@ public class EngineTester {
             );
         } // the stack frame is popped automatically
 
+        //*********************************Initialize openGL context************************************
         // Make the OpenGL context current
         GLFW.glfwMakeContextCurrent(window);
 
-        GLFW.glfwSwapInterval(0);
+        //Restrict fps to 60 fps
+        GLFW.glfwSwapInterval(1);
 
+
+        //********************************Change the icon***************************************
         try {
             IconLoader.setIcons("/res/icon/", window);
         }catch(Exception e){
@@ -98,9 +108,14 @@ public class EngineTester {
         //Poll events to make the taskbar icon update
         GLFW.glfwPollEvents();
 
+        //**********************************Initialize input manager**********************************
         InputManager.init(window, null);
     }
 
+    /**
+     * Initializes the rendering loop and begins looping
+     *  - TODO: Move finalized initialization steps to init() method
+     */
     private void loop() {
         // This line is critical for LWJGL's interoperation with GLFW's
         // OpenGL context, or any context that is managed externally.
@@ -112,16 +127,22 @@ public class EngineTester {
         // Set the clear color
         GL11.glClearColor(0.2f, 0.2f, 0.2f, 0.0f);
 
+        //Initializes the render engine
         engine = new RenderEngine();
 
-
-
+        //********************************************Initialize guis************************************************************
+        //Create list to store all gui elements on screen
         List<GuiTexture> guis = new ArrayList<>();
 		//guis.add(new GuiTexture(engine.getRenderer().getReflectionTexture(), new Vector2f(0.5f, 0.5f), new Vector2f(0.5f, 0.5f)));
+        float fontSize = 1;
 
+        //*********************************************Initialize text boxes*****************************************************
+        //Create a font to use for rendering files
         FontType tacoma = new FontType(Loader.loadTexture(new MyFile("/res/fonts/arial/arial.png")), new MyFile("/res/fonts/arial/arial.fnt"));
-		//GUIText codeFile = new GUIText("Hello\nWorld", 3, tacoma, new Vector2f(0,0), 1, true, 0.5f, 0.5f, new Vector3f(1.0f, 1.0f, 1.0f), new Vector2f(1.0f, 1.0f));
-        TextBox codeFile = new TextBox(new Vector2f(0,0), new Vector2f(0.5f, 1), new Vector3f(0.1f,0.1f,0.1f), new Vector3f(1,1,1), new Vector3f(0,0,0), "    .ORIG    x3000\n" +
+        //Create list to store all text boxes
+        List<TextBox> textBoxes = new ArrayList<>();
+        //Create sample text boxes
+        TextBox codeFile = new TextBox(new Vector2f(0f,0f), new Vector2f(1f, 2f), new Vector3f(0.1f,0.1f,0.1f), new Vector3f(1,1,1), new Vector3f(0,0,0), "    .ORIG    x3000\n" +
                 ";Start\n" +
                 "        LEA    R0, PROMPT1\n" +
                 "        PUTS            ;Display beginning prompt\n" +
@@ -273,18 +294,22 @@ public class EngineTester {
                 "GUESS    .FILL    x3240\n" +
                 "USED    .FILL    x3260\n" +
                 ";\n" +
-                "    .END", tacoma, 1, 0.25f, 0.5f);
-        TextBox flowChart1 = new TextBox(new Vector2f(1.15f,1.5f), new Vector3f(0.1f,0.1f,0.1f), new Vector3f(1,1,1), new Vector3f(0,0,0), "Sample automatically sized textbox\nThis text box automatically sizes itself to match it's input", tacoma, 1, 0.25f, 0.5f);
+                "    .END", tacoma, fontSize, 0.25f, 0.5f, GeneralSettings.TEXT_BOX_BORDER_WIDTH);
+        TextBox flowChart1 = new TextBox(new Vector2f(1.15f,1.5f), new Vector3f(0.1f,0.1f,0.1f), new Vector3f(1,1,1), new Vector3f(0,0,0), "Sample automatically sized textbox\nThis text box automatically sizes itself to match it's input", tacoma, fontSize, 0.25f, 0.5f, GeneralSettings.TEXT_BOX_BORDER_WIDTH);
         //        MousePicker picker = new MousePicker(scene.getCamera(), scene.getTerrains());
-        List<TextBox> textBoxes = new ArrayList<>();
         textBoxes.add(codeFile);
         textBoxes.add(flowChart1);
+
+        //Initialize cursor to be null
+        Cursor cursor = null;
 
         // Run the rendering loop until the user has attempted to close
         // the window or has pressed the ESCAPE key.
         while ( !GLFW.glfwWindowShouldClose(window) ) {
-            GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT); // clear the framebuffer
+            //Clear the framebuffer
+            GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 
+            //Update the frame time
             GeneralSettings.update();
 
             // Poll for window events. The key callback above will only be
@@ -293,26 +318,77 @@ public class EngineTester {
             InputManager.processEvents();
 
             GL11.glEnable(GL30.GL_CLIP_DISTANCE0);
-            Vector3f testPoint = new Vector3f(10,0,10);
-            engine.renderScene(guis, textBoxes);
-            //scene.updateTime();
 
+            //If the user is clicking and their mouse is in a text box recreate the cursor at the new position
+            if(InputManager.LEFT_CLICK){
+                Vector2f newPosition = new Vector2f((float)InputManager.MOUSE_X/GeneralSettings.DISPLAY_WIDTH*2 - 1f, 1-(float)InputManager.MOUSE_Y/GeneralSettings.DISPLAY_HEIGHT*2);
+                for (TextBox textBox : textBoxes){
+                    if(newPosition.x > textBox.getPosition().x - 1 && newPosition.x < (textBox.getPosition().x + textBox.getSize().x)-1 && newPosition.y > textBox.getPosition().y - 1 && newPosition.y < (textBox.getPosition().y + textBox.getSize().y)-1) {
+                        cursor = new Cursor(newPosition, textBox);
+                        break;
+                    }
+                }
+                //Reset left click value to avoid checking for new position multiple times per click
+                InputManager.LEFT_CLICK = false;
+            }
+
+            //If there is a cursor process all of the events
+            if(cursor != null) {
+                cursor.processInputs(window);
+            }
+
+            //Render
+            engine.renderScene(guis, textBoxes, new Vector3f(1,1,1), cursor, fontSize);
+
+            //Temporarily make changes for scrolling
             codeFile.changeContentsVerticalPosition((float)InputManager.SCROLL_CHANGE/10);
             InputManager.SCROLL_CHANGE = 0;
 
-            GLFW.glfwSwapBuffers(window); // swap the color buffers
+            //Swap the color buffers to update the screen
+            GLFW.glfwSwapBuffers(window);
 
         }
-
-        engine.close();
-        Loader.cleanUp();
     }
 
+    /**Used for a graceful crash of the program
+     *  - TODO: Saves changes to files
+     *  - Frees up memory
+     *  - Exits with an error code
+     */
     public void crash(){
-        engine.close();
-        Loader.cleanUp();
+        exit();
+        System.exit(-1);
     }
 
+    /**
+     * Handles cleaning up all information used for the program
+     *  - Destroys the window
+     *  - Cleans up VAO's/VBO's
+     *  - Destroys the render engine
+     */
+    private void exit(){
+        // Free the window callbacks and destroy the window
+        Callbacks.glfwFreeCallbacks(window);
+        GLFW.glfwDestroyWindow(window);
+
+        // Terminate GLFW and free the error callback
+        GLFW.glfwTerminate();
+        try {
+            GLFW.glfwSetErrorCallback(null).free();
+        }catch(NullPointerException e){
+            e.printStackTrace();
+        }
+
+        //Clean up VAO's, VBO's, and textures from loader
+        Loader.cleanUp();
+
+        //Close the render engine
+        engine.close();
+    }
+
+    /**
+     * Runs the program, if the program completes running without any errors then the exit code 0 will be used
+     */
     public static void main(String[] args) {
         new EngineTester().run();
         System.exit(0);

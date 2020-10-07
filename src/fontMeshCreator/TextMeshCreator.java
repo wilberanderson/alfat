@@ -1,5 +1,6 @@
 package fontMeshCreator;
 
+import gui.GUIText;
 import utils.MyFile;
 
 import java.util.ArrayList;
@@ -31,7 +32,9 @@ public class TextMeshCreator {
 				line.addWord(currentWord);
 				currentWord = new Word(text.getFontSize());
 				continue;
-			}
+			}/*else if(c == '\t'){
+				 line.addSpaces(GeneralSettings.DEFAULT_TAB_WIDTH);
+			}*/
 			Character character = metaData.getCharacter(c);
 			currentWord.addCharacter(character);
 		}
@@ -46,21 +49,22 @@ public class TextMeshCreator {
 		double curserY = 0f;
 		List<Float> vertices = new ArrayList<>();
 		List<Float> textureCoords = new ArrayList<>();
+		List<Float> characterEdges = new ArrayList<>();
+		characterEdges.add(0f);
 
-		if (text.isCentered()) {
-			curserX = (line.getMaxLength() - line.getLineLength()) / 2;
-		}
 		for (Word word : line.getWords()) {
 			for (Character letter : word.getCharacters()) {
 				addVerticesForCharacter(curserX, curserY, letter, text.getFontSize(), vertices);
 				addTexCoords(textureCoords, letter.getxTextureCoord(), letter.getyTextureCoord(),
 						letter.getXMaxTextureCoord(), letter.getYMaxTextureCoord());
 				curserX += letter.getxAdvance() * text.getFontSize();
+				characterEdges.add((float) curserX);
 			}
 			curserX += metaData.getSpaceWidth() * text.getFontSize();
+			characterEdges.add((float) curserX);
 		}
-
-		return new TextMeshData(listToArray(vertices), listToArray(textureCoords));
+		characterEdges.remove(characterEdges.size()-1);
+		return new TextMeshData(listToArray(vertices), listToArray(textureCoords), listToArray(characterEdges));
 	}
 
 	private void addVerticesForCharacter(double curserX, double curserY, Character character, double fontSize,

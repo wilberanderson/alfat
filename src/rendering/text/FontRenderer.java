@@ -3,29 +3,20 @@ package rendering.text;
 import java.util.List;
 import java.util.Map;
 
-import dataStructures.RawModel;
-import loaders.Loader;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 import fontMeshCreator.FontType;
-import fontMeshCreator.GUIText;
+import gui.GUIText;
 
 public class FontRenderer {
 
 	private FontShader shader;
-	private static final float[] VERTICES = {
-			-0.5f, -0.5f,
-			-0.5f, 0.5f,
-			0.5f, 0.5f,
-			0.5f, -0.5f
-	};
-	private RawModel square;
+
 
 	public FontRenderer() {
 		shader = new FontShader();
-		square = Loader.loadToVAO(VERTICES, 2);
 	}
 
 
@@ -66,6 +57,7 @@ public class FontRenderer {
 		shader.offset.loadVec2(text.getOffset());
 		shader.outlineColor.loadVec3(text.getOutlineColor());
 		shader.translation.loadVec2(text.getPosition());
+		shader.positionBounds.loadVec4(text.getPositionBounds());
 		GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, text.getVertexCount());
 		GL20.glDisableVertexAttribArray(0);
 		GL20.glDisableVertexAttribArray(1);

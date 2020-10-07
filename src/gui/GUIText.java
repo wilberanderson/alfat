@@ -1,10 +1,11 @@
-package fontMeshCreator;
+package gui;
 
-import dataStructures.RawModel;
-import loaders.Loader;
+import fontMeshCreator.FontType;
+import fontMeshCreator.TextMeshData;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 
+import org.lwjgl.util.vector.Vector4f;
 import rendering.text.TextMaster;
 
 /**
@@ -23,7 +24,6 @@ public class GUIText {
 	private Vector3f colour;
 
 	private Vector2f position;
-	private float lineMaxSize;
 
 	private float width;
 	private float edge;
@@ -35,9 +35,10 @@ public class GUIText {
 	private FontType font;
 	private double length;
 
+	private Vector4f positionBounds;
 
+	private TextMeshData textMeshData;
 
-	private boolean centerText;
 
 	/**
 	 * Creates a new text, loads the text's quads into a VAO, and adds the text
@@ -54,36 +55,50 @@ public class GUIText {
 	 *            - the position on the screen where the top left corner of the
 	 *            text should be rendered. The top left corner of the screen is
 	 *            (0, 0) and the bottom right is (1, 1).
-	 * @param maxLineLength
-	 *            - basically the width of the virtual page in terms of screen
-	 *            width (1 is full screen width, 0.5 is half the width of the
-	 *            screen, etc.) Text cannot go off the edge of the page, so if
-	 *            the text is longer than this length it will go onto the next
-	 *            line. When text is centered it is centered into the middle of
-	 *            the line, based on this line length value.
-	 * @param centered
-	 *            - whether the text should be centered or not.
 	 */
-	public GUIText(String text, float fontSize, FontType font, Vector2f position, float maxLineLength,
-			boolean centered, float width, float edge, Vector3f colour) {
+	public GUIText(String text, float fontSize, FontType font, Vector2f position, float width, float edge, Vector3f colour, Vector4f positionBounds) {
 		this.textString = text;
 		this.fontSize = fontSize;
 		this.font = font;
 		this.position = position;
-		this.lineMaxSize = maxLineLength;
-		this.centerText = centered;
+		this.position.x = (position.x+1)/2;
+		this.position.y = -(position.y - 1)/2;
 		this.width = width;
 		this.edge = edge;
 		this.borderEdge = edge;
 		this.colour = colour;
-		TextMaster.loadText(this);
+		this.positionBounds = positionBounds;
+		this.textMeshData = TextMaster.loadText(this);
+		this.position.x = this.position.x*2-1;
+		this.position.y = -this.position.y*2+1;
 	}
+
+	public GUIText(String text, GUIText guiText, boolean deleteText) {
+		this.textString = text;
+		this.fontSize = guiText.fontSize;
+		this.font = guiText.font;
+		this.position = guiText.position;
+		this.position.x = (position.x+1)/2;
+		this.position.y = -(position.y - 1)/2;
+		this.width = guiText.width;
+		this.edge = guiText.edge;
+		this.borderEdge = edge;
+		this.colour = guiText.colour;
+		this.positionBounds = guiText.positionBounds;
+		this.textMeshData = TextMaster.loadText(this);
+		if(deleteText){
+			TextMaster.removeText(guiText);
+		}
+		this.position.x = this.position.x*2-1;
+		this.position.y = -this.position.y*2+1;
+	}
+
 
 	/**
 	 * Remove the text from the screen.
 	 */
-	public void remove() {
-		TextMaster.removeText(this);
+	public void remove(GUIText text) {
+		TextMaster.removeText(text);
 	}
 
 	/**
@@ -155,28 +170,14 @@ public class GUIText {
 	/**
 	 * @return the font size of the text (a font size of 1 is normal).
 	 */
-	protected float getFontSize() {
+	public float getFontSize() {
 		return fontSize;
-	}
-
-	/**
-	 * @return {@code true} if the text should be centered.
-	 */
-	protected boolean isCentered() {
-		return centerText;
-	}
-
-	/**
-	 * @return The maximum length of a line of this text.
-	 */
-	protected float getMaxLineSize() {
-		return lineMaxSize;
 	}
 
 	/**
 	 * @return The string of text.
 	 */
-	protected String getTextString() {
+	public String getTextString() {
 		return textString;
 	}
 
@@ -264,5 +265,21 @@ public class GUIText {
 
 	public void changeHorizontalPosition(float change){
 		this.position.x += change;
+	}
+
+	public Vector4f getPositionBounds() {
+		return positionBounds;
+	}
+
+	public void setPositionBounds(Vector4f positionBounds){
+		this.positionBounds = positionBounds;
+	}
+
+	public float[] getCharacterEdges(){
+		return textMeshData.getCharacterEdges();
+	}
+
+	public void setPosition(Vector2f position){
+		this.position = position;
 	}
 }

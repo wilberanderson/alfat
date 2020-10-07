@@ -1,6 +1,7 @@
 #version 330
 
 in vec2 pass_textureCoords;
+in vec2 vertexPosition;
 
 out vec4 out_color;
 
@@ -17,7 +18,15 @@ uniform vec2 offset;
 
 uniform vec3 outlineColor;
 
+uniform vec4 positionBounds;
+
 void main(void){
+    vec2 position;
+    position.x = vertexPosition.x + 1;
+    position.y = 2-(-vertexPosition.y + 1);
+    if (position.x < positionBounds.x || position.y < positionBounds.y || position.x > positionBounds.z || position.y > positionBounds.w){// || position.y < startPosition.x || position.x > endPosition.x || position.y > endPosition.y){
+        discard;
+    }
 
 	float distance = 1.0 - texture(fontAtlas, pass_textureCoords).a;
 	float alpha = 1.0 - smoothstep(width, width + edge, distance);

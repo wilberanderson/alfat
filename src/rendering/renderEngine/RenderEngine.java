@@ -1,7 +1,10 @@
 package rendering.renderEngine;
 
+import gui.Cursor;
 import gui.GuiTexture;
 import gui.TextBox;
+import org.lwjgl.util.vector.Vector2f;
+import org.lwjgl.util.vector.Vector3f;
 
 import java.util.List;
 
@@ -28,8 +31,8 @@ public class RenderEngine {
 	 * Renders the scene to the screen.
 	 *
 	 */
-	public void renderScene(List<GuiTexture> guis, List<TextBox> textBoxes) {
-		renderer.renderScene(guis, textBoxes);
+	public void renderScene(List<GuiTexture> guis, List<TextBox> textBoxes, Vector3f cursorColor, Cursor cursor, float fontSize) {
+		renderer.renderScene(guis, textBoxes, cursorColor, cursor, fontSize);
 	}
 
 	/**
@@ -46,7 +49,7 @@ public class RenderEngine {
 	 */
 	public void init() {
 //		DisplayManager.createDisplay();
-		renderer.init();
+		renderer = new MasterRenderer();
 	}
 
 

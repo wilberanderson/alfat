@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import fontMeshCreator.FontType;
-import fontMeshCreator.GUIText;
+import gui.GUIText;
 import fontMeshCreator.TextMeshData;
 import loaders.Loader;
 
@@ -23,7 +23,7 @@ public class TextMaster {
 		renderer.render(texts);
 	}
 	
-	public static void loadText(GUIText text){
+	public static TextMeshData loadText(GUIText text){
 		FontType font = text.getFont();
 		TextMeshData data = font.loadText(text);
 		int vao = Loader.loadToVAO(data.getVertexPositions(), data.getTextureCoords());
@@ -34,6 +34,7 @@ public class TextMaster {
 			texts.put(font, textBatch);
 		}
 		textBatch.add(text);
+		return data;
 	}
 	
 	@SuppressWarnings("unlikely-arg-type")

@@ -1,21 +1,15 @@
-package rendering.text;
+package rendering.textBox;
 
 import java.util.List;
-import java.util.Map;
 
 import dataStructures.RawModel;
 import gui.TextBox;
 import loaders.Loader;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
-import fontMeshCreator.FontType;
-import fontMeshCreator.GUIText;
-import org.lwjgl.util.vector.Matrix2f;
 import org.lwjgl.util.vector.Matrix3f;
-import org.lwjgl.util.vector.Vector2f;
-import org.lwjgl.util.vector.Vector3f;
+import rendering.textBox.TextBoxShader;
 
 public class TextBoxRenderer {
 
@@ -43,8 +37,8 @@ public class TextBoxRenderer {
         for(TextBox textBox : textBoxes) {
             shader.color.loadVec3(textBox.getBackgroundColor());
             Matrix3f transformationMatrix = new Matrix3f();
-            transformationMatrix.m00 = textBox.getSize().x;
-            transformationMatrix.m11 = textBox.getSize().y;
+            transformationMatrix.m00 = textBox.getSize().x/2;
+            transformationMatrix.m11 = textBox.getSize().y/2;
             transformationMatrix.m20 = textBox.getPosition().x;
             transformationMatrix.m21 = textBox.getPosition().y;
             shader.transformation.loadMatrix(transformationMatrix);

@@ -1,4 +1,4 @@
-package rendering.text;
+package rendering.textBox;
 
 import rendering.shaders.ShaderProgram;
 import main.GeneralSettings;
