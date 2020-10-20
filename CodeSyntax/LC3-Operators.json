@@ -1,0 +1,60 @@
+{
+  "operation": [
+    {
+      "name": "ADD",
+      "parameters": 3
+    },
+    {
+      "name": "AND",
+      "parameters": 3
+    },
+    {
+      "name": "NOT",
+      "parameters": 2
+    }
+  ],
+  "dataMovemnet": [
+    {
+      "name": "LD",
+      "parameters": 2
+    },
+    {
+      "name": "LDR",
+      "parameters": 3
+    },
+    {
+      "name": "LDI",
+      "parameters": 3
+    },
+    {
+      "name": "ST",
+      "parameters": 2
+    },
+    {
+      "name": "STR",
+      "parameters": 3
+    },
+    {
+      "name": "STI",
+      "parameters": 2
+    }
+  ],
+  "control": [
+    {
+      "name": "BR",
+      "parameters": 1
+    },
+    {
+      "name": "JMP",
+      "parameters": 1
+    },
+    {
+      "name": "JSR",
+      "parameters": 1
+    },
+    {
+      "name": "JSRR",
+      "parameters": 1
+    }
+  ]
+}

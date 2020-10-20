@@ -10,7 +10,7 @@ public class UniformBoolean extends Uniform{
 	public UniformBoolean(String name){
 		super(name);
 	}
-	
+
 	public void loadBoolean(boolean bool){
 		if(!used || currentBool != bool){
 			GL20.glUniform1f(super.getLocation(), bool ? 1f : 0f);

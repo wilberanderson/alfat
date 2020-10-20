@@ -17,6 +17,7 @@ import java.nio.*;
 import java.util.ArrayList;
 import java.util.List;
 
+//Can you see this???
 
 public class EngineTester {
 
@@ -302,6 +303,12 @@ public class EngineTester {
 
         //Initialize cursor to be null
         Cursor cursor = null;
+
+
+        //Testing stuff
+
+        System.out.println("hello world ");
+
 
         // Run the rendering loop until the user has attempted to close
         // the window or has pressed the ESCAPE key.
