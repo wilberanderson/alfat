@@ -1,20 +1,42 @@
 package parser;
 
-import java.util.ArrayList;
+/*
+* A TLine stands for Text line.
+* A text line contains the line number, and full text of a single line of code.
+* */
+public abstract class TLine {
+    private String lineText;
+    private  int lineNumber;
 
-public class TLine {
-    //every line has these:
-    public String lineText;
-    public int lineNumber;
+    TLine() {
+        //TODO: Should prob have something in here... ?
+    }
 
-    //Each line usually has a combination of these:
-    public String command = null;
-    public String label = null;
-    public ArrayList<Integer> registers = new ArrayList<>();
-
-    //general constructor:
-    public void parse(String inputText,int lineNumber){
+    TLine(int lineNumber, String lineText) {
         this.lineNumber = lineNumber;
-        //call lc3 parser
+        this.lineText = lineText;
+    }
+
+
+    public int getLineNumber() {
+        return lineNumber;
+    }
+
+    public void setLineNumber(int lineNumber) {
+        this.lineNumber = lineNumber;
+    }
+
+    public String getLineText() {
+        return lineText;
+    }
+
+    public void setLineText(String lineText) {
+        this.lineText = lineText;
+    }
+
+
+    @Override
+    public String toString() {
+        return this.lineNumber + " " + this.lineText;
     }
 }
