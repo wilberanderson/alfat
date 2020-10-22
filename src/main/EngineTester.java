@@ -8,16 +8,20 @@ import org.lwjgl.opengl.*;
 import org.lwjgl.system.*;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
+import parser.JsonReader;
+import parser.LC3Syntax;
 import rendering.renderEngine.RenderEngine;
 import gui.GuiTexture;
 import utils.InputManager;
 import utils.MyFile;
 
+import java.io.File;
 import java.nio.*;
 import java.util.ArrayList;
 import java.util.List;
 
 //Can you see this???
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class EngineTester {
 
@@ -308,6 +312,30 @@ public class EngineTester {
         //Testing stuff
 
         System.out.println("hello world ");
+
+//        ObjectMapper objectMapper = new ObjectMapper();
+//        File file0 = new File("CodeSyntax\\LC3-Operators.json");
+//        try {
+//
+//           // String jsonFile = objectMapper.writeValueAsString(file0);
+//
+//            LC3Syntax s = objectMapper.readValue(file0, LC3Syntax.class);
+//            //System.out.println(jsonFile);
+//            System.out.println(s);
+//        }
+//        catch(Exception e){
+//            e.printStackTrace();
+//        }
+
+//        JsonReader j = new JsonReader();
+//        LC3Syntax s = j.mapJson(new File("CodeSyntax\\LC3-Operators.json"));
+//        System.out.println(s);
+
+
+
+
+
+
 
 
         // Run the rendering loop until the user has attempted to close

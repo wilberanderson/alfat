@@ -82,9 +82,4 @@ public class LC3LinesManager extends TLinesManager<LC3TLine>  {
             start = start.next;
         }
     }
-
-
-
-
-
 }

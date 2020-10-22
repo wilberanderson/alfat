@@ -56,5 +56,39 @@
       "name": "JSRR",
       "parameters": 1
     }
+  ],
+  "registers": [
+    {
+      "name": "R0",
+      "parameters": 0
+    },
+    {
+      "name": "R1",
+      "parameters": 0
+    },
+    {
+      "name": "R2",
+      "parameters": 0
+    },
+    {
+      "name": "R3",
+      "parameters": 0
+    },
+    {
+      "name": "R4",
+      "parameters": 0
+    },
+    {
+      "name": "R5",
+      "parameters": 0
+    },
+    {
+      "name": "R6",
+      "parameters": 0
+    },
+    {
+      "name": "R7",
+      "parameters": 0
+    }
   ]
 }
