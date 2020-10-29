@@ -55,4 +55,8 @@ public class GeneralSettings {
 	public static final Vector3f HIGHLIGHT_COLOR = new Vector3f(0, 0.7f, 0.93f);
 	public static final float TEXT_BOX_BORDER_WIDTH = 0.003f;
 	public static final Vector3f HEADER_COLOR = new Vector3f(0f, 0f, 1f);//0.2f, 0.2f, 0.2f);
+
+	public static final float FONT_SIZE = 1f;
+	public static final float FONT_WIDTH = 0.25f;
+	public static final float FONT_EDGE = 0.5f;
 }

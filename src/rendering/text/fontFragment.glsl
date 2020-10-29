@@ -24,10 +24,11 @@ void main(void){
     vec2 position;
     position.x = vertexPosition.x + 1;
     position.y = 2-(-vertexPosition.y + 1);
-    if (position.x < positionBounds.x || position.y < positionBounds.y || position.x > positionBounds.z || position.y > positionBounds.w){// || position.y < startPosition.x || position.x > endPosition.x || position.y > endPosition.y){
-        discard;
-    }
-
+	if((positionBounds.x != -2 && positionBounds.y != -2 && positionBounds.z != -2 && positionBounds.w != -2)){
+		if (position.x < positionBounds.x || position.y < positionBounds.y || position.x > positionBounds.z || position.y > positionBounds.w){ // || position.y < startPosition.x || position.x > endPosition.x || position.y > endPosition.y){
+			discard;
+		}
+	}
 	float distance = 1.0 - texture(fontAtlas, pass_textureCoords).a;
 	float alpha = 1.0 - smoothstep(width, width + edge, distance);
 	

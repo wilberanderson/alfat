@@ -14,7 +14,6 @@ public class FontRenderer {
 
 	private FontShader shader;
 
-
 	public FontRenderer() {
 		shader = new FontShader();
 	}
@@ -30,7 +29,6 @@ public class FontRenderer {
 			}
 		}
 		endRendering();
-
 
 	}
 

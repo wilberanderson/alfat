@@ -1,11 +1,13 @@
 package utils;
 
+import fontMeshCreator.FontType;
 import gui.Button;
 import gui.TextButton;
 import main.GeneralSettings;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector2f;
+import org.lwjgl.util.vector.Vector3f;
 import org.w3c.dom.Text;
 
 import java.util.ArrayList;
@@ -44,16 +46,16 @@ public class InputManager {
     private static GLFWScrollCallback scrollCallback;
     private static GLFWMouseButtonCallback mouseButtonCallback;
     private static GLFWCursorPosCallback cursorPosCallback;
-    private static List<Button> buttons;
+    public static List<Button> buttons;
     private static GLFWCharCallback charCallback;
     private static GLFWFramebufferSizeCallback framebufferSizeCallback;
     public static List<Character> codepoints = new ArrayList<>();
 
 
-    public static void init(long window){
+    public static void init(long window, FontType font){
         buttons = new ArrayList<>();
 
-        TextButton button = new TextButton(new Vector2f(-1f, -1f), new Vector2f(2f, 2f)) {
+        TextButton button = new TextButton(new Vector2f(-1f, 0.9f), new Vector2f(.3f, .1f), "Text creation test", new Vector3f(0, 0, 0), new Vector3f(1, 1, 1), font, GeneralSettings.FONT_SIZE, GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE) {
             @Override
             public void onPress() {
                 System.out.println("Test success");

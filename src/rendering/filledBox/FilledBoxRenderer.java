@@ -6,11 +6,13 @@ import dataStructures.RawModel;
 import gui.GUIFilledBox;
 import gui.Header;
 import gui.TextBox;
+import gui.TextButton;
 import loaders.Loader;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.util.vector.Matrix3f;
+import utils.InputManager;
 
 public class FilledBoxRenderer {
 
@@ -46,6 +48,17 @@ public class FilledBoxRenderer {
         transformationMatrix.m21 = header.getGuiFilledBox().getPosition().y+1;
         shader.transformation.loadMatrix(transformationMatrix);
         GL11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 0, 4);
+
+        shader.color.loadVec3(((TextButton)InputManager.buttons.get(0)).getGuiFilledBox().getColor());
+        transformationMatrix = new Matrix3f();
+        transformationMatrix.m00 = ((TextButton)InputManager.buttons.get(0)).getGuiFilledBox().getSize().x/2;
+        transformationMatrix.m11 = ((TextButton)InputManager.buttons.get(0)).getGuiFilledBox().getSize().y/2;
+        transformationMatrix.m20 = ((TextButton)InputManager.buttons.get(0)).getGuiFilledBox().getPosition().x+1;
+        transformationMatrix.m21 = ((TextButton)InputManager.buttons.get(0)).getGuiFilledBox().getPosition().y+1;
+        shader.transformation.loadMatrix(transformationMatrix);
+        GL11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 0, 4);
+
+
 
         GL20.glDisableVertexAttribArray(0);
         GL30.glBindVertexArray(0);

@@ -114,7 +114,7 @@ public class EngineTester {
 
         //**********************************Initialize input manager**********************************
 
-        InputManager.init(window);
+        //InputManager.init(window);
     }
 
     /**
@@ -139,11 +139,13 @@ public class EngineTester {
         //Create list to store all gui elements on screen
         List<GuiTexture> guis = new ArrayList<>();
 		//guis.add(new GuiTexture(engine.getRenderer().getReflectionTexture(), new Vector2f(0.5f, 0.5f), new Vector2f(0.5f, 0.5f)));
-        float fontSize = 1;
 
         //*********************************************Initialize text boxes*****************************************************
         //Create a font to use for rendering files
         FontType tacoma = new FontType(Loader.loadTexture(new MyFile("/res/fonts/arial/arial.png")), new MyFile("/res/fonts/arial/arial.fnt"));
+
+        InputManager.init(window, tacoma);
+
         //Create list to store all text boxes
         List<TextBox> textBoxes = new ArrayList<>();
         //Create sample text boxes
@@ -299,8 +301,8 @@ public class EngineTester {
                 "GUESS    .FILL    x3240\n" +
                 "USED    .FILL    x3260\n" +
                 ";\n" +
-                "    .END", tacoma, fontSize, 0.25f, 0.5f, GeneralSettings.TEXT_BOX_BORDER_WIDTH);
-        TextBox flowChart1 = new TextBox(new Vector2f(1.15f,1.5f), new Vector3f(0.1f,0.1f,0.1f), new Vector3f(1,1,1), new Vector3f(0,0,0), "Sample automatically sized textbox\nThis text box automatically sizes itself to match it's input", tacoma, fontSize, 0.25f, 0.5f, GeneralSettings.TEXT_BOX_BORDER_WIDTH);
+                "    .END", tacoma, GeneralSettings.FONT_SIZE, GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE, GeneralSettings.TEXT_BOX_BORDER_WIDTH);
+        TextBox flowChart1 = new TextBox(new Vector2f(1.15f,1.5f), new Vector3f(0.1f,0.1f,0.1f), new Vector3f(1,1,1), new Vector3f(0,0,0), "Sample automatically sized textbox\nThis text box automatically sizes itself to match it's input", tacoma, GeneralSettings.FONT_SIZE, GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE, GeneralSettings.TEXT_BOX_BORDER_WIDTH);
         //        MousePicker picker = new MousePicker(scene.getCamera(), scene.getTerrains());
         textBoxes.add(codeFile);
         textBoxes.add(flowChart1);
@@ -375,7 +377,7 @@ public class EngineTester {
             }
 
             //Render
-            renderer.renderScene(guis, textBoxes, new Vector3f(1,1,1), cursor, fontSize, header);
+            renderer.renderScene(guis, textBoxes, new Vector3f(1,1,1), cursor, GeneralSettings.FONT_SIZE, header);
 
             //Temporarily make changes for scrolling
             codeFile.changeContentsVerticalPosition((float)InputManager.SCROLL_CHANGE/10);
