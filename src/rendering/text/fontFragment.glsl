@@ -30,7 +30,7 @@ void main(void){
 		}
 	}
 	float distance = 1.0 - texture(fontAtlas, pass_textureCoords).a;
-	float alpha = 1.0 - smoothstep(width, wi-+0dth + edge, distance);
+	float alpha = 1.0 - smoothstep(width, width + edge, distance);
 	
 	float distance2 = 1.0 - texture(fontAtlas, pass_textureCoords + offset).a;
 	float outlineAlpha = 1.0 - smoothstep(borderWidth, borderWidth + borderEdge, distance2);
