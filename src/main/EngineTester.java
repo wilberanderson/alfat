@@ -160,7 +160,7 @@ public class EngineTester {
         //*********************************************Initialize text boxes*****************************************************
         //Create a font to use for rendering files
 
-        header = new Header(new Vector2f(-1, 1-(GeneralSettings.FONT_SIZE*GeneralSettings.FONT_SCALING_FACTOR)), new Vector2f(2f, GeneralSettings.FONT_SIZE*GeneralSettings.FONT_SCALING_FACTOR));
+        header = new Header(new Vector2f(-1, 1-(GeneralSettings.FONT_SIZE*GeneralSettings.FONT_SCALING_FACTOR + GeneralSettings.TEXT_BUTTON_PADDING*2)), new Vector2f(2f, GeneralSettings.FONT_SIZE*GeneralSettings.FONT_SCALING_FACTOR + GeneralSettings.TEXT_BUTTON_PADDING*2));
 
 
         //Create list to store all text boxes
@@ -394,12 +394,11 @@ public class EngineTester {
             //If the user is clicking and their mouse is in a text box recreate the cursor at the new position
             if(InputManager.LEFT_CLICK){
                 Vector2f newPosition = new Vector2f((float)InputManager.MOUSE_X, (float)InputManager.MOUSE_Y);
-                for (TextBox textBox : textBoxes){
-                    if(newPosition.x > textBox.getPosition().x - 1 && newPosition.x < (textBox.getPosition().x + textBox.getSize().x)-1 && newPosition.y > textBox.getPosition().y - 1 && newPosition.y < (textBox.getPosition().y + textBox.getSize().y)-1) {
-                        cursor = new Cursor(newPosition, textBox);
-                        break;
-                    }
+
+                if(newPosition.x > textBoxes.get(0).getPosition().x - 1 && newPosition.x < (textBoxes.get(0).getPosition().x + textBoxes.get(0).getSize().x)-1 && newPosition.y > textBoxes.get(0).getPosition().y - 1 && newPosition.y < (textBoxes.get(0).getPosition().y + textBoxes.get(0).getSize().y)-1) {
+                    cursor = new Cursor(newPosition, textBoxes.get(0));
                 }
+
                 //Reset left click value to avoid checking for new position multiple times per click
                 InputManager.LEFT_CLICK = false;
             }

@@ -9,7 +9,9 @@ public abstract class HighlightableButton extends Button{
     public HighlightableButton(Vector2f position, Vector2f size){
         super(position, size);
     }
-
+    public HighlightableButton(){
+        super();
+    }
     public abstract void onHighlight();
     public abstract void onUnhighlight();
 
