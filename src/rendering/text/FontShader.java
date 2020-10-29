@@ -7,6 +7,9 @@ import rendering.shaders.uniforms.UniformVec2;
 import rendering.shaders.uniforms.UniformVec3;
 import rendering.shaders.uniforms.UniformVec4;
 
+/**
+ * Handles the interaction with the {@link gui.Selection} vertex and fragment shaders.
+ */
 public class FontShader extends ShaderProgram{
 
 	

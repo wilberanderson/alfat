@@ -5,19 +5,15 @@ import org.lwjgl.util.vector.Vector2f;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class Button extends GuiTexture {
+public abstract class Button{
 
-    private boolean clicked = false;
+    private Vector2f position;
+    private Vector2f size;
 
-    public Button(int texture, Vector2f position, Vector2f scale, boolean highlightable) {
-        super(texture, position, scale, highlightable);
+    public Button(Vector2f position, Vector2f size) {
+        this.position = position;
+        this.size = size;
     }
 
-    public boolean isClicked() {
-        return clicked;
-    }
-
-    public void setClicked(boolean clicked) {
-        this.clicked = clicked;
-    }
+    public abstract void onPress();
 }

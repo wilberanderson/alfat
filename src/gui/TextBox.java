@@ -18,6 +18,7 @@ public class TextBox {
     private Vector3f textColor;
     private List<GUIText> texts = new ArrayList<>();
     private float border;
+    private GUIFilledBox guiFilledBox;
 
     private static final float LINE_HEIGHT = 0.06f;
 
@@ -34,6 +35,7 @@ public class TextBox {
 		    texts.add(new GUIText(line, fontSize, font, new Vector2f(border + position.x-1,position.y-minHeight+size.y-1), thickness, borderWidth, textColor, new Vector4f(position.x, position.y, position.x + size.x, position.y + size.y)));
 		    minHeight += lineHeight;
         }
+        guiFilledBox = new GUIFilledBox(position, size, backgroundColor);
     }
 
     public TextBox(Vector2f position, Vector3f backgroundColor, Vector3f textColor, Vector3f borderColor, String content, FontType font, float fontSize, float thickness, float borderWidth, float border) {
@@ -61,6 +63,7 @@ public class TextBox {
                 text.setPositionBounds(new Vector4f(position.x, position.y, position.x+size.x, position.y+size.y));
             }
         }
+        guiFilledBox = new GUIFilledBox(position, size, backgroundColor);
     }
 
 
@@ -131,5 +134,9 @@ public class TextBox {
         GUIText newText = new GUIText(left.getTextString() + rightText, left, true);
         texts.set(index, newText);
         return newText;
+    }
+
+    public GUIFilledBox getGuiFilledBox() {
+        return guiFilledBox;
     }
 }

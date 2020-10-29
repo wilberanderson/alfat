@@ -1,6 +1,7 @@
 package main;
 import fontMeshCreator.FontType;
 import gui.Cursor;
+import gui.Header;
 import gui.TextBox;
 import loaders.*;
 import org.lwjgl.glfw.*;
@@ -8,26 +9,23 @@ import org.lwjgl.opengl.*;
 import org.lwjgl.system.*;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
-import parser.JsonReader;
-import parser.LC3Syntax;
-import rendering.renderEngine.RenderEngine;
+import rendering.renderEngine.MasterRenderer;
 import gui.GuiTexture;
 import utils.InputManager;
 import utils.MyFile;
 
-import java.io.File;
 import java.nio.*;
 import java.util.ArrayList;
 import java.util.List;
 
 //Can you see this???
-import com.fasterxml.jackson.databind.ObjectMapper;
+
 
 public class EngineTester {
 
     // The window handle
     private long window;
-    private RenderEngine engine;
+    private MasterRenderer renderer;
 
     /**
      * Used for all operations of the program
@@ -74,6 +72,7 @@ public class EngineTester {
         if ( window == MemoryUtil.NULL )
             throw new RuntimeException("Failed to create the GLFW window");
 
+
         // Get the thread stack and push a new frame
         try ( MemoryStack stack = MemoryStack.stackPush() ) {
             IntBuffer pWidth = stack.mallocInt(1); // int*
@@ -114,7 +113,8 @@ public class EngineTester {
         GLFW.glfwPollEvents();
 
         //**********************************Initialize input manager**********************************
-        InputManager.init(window, null);
+
+        InputManager.init(window);
     }
 
     /**
@@ -133,7 +133,7 @@ public class EngineTester {
         GL11.glClearColor(0.2f, 0.2f, 0.2f, 0.0f);
 
         //Initializes the render engine
-        engine = new RenderEngine();
+        renderer = new MasterRenderer();
 
         //********************************************Initialize guis************************************************************
         //Create list to store all gui elements on screen
@@ -147,7 +147,7 @@ public class EngineTester {
         //Create list to store all text boxes
         List<TextBox> textBoxes = new ArrayList<>();
         //Create sample text boxes
-        TextBox codeFile = new TextBox(new Vector2f(0f,0f), new Vector2f(1f, 2f), new Vector3f(0.1f,0.1f,0.1f), new Vector3f(1,1,1), new Vector3f(0,0,0), "    .ORIG    x3000\n" +
+        TextBox codeFile = new TextBox(new Vector2f(0f,0f), new Vector2f(1f, 1.9f), new Vector3f(0.1f,0.1f,0.1f), new Vector3f(1,1,1), new Vector3f(0,0,0), "    .ORIG    x3000\n" +
                 ";Start\n" +
                 "        LEA    R0, PROMPT1\n" +
                 "        PUTS            ;Display beginning prompt\n" +
@@ -337,6 +337,8 @@ public class EngineTester {
 
 
 
+        Header header = new Header(new Vector2f(-1, 0.9f), new Vector2f(2f, 0.1f));
+
 
         // Run the rendering loop until the user has attempted to close
         // the window or has pressed the ESCAPE key.
@@ -373,7 +375,7 @@ public class EngineTester {
             }
 
             //Render
-            engine.renderScene(guis, textBoxes, new Vector3f(1,1,1), cursor, fontSize);
+            renderer.renderScene(guis, textBoxes, new Vector3f(1,1,1), cursor, fontSize, header);
 
             //Temporarily make changes for scrolling
             codeFile.changeContentsVerticalPosition((float)InputManager.SCROLL_CHANGE/10);
@@ -381,6 +383,12 @@ public class EngineTester {
 
             //Swap the color buffers to update the screen
             GLFW.glfwSwapBuffers(window);
+
+
+
+
+
+
 
         }
     }
@@ -418,7 +426,7 @@ public class EngineTester {
         Loader.cleanUp();
 
         //Close the render engine
-        engine.close();
+        renderer.cleanUp();
     }
 
     /**

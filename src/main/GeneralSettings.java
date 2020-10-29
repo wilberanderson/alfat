@@ -20,16 +20,16 @@ public class GeneralSettings {
 	public static final MyFile GUI_FRAGMENT = new MyFile("/rendering/guis/guiFragmentShader.glsl");
 	public static final MyFile FONT_VERTEX = new MyFile("/rendering/text/fontVertex.glsl");
 	public static final MyFile FONT_FRAGMENT = new MyFile("/rendering/text/fontFragment.glsl");
-	public static final MyFile TEXT_BOX_VERTEX = new MyFile("/rendering/textBox/boxVertex.glsl");
-	public static final MyFile TEXT_BOX_FRAGMENT = new MyFile("/rendering/textBox/boxFragment.glsl");
+	public static final MyFile FILLED_BOX_VERTEX = new MyFile("/rendering/filledBox/filledBoxVertexShader.glsl");
+	public static final MyFile FILLED_BOX_FRAGMENT = new MyFile("/rendering/filledBox/filledBoxFragmentShader.glsl");
 	public static final MyFile CURSOR_VERTEX = new MyFile("/rendering/cursor/cursorVertex.glsl");
 	public static final MyFile CURSOR_FRAGMENT = new MyFile("/rendering/cursor/cursorFragment.glsl");
 	public static final MyFile SELECTION_VERTEX = new MyFile("/rendering/selection/vertex.glsl");
 	public static final MyFile SELECTION_FRAGMENT = new MyFile("/rendering/selection/fragment.glsl");
 
 
-    public static final int DISPLAY_WIDTH = 1280;
-	public static final int DISPLAY_HEIGHT = 720;
+    public static int DISPLAY_WIDTH = 1280;
+	public static int DISPLAY_HEIGHT = 720;
 
 
     public static float delta;
@@ -54,5 +54,5 @@ public class GeneralSettings {
 	public static final int DEFAULT_TAB_WIDTH = 4;
 	public static final Vector3f HIGHLIGHT_COLOR = new Vector3f(0, 0.7f, 0.93f);
 	public static final float TEXT_BOX_BORDER_WIDTH = 0.003f;
-
+	public static final Vector3f HEADER_COLOR = new Vector3f(0f, 0f, 1f);//0.2f, 0.2f, 0.2f);
 }

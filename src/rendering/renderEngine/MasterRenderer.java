@@ -1,13 +1,13 @@
 package rendering.renderEngine;
 
 import gui.Cursor;
+import gui.Header;
 import gui.TextBox;
-import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 import rendering.cursor.CursorRenderer;
 import rendering.guis.GuiRenderer;
 import gui.GuiTexture;
-import rendering.textBox.TextBoxRenderer;
+import rendering.filledBox.FilledBoxRenderer;
 import rendering.text.TextMaster;
 
 import java.util.List;
@@ -20,12 +20,12 @@ import java.util.List;
 public class MasterRenderer {
 
 	private GuiRenderer guiRenderer;
-	private TextBoxRenderer textBoxRenderer;
+	private FilledBoxRenderer filledBoxRenderer;
 	private CursorRenderer cursorRenderer;
 
 	public MasterRenderer() {
 		guiRenderer = new GuiRenderer();
-		textBoxRenderer = new TextBoxRenderer();
+		filledBoxRenderer = new FilledBoxRenderer();
 		TextMaster.init();
 		cursorRenderer = new CursorRenderer();
 	}
@@ -33,9 +33,9 @@ public class MasterRenderer {
 	/**
 	 * Renders the scene to the screen.
 	 */
-	protected void renderScene(List<GuiTexture> guis, List<TextBox> textBoxes, Vector3f color, Cursor cursor, float fontSize) {
+	public void renderScene(List<GuiTexture> guis, List<TextBox> textBoxes, Vector3f color, Cursor cursor, float fontSize, Header header) {
 		guiRenderer.render(guis);
-		textBoxRenderer.render(textBoxes);
+		filledBoxRenderer.render(textBoxes, header);
 		TextMaster.render();
 		if(cursor != null) {
 			cursorRenderer.render(color, cursor.getPosition(), fontSize);
@@ -45,10 +45,10 @@ public class MasterRenderer {
 	/**
 	 * Clean up when the game is closed.
 	 */
-	protected void cleanUp() {
+	public void cleanUp() {
 		guiRenderer.cleanUp();
 		TextMaster.cleanUp();
-		textBoxRenderer.cleanUp();
+		filledBoxRenderer.cleanUp();
 		cursorRenderer.cleanUp();
 	}
 }

@@ -1,8 +1,12 @@
 package utils;
 
 import gui.Button;
+import gui.TextButton;
 import main.GeneralSettings;
 import org.lwjgl.glfw.*;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.util.vector.Vector2f;
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,12 +44,22 @@ public class InputManager {
     private static GLFWScrollCallback scrollCallback;
     private static GLFWMouseButtonCallback mouseButtonCallback;
     private static GLFWCursorPosCallback cursorPosCallback;
-    private static Map<String, Button> buttons;
+    private static List<Button> buttons;
     private static GLFWCharCallback charCallback;
+    private static GLFWFramebufferSizeCallback framebufferSizeCallback;
     public static List<Character> codepoints = new ArrayList<>();
 
-    public static void init(long window, Map<String, Button> buttonList){
-        buttons = buttonList;
+
+    public static void init(long window){
+        buttons = new ArrayList<>();
+
+        TextButton button = new TextButton(new Vector2f(-1f, -1f), new Vector2f(2f, 2f)) {
+            @Override
+            public void onPress() {
+                System.out.println("Test success");
+            }
+        };
+        buttons.add(button);
         // Setup a key callback. It will be called every time a key is pressed, repeated or released
         glfwSetKeyCallback(window, keyCallback = new GLFWKeyCallback() {
             @Override
@@ -104,6 +118,7 @@ public class InputManager {
             public void invoke(long window, int button, int action, int mods) {
                 if(button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
                     LEFT_CLICK = true;
+                    buttons.get(0).onPress();
                 }else if(button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS) {
                     RIGHT_CLICK = true;
                 }else if(button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_RELEASE) {
@@ -125,6 +140,15 @@ public class InputManager {
             @Override
             public void invoke(long window, int codepoint) {
                 codepoints.add((char)codepoint);
+            }
+        });
+
+        glfwSetFramebufferSizeCallback(window, framebufferSizeCallback = new GLFWFramebufferSizeCallback() {
+            @Override
+            public void invoke(long window, int width, int height) {
+                GeneralSettings.DISPLAY_WIDTH = width;
+                GeneralSettings.DISPLAY_HEIGHT = height;
+                GL11.glViewport(0, 0, GeneralSettings.DISPLAY_WIDTH, GeneralSettings.DISPLAY_HEIGHT);
             }
         });
     }
