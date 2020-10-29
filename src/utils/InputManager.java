@@ -2,6 +2,7 @@ package utils;
 
 import fontMeshCreator.FontType;
 import gui.Button;
+import gui.HighlightableButton;
 import gui.TextButton;
 import main.GeneralSettings;
 import org.lwjgl.glfw.*;
@@ -55,7 +56,7 @@ public class InputManager {
     public static void init(long window, FontType font){
         buttons = new ArrayList<>();
 
-        TextButton button = new TextButton(new Vector2f(-1f, 0.9f), new Vector2f(.3f, .1f), "Text creation test", new Vector3f(0, 0, 0), new Vector3f(1, 1, 1), font, GeneralSettings.FONT_SIZE, GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE) {
+        TextButton button = new TextButton(new Vector2f(-1f, 0.9f), new Vector2f(.3f, .1f), "Text creation test", new Vector3f(0, 0, 0), new Vector3f(0, 1, 1), new Vector3f(1, 1, 1), font, GeneralSettings.FONT_SIZE, GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE) {
             @Override
             public void onPress() {
                 System.out.println("Test success");
@@ -120,7 +121,12 @@ public class InputManager {
             public void invoke(long window, int button, int action, int mods) {
                 if(button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
                     LEFT_CLICK = true;
-                    buttons.get(0).onPress();
+                    for(Button b: buttons){
+                        if(MOUSE_X >= b.getPosition().x && MOUSE_Y >= b.getPosition().y && MOUSE_X < b.getPosition().x+b.getSize().x && MOUSE_Y < b.getPosition().y+b.getSize().y){
+                            b.onPress();
+                            break;
+                        }
+                    }
                 }else if(button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS) {
                     RIGHT_CLICK = true;
                 }else if(button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_RELEASE) {
@@ -131,8 +137,19 @@ public class InputManager {
         glfwSetCursorPosCallback(window, cursorPosCallback = new GLFWCursorPosCallback() {
             @Override
             public void invoke(long window, double xpos, double ypos) {
-                MOUSE_X = xpos;
-                MOUSE_Y = ypos;
+                MOUSE_X = xpos/GeneralSettings.DISPLAY_WIDTH*2 - 1f;
+                MOUSE_Y = 1-ypos/GeneralSettings.DISPLAY_HEIGHT*2;
+                for(Button b: buttons){
+                    if(b instanceof HighlightableButton) {
+                        if (MOUSE_X >= b.getPosition().x && MOUSE_Y >= b.getPosition().y && MOUSE_X < b.getPosition().x + b.getSize().x && MOUSE_Y < b.getPosition().y + b.getSize().y) {
+                            ((HighlightableButton) b).highlight();
+                        }else{
+                            if(((HighlightableButton) b).isHighlighted()) {
+                                ((HighlightableButton) b).unhighlight();
+                            }
+                        }
+                    }
+                }
             }
         });
         previousMouseX = MOUSE_X;

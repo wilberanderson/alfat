@@ -1,5 +1,7 @@
 package main;
 
+import fontMeshCreator.FontType;
+import loaders.Loader;
 import org.lwjgl.util.vector.Vector3f;
 import utils.MyFile;
 
@@ -59,4 +61,9 @@ public class GeneralSettings {
 	public static final float FONT_SIZE = 1f;
 	public static final float FONT_WIDTH = 0.25f;
 	public static final float FONT_EDGE = 0.5f;
+	public static final float FONT_SCALING_FACTOR = 0.06f;
+	public static FontType TACOMA;
+	public static void init() {
+		TACOMA = new FontType(Loader.loadTexture(new MyFile("/res/fonts/arial/arial.png")), new MyFile("/res/fonts/arial/arial.fnt"));
+	}
 }

@@ -39,6 +39,7 @@ public class GUIText {
 
 	private TextMeshData textMeshData;
 
+	private boolean isGuiText;
 
 	/**
 	 * Creates a new text, loads the text's quads into a VAO, and adds the text
@@ -56,7 +57,7 @@ public class GUIText {
 	 *            text should be rendered. The top left corner of the screen is
 	 *            (0, 0) and the bottom right is (1, 1).
 	 */
-	public GUIText(String text, float fontSize, FontType font, Vector2f position, float width, float edge, Vector3f colour, Vector4f positionBounds) {
+	public GUIText(String text, float fontSize, FontType font, Vector2f position, float width, float edge, Vector3f colour, Vector4f positionBounds, boolean isGuiText) {
 		this.textString = text;
 		this.fontSize = fontSize;
 		this.font = font;
@@ -68,7 +69,12 @@ public class GUIText {
 		this.borderEdge = edge;
 		this.colour = colour;
 		this.positionBounds = positionBounds;
-		this.textMeshData = TextMaster.loadText(this);
+		this.isGuiText = isGuiText;
+		if(isGuiText){
+			this.textMeshData = TextMaster.loadGuiText(this);
+		}else{
+			this.textMeshData = TextMaster.loadText(this);
+		}
 		this.position.x = this.position.x*2-1;
 		this.position.y = -this.position.y*2+1;
 	}
@@ -85,9 +91,17 @@ public class GUIText {
 		this.borderEdge = edge;
 		this.colour = guiText.colour;
 		this.positionBounds = guiText.positionBounds;
-		this.textMeshData = TextMaster.loadText(this);
+		if(isGuiText){
+			this.textMeshData = TextMaster.loadGuiText(this);
+		}else{
+			this.textMeshData = TextMaster.loadText(this);
+		}
 		if(deleteText){
-			TextMaster.removeText(guiText);
+			if(isGuiText){
+				TextMaster.removeGuiText(guiText);
+			}else {
+				TextMaster.removeText(guiText);
+			}
 		}
 		this.position.x = this.position.x*2-1;
 		this.position.y = -this.position.y*2+1;
@@ -98,7 +112,11 @@ public class GUIText {
 	 * Remove the text from the screen.
 	 */
 	public void remove(GUIText text) {
-		TextMaster.removeText(text);
+		if(isGuiText){
+			TextMaster.removeGuiText(text);
+		}else {
+			TextMaster.removeText(text);
+		}
 	}
 
 	/**

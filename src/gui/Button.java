@@ -16,4 +16,12 @@ public abstract class Button{
     }
 
     public abstract void onPress();
+
+    public Vector2f getPosition(){
+        return position;
+    }
+
+    public Vector2f getSize(){
+        return size;
+    }
 }

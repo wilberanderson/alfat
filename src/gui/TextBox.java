@@ -32,7 +32,7 @@ public class TextBox {
         float minHeight = border;
         float lineHeight = LINE_HEIGHT*fontSize;
         for (String line : lines){
-		    texts.add(new GUIText(line, fontSize, font, new Vector2f(border + position.x-1,position.y-minHeight+size.y-1), thickness, borderWidth, textColor, new Vector4f(position.x, position.y, position.x + size.x, position.y + size.y)));
+		    texts.add(new GUIText(line, fontSize, font, new Vector2f(border + position.x-1,position.y-minHeight+size.y-1), thickness, borderWidth, textColor, new Vector4f(position.x, position.y, position.x + size.x, position.y + size.y), false));
 		    minHeight += lineHeight;
         }
         guiFilledBox = new GUIFilledBox(position, size, backgroundColor);
@@ -50,7 +50,7 @@ public class TextBox {
         double greatestLength = 0;
 
         for (String line : lines){
-		    GUIText text = new GUIText(line, fontSize, font, new Vector2f(border + position.x-1,position.y-minHeight - 1 - border + lineHeight*lines.length), thickness, borderWidth, textColor, null);
+		    GUIText text = new GUIText(line, fontSize, font, new Vector2f(border + position.x-1,position.y-minHeight - 1 - border + lineHeight*lines.length), thickness, borderWidth, textColor, null, false);
 		    texts.add(text);
             if (text.getLength() > greatestLength){
                 greatestLength = text.getLength();

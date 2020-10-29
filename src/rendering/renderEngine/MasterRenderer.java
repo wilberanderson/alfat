@@ -40,6 +40,8 @@ public class MasterRenderer {
 		if(cursor != null) {
 			cursorRenderer.render(color, cursor.getPosition(), fontSize);
 		}
+		filledBoxRenderer.renderGuis();
+		TextMaster.renderGuis();
 	}
 
 	/**

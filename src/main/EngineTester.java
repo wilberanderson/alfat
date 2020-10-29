@@ -142,14 +142,17 @@ public class EngineTester {
 
         //*********************************************Initialize text boxes*****************************************************
         //Create a font to use for rendering files
-        FontType tacoma = new FontType(Loader.loadTexture(new MyFile("/res/fonts/arial/arial.png")), new MyFile("/res/fonts/arial/arial.fnt"));
 
-        InputManager.init(window, tacoma);
+        //Before rendering fonts initialize the font in General Settings
+        GeneralSettings.init();
+
+        Header header = new Header(new Vector2f(-1, 1-(GeneralSettings.FONT_SIZE*GeneralSettings.FONT_SCALING_FACTOR)), new Vector2f(2f, GeneralSettings.FONT_SIZE*GeneralSettings.FONT_SCALING_FACTOR));
+        InputManager.init(window, GeneralSettings.TACOMA);
 
         //Create list to store all text boxes
         List<TextBox> textBoxes = new ArrayList<>();
         //Create sample text boxes
-        TextBox codeFile = new TextBox(new Vector2f(0f,0f), new Vector2f(1f, 1.9f), new Vector3f(0.1f,0.1f,0.1f), new Vector3f(1,1,1), new Vector3f(0,0,0), "    .ORIG    x3000\n" +
+        TextBox codeFile = new TextBox(new Vector2f(0f,0f), new Vector2f(1f, header.getPosition().y+1), new Vector3f(0.1f,0.1f,0.1f), new Vector3f(1,1,1), new Vector3f(0,0,0), "    .ORIG    x3000\n" +
                 ";Start\n" +
                 "        LEA    R0, PROMPT1\n" +
                 "        PUTS            ;Display beginning prompt\n" +
@@ -301,8 +304,8 @@ public class EngineTester {
                 "GUESS    .FILL    x3240\n" +
                 "USED    .FILL    x3260\n" +
                 ";\n" +
-                "    .END", tacoma, GeneralSettings.FONT_SIZE, GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE, GeneralSettings.TEXT_BOX_BORDER_WIDTH);
-        TextBox flowChart1 = new TextBox(new Vector2f(1.15f,1.5f), new Vector3f(0.1f,0.1f,0.1f), new Vector3f(1,1,1), new Vector3f(0,0,0), "Sample automatically sized textbox\nThis text box automatically sizes itself to match it's input", tacoma, GeneralSettings.FONT_SIZE, GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE, GeneralSettings.TEXT_BOX_BORDER_WIDTH);
+                "    .END", GeneralSettings.TACOMA, GeneralSettings.FONT_SIZE, GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE, GeneralSettings.TEXT_BOX_BORDER_WIDTH);
+        TextBox flowChart1 = new TextBox(new Vector2f(1.15f,1.5f), new Vector3f(0.1f,0.1f,0.1f), new Vector3f(1,1,1), new Vector3f(0,0,0), "Sample automatically sized textbox\nThis text box automatically sizes itself to match it's input", GeneralSettings.TACOMA, GeneralSettings.FONT_SIZE, GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE, GeneralSettings.TEXT_BOX_BORDER_WIDTH);
         //        MousePicker picker = new MousePicker(scene.getCamera(), scene.getTerrains());
         textBoxes.add(codeFile);
         textBoxes.add(flowChart1);
@@ -339,8 +342,6 @@ public class EngineTester {
 
 
 
-        Header header = new Header(new Vector2f(-1, 0.9f), new Vector2f(2f, 0.1f));
-
 
         // Run the rendering loop until the user has attempted to close
         // the window or has pressed the ESCAPE key.
@@ -360,7 +361,7 @@ public class EngineTester {
 
             //If the user is clicking and their mouse is in a text box recreate the cursor at the new position
             if(InputManager.LEFT_CLICK){
-                Vector2f newPosition = new Vector2f((float)InputManager.MOUSE_X/GeneralSettings.DISPLAY_WIDTH*2 - 1f, 1-(float)InputManager.MOUSE_Y/GeneralSettings.DISPLAY_HEIGHT*2);
+                Vector2f newPosition = new Vector2f((float)InputManager.MOUSE_X, (float)InputManager.MOUSE_Y);
                 for (TextBox textBox : textBoxes){
                     if(newPosition.x > textBox.getPosition().x - 1 && newPosition.x < (textBox.getPosition().x + textBox.getSize().x)-1 && newPosition.y > textBox.getPosition().y - 1 && newPosition.y < (textBox.getPosition().y + textBox.getSize().y)-1) {
                         cursor = new Cursor(newPosition, textBox);
