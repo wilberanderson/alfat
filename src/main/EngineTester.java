@@ -1,22 +1,21 @@
 package main;
 import fontMeshCreator.FontType;
-import gui.Cursor;
-import gui.Header;
-import gui.TextBox;
+import gui.*;
 import loaders.*;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
 import org.lwjgl.system.*;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
+import org.lwjgl.util.vector.Vector4f;
 import rendering.renderEngine.MasterRenderer;
-import gui.GuiTexture;
 import utils.InputManager;
 import utils.MyFile;
 
 import java.nio.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Flow;
 
 //Can you see this???
 
@@ -27,6 +26,12 @@ public class EngineTester {
     private long window;
     private MasterRenderer renderer;
 
+    //Temporary attributes
+    private Cursor cursor;
+    private List<TextBox> textBoxes;
+    private List<GuiTexture> guis;
+    private Header header;
+    private List<FlowchartLine> flowchartLines;
     /**
      * Used for all operations of the program
      *  - Initializes all relevant objects
@@ -115,13 +120,8 @@ public class EngineTester {
         //**********************************Initialize input manager**********************************
 
         //InputManager.init(window);
-    }
 
-    /**
-     * Initializes the rendering loop and begins looping
-     *  - TODO: Move finalized initialization steps to init() method
-     */
-    private void loop() {
+        //**********************************Initialize Rendering system****************************
         // This line is critical for LWJGL's interoperation with GLFW's
         // OpenGL context, or any context that is managed externally.
         // LWJGL detects the context that is current in the current thread,
@@ -135,22 +135,36 @@ public class EngineTester {
         //Initializes the render engine
         renderer = new MasterRenderer();
 
+        //************************************Initialize guis************************************
+        //Create the FontTypes in GeneralSettings, must happen before using any font
+        GeneralSettings.initializeFonts();
+
+        //************************************Initialize input*************************************
+        InputManager.init(window);
+
+
+
+
+        //****************************************Perform temporary initializations****************************
+        tempInit();
+    }
+
+    private void tempInit(){
+
+
         //********************************************Initialize guis************************************************************
         //Create list to store all gui elements on screen
-        List<GuiTexture> guis = new ArrayList<>();
-		//guis.add(new GuiTexture(engine.getRenderer().getReflectionTexture(), new Vector2f(0.5f, 0.5f), new Vector2f(0.5f, 0.5f)));
+        guis = new ArrayList<>();
+        //guis.add(new GuiTexture(engine.getRenderer().getReflectionTexture(), new Vector2f(0.5f, 0.5f), new Vector2f(0.5f, 0.5f)));
 
         //*********************************************Initialize text boxes*****************************************************
         //Create a font to use for rendering files
 
-        //Before rendering fonts initialize the font in General Settings
-        GeneralSettings.init();
+        header = new Header(new Vector2f(-1, 1-(GeneralSettings.FONT_SIZE*GeneralSettings.FONT_SCALING_FACTOR)), new Vector2f(2f, GeneralSettings.FONT_SIZE*GeneralSettings.FONT_SCALING_FACTOR));
 
-        Header header = new Header(new Vector2f(-1, 1-(GeneralSettings.FONT_SIZE*GeneralSettings.FONT_SCALING_FACTOR)), new Vector2f(2f, GeneralSettings.FONT_SIZE*GeneralSettings.FONT_SCALING_FACTOR));
-        InputManager.init(window, GeneralSettings.TACOMA);
 
         //Create list to store all text boxes
-        List<TextBox> textBoxes = new ArrayList<>();
+        textBoxes = new ArrayList<>();
         //Create sample text boxes
         TextBox codeFile = new TextBox(new Vector2f(0f,0f), new Vector2f(1f, header.getPosition().y+1), new Vector3f(0.1f,0.1f,0.1f), new Vector3f(1,1,1), new Vector3f(0,0,0), "    .ORIG    x3000\n" +
                 ";Start\n" +
@@ -310,10 +324,6 @@ public class EngineTester {
         textBoxes.add(codeFile);
         textBoxes.add(flowChart1);
 
-        //Initialize cursor to be null
-        Cursor cursor = null;
-
-
         //Testing stuff
 
         System.out.println("hello world ");
@@ -336,12 +346,34 @@ public class EngineTester {
 //        LC3Syntax s = j.mapJson(new File("CodeSyntax\\LC3-Operators.json"));
 //        System.out.println(s);
 
+        flowchartLines = new ArrayList<>();
+        List<Vector2f> positions1 = new ArrayList<>();
+        List<Vector2f> positions2 = new ArrayList<>();
+        Vector2f position = new Vector2f(0.5f, 0);
+        positions1.add(position);
+        position = new Vector2f(0.5f, 0.5f);
+        positions1.add(position);
+        position = new Vector2f(0.75f, 0.5f);
+        positions1.add(position);
 
+        position = new Vector2f(0.5f, -0.9f);
+        positions2.add(position);
+        position = new Vector2f(0.75f, -0.9f);
+        positions2.add(position);
+        position = new Vector2f(0.75f, 0);
+        positions2.add(position);
 
+        FlowchartLine flowchartLine = new FlowchartLine(positions1);
+        flowchartLines.add(flowchartLine);
+        flowchartLine = new FlowchartLine(positions2);
+        flowchartLines.add(flowchartLine);
+    }
 
-
-
-
+    /**
+     * Initializes the rendering loop and begins looping
+     *  - TODO: Move finalized initialization steps to init() method
+     */
+    private void loop() {
 
         // Run the rendering loop until the user has attempted to close
         // the window or has pressed the ESCAPE key.
@@ -378,10 +410,10 @@ public class EngineTester {
             }
 
             //Render
-            renderer.renderScene(guis, textBoxes, new Vector3f(1,1,1), cursor, GeneralSettings.FONT_SIZE, header);
+            renderer.renderScene(guis, textBoxes, new Vector3f(1,1,1), cursor, GeneralSettings.FONT_SIZE, header, flowchartLines);
 
             //Temporarily make changes for scrolling
-            codeFile.changeContentsVerticalPosition((float)InputManager.SCROLL_CHANGE/10);
+            textBoxes.get(0).changeContentsVerticalPosition((float)InputManager.SCROLL_CHANGE/10);
             InputManager.SCROLL_CHANGE = 0;
 
             //Swap the color buffers to update the screen

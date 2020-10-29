@@ -1,7 +1,9 @@
 package rendering.cursor;
 
 import dataStructures.RawModel;
+import gui.Cursor;
 import loaders.Loader;
+import main.GeneralSettings;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
@@ -21,18 +23,18 @@ public class CursorRenderer {
         shader = new CursorShader();
         cursor = Loader.loadToVAO(VERTICES, 2);
         shader.start();
-        shader.color.loadVec3(1,1,1);
+        shader.color.loadVec3(GeneralSettings.CURSOR_COLOR);
+        shader.stop();
     }
 
 
-    public void render(Vector3f color, Vector2f mousePosition, float fontSize){
+    public void render(Cursor cursor){
         prepare();
 
-        GL30.glBindVertexArray(cursor.getVaoID());
+        GL30.glBindVertexArray(this.cursor.getVaoID());
         GL20.glEnableVertexAttribArray(0);
-        shader.color.loadVec3(color);
-        shader.mousePosition.loadVec2(mousePosition);
-        shader.fontHeight.loadFloat(0.05f*fontSize);
+        shader.mousePosition.loadVec2(cursor.getPosition());
+        shader.fontHeight.loadFloat(GeneralSettings.FONT_SCALING_FACTOR*GeneralSettings.FONT_SIZE);
         GL11.glDrawArrays(GL11.GL_LINES, 0, 2);
         GL20.glDisableVertexAttribArray(0);
         GL30.glBindVertexArray(0);

@@ -53,10 +53,10 @@ public class InputManager {
     public static List<Character> codepoints = new ArrayList<>();
 
 
-    public static void init(long window, FontType font){
+    public static void init(long window){
         buttons = new ArrayList<>();
 
-        TextButton button = new TextButton(new Vector2f(-1f, 0.9f), new Vector2f(.3f, .1f), "Text creation test", new Vector3f(0, 0, 0), new Vector3f(0, 1, 1), new Vector3f(1, 1, 1), font, GeneralSettings.FONT_SIZE, GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE) {
+        TextButton button = new TextButton(new Vector2f(-1f, 0.9f), new Vector2f(.3f, .1f), "Text creation test", new Vector3f(0, 0, 0), new Vector3f(0, 1, 1), new Vector3f(1, 1, 1), GeneralSettings.TACOMA, GeneralSettings.FONT_SIZE, GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE) {
             @Override
             public void onPress() {
                 System.out.println("Test success");

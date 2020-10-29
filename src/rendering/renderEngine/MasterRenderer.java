@@ -1,12 +1,10 @@
 package rendering.renderEngine;
 
-import gui.Cursor;
-import gui.Header;
-import gui.TextBox;
+import gui.*;
 import org.lwjgl.util.vector.Vector3f;
 import rendering.cursor.CursorRenderer;
+import rendering.flowchartLine.FlowchartLineRenderer;
 import rendering.guis.GuiRenderer;
-import gui.GuiTexture;
 import rendering.filledBox.FilledBoxRenderer;
 import rendering.text.TextMaster;
 
@@ -22,26 +20,29 @@ public class MasterRenderer {
 	private GuiRenderer guiRenderer;
 	private FilledBoxRenderer filledBoxRenderer;
 	private CursorRenderer cursorRenderer;
+	private FlowchartLineRenderer flowchartLineRenderer;
 
 	public MasterRenderer() {
 		guiRenderer = new GuiRenderer();
 		filledBoxRenderer = new FilledBoxRenderer();
 		TextMaster.init();
 		cursorRenderer = new CursorRenderer();
+		flowchartLineRenderer = new FlowchartLineRenderer();
 	}
 
 	/**
 	 * Renders the scene to the screen.
 	 */
-	public void renderScene(List<GuiTexture> guis, List<TextBox> textBoxes, Vector3f color, Cursor cursor, float fontSize, Header header) {
+	public void renderScene(List<GuiTexture> guis, List<TextBox> textBoxes, Vector3f color, Cursor cursor, float fontSize, Header header, List<FlowchartLine> flowchartLines) {
 		guiRenderer.render(guis);
 		filledBoxRenderer.render(textBoxes, header);
 		TextMaster.render();
 		if(cursor != null) {
-			cursorRenderer.render(color, cursor.getPosition(), fontSize);
+			cursorRenderer.render(cursor);
 		}
 		filledBoxRenderer.renderGuis();
 		TextMaster.renderGuis();
+		flowchartLineRenderer.render(flowchartLines);
 	}
 
 	/**

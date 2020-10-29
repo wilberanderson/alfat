@@ -3,6 +3,7 @@ package gui;
 import main.GeneralSettings;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.util.vector.Vector2f;
+import org.lwjgl.util.vector.Vector3f;
 import utils.InputManager;
 
 import java.util.List;
@@ -237,7 +238,7 @@ public class Cursor {
                 GUIText newText = new GUIText(textString, text, true);
                 texts.set(lineIndex, newText);
                 text = new GUIText(endText, newText, false);
-                text.setPosition(new Vector2f(text.getPosition().x, text.getPosition().y - text.getFontSize()*0.06f));
+                text.setPosition(new Vector2f(text.getPosition().x, text.getPosition().y - text.getFontSize()*GeneralSettings.FONT_SCALING_FACTOR));
                 lineIndex++;
                 textBox.addText(text, lineIndex);
                 textString = "";
