@@ -160,6 +160,7 @@ public class EngineTester {
         //*********************************************Initialize text boxes*****************************************************
         //Create a font to use for rendering files
 
+
         header = new Header(new Vector2f(-1, 1-(GeneralSettings.FONT_SIZE*GeneralSettings.FONT_SCALING_FACTOR + GeneralSettings.TEXT_BUTTON_PADDING*2)), new Vector2f(2f, GeneralSettings.FONT_SIZE*GeneralSettings.FONT_SCALING_FACTOR + GeneralSettings.TEXT_BUTTON_PADDING*2));
 
 
@@ -349,6 +350,7 @@ public class EngineTester {
         flowchartLines = new ArrayList<>();
         List<Vector2f> positions1 = new ArrayList<>();
         List<Vector2f> positions2 = new ArrayList<>();
+        List<Vector2f> positions3 = new ArrayList<>();
         Vector2f position = new Vector2f(0.5f, 0);
         positions1.add(position);
         position = new Vector2f(0.5f, 0.5f);
@@ -363,9 +365,18 @@ public class EngineTester {
         position = new Vector2f(0.75f, 0);
         positions2.add(position);
 
+        position = new Vector2f(-1, -1);
+        positions3.add(position);
+        position = new Vector2f(0.5f, 10);
+        positions3.add(position);
+        position = new Vector2f(1f, -1f);
+        positions3.add(position);
+
         FlowchartLine flowchartLine = new FlowchartLine(positions1);
         flowchartLines.add(flowchartLine);
         flowchartLine = new FlowchartLine(positions2);
+        flowchartLines.add(flowchartLine);
+        flowchartLine = new FlowchartLine(positions3);
         flowchartLines.add(flowchartLine);
     }
 
@@ -417,8 +428,6 @@ public class EngineTester {
 
             //Swap the color buffers to update the screen
             GLFW.glfwSwapBuffers(window);
-
-
 
 
 

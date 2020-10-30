@@ -36,13 +36,13 @@ public class MasterRenderer {
 	public void renderScene(List<GuiTexture> guis, List<TextBox> textBoxes, Vector3f color, Cursor cursor, float fontSize, Header header, List<FlowchartLine> flowchartLines) {
 		guiRenderer.render(guis);
 		filledBoxRenderer.render(textBoxes, header);
+		flowchartLineRenderer.render(flowchartLines);
 		TextMaster.render();
 		if(cursor != null) {
 			cursorRenderer.render(cursor);
 		}
 		filledBoxRenderer.renderGuis();
 		TextMaster.renderGuis();
-		flowchartLineRenderer.render(flowchartLines);
 	}
 
 	/**

@@ -64,6 +64,7 @@ public class GeneralSettings {
 	public static final float FONT_WIDTH = 0.25f;
 	public static final float FONT_EDGE = 0.4f;
 	public static final float FONT_SCALING_FACTOR = 0.06f;
+	public static final Vector3f TEXT_COLOR = new Vector3f(1, 1, 1);
 	public static FontType TACOMA;
 	public static void initializeFonts() {
 		TACOMA = new FontType(Loader.loadTexture(new MyFile("/res/fonts/arial/arial.png")), new MyFile("/res/fonts/arial/arial.fnt"));
@@ -74,4 +75,7 @@ public class GeneralSettings {
 	public static final Vector3f FLOWCHART_LINE_COLOR = new Vector3f(1,1,1);
 
 	public static final float TEXT_BUTTON_PADDING = 0.005f;
+	public static final Vector3f TEXT_BUTTON_BACKGROUND_COLOR = new Vector3f(0f, 0f, 0f);
+
+	public static String FILE_PATH;
 }

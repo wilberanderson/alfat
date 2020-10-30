@@ -23,7 +23,10 @@ public class TextMaster {
 	public static void render(){
 		renderer.render(texts);
 	}
-	public static void renderGuis(){renderer.render(guiTexts);}
+	public static void renderGuis(){
+		renderer.render(guiTexts);
+
+	}
 	
 	public static TextMeshData loadText(GUIText text){
 		FontType font = text.getFont();
@@ -64,11 +67,12 @@ public class TextMaster {
 
 	@SuppressWarnings("unlikely-arg-type")
 	public static void removeGuiText(GUIText text){
-		List<GUIText> textBatch = texts.get(text.getFont());
+		List<GUIText> textBatch = guiTexts.get(text.getFont());
 		textBatch.remove(text);
-		if(textBatch.isEmpty()){
-			guiTexts.remove(texts.get(text.getFont()));
+		if (textBatch.isEmpty()) {
+			guiTexts.remove(guiTexts.get(text.getFont()));
 		}
+
 	}
 
 	public static void cleanUp(){
