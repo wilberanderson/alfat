@@ -3,11 +3,7 @@ package rendering.filledBox;
 import java.util.List;
 
 import dataStructures.RawModel;
-import gui.GUIFilledBox;
-import gui.Header;
-import gui.TextBox;
-import gui.TextButton;
-import gui.Button;
+import gui.*;
 import loaders.Loader;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
@@ -33,14 +29,19 @@ public class FilledBoxRenderer {
     }
 
 
-    public void render(List<TextBox> textBoxes, Header header){
+    public void render(List<TextBox> textBoxes, Header header, FlowChartWindow flowChartWindow){
         prepare();
 
         GL30.glBindVertexArray(square.getVaoID());
         GL20.glEnableVertexAttribArray(0);
 
-        for(TextBox textBox : textBoxes) {
-            renderFilledBox(textBox.getGuiFilledBox());
+
+        for(int i = 0; i < textBoxes.size(); i++) {
+            if(i == 0){
+                renderFilledBox(textBoxes.get(0).getGuiFilledBox(), null);
+            }else{
+                renderFilledBox(textBoxes.get(i).getGuiFilledBox(), flowChartWindow);
+            }
         }
         shader.color.loadVec3(header.getGuiFilledBox().getColor());
         Matrix3f transformationMatrix = new Matrix3f();
@@ -49,6 +50,8 @@ public class FilledBoxRenderer {
         transformationMatrix.m20 = header.getGuiFilledBox().getPosition().x+1;
         transformationMatrix.m21 = header.getGuiFilledBox().getPosition().y+1;
         shader.transformation.loadMatrix(transformationMatrix);
+        shader.windowPosition.loadVec2(-1, -1);
+        shader.windowSize.loadVec2(2, 2);
         GL11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 0, 4);
 
         GL20.glDisableVertexAttribArray(0);
@@ -74,6 +77,8 @@ public class FilledBoxRenderer {
                 transformationMatrix.m20 = ((TextButton)button).getGuiFilledBox().getPosition().x+1;
                 transformationMatrix.m21 = ((TextButton)button).getGuiFilledBox().getPosition().y+1;
                 shader.transformation.loadMatrix(transformationMatrix);
+                shader.windowPosition.loadVec2(-1, -1);
+                shader.windowSize.loadVec2(2, 2);
                 GL11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 0, 4);
             }
         }
@@ -88,7 +93,7 @@ public class FilledBoxRenderer {
 
     }
 
-    private void renderFilledBox(GUIFilledBox filledBox){
+    private void renderFilledBox(GUIFilledBox filledBox, FlowChartWindow window){
         shader.color.loadVec3(filledBox.getColor());
         Matrix3f transformationMatrix = new Matrix3f();
         transformationMatrix.m00 = filledBox.getSize().x/2;
@@ -96,6 +101,13 @@ public class FilledBoxRenderer {
         transformationMatrix.m20 = filledBox.getPosition().x;
         transformationMatrix.m21 = filledBox.getPosition().y;
         shader.transformation.loadMatrix(transformationMatrix);
+        if(window != null){
+            shader.windowPosition.loadVec2(window.getPosition());
+            shader.windowSize.loadVec2(window.getSize());
+        }else {
+            shader.windowPosition.loadVec2(-1, -1);
+            shader.windowSize.loadVec2(2, 2);
+        }
         GL11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 0, 4);
     }
 

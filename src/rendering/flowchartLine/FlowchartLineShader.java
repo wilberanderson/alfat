@@ -15,6 +15,8 @@ public class FlowchartLineShader extends ShaderProgram{
     protected UniformVec3 color = new UniformVec3("color");
     protected UniformVec2 startPosition = new UniformVec2("startPosition");
     protected UniformVec2 endPosition = new UniformVec2("endPosition");
+    protected UniformVec2 windowPosition = new UniformVec2("windowPosition");
+    protected UniformVec2 windowSize = new UniformVec2("windowSize");
 
     /**
      * Performs setup for a {@link FlowchartLineShader}
@@ -24,7 +26,7 @@ public class FlowchartLineShader extends ShaderProgram{
      */
     public FlowchartLineShader() {
         super(GeneralSettings.FLOWCHART_VERTEX, GeneralSettings.FLOWCHART_FRAGMENT, "position");
-        super.storeAllUniformLocations(color, startPosition, endPosition);
+        super.storeAllUniformLocations(color, startPosition, endPosition, windowPosition, windowSize);
     }
 
 

@@ -41,6 +41,8 @@ public class GUIText {
 
 	private boolean isGuiText;
 
+	private boolean isInFlowchart;
+
 	/**
 	 * Creates a new text, loads the text's quads into a VAO, and adds the text
 	 * to the screen.
@@ -57,7 +59,7 @@ public class GUIText {
 	 *            text should be rendered. The top left corner of the screen is
 	 *            (0, 0) and the bottom right is (1, 1).
 	 */
-	public GUIText(String text, float fontSize, FontType font, Vector2f position, float width, float edge, Vector3f colour, Vector4f positionBounds, boolean isGuiText) {
+	public GUIText(String text, float fontSize, FontType font, Vector2f position, float width, float edge, Vector3f colour, Vector4f positionBounds, boolean isGuiText, boolean isInFlowchart) {
 		this.textString = text;
 		this.fontSize = fontSize;
 		this.font = font;
@@ -70,6 +72,7 @@ public class GUIText {
 		this.colour = colour;
 		this.positionBounds = positionBounds;
 		this.isGuiText = isGuiText;
+		this.isInFlowchart = isInFlowchart;
 		if(isGuiText){
 			this.textMeshData = TextMaster.loadGuiText(this);
 		}else{
@@ -91,6 +94,7 @@ public class GUIText {
 		this.borderEdge = edge;
 		this.colour = guiText.colour;
 		this.positionBounds = guiText.positionBounds;
+		this.isInFlowchart = guiText.isInFlowchart;
 		if(isGuiText){
 			this.textMeshData = TextMaster.loadGuiText(this);
 		}else{
@@ -299,5 +303,9 @@ public class GUIText {
 
 	public void setPosition(Vector2f position){
 		this.position = position;
+	}
+
+	public boolean isInFlowchart() {
+		return isInFlowchart;
 	}
 }

@@ -9,6 +9,8 @@ public class FilledBoxShader extends ShaderProgram{
 
     protected UniformVec3 color = new UniformVec3("color");
     protected UniformMat3 transformation = new UniformMat3("transformation");
+    protected UniformVec2 windowPosition = new UniformVec2("windowPosition");
+    protected UniformVec2 windowSize = new UniformVec2("windowSize");
 
     /**
      * Handles the interaction with the TextBox vertex and fragment shaders.
@@ -18,7 +20,7 @@ public class FilledBoxShader extends ShaderProgram{
      */
     public FilledBoxShader() {
         super(GeneralSettings.FILLED_BOX_VERTEX, GeneralSettings.FILLED_BOX_FRAGMENT, "position");
-        super.storeAllUniformLocations(color, transformation);
+        super.storeAllUniformLocations(color, transformation, windowPosition, windowSize);
     }
 
 

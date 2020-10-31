@@ -19,6 +19,8 @@ public class TextBox {
     private List<GUIText> texts = new ArrayList<>();
     private float border;
     private GUIFilledBox guiFilledBox;
+    private float contentsVerticalPosition = 0;
+    private float maxVerticalPosition;
 
     private static final float LINE_HEIGHT = 0.06f;
 
@@ -32,7 +34,7 @@ public class TextBox {
         float minHeight = border;
         float lineHeight = LINE_HEIGHT*fontSize;
         for (String line : lines){
-		    texts.add(new GUIText(line, fontSize, font, new Vector2f(border + position.x-1,position.y-minHeight+size.y-1), thickness, borderWidth, textColor, new Vector4f(position.x, position.y, position.x + size.x, position.y + size.y), false));
+		    texts.add(new GUIText(line, fontSize, font, new Vector2f(border + position.x-1,position.y-minHeight+size.y-1), thickness, borderWidth, textColor, new Vector4f(position.x, position.y, position.x + size.x, position.y + size.y), false, false));
 		    minHeight += lineHeight;
         }
         guiFilledBox = new GUIFilledBox(position, size, backgroundColor);
@@ -50,7 +52,7 @@ public class TextBox {
         double greatestLength = 0;
 
         for (String line : lines){
-		    GUIText text = new GUIText(line, fontSize, font, new Vector2f(border + position.x-1,position.y-minHeight - 1 - border + lineHeight*lines.length), thickness, borderWidth, textColor, null, false);
+		    GUIText text = new GUIText(line, fontSize, font, new Vector2f(border + position.x-1,position.y-minHeight - 1 - border + lineHeight*lines.length), thickness, borderWidth, textColor, null, false, true);
 		    texts.add(text);
             if (text.getLength() > greatestLength){
                 greatestLength = text.getLength();
@@ -97,6 +99,7 @@ public class TextBox {
         for(GUIText text : texts){
             text.changeVerticalPosition(change);
         }
+        contentsVerticalPosition += change;
     }
 
     public void changeContentsHorizontalPosition(float change){
@@ -136,7 +139,11 @@ public class TextBox {
         return newText;
     }
 
-    public GUIFilledBox getGuiFilledBox() {
+    public GUIFilledBox getGuiFilledBox(){
         return guiFilledBox;
+    }
+
+    public float getContentsVerticalPosition() {
+        return contentsVerticalPosition;
     }
 }

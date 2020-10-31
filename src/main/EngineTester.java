@@ -32,6 +32,7 @@ public class EngineTester {
     private List<GuiTexture> guis;
     private Header header;
     private List<FlowchartLine> flowchartLines;
+    private FlowChartWindow flowChartWindow;
     /**
      * Used for all operations of the program
      *  - Initializes all relevant objects
@@ -320,8 +321,7 @@ public class EngineTester {
                 "USED    .FILL    x3260\n" +
                 ";\n" +
                 "    .END", GeneralSettings.TACOMA, GeneralSettings.FONT_SIZE, GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE, GeneralSettings.TEXT_BOX_BORDER_WIDTH);
-        TextBox flowChart1 = new TextBox(new Vector2f(1.15f,1.5f), new Vector3f(0.1f,0.1f,0.1f), new Vector3f(1,1,1), new Vector3f(0,0,0), "Sample automatically sized textbox\nThis text box automatically sizes itself to match it's input", GeneralSettings.TACOMA, GeneralSettings.FONT_SIZE, GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE, GeneralSettings.TEXT_BOX_BORDER_WIDTH);
-        //        MousePicker picker = new MousePicker(scene.getCamera(), scene.getTerrains());
+        TextBox flowChart1 = new TextBox(new Vector2f(0.5f,1.5f), new Vector3f(1f,0f,0f), new Vector3f(1,1,1), new Vector3f(0,0,0), "Sample automatically sized textbox\nThis text box automatically sizes itself to match it's input", GeneralSettings.TACOMA, GeneralSettings.FONT_SIZE, GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE, GeneralSettings.TEXT_BOX_BORDER_WIDTH);
         textBoxes.add(codeFile);
         textBoxes.add(flowChart1);
 
@@ -378,6 +378,8 @@ public class EngineTester {
         flowchartLines.add(flowchartLine);
         flowchartLine = new FlowchartLine(positions3);
         flowchartLines.add(flowchartLine);
+
+        flowChartWindow = new FlowChartWindow(null, null);
     }
 
     /**
@@ -420,10 +422,11 @@ public class EngineTester {
             }
 
             //Render
-            renderer.renderScene(guis, textBoxes, new Vector3f(1,1,1), cursor, GeneralSettings.FONT_SIZE, header, flowchartLines);
+            renderer.renderScene(guis, textBoxes, new Vector3f(1,1,1), cursor, GeneralSettings.FONT_SIZE, header, flowchartLines, flowChartWindow);
 
             //Temporarily make changes for scrolling
-            textBoxes.get(0).changeContentsVerticalPosition((float)InputManager.SCROLL_CHANGE/10);
+            //if(textBoxes.get(0).getContentsVerticalPosition())
+            textBoxes.get(0).changeContentsVerticalPosition((float)-InputManager.SCROLL_CHANGE/10);
             InputManager.SCROLL_CHANGE = 0;
 
             //Swap the color buffers to update the screen

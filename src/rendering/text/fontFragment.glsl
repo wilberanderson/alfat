@@ -20,6 +20,9 @@ uniform vec3 outlineColor;
 
 uniform vec4 positionBounds;
 
+uniform vec2 windowPosition;
+uniform vec2 windowSize;
+
 void main(void){
     vec2 position;
     position.x = vertexPosition.x + 1;
@@ -28,6 +31,9 @@ void main(void){
 		if (position.x < positionBounds.x || position.y < positionBounds.y || position.x > positionBounds.z || position.y > positionBounds.w){ // || position.y < startPosition.x || position.x > endPosition.x || position.y > endPosition.y){
 			discard;
 		}
+	}
+	if(vertexPosition.x < windowPosition.x || vertexPosition.y < windowPosition.y || vertexPosition.x > windowPosition.x+windowSize.x || vertexPosition.y > windowPosition.y+windowSize.y){
+		discard;
 	}
 	float distance = 1.0 - texture(fontAtlas, pass_textureCoords).a;
 	float alpha = 1.0 - smoothstep(width, width + edge, distance);

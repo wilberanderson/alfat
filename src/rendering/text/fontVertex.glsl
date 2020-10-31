@@ -5,6 +5,7 @@ in vec2 textureCoords;
 
 out vec2 pass_textureCoords;
 out vec2 vertexPosition;
+
 uniform vec2 translation;
 
 void main(void){

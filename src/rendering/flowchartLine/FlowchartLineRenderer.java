@@ -1,6 +1,7 @@
 package rendering.flowchartLine;
 
 import dataStructures.RawModel;
+import gui.FlowChartWindow;
 import gui.FlowchartLine;
 import loaders.Loader;
 import main.GeneralSettings;
@@ -31,7 +32,7 @@ public class FlowchartLineRenderer {
     }
 
 
-    public void render(List<FlowchartLine> flowchartLines){
+    public void render(List<FlowchartLine> flowchartLines, FlowChartWindow flowChartWindow){
         prepare();
 
         for(FlowchartLine line : flowchartLines) {
@@ -42,6 +43,8 @@ public class FlowchartLineRenderer {
                 shader.startPosition.loadVec2(position);
                 position = line.getPositions().get(i);
                 shader.endPosition.loadVec2(position);
+                shader.windowPosition.loadVec2(flowChartWindow.getPosition());
+                shader.windowSize.loadVec2(flowChartWindow.getSize());
                 GL11.glDrawArrays(GL11.GL_LINES, 0, 2);
             }
             GL20.glDisableVertexAttribArray(0);
