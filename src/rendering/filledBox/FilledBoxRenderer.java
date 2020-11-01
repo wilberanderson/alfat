@@ -51,17 +51,6 @@ public class FilledBoxRenderer {
         shader.transformation.loadMatrix(transformationMatrix);
         GL11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 0, 4);
 
-        shader.color.loadVec3(((TextButton)InputManager.buttons.get(0)).getGuiFilledBox().getColor());
-        transformationMatrix = new Matrix3f();
-        transformationMatrix.m00 = ((TextButton)InputManager.buttons.get(0)).getGuiFilledBox().getSize().x/2;
-        transformationMatrix.m11 = ((TextButton)InputManager.buttons.get(0)).getGuiFilledBox().getSize().y/2;
-        transformationMatrix.m20 = ((TextButton)InputManager.buttons.get(0)).getGuiFilledBox().getPosition().x+1;
-        transformationMatrix.m21 = ((TextButton)InputManager.buttons.get(0)).getGuiFilledBox().getPosition().y+1;
-        shader.transformation.loadMatrix(transformationMatrix);
-        GL11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 0, 4);
-
-
-
         GL20.glDisableVertexAttribArray(0);
         GL30.glBindVertexArray(0);
 
@@ -78,12 +67,12 @@ public class FilledBoxRenderer {
 
         for(Button button : InputManager.buttons){
             if(button instanceof TextButton){
-                shader.color.loadVec3(((TextButton)InputManager.buttons.get(0)).getGuiFilledBox().getColor());
+                shader.color.loadVec3(((TextButton)button).getGuiFilledBox().getColor());
                 Matrix3f transformationMatrix = new Matrix3f();
-                transformationMatrix.m00 = ((TextButton)InputManager.buttons.get(0)).getGuiFilledBox().getSize().x/2;
-                transformationMatrix.m11 = ((TextButton)InputManager.buttons.get(0)).getGuiFilledBox().getSize().y/2;
-                transformationMatrix.m20 = ((TextButton)InputManager.buttons.get(0)).getGuiFilledBox().getPosition().x+1;
-                transformationMatrix.m21 = ((TextButton)InputManager.buttons.get(0)).getGuiFilledBox().getPosition().y+1;
+                transformationMatrix.m00 = ((TextButton)button).getGuiFilledBox().getSize().x/2;
+                transformationMatrix.m11 = ((TextButton)button).getGuiFilledBox().getSize().y/2;
+                transformationMatrix.m20 = ((TextButton)button).getGuiFilledBox().getPosition().x+1;
+                transformationMatrix.m21 = ((TextButton)button).getGuiFilledBox().getPosition().y+1;
                 shader.transformation.loadMatrix(transformationMatrix);
                 GL11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 0, 4);
             }

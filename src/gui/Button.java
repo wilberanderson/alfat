@@ -15,6 +15,9 @@ public abstract class Button{
         this.size = size;
     }
 
+    public Button(){
+    }
+
     public abstract void onPress();
 
     public Vector2f getPosition(){
@@ -23,5 +26,13 @@ public abstract class Button{
 
     public Vector2f getSize(){
         return size;
+    }
+
+    public void setPosition(Vector2f position) {
+        this.position = position;
+    }
+
+    public void setSize(Vector2f size) {
+        this.size = size;
     }
 }

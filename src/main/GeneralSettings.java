@@ -56,14 +56,15 @@ public class GeneralSettings {
 	public static final float RAPID_MODE_DURATION = 1.0f;
 	public static final int RAPID_MODE_FREQUENCY = 3;
 	public static final int DEFAULT_TAB_WIDTH = 4;
-	public static final Vector3f HIGHLIGHT_COLOR = new Vector3f(0, 0.7f, 0.93f);
+	public static final Vector3f HIGHLIGHT_COLOR = new Vector3f(0, 0.35f, 0.465f);
 	public static final float TEXT_BOX_BORDER_WIDTH = 0.003f;
-	public static final Vector3f HEADER_COLOR = new Vector3f(0f, 0f, 1f);//0.2f, 0.2f, 0.2f);
+	public static final Vector3f HEADER_COLOR = new Vector3f(0.25f, 0.25f, 0.25f);
 
 	public static final float FONT_SIZE = 1f;
 	public static final float FONT_WIDTH = 0.25f;
 	public static final float FONT_EDGE = 0.4f;
 	public static final float FONT_SCALING_FACTOR = 0.06f;
+	public static final Vector3f TEXT_COLOR = new Vector3f(1, 1, 1);
 	public static FontType TACOMA;
 	public static void initializeFonts() {
 		TACOMA = new FontType(Loader.loadTexture(new MyFile("/res/fonts/arial/arial.png")), new MyFile("/res/fonts/arial/arial.fnt"));
@@ -72,4 +73,9 @@ public class GeneralSettings {
 	public static final Vector3f CURSOR_COLOR = new Vector3f(1, 1, 1);
 
 	public static final Vector3f FLOWCHART_LINE_COLOR = new Vector3f(1,1,1);
+
+	public static final float TEXT_BUTTON_PADDING = 0.005f;
+	public static final Vector3f TEXT_BUTTON_BACKGROUND_COLOR = new Vector3f(0f, 0f, 0f);
+
+	public static String FILE_PATH;
 }

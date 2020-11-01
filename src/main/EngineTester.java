@@ -160,7 +160,8 @@ public class EngineTester {
         //*********************************************Initialize text boxes*****************************************************
         //Create a font to use for rendering files
 
-        header = new Header(new Vector2f(-1, 1-(GeneralSettings.FONT_SIZE*GeneralSettings.FONT_SCALING_FACTOR)), new Vector2f(2f, GeneralSettings.FONT_SIZE*GeneralSettings.FONT_SCALING_FACTOR));
+
+        header = new Header(new Vector2f(-1, 1-(GeneralSettings.FONT_SIZE*GeneralSettings.FONT_SCALING_FACTOR + GeneralSettings.TEXT_BUTTON_PADDING*2)), new Vector2f(2f, GeneralSettings.FONT_SIZE*GeneralSettings.FONT_SCALING_FACTOR + GeneralSettings.TEXT_BUTTON_PADDING*2));
 
 
         //Create list to store all text boxes
@@ -349,6 +350,7 @@ public class EngineTester {
         flowchartLines = new ArrayList<>();
         List<Vector2f> positions1 = new ArrayList<>();
         List<Vector2f> positions2 = new ArrayList<>();
+        List<Vector2f> positions3 = new ArrayList<>();
         Vector2f position = new Vector2f(0.5f, 0);
         positions1.add(position);
         position = new Vector2f(0.5f, 0.5f);
@@ -363,9 +365,18 @@ public class EngineTester {
         position = new Vector2f(0.75f, 0);
         positions2.add(position);
 
+        position = new Vector2f(-1, -1);
+        positions3.add(position);
+        position = new Vector2f(0.5f, 10);
+        positions3.add(position);
+        position = new Vector2f(1f, -1f);
+        positions3.add(position);
+
         FlowchartLine flowchartLine = new FlowchartLine(positions1);
         flowchartLines.add(flowchartLine);
         flowchartLine = new FlowchartLine(positions2);
+        flowchartLines.add(flowchartLine);
+        flowchartLine = new FlowchartLine(positions3);
         flowchartLines.add(flowchartLine);
     }
 
@@ -394,12 +405,11 @@ public class EngineTester {
             //If the user is clicking and their mouse is in a text box recreate the cursor at the new position
             if(InputManager.LEFT_CLICK){
                 Vector2f newPosition = new Vector2f((float)InputManager.MOUSE_X, (float)InputManager.MOUSE_Y);
-                for (TextBox textBox : textBoxes){
-                    if(newPosition.x > textBox.getPosition().x - 1 && newPosition.x < (textBox.getPosition().x + textBox.getSize().x)-1 && newPosition.y > textBox.getPosition().y - 1 && newPosition.y < (textBox.getPosition().y + textBox.getSize().y)-1) {
-                        cursor = new Cursor(newPosition, textBox);
-                        break;
-                    }
+
+                if(newPosition.x > textBoxes.get(0).getPosition().x - 1 && newPosition.x < (textBoxes.get(0).getPosition().x + textBoxes.get(0).getSize().x)-1 && newPosition.y > textBoxes.get(0).getPosition().y - 1 && newPosition.y < (textBoxes.get(0).getPosition().y + textBoxes.get(0).getSize().y)-1) {
+                    cursor = new Cursor(newPosition, textBoxes.get(0));
                 }
+
                 //Reset left click value to avoid checking for new position multiple times per click
                 InputManager.LEFT_CLICK = false;
             }
@@ -418,8 +428,6 @@ public class EngineTester {
 
             //Swap the color buffers to update the screen
             GLFW.glfwSwapBuffers(window);
-
-
 
 
 

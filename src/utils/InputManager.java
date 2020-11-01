@@ -1,9 +1,7 @@
 package utils;
 
 import fontMeshCreator.FontType;
-import gui.Button;
-import gui.HighlightableButton;
-import gui.TextButton;
+import gui.*;
 import main.GeneralSettings;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.GL11;
@@ -51,18 +49,18 @@ public class InputManager {
     private static GLFWCharCallback charCallback;
     private static GLFWFramebufferSizeCallback framebufferSizeCallback;
     public static List<Character> codepoints = new ArrayList<>();
-
+    private static HeaderMenu openMenu = null;
 
     public static void init(long window){
         buttons = new ArrayList<>();
 
-        TextButton button = new TextButton(new Vector2f(-1f, 0.9f), new Vector2f(.3f, .1f), "Text creation test", new Vector3f(0, 0, 0), new Vector3f(0, 1, 1), new Vector3f(1, 1, 1), GeneralSettings.TACOMA, GeneralSettings.FONT_SIZE, GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE) {
-            @Override
-            public void onPress() {
-                System.out.println("Test success");
-            }
-        };
-        buttons.add(button);
+//        TextButton button = new TextButton(new Vector2f(-1f, 1-GeneralSettings.FONT_SIZE*GeneralSettings.FONT_SCALING_FACTOR - 2*GeneralSettings.TEXT_BUTTON_PADDING), "Text creation test", new Vector3f(0, 0, 0), GeneralSettings.HIGHLIGHT_COLOR, new Vector3f(1, 1, 1), GeneralSettings.TACOMA, GeneralSettings.FONT_SIZE, GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE) {
+//            @Override
+//            public void onPress() {
+//                System.out.println("Test success");
+//            }
+//        };
+//        buttons.add(button);
         // Setup a key callback. It will be called every time a key is pressed, repeated or released
         glfwSetKeyCallback(window, keyCallback = new GLFWKeyCallback() {
             @Override
@@ -121,9 +119,17 @@ public class InputManager {
             public void invoke(long window, int button, int action, int mods) {
                 if(button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
                     LEFT_CLICK = true;
+
                     for(Button b: buttons){
                         if(MOUSE_X >= b.getPosition().x && MOUSE_Y >= b.getPosition().y && MOUSE_X < b.getPosition().x+b.getSize().x && MOUSE_Y < b.getPosition().y+b.getSize().y){
                             b.onPress();
+                            if(openMenu != null){
+                                openMenu.close();
+                                openMenu = null;
+                            }
+                            if(b instanceof HeaderMenu){
+                                openMenu = (HeaderMenu) b;
+                            }
                             break;
                         }
                     }
@@ -142,7 +148,9 @@ public class InputManager {
                 for(Button b: buttons){
                     if(b instanceof HighlightableButton) {
                         if (MOUSE_X >= b.getPosition().x && MOUSE_Y >= b.getPosition().y && MOUSE_X < b.getPosition().x + b.getSize().x && MOUSE_Y < b.getPosition().y + b.getSize().y) {
-                            ((HighlightableButton) b).highlight();
+                            if(!((HighlightableButton) b).isHighlighted()) {
+                                ((HighlightableButton) b).highlight();
+                            }
                         }else{
                             if(((HighlightableButton) b).isHighlighted()) {
                                 ((HighlightableButton) b).unhighlight();
