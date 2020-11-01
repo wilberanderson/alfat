@@ -4,6 +4,7 @@ import fontMeshCreator.FontType;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
+import utils.InputManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +38,7 @@ public class TextBox {
 		    texts.add(new GUIText(line, fontSize, font, new Vector2f(border + position.x-1,position.y-minHeight+size.y-1), thickness, borderWidth, textColor, new Vector4f(position.x, position.y, position.x + size.x, position.y + size.y), false, false));
 		    minHeight += lineHeight;
         }
+        maxVerticalPosition = minHeight-size.y;
         guiFilledBox = new GUIFilledBox(position, size, backgroundColor);
     }
 
@@ -145,5 +147,21 @@ public class TextBox {
 
     public float getContentsVerticalPosition() {
         return contentsVerticalPosition;
+    }
+
+    public void scroll(float scrollChange){
+        float newPosition = contentsVerticalPosition + scrollChange;
+        if(newPosition < 0){
+            changeContentsVerticalPosition(-contentsVerticalPosition);
+            contentsVerticalPosition = 0;
+        }
+        else if(newPosition > maxVerticalPosition){
+            changeContentsVerticalPosition(maxVerticalPosition-contentsVerticalPosition);
+            contentsVerticalPosition = maxVerticalPosition;
+        }else{
+            changeContentsVerticalPosition(scrollChange);
+            contentsVerticalPosition = newPosition;
+        }
+        InputManager.SCROLL_CHANGE = 0;
     }
 }

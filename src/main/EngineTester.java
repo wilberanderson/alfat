@@ -425,10 +425,9 @@ public class EngineTester {
             renderer.renderScene(guis, textBoxes, new Vector3f(1,1,1), cursor, GeneralSettings.FONT_SIZE, header, flowchartLines, flowChartWindow);
 
             //Temporarily make changes for scrolling
-            //if(textBoxes.get(0).getContentsVerticalPosition())
-            textBoxes.get(0).changeContentsVerticalPosition((float)-InputManager.SCROLL_CHANGE/10);
-            InputManager.SCROLL_CHANGE = 0;
-
+            if(InputManager.SCROLL_CHANGE != 0) {
+                textBoxes.get(0).scroll((float) -InputManager.SCROLL_CHANGE / 10);
+            }
             //Swap the color buffers to update the screen
             GLFW.glfwSwapBuffers(window);
 

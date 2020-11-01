@@ -35,6 +35,8 @@ public class CursorRenderer {
         GL20.glEnableVertexAttribArray(0);
         shader.mousePosition.loadVec2(cursor.getPosition());
         shader.fontHeight.loadFloat(GeneralSettings.FONT_SCALING_FACTOR*GeneralSettings.FONT_SIZE);
+        shader.windowPosition.loadVec2(cursor.getTextBox().getPosition().x-1, cursor.getTextBox().getPosition().y-1);
+        shader.windowSize.loadVec2(cursor.getTextBox().getSize());
         GL11.glDrawArrays(GL11.GL_LINES, 0, 2);
         GL20.glDisableVertexAttribArray(0);
         GL30.glBindVertexArray(0);

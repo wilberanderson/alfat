@@ -14,6 +14,8 @@ public class CursorShader extends ShaderProgram{
     protected UniformVec3 color = new UniformVec3("color");
     protected UniformVec2 mousePosition = new UniformVec2("mousePosition");
     protected UniformFloat fontHeight = new UniformFloat("fontHeight");
+    protected UniformVec2 windowPosition = new UniformVec2("windowPosition");
+    protected UniformVec2 windowSize = new UniformVec2("windowSize");
 
     /**
      * Performs setup for a {@link CursorShader}
@@ -23,7 +25,7 @@ public class CursorShader extends ShaderProgram{
      */
     public CursorShader() {
         super(GeneralSettings.CURSOR_VERTEX, GeneralSettings.CURSOR_FRAGMENT, "position");
-        super.storeAllUniformLocations(color, mousePosition, fontHeight);
+        super.storeAllUniformLocations(color, mousePosition, fontHeight, windowPosition, windowSize);
     }
 
 

@@ -104,7 +104,7 @@ public class Cursor {
             type();
         }
 
-        position.y = position.y + (float)InputManager.SCROLL_CHANGE/10;
+        position.y = text.getPosition().y;
     }
 
     public Vector2f getPosition(){
@@ -281,5 +281,9 @@ public class Cursor {
     private void updatePosition(){
         updateXPosition();
         updateYPosition();
+    }
+
+    public TextBox getTextBox(){
+        return textBox;
     }
 }

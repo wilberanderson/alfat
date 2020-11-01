@@ -4,6 +4,9 @@ in vec2 position;
 uniform vec2 mousePosition;
 uniform float fontHeight;
 
+out vec2 fragment_Position;
+
 void main(void){
-    gl_Position = vec4(position.x+mousePosition.x, position.y*fontHeight+mousePosition.y, 1, 1);
+    fragment_Position = vec2(position.x+mousePosition.x, position.y*fontHeight+mousePosition.y);
+    gl_Position = vec4(fragment_Position, 1, 1);
 }
