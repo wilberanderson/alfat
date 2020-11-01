@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import fontMeshCreator.FontType;
+import gui.CodeWindow;
 import gui.FlowChartWindow;
 import gui.GUIText;
 import fontMeshCreator.TextMeshData;
@@ -21,11 +22,11 @@ public class TextMaster {
 		renderer = new FontRenderer();
 	}
 	
-	public static void render(FlowChartWindow flowChartWindow){
-		renderer.render(texts, flowChartWindow);
+	public static void render(FlowChartWindow flowChartWindow, CodeWindow codeWindow){
+		renderer.render(texts, flowChartWindow, codeWindow);
 	}
-	public static void renderGuis(FlowChartWindow flowChartWindow){
-		renderer.render(guiTexts, flowChartWindow);
+	public static void renderGuis(FlowChartWindow flowChartWindow, CodeWindow codeWindow){
+		renderer.render(guiTexts, flowChartWindow, codeWindow);
 
 	}
 	

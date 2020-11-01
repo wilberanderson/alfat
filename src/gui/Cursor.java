@@ -3,7 +3,6 @@ package gui;
 import main.GeneralSettings;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.util.vector.Vector2f;
-import org.lwjgl.util.vector.Vector3f;
 import utils.InputManager;
 
 import java.util.List;
@@ -12,15 +11,15 @@ public class Cursor {
 
     private int lineIndex;
     private int characterIndex;
-    private TextBox textBox;
+    private CodeWindow codeWindow;
     private GUIText text;
     private Vector2f position;
     private int rapidCounter = 0;
     private List<GUIText> texts;
 
-    public Cursor(Vector2f newPosition, TextBox textBox){
-        this.textBox = textBox;
-        texts = textBox.getTexts();
+    public Cursor(Vector2f newPosition, CodeWindow codeWindow){
+        this.codeWindow = codeWindow;
+        texts = codeWindow.getTexts();
         float testHeight = newPosition.y;
         text = null;
         for (int i = 0; i < texts.size(); i++){
@@ -181,7 +180,7 @@ public class Cursor {
         } else if (lineIndex > 0) {
             lineIndex--;
             characterIndex = texts.get(lineIndex).getCharacterEdges().length - 1;
-            text = textBox.mergeTexts(texts.get(lineIndex), text);
+            text = codeWindow.mergeTexts(texts.get(lineIndex), text);
             updatePosition();
         }
     }
@@ -193,7 +192,7 @@ public class Cursor {
             texts.set(lineIndex, text);
         } else if (lineIndex < texts.size() - 1) {
             lineIndex++;
-            text = textBox.mergeTexts(text, texts.get(lineIndex));
+            text = codeWindow.mergeTexts(text, texts.get(lineIndex));
         }
     }
 
@@ -213,7 +212,7 @@ public class Cursor {
                 text = new GUIText(endText, newText, false);
                 text.setPosition(new Vector2f(text.getPosition().x, text.getPosition().y - text.getFontSize()*0.06f));
                 lineIndex++;
-                textBox.addText(text, lineIndex);
+                codeWindow.addText(text, lineIndex);
                 textString = "";
                 characterIndex = 0;
                 updateYPosition();
@@ -240,7 +239,7 @@ public class Cursor {
                 text = new GUIText(endText, newText, false);
                 text.setPosition(new Vector2f(text.getPosition().x, text.getPosition().y - text.getFontSize()*GeneralSettings.FONT_SCALING_FACTOR));
                 lineIndex++;
-                textBox.addText(text, lineIndex);
+                codeWindow.addText(text, lineIndex);
                 textString = "";
                 characterIndex = 0;
                 updateYPosition();
@@ -258,23 +257,23 @@ public class Cursor {
 
     private void updateXPosition(){
         position.x = text.getCharacterEdges()[characterIndex]*2 + text.getPosition().x;
-        if (position.x < textBox.getPosition().x-1){
-            textBox.changeContentsHorizontalPosition((textBox.getPosition().x-1) - (text.getPosition().x + text.getCharacterEdges()[characterIndex]*2));
-            position.x = textBox.getPosition().x-1;
-        }else if(position.x > textBox.getPosition().x + textBox.getSize().x - 1){
-            textBox.changeContentsHorizontalPosition(-(text.getPosition().x +text.getCharacterEdges()[characterIndex]*2 - (textBox.getPosition().x + textBox.getSize().x-1)));
-            position.x = textBox.getPosition().x + textBox.getSize().x - 1;
+        if (position.x < codeWindow.getPosition().x-1){
+            codeWindow.changeContentsHorizontalPosition((codeWindow.getPosition().x-1) - (text.getPosition().x + text.getCharacterEdges()[characterIndex]*2));
+            position.x = codeWindow.getPosition().x-1;
+        }else if(position.x > codeWindow.getPosition().x + codeWindow.getSize().x - 1){
+            codeWindow.changeContentsHorizontalPosition(-(text.getPosition().x +text.getCharacterEdges()[characterIndex]*2 - (codeWindow.getPosition().x + codeWindow.getSize().x-1)));
+            position.x = codeWindow.getPosition().x + codeWindow.getSize().x - 1;
         }
     }
 
     private void updateYPosition(){
         position.y = text.getPosition().y;
-        if(position.y > (textBox.getPosition().y + textBox.getSize().y) - 1){
-            textBox.changeContentsVerticalPosition((textBox.getPosition().y - 1 + textBox.getSize().y)-text.getPosition().y);
-            position.y = textBox.getPosition().y + textBox.getSize().y - 1;
-        }else if(position.y < textBox.getPosition().y-1+0.06*text.getFontSize()){
-            textBox.changeContentsVerticalPosition((textBox.getPosition().y-1)-(text.getPosition().y-0.06f*text.getFontSize()));
-            position.y = textBox.getPosition().y-1 + 0.06f*text.getFontSize();
+        if(position.y > (codeWindow.getPosition().y + codeWindow.getSize().y) - 1){
+            codeWindow.changeContentsVerticalPosition((codeWindow.getPosition().y - 1 + codeWindow.getSize().y)-text.getPosition().y);
+            position.y = codeWindow.getPosition().y + codeWindow.getSize().y - 1;
+        }else if(position.y < codeWindow.getPosition().y-1+0.06*text.getFontSize()){
+            codeWindow.changeContentsVerticalPosition((codeWindow.getPosition().y-1)-(text.getPosition().y-0.06f*text.getFontSize()));
+            position.y = codeWindow.getPosition().y-1 + 0.06f*text.getFontSize();
         }
     }
 
@@ -283,7 +282,7 @@ public class Cursor {
         updateYPosition();
     }
 
-    public TextBox getTextBox(){
-        return textBox;
+    public CodeWindow getCodeWindow(){
+        return codeWindow;
     }
 }

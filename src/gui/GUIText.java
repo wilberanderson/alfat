@@ -73,6 +73,7 @@ public class GUIText {
 		this.positionBounds = positionBounds;
 		this.isGuiText = isGuiText;
 		this.isInFlowchart = isInFlowchart;
+		this.isGuiText = isGuiText;
 		if(isGuiText){
 			this.textMeshData = TextMaster.loadGuiText(this);
 		}else{
@@ -94,6 +95,7 @@ public class GUIText {
 		this.borderEdge = edge;
 		this.colour = guiText.colour;
 		this.positionBounds = guiText.positionBounds;
+		this.isGuiText = guiText.isGuiText;
 		this.isInFlowchart = guiText.isInFlowchart;
 		if(isGuiText){
 			this.textMeshData = TextMaster.loadGuiText(this);
@@ -307,5 +309,9 @@ public class GUIText {
 
 	public boolean isInFlowchart() {
 		return isInFlowchart;
+	}
+
+	public boolean isGuiText(){
+		return isGuiText;
 	}
 }

@@ -33,6 +33,7 @@ public class EngineTester {
     private Header header;
     private List<FlowchartLine> flowchartLines;
     private FlowChartWindow flowChartWindow;
+    private CodeWindow codeWindow;
     /**
      * Used for all operations of the program
      *  - Initializes all relevant objects
@@ -168,7 +169,7 @@ public class EngineTester {
         //Create list to store all text boxes
         textBoxes = new ArrayList<>();
         //Create sample text boxes
-        TextBox codeFile = new TextBox(new Vector2f(0f,0f), new Vector2f(1f, header.getPosition().y+1), new Vector3f(0.1f,0.1f,0.1f), new Vector3f(1,1,1), new Vector3f(0,0,0), "    .ORIG    x3000\n" +
+        codeWindow = new CodeWindow(new Vector2f(0f,0f), new Vector2f(1f, header.getPosition().y+1), new Vector3f(0.1f,0.1f,0.1f), new Vector3f(1,1,1), new Vector3f(0,0,0), "    .ORIG    x3000\n" +
                 ";Start\n" +
                 "        LEA    R0, PROMPT1\n" +
                 "        PUTS            ;Display beginning prompt\n" +
@@ -321,13 +322,12 @@ public class EngineTester {
                 "USED    .FILL    x3260\n" +
                 ";\n" +
                 "    .END", GeneralSettings.TACOMA, GeneralSettings.FONT_SIZE, GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE, GeneralSettings.TEXT_BOX_BORDER_WIDTH);
-        TextBox flowChart1 = new TextBox(new Vector2f(0.5f,1.5f), new Vector3f(1f,0f,0f), new Vector3f(1,1,1), new Vector3f(0,0,0), "Sample automatically sized textbox\nThis text box automatically sizes itself to match it's input", GeneralSettings.TACOMA, GeneralSettings.FONT_SIZE, GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE, GeneralSettings.TEXT_BOX_BORDER_WIDTH);
-        textBoxes.add(codeFile);
-        textBoxes.add(flowChart1);
+        FlowChartTextBox flowChartTextBox = new FlowChartTextBox(new Vector2f(0.5f,1.5f), new Vector3f(1f,0f,0f), new Vector3f(1,1,1), new Vector3f(0,0,0), "Sample automatically sized textbox\nThis text box automatically sizes itself to match it's input", GeneralSettings.TACOMA, GeneralSettings.FONT_SIZE, GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE, GeneralSettings.TEXT_BOX_BORDER_WIDTH);
+        textBoxes.add(codeWindow);
+        textBoxes.add(flowChartTextBox);
 
         //Testing stuff
 
-        System.out.println("hello world ");
 
 //        ObjectMapper objectMapper = new ObjectMapper();
 //        File file0 = new File("CodeSyntax\\LC3-Operators.json");
@@ -382,7 +382,7 @@ public class EngineTester {
         flowChartWindow = new FlowChartWindow(null, null);
 
         header.setFlowChartWindow(flowChartWindow);
-        header.setCodeWindow(codeFile);
+        header.setCodeWindow(codeWindow);
     }
 
     /**
@@ -412,7 +412,7 @@ public class EngineTester {
                 Vector2f newPosition = new Vector2f((float)InputManager.MOUSE_X, (float)InputManager.MOUSE_Y);
 
                 if(newPosition.x > textBoxes.get(0).getPosition().x - 1 && newPosition.x < (textBoxes.get(0).getPosition().x + textBoxes.get(0).getSize().x)-1 && newPosition.y > textBoxes.get(0).getPosition().y - 1 && newPosition.y < (textBoxes.get(0).getPosition().y + textBoxes.get(0).getSize().y)-1) {
-                    cursor = new Cursor(newPosition, textBoxes.get(0));
+                    cursor = new Cursor(newPosition, codeWindow);
                 }
 
                 //Reset left click value to avoid checking for new position multiple times per click
@@ -425,11 +425,11 @@ public class EngineTester {
             }
 
             //Render
-            renderer.renderScene(guis, textBoxes, new Vector3f(1,1,1), cursor, GeneralSettings.FONT_SIZE, header, flowchartLines, flowChartWindow);
+            renderer.renderScene(guis, textBoxes, new Vector3f(1,1,1), cursor, GeneralSettings.FONT_SIZE, header, flowchartLines, flowChartWindow, codeWindow);
 
             //Temporarily make changes for scrolling
             if(InputManager.SCROLL_CHANGE != 0) {
-                textBoxes.get(0).scroll((float) -InputManager.SCROLL_CHANGE / 10);
+                codeWindow.scroll((float) -InputManager.SCROLL_CHANGE / 10);
             }
             //Swap the color buffers to update the screen
             GLFW.glfwSwapBuffers(window);

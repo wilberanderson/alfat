@@ -7,8 +7,6 @@ import main.GeneralSettings;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
-import org.lwjgl.util.vector.Vector2f;
-import org.lwjgl.util.vector.Vector3f;
 
 public class CursorRenderer {
 
@@ -35,8 +33,8 @@ public class CursorRenderer {
         GL20.glEnableVertexAttribArray(0);
         shader.mousePosition.loadVec2(cursor.getPosition());
         shader.fontHeight.loadFloat(GeneralSettings.FONT_SCALING_FACTOR*GeneralSettings.FONT_SIZE);
-        shader.windowPosition.loadVec2(cursor.getTextBox().getPosition().x-1, cursor.getTextBox().getPosition().y-1);
-        shader.windowSize.loadVec2(cursor.getTextBox().getSize());
+        shader.windowPosition.loadVec2(cursor.getCodeWindow().getPosition().x-1, cursor.getCodeWindow().getPosition().y-1);
+        shader.windowSize.loadVec2(cursor.getCodeWindow().getSize());
         GL11.glDrawArrays(GL11.GL_LINES, 0, 2);
         GL20.glDisableVertexAttribArray(0);
         GL30.glBindVertexArray(0);

@@ -12,7 +12,7 @@ public class Header {
     private GUIFilledBox guiFilledBox;
     private Vector2f position;
     private FlowChartWindow flowChartWindow;
-    private TextBox codeWindow;
+    private CodeWindow codeWindow;
 
 
     public Header(Vector2f position, Vector2f size){
@@ -55,24 +55,30 @@ public class Header {
         button = new TextButton("Text Editor View") {
             @Override
             public void onPress() {
-                codeWindow.maximize();
-                flowChartWindow.minimize();
+                if(codeWindow != null && flowChartWindow != null) {
+                    codeWindow.maximize();
+                    flowChartWindow.minimize();
+                }
             }
         };
         testMenuButtonList.add(button);
         button = new TextButton("Flowchart View") {
             @Override
             public void onPress() {
-                codeWindow.minimize();
-                flowChartWindow.maximize();
+                if(codeWindow != null && flowChartWindow != null) {
+                    codeWindow.minimize();
+                    flowChartWindow.maximize();
+                }
             }
         };
         testMenuButtonList.add(button);
         button = new TextButton("Splitscreen View") {
             @Override
             public void onPress() {
-                codeWindow.goSplitScreen();
-                flowChartWindow.goSplitScreen();
+                if(codeWindow != null && flowChartWindow != null) {
+                    codeWindow.goSplitScreen();
+                    flowChartWindow.goSplitScreen();
+                }
             }
         };
 
@@ -97,7 +103,7 @@ public class Header {
     public void setFlowChartWindow(FlowChartWindow flowChartWindow){
         this.flowChartWindow = flowChartWindow;
     }
-    public void setCodeWindow(TextBox codeWindow){
+    public void setCodeWindow(CodeWindow codeWindow){
         this.codeWindow = codeWindow;
     }
 }

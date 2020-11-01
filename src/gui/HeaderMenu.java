@@ -35,7 +35,6 @@ public class HeaderMenu extends TextButton{
 
     @Override
     public void onPress(){
-        System.out.println("HeaderMenu clicked");
         for(TextButton button : dropDownButtons){
             InputManager.buttons.add(button);
             TextMaster.loadGuiText(button.getText());

@@ -10,11 +10,11 @@ public class FlowChartWindow {
     private Vector2f position = new Vector2f(0, -1);
     private Vector2f size = new Vector2f(1, 2- GeneralSettings.TEXT_BUTTON_PADDING*2 - GeneralSettings.FONT_SIZE*GeneralSettings.FONT_SCALING_FACTOR);
 
-    private List<TextBox> textBoxList;
+    private List<FlowChartTextBox> flowChartTextBoxList;
     private List<FlowchartLine> flowchartLineList;
 
-    public FlowChartWindow(List<TextBox> textBoxList, List<FlowchartLine> flowchartLineList){
-        this.textBoxList = textBoxList;
+    public FlowChartWindow(List<FlowChartTextBox> flowchartTextBoxList, List<FlowchartLine> flowchartLineList){
+        this.flowChartTextBoxList = flowchartTextBoxList;
         this.flowchartLineList = flowchartLineList;
     }
 
@@ -34,8 +34,8 @@ public class FlowChartWindow {
         size.x = 0f;
     }
 
-    public List<TextBox> getTextBoxList() {
-        return textBoxList;
+    public List<FlowChartTextBox> getFlowChartTextBoxList() {
+        return flowChartTextBoxList;
     }
 
     public List<FlowchartLine> getFlowchartLineList(){

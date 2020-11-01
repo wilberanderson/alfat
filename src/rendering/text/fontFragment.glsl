@@ -18,20 +18,11 @@ uniform vec2 offset;
 
 uniform vec3 outlineColor;
 
-uniform vec4 positionBounds;
-
 uniform vec2 windowPosition;
 uniform vec2 windowSize;
 
 void main(void){
-    vec2 position;
-    position.x = vertexPosition.x + 1;
-    position.y = 2-(-vertexPosition.y + 1);
-	if((positionBounds.x != -2 && positionBounds.y != -2 && positionBounds.z != -2 && positionBounds.w != -2)){
-		if (position.x < positionBounds.x || position.y < positionBounds.y || position.x > positionBounds.z || position.y > positionBounds.w){ // || position.y < startPosition.x || position.x > endPosition.x || position.y > endPosition.y){
-			discard;
-		}
-	}
+
 	if(vertexPosition.x < windowPosition.x || vertexPosition.y < windowPosition.y || vertexPosition.x > windowPosition.x+windowSize.x || vertexPosition.y > windowPosition.y+windowSize.y){
 		discard;
 	}

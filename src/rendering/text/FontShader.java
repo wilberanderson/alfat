@@ -21,13 +21,12 @@ public class FontShader extends ShaderProgram{
 	protected UniformFloat edge = new UniformFloat("edge");
 	protected UniformFloat borderWidth = new UniformFloat("borderWidth");
 	protected UniformFloat borderEdge = new UniformFloat("borderEdge");
-	protected UniformVec4 positionBounds = new UniformVec4("positionBounds");
 	protected UniformVec2 windowPosition = new UniformVec2("windowPosition");
 	protected UniformVec2 windowSize = new UniformVec2("windowSize");
 
 	public FontShader() {
 		super(GeneralSettings.FONT_VERTEX, GeneralSettings.FONT_FRAGMENT, "position", "textureCoords");
-		super.storeAllUniformLocations(color, outlineColor, translation, offset, width, edge, borderWidth, borderEdge, positionBounds, windowPosition, windowSize);
+		super.storeAllUniformLocations(color, outlineColor, translation, offset, width, edge, borderWidth, borderEdge, windowPosition, windowSize);
 	}
 
 
