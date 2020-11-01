@@ -4,9 +4,9 @@ import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 
 public class GUIFilledBox {
-    Vector2f position;
-    Vector2f size;
-    Vector3f color;
+    private Vector2f position;
+    private Vector2f size;
+    private Vector3f color;
 
     public GUIFilledBox(Vector2f position, Vector2f size, Vector3f color){
         this.position = position;

@@ -3,15 +3,17 @@ package gui;
 import main.GeneralSettings;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
-import utils.InputManager;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Header {
-    List<HeaderMenu> menuList;
-    GUIFilledBox guiFilledBox;
-    Vector2f position;
+    private List<HeaderMenu> menuList;
+    private GUIFilledBox guiFilledBox;
+    private Vector2f position;
+    private FlowChartWindow flowChartWindow;
+    private TextBox codeWindow;
+
 
     public Header(Vector2f position, Vector2f size){
         menuList = new ArrayList<>();
@@ -21,39 +23,56 @@ public class Header {
 
 
         List<TextButton> testMenuButtonList = new ArrayList<>();
-        TextButton button = new TextButton("Text creation test0") {
+        TextButton button = new TextButton("Open File") {
             @Override
             public void onPress() {
-                System.out.println("Test success Button 0");
+                System.out.println("Open File");
                 GeneralSettings.FILE_PATH = "Hello World";
             }
         };
         testMenuButtonList.add(button);
-        button = new TextButton("Text creation test00") {
+        button = new TextButton("Generate Flowchart") {
             @Override
             public void onPress() {
                 System.out.println("Tes success Button 1");
             }
         };
         testMenuButtonList.add(button);
-        button = new TextButton("Text creation test000") {
+        button = new TextButton("Regenerate Flowchart From Editor") {
             @Override
             public void onPress() {
-                System.out.println("Tesess Button 2");
+                System.out.println("Tes success Button 1");
             }
         };
         testMenuButtonList.add(button);
-        button = new TextButton("Text creation test0000") {
+        button = new TextButton("Regenerate Flowchart From Source") {
             @Override
             public void onPress() {
-                System.out.println("Testccess Button 3");
+                System.out.println("Tes success Button 1");
             }
         };
         testMenuButtonList.add(button);
-        button = new TextButton("Text creation test000000") {
+        button = new TextButton("Text Editor View") {
             @Override
             public void onPress() {
-                System.out.println("Test scess Button 4");
+                codeWindow.maximize();
+                flowChartWindow.minimize();
+            }
+        };
+        testMenuButtonList.add(button);
+        button = new TextButton("Flowchart View") {
+            @Override
+            public void onPress() {
+                codeWindow.minimize();
+                flowChartWindow.maximize();
+            }
+        };
+        testMenuButtonList.add(button);
+        button = new TextButton("Splitscreen View") {
+            @Override
+            public void onPress() {
+                codeWindow.goSplitScreen();
+                flowChartWindow.goSplitScreen();
             }
         };
 
@@ -73,5 +92,12 @@ public class Header {
 
     public List<HeaderMenu> getMenuList(){
         return menuList;
+    }
+
+    public void setFlowChartWindow(FlowChartWindow flowChartWindow){
+        this.flowChartWindow = flowChartWindow;
+    }
+    public void setCodeWindow(TextBox codeWindow){
+        this.codeWindow = codeWindow;
     }
 }

@@ -380,6 +380,9 @@ public class EngineTester {
         flowchartLines.add(flowchartLine);
 
         flowChartWindow = new FlowChartWindow(null, null);
+
+        header.setFlowChartWindow(flowChartWindow);
+        header.setCodeWindow(codeFile);
     }
 
     /**

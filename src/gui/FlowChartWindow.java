@@ -19,7 +19,7 @@ public class FlowChartWindow {
     }
 
 
-    public void goFullScreen(){
+    public void maximize(){
         position.x = -1f;
         size.x = 2f;
     }
@@ -27,6 +27,11 @@ public class FlowChartWindow {
     public void goSplitScreen(){
         position.x = 0f;
         size.x = 1f;
+    }
+
+    public void minimize(){
+        position.x = 0f;
+        size.x = 0f;
     }
 
     public List<TextBox> getTextBoxList() {

@@ -22,6 +22,7 @@ public class TextBox {
     private GUIFilledBox guiFilledBox;
     private float contentsVerticalPosition = 0;
     private float maxVerticalPosition;
+    private Vector4f positionBounds;
 
     private static final float LINE_HEIGHT = 0.06f;
 
@@ -34,8 +35,9 @@ public class TextBox {
         String[] lines = content.split("\n");
         float minHeight = border;
         float lineHeight = LINE_HEIGHT*fontSize;
+        positionBounds = new Vector4f(position.x, position.y, position.x + size.x, position.y + size.y);
         for (String line : lines){
-		    texts.add(new GUIText(line, fontSize, font, new Vector2f(border + position.x-1,position.y-minHeight+size.y-1), thickness, borderWidth, textColor, new Vector4f(position.x, position.y, position.x + size.x, position.y + size.y), false, false));
+		    texts.add(new GUIText(line, fontSize, font, new Vector2f(border + position.x-1,position.y-minHeight+size.y-1), thickness, borderWidth, textColor, positionBounds, false, false));
 		    minHeight += lineHeight;
         }
         maxVerticalPosition = minHeight-size.y;
@@ -163,5 +165,24 @@ public class TextBox {
             contentsVerticalPosition = newPosition;
         }
         InputManager.SCROLL_CHANGE = 0;
+    }
+
+
+    public void maximize(){
+        size.x = 2f;
+        guiFilledBox.setSize(new Vector2f(2f, 2f));
+        positionBounds.z = position.x + size.x;
+    }
+
+    public void goSplitScreen(){
+        size.x = 1f;
+        guiFilledBox.setSize(new Vector2f(1f, 2f));
+        positionBounds.z = position.x + size.x;
+    }
+
+    public void minimize(){
+        size.x = 0f;
+        guiFilledBox.setSize(new Vector2f(0f, 2f));
+        positionBounds.z = position.x + size.x;
     }
 }
