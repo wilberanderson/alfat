@@ -4,6 +4,8 @@ import main.GeneralSettings;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 
+
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,7 +29,15 @@ public class Header {
             @Override
             public void onPress() {
                 System.out.println("Open File");
+
+                //Test example notice that file path isn't hello world
                 GeneralSettings.FILE_PATH = "Hello World";
+                OpenFileDialog of = new OpenFileDialog();
+                of.displayConsole(true);
+                of.openWindow();
+                GeneralSettings.FILE_PATH = of.getFilePath();
+                System.out.println(GeneralSettings.FILE_PATH);
+
             }
         };
         testMenuButtonList.add(button);
