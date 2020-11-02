@@ -1,22 +1,28 @@
 package parser;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
 /*
 * A TLine stands for Text line.
 * A text line contains the line number, and full text of a single line of code.
 * */
 public abstract class TLine {
     private String lineText;
-    private  int lineNumber;
+    private int lineNumber;
+    private String command;
+    private String label;
+    private String target;
+    private List<String> registers = new ArrayList<>();
+    private boolean jump;
 
     TLine() {
-        //TODO: Should prob have something in here... ?
+        /* this space intentionally left blank
+        *  please do not call the default constructor */
     }
 
-    TLine(int lineNumber, String lineText) {
-        this.lineNumber = lineNumber;
-        this.lineText = lineText;
-    }
-
+    //getters and setters:
 
     public int getLineNumber() {
         return lineNumber;
@@ -34,6 +40,45 @@ public abstract class TLine {
         this.lineText = lineText;
     }
 
+    public String getCommand() {
+        return command;
+    }
+
+    public void setCommand(String command){
+        this.command = command;
+    }
+
+    public String getLabel() {
+        return label;
+    }
+
+    public void setLabel(String label){
+        this.label = label;
+    }
+
+    public String getTarget(){
+        return target;
+    }
+
+    public void setTarget(String target){
+        this.target = target;
+    }
+
+    public List<String> getRegisters() {
+        return registers;
+    }
+
+    public void setRegisters(List<String> registers) {
+        this.registers = registers;
+    }
+
+    public boolean isJumps() {
+        return jump;
+    }
+
+    public void setJump(boolean jump) {
+        this.jump = jump;
+    }
 
     @Override
     public String toString() {

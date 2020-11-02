@@ -1,124 +1,181 @@
 package parser;
 import java.util.*;
+import java.io.*;
 
 public class LC3Parser implements CodeReader {
+    // attributes
+    String infile;  // file path
+    boolean verbose = true; // final release should have this changed to false
 
-    //infile is the path to a file.
-    String infile;
+    HashMap<String, Integer> labelMap = new HashMap<>(); // map of labels -> line numbers
+    List<LC3TLine> lines = new ArrayList<>();
 
-    LC3Parser(String infile) {
+    public LC3Parser(String infile, boolean verbose) {
         this.infile = infile;
+        this.verbose = verbose;
     }
 
     //TODO: change from hardcoded to dynamically loaded from JSON
-    //TODO: catch traps, which are in the form x2*
 
     //normal commands or reserved operations:
     String[] commands = {"ADD","AND","BR","LD","LDI","LDR","LEA","NOT","RET","RTI","ST","STI","STR","TRAP",".ORIG",".FILL",".BLKW",".STRING",".END","PUTS","GETC","OUT","HALT"};
 
     //commands that can result in a jump to a new code block
     String[] jumps = {"JMP","JSR","JSRR"};
-//try {
-//        File myObj = new File("D:\\Java\\JSONtest\\SelfNodes\\files\\input.asm");
-//        Scanner myReader = new Scanner(myObj);
-//        while (myReader.hasNextLine()) {
-//            String data = myReader.nextLine();
-//            System.out.println(data);
-//        }
-//        myReader.close();
-//    } catch (FileNotFoundException e) {
-//        System.out.println("An error occurred.");
-//        e.printStackTrace();
-//    }
 
+
+    /**Read an input file. Parse the input file line by line, and store them in the arrayList of LC3TLine objects.
+     *  Create a hashmap of all labels and their line numbers, to make searching easier later.
+     *
+     * @param infile The absolute or relative location of the file, as a string.
+     */
     @Override
     public void ReadFile(String infile) {
+        //prepare to read file:
         this.infile = infile;
-        //sets file path.
+        File file = new File(infile);
+        try {
+            BufferedReader br = new BufferedReader(new FileReader(file));
+            //get number of lines.
+            int i = 0;
+            String line;
+            while ((line = br.readLine()) != null) {
+                //parse line:
+                i++;
+                if (verbose) System.out.println("parsing `" + line + "`");
 
-        //open file, read into massive string
-        String[] input = {".ORIG x3000",
-                "  AND R0, R0, #0    ; Clear R0",
-                "  AND R1, R1, #0    ; Clear R1",
-                "  AND R3, R3, #0    ; Clear R3",
-                "  LEA R0, NUM       ; pointer [mem]NUM",
-                "  ADD R1, R1, R0    ; Store the pointer address of R0 into R1",
-                "  LD R2, ASCII      ; load the ascii offset into R2",
-                "",
-                "FOR_LOOP",
-                "  LDR R4, R1, #0    ; load the contents of mem address of R1 into R4",
-                "  BRz END_LOOP",
-                "  ADD R4, R4, R2    ; Add our number to the ASCII offset",
-                "  STR R4, R1, #0    ; Store the new value in R4 into [mem] address R1",
-                "  ADD R1, R1, #1    ; move our memory pointer down one",
-                "  BRnzp FOR_LOOP    ; loop again until we get an x00 char",
-                "END_LOOP",
-                "",
-                "  PUTs              ; print our string starting from [mem]address in R0",
-                "HALT                ; Trap x25",
-                "",
-                "ASCII .fill  x30    ; Our ASCII offset",
-                "NUM   .fill  x01    ; Our Number to print",
-                "      .fill  x02     ",
-                "      .fill  x03",
-                "      .fill  x04",
-                ".END"};
+                //take entire line before semicolon
+                int index = line.indexOf(";");
+                if (index == -1) index = line.length();
+                String[] arrLine = line.substring(0, index).split(" ");
 
-        //get number of lines.
-        int lines = 26;
-        for (int i = 1; i < lines+1; i++){
-            //parse line:
-            //System.out.println("parsing |" + i + "\t|: " + input[i]);
+                //temp variables:
+                Optional<String> comm = Optional.empty();
+                String label = null;
+                String targetLabel = null;
+                List<String> registers = new ArrayList<>();
+                boolean jump = false;
 
-            //take entire line before semicolon
-            int index = input[i].indexOf(";");
-            if (index == -1) index = input[i].length();
-            String[] arrLine = input[i].substring(0,index).split(" ");
-
-            //temp variables:
-            Optional<String> comm;
-            String label;
-            List<String> labelspointed = new ArrayList<>();
-            List<String> registers= new ArrayList<>();
-            boolean jump = false;
-
-            //  arrLine = {"LABEL:", "JGZ", "R1", "R2", "FINISH"}
-            for (String fragment : arrLine) {
-                //grab each command in the line, if they exist:
-                if (Arrays.stream(commands).anyMatch(fragment.toUpperCase()::contains)) {
-                    comm = Arrays.stream(commands).filter(fragment.toUpperCase()::contains).findAny();
-                } else if (Arrays.stream(jumps).anyMatch(fragment.toUpperCase()::contains) || fragment.matches("^BR[nzp]{0,3}$")) {
-                    comm = Arrays.stream(jumps).filter(fragment.toUpperCase()::contains).findAny();
-                    jump = true;
-                } else if (fragment.matches("^R[0-7]")) {  //register
-                    registers.add(fragment);
-                } else if (fragment.matches("^[x#]?-?[0-9]+")) {
-                    //immediate value, literal or trap
-                    //just skip this for now
-                } else if (fragment.matches("^[a-zA-Z0-9\\-_]+:")) {
-                    //this is the (optional) label for the line
-                    label = fragment;
-                } else if (jump && fragment.matches("^[a-zA-Z0-9\\-_]+")) {   //jump statement, this matches a label
-                    //if the line is a jump statement,
-                    //this matches the label or labels pointed to by the command
-                    //if the language supports having the label BEFORE the command,
-                    //remove the `jump &&` statement as it will cause problems.
-                    labelspointed.add(fragment);
-                } else if (!jump && fragment.matches("^[a-zA-Z0-9\\-_]+")) {
-                    //the command isn't a jump statement, so the label must be a variable i.e. string, etc.
+                //  arrLine = {"LABEL:", "JGZ", "R1", "R2", "FINISH"}
+                for (String fragment : arrLine) {
+                    //grab each command in the line, if they exist:
+                    if (Arrays.stream(commands).anyMatch(fragment.toUpperCase()::contains)) {
+                        comm = Arrays.stream(commands).filter(fragment.toUpperCase()::contains).findAny();
+                    } else if (Arrays.stream(jumps).anyMatch(fragment.toUpperCase()::contains) || fragment.matches("^BR[nzp]{0,3}$")) {
+                        comm = Arrays.stream(jumps).filter(fragment.toUpperCase()::contains).findAny();
+                        jump = true;
+                    } else if (fragment.matches("^R[0-7]")) {  //register
+                        registers.add(fragment);
+                    } else if (fragment.matches("^[x#]?-?[0-9]+")) {
+                        //immediate value, literal or trap
+                        //just skip this for now
+                    } else if (fragment.matches("^[a-zA-Z0-9\\-_]+:")) {
+                        //this is the (optional) label for the line
+                        label = fragment;
+                        labelMap.put(label, i);
+                    } else if (jump && fragment.matches("^[a-zA-Z0-9\\-_]+")) {   //jump statement, this matches a label
+                        //if the line is a jump statement,
+                        //this matches the label or labels pointed to by the command
+                        //if the language supports having the label BEFORE the command,
+                        //remove the `jump &&` statement as it will cause problems.
+                        targetLabel = fragment;
+                    } else if (!jump && fragment.matches("^[a-zA-Z0-9\\-_]+")) {
+                        //the command isn't a jump statement, so the label must be a variable i.e. string, etc.
+                    }
                 }
+
+                //log testing data, if verbose parsing is on:
+                if (verbose) {
+                    System.out.println("Parsed line " + i);
+                    comm.ifPresent(s -> System.out.println(" " + s));
+                    if (!label.isEmpty()) System.out.println(" line label: " + label);
+                    if (jump) System.out.println(" jump targets: " + targetLabel);
+                    System.out.println(" registers used: " + registers);
+                }
+
+                //call constructor for TLine, then add the new object to the arraylist for the file
+                lines.add(new LC3TLine(line, comm, label, targetLabel, jump, registers, i));
             }
-            //call constructor for TLine, then add the new object to the arraylist for the file
-            /*
-            TLine object:
-            line_text = "  AND R0, LABEL, #0    ; Clear R0"
-            lineNumber = 1
-            Command = "AND"
-            Registers[] = "R0,R1";
-            jump = true;
-            label = null;
-            target = LABEL;
-            */
+        }
+        catch (FileNotFoundException e) {
+            if (verbose) System.out.println("File not found");
+            e.printStackTrace();
+        }
+        catch (IOException e) {
+            if (verbose) System.out.println("IO error occured");
+            e.printStackTrace();
+        }
+    }
+
+    /** Parse a single line and insert it into the list at index <i>i</i>.
+     *
+     * @param line The string of the line to insert
+     * @param i The index of the line to insert
+     */
+    public void parseLine(String line, int i){
+        if (verbose) System.out.println("parsing `" + line + "`");
+
+        //take entire line before semicolon
+        int index = line.indexOf(";");
+        if (index == -1) index = line.length();
+        String[] arrLine = line.substring(0, index).split(" ");
+
+        //temp variables:
+        Optional<String> comm = Optional.empty();
+        String label = null;
+        String targetLabel = null;
+        List<String> registers = new ArrayList<>();
+        boolean jump = false;
+
+        //  arrLine = {"LABEL:", "JGZ", "R1", "R2", "FINISH"}
+        for (String fragment : arrLine) {
+            //grab each command in the line, if they exist:
+            if (Arrays.stream(commands).anyMatch(fragment.toUpperCase()::contains)) {
+                comm = Arrays.stream(commands).filter(fragment.toUpperCase()::contains).findAny();
+            } else if (Arrays.stream(jumps).anyMatch(fragment.toUpperCase()::contains) || fragment.matches("^BR[nzp]{0,3}$")) {
+                comm = Arrays.stream(jumps).filter(fragment.toUpperCase()::contains).findAny();
+                jump = true;
+            } else if (fragment.matches("^R[0-7]")) {  //register
+                registers.add(fragment);
+            } else if (fragment.matches("^[x#]?-?[0-9]+")) {
+                //immediate value, literal or trap
+                //just skip this for now
+            } else if (fragment.matches("^[a-zA-Z0-9\\-_]+:")) {
+                //this is the (optional) label for the line
+                label = fragment;
+                labelMap.put(label, i);
+            } else if (jump && fragment.matches("^[a-zA-Z0-9\\-_]+")) {   //jump statement, this matches a label
+                //if the line is a jump statement,
+                //this matches the label or labels pointed to by the command
+                //if the language supports having the label BEFORE the command,
+                //remove the `jump &&` statement as it will cause problems.
+                targetLabel = fragment;
+            } else if (!jump && fragment.matches("^[a-zA-Z0-9\\-_]+")) {
+                //the command isn't a jump statement, so the label must be a variable i.e. string, etc.
+            }
+        }
+
+        //log testing data, if verbose parsing is on:
+        if (verbose) {
+            System.out.println("Parsed line " + i);
+            comm.ifPresent(s -> System.out.println(" " + s));
+            if (!label.isEmpty()) System.out.println(" line label: " + label);
+            if (jump) System.out.println(" jump targets: " + targetLabel);
+            System.out.println(" registers used: " + registers);
+        }
+
+        // call constructor for TLine, then add the new object to the arraylist for the file
+        // if the new value goes in the middle of the list, put it there:
+        if (i < lines.size()){
+            lines.add(i-1, new LC3TLine(line, comm, label, targetLabel, jump, registers, i));
+
+            //renumber all proceeding objects:
+            for (int j = i;j<lines.size();j++){
+                lines.get(j).incrementLineNumber(1);
+            }
+        } else {
+            // just append the new item to the end
+            lines.add(new LC3TLine(line, comm, label, targetLabel, jump, registers, i));
         }
     }
 
