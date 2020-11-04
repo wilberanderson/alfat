@@ -8,10 +8,13 @@ import org.lwjgl.system.*;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
+import parser.JsonReader;
+import parser.LC3Syntax;
 import rendering.renderEngine.MasterRenderer;
 import utils.InputManager;
 import utils.MyFile;
 
+import java.io.File;
 import java.nio.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -343,9 +346,19 @@ public class EngineTester {
 //            e.printStackTrace();
 //        }
 
-//        JsonReader j = new JsonReader();
-//        LC3Syntax s = j.mapJson(new File("CodeSyntax\\LC3-Operators.json"));
+//        JsonReader j = new JsonReader(new File("CodeSyntax\\LC3-Operators.json"));
+//        LC3Syntax s = j.mapJsonLC3Syntax();
 //        System.out.println(s);
+//        String []foo = s.getJumps();
+//
+//        for(int i = 0; i < foo.length; i++) {
+//            System.out.println(foo[i]);
+//        }
+//
+
+
+
+
 
         flowchartLines = new ArrayList<>();
         List<Vector2f> positions1 = new ArrayList<>();

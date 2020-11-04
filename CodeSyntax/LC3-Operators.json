@@ -13,7 +13,7 @@
       "parameters": 2
     }
   ],
-  "dataMovemnet": [
+  "dataMovement": [
     {
       "name": "LD",
       "parameters": 2
@@ -25,6 +25,10 @@
     {
       "name": "LDI",
       "parameters": 3
+    },
+    {
+      "name": "LEA",
+      "parameters": 2
     },
     {
       "name": "ST",
@@ -54,6 +58,44 @@
     },
     {
       "name": "JSRR",
+      "parameters": 1
+    }
+  ],
+  "reserved": [
+    {"name": "RET",
+      "parameters": 0
+    },
+    {"name": "RTI",
+      "parameters": 0
+    },
+    {"name": "TRAP",
+      "parameters": 0
+    },
+    {"name": ".ORIG",
+      "parameters": 1
+    },
+    {"name": ".FILL",
+      "parameters": 1
+    },
+    {"name": ".BLKW",
+      "parameters": 1
+    },
+    {"name": ".STRING",
+      "parameters": 1
+    },
+    {"name": ".END",
+      "parameters": 1
+    },
+    {"name": "PUTS",
+      "parameters": 1
+    },
+    {"name": "GETC",
+      "parameters": 1
+    },
+    {"name": "OUT",
+      "parameters": 1
+    },
+    {"name": "HALT",
       "parameters": 1
     }
   ],

@@ -5,9 +5,16 @@ import java.util.ArrayList;
 public class LC3Syntax {
 
     private ArrayList<Pair> operation = new ArrayList<Pair>();
-    private ArrayList<Pair> dataMovemnet = new ArrayList<Pair>();
+    private ArrayList<Pair> dataMovement = new ArrayList<Pair>();
     private ArrayList<Pair> control = new ArrayList<Pair>();
     private ArrayList<Pair> registers = new ArrayList<Pair>();
+    private ArrayList<Pair> reserved = new ArrayList<Pair>();
+
+
+    public ArrayList<Pair> getReserved() { return reserved; }
+
+    public void setReserved(ArrayList<Pair> reserved) { this.reserved = reserved; }
+
 
     public ArrayList<Pair> getOperation() {
         return operation;
@@ -17,12 +24,12 @@ public class LC3Syntax {
         this.operation = operation;
     }
 
-    public ArrayList<Pair> getDataMovemnet() {
-        return dataMovemnet;
+    public ArrayList<Pair> getDataMovement() {
+        return dataMovement;
     }
 
-    public void setDataMovemnet(ArrayList<Pair> dataMovemnet) {
-        this.dataMovemnet = dataMovemnet;
+    public void setDataMovement(ArrayList<Pair> dataMovement) {
+        this.dataMovement = dataMovement;
     }
 
     public ArrayList<Pair> getControl() {
@@ -41,13 +48,60 @@ public class LC3Syntax {
         this.registers = registers;
     }
 
+    public String[] getCommands() {
+        int lastIn = 0;
+
+        String[] commands = new String[countCommands()];
+
+
+        for(int i = 0; i < operation.size(); i++){
+            commands[lastIn] = operation.get(i).name;
+            lastIn++;
+        }
+
+        for(int i = 0; i < dataMovement.size(); i++){
+            commands[lastIn] = dataMovement.get(i).name;
+            lastIn++;
+        }
+
+
+        for(int i = 0; i < reserved.size(); i++){
+            commands[lastIn] = reserved.get(i).name;
+            lastIn++;
+        }
+
+        return commands;
+    }
+
+
+    public String[] getJumps() {
+        String[] jumps = new String[control.size()];
+
+        for(int i = 0; i < control.size(); i++) {
+            jumps[i] = control.get(i).name;
+        }
+
+        return jumps;
+    }
+
+
+    private int countCommands() {
+        int cmdCount = 0;
+
+        cmdCount += operation.size();
+        cmdCount += dataMovement.size();
+        cmdCount += reserved.size();
+        return cmdCount;
+    }
+
 
     @Override
     public String toString() {
         return "LC3Syntax{" +
                 "operation=" + operation +
-                ", dataMovemnet=" + dataMovemnet +
+                ", dataMovemnet=" + dataMovement +
                 ", control=" + control +
+                ",reserved=" + reserved +
                 ", registers=" + registers +
                 '}';
     }

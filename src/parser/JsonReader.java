@@ -4,32 +4,32 @@ package parser;
 import java.io.File;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-/*
-*
-* Takes a file as an input and creates and object mapper based on the defined syntax in LC3Syntax using the mapJson method.
-*
-* */
+/**
+ * Takes a file as an input JSON and creates and object mapper based on the defined syntax in JSON to a Syntax object.
+ * TODO: Find a more dynamic way to return a mapped class object...
+ * @see parser.LC3Syntax
+ * @author Thomas
+ * @author Brandon
+*/
 public class JsonReader {
-    File input;
+    //Holds the input file
+    private File input;
 
-    public JsonReader () {
-
-    }
+    /**
+     * Constructor must be set with a json file path to read from
+     * @param input
+    */
     public JsonReader (File input) {
         this.input = input;
     }
 
-    public void setInput(File input) {
-        this.input = input;
-    }
-
-    //Then create object
-    //TODO: find a more dynamic way to return a mapped class
-    public LC3Syntax mapJson(File input) {
-
+    /**
+     * Returns a json mapped LC3Syntax object
+     * @return LC3Syntax
+     * */
+    public LC3Syntax mapJsonLC3Syntax() {
         ObjectMapper objectMapper = new ObjectMapper();
         LC3Syntax outputClass;
-
         try {
             outputClass = objectMapper.readValue(input, LC3Syntax.class);
             return outputClass;
@@ -37,13 +37,6 @@ public class JsonReader {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         return null;
     }
-
-
-
-
-
-
 }
