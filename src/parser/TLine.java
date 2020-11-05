@@ -10,7 +10,7 @@ import java.util.Optional;
 * */
 public abstract class TLine {
     private String lineText;
-    private int lineNumber;
+    private int lineNumber = 0;
     private String command;
     private String label;
     private String target;

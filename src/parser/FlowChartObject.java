@@ -5,12 +5,12 @@ import gui.TextBox;
 import java.util.ArrayList;
 
 public class FlowChartObject {
-    public String codeBlock;
-    public String label = null;
-    public String target = null;
+    public String label = "";
+    public String target = "";
     public ArrayList<LC3TLine> lines = new ArrayList<>();
     public int lineCount = 0;   //number of lines in the box
     public int startLine;   //the starting line number of the box
+    public String alert = "";
 
     public boolean jumps = false;
     public FlowChartObject connection = null;
@@ -20,7 +20,7 @@ public class FlowChartObject {
         for (LC3TLine line : lines){
             temp = (temp + line.getLineText(comments) + "\n");
         }
-        temp = temp.substring(0,temp.length()-2); //remove extra newline
+        temp = temp.substring(0,temp.length()-1); //remove extra newline
         return temp;
     }
 
@@ -50,5 +50,9 @@ public class FlowChartObject {
 
     public boolean isJumps() {
         return jumps;
+    }
+
+    public void setLabel(String label){
+        this.label = label;
     }
 }
