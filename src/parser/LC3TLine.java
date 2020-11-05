@@ -11,7 +11,7 @@ import java.util.Optional;
 *
 * */
 
-public class LC3TLine extends TLine {
+public class LC3TLine {
     private String lineText;
     private int lineNumber;
     private String command;
@@ -43,10 +43,19 @@ public class LC3TLine extends TLine {
         this.jump = jump;
         this.lineNumber = line;
         this.lineText = fullText;
+        if (this.label == null){
+            this.label = "";
+        }
     }
 
-    @Override
-    //TODO: Change if we want this to be something different. Remove comment and return super otherwise...
+    public String getLabel() {
+        return label;
+    }
+
+    public boolean isJumps() {
+        return this.jump;
+    }
+
     public String toString() {
         return super.toString();
     }
@@ -71,4 +80,55 @@ public class LC3TLine extends TLine {
         this.lineNumber += n;
     }
 
+    public String getLineText() {
+        return lineText;
+    }
+
+    public void setJump(boolean jump) {
+        this.jump = jump;
+    }
+
+    public void setRegisters(List<String> registers) {
+        this.registers = registers;
+    }
+
+    public List<String> getRegisters() {
+        return registers;
+    }
+
+    public boolean isJump() {
+        return jump;
+    }
+
+    public int getLineNumber() {
+        return lineNumber;
+    }
+
+    public String getCommand() {
+        return command;
+    }
+
+    public String getTarget() {
+        return target;
+    }
+
+    public void setCommand(String command) {
+        this.command = command;
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
+    }
+
+    public void setLineNumber(int lineNumber) {
+        this.lineNumber = lineNumber;
+    }
+
+    public void setLineText(String lineText) {
+        this.lineText = lineText;
+    }
+
+    public void setTarget(String target) {
+        this.target = target;
+    }
 }
