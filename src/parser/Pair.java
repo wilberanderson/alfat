@@ -1,7 +1,5 @@
 package parser;
 
-
-
 /**
  * A simple mapping object used with the LC3Syntax class
  * store mapped json parameters.
