@@ -1,11 +1,13 @@
 package parser;
 import java.util.*;
 import java.io.*;
+import java.util.concurrent.Flow;
 
 public class LC3Parser implements CodeReader {
     // attributes
     String infile;  // file path
     boolean verbose = true; // final release should have this changed to false
+    ArrayList<FlowChartObject> flowchart = new ArrayList<>();
 
     HashMap<String, Integer> labelMap = new HashMap<>(); // map of labels -> line numbers
     List<LC3TLine> lines = new ArrayList<>();
@@ -41,7 +43,7 @@ public class LC3Parser implements CodeReader {
             String line;
             while ((line = br.readLine()) != null) {
                 //parse line:
-                i++;
+                i++;    //line numbers start at 1
                 if (verbose) System.out.println("parsing `" + line + "`");
 
                 //take entire line before semicolon
@@ -51,8 +53,8 @@ public class LC3Parser implements CodeReader {
 
                 //temp variables:
                 Optional<String> comm = Optional.empty();
-                String label = null;
-                String targetLabel = null;
+                String label = "";
+                String targetLabel = "";
                 List<String> registers = new ArrayList<>();
                 boolean jump = false;
 
@@ -64,12 +66,12 @@ public class LC3Parser implements CodeReader {
                     } else if (Arrays.stream(jumps).anyMatch(fragment.toUpperCase()::contains) || fragment.matches("^BR[nzp]{0,3}$")) {
                         comm = Arrays.stream(jumps).filter(fragment.toUpperCase()::contains).findAny();
                         jump = true;
-                    } else if (fragment.matches("^R[0-7]")) {  //register
+                    } else if (fragment.matches("^R[0-9]")) {  //register
                         registers.add(fragment);
-                    } else if (fragment.matches("^[x#]?-?[0-9]+")) {
+                    } else if (fragment.matches("^[x#]-?[0-9]+")) {
                         //immediate value, literal or trap
                         //just skip this for now
-                    } else if (fragment.matches("^[a-zA-Z0-9\\-_]+:")) {
+                    } else if (fragment.matches("^[a-zA-Z0-9\\-_]+")) {
                         //this is the (optional) label for the line
                         label = fragment;
                         labelMap.put(label, i);
@@ -122,8 +124,8 @@ public class LC3Parser implements CodeReader {
 
         //temp variables:
         Optional<String> comm = Optional.empty();
-        String label = null;
-        String targetLabel = null;
+        String label = "";
+        String targetLabel = "";
         List<String> registers = new ArrayList<>();
         boolean jump = false;
 
@@ -137,10 +139,10 @@ public class LC3Parser implements CodeReader {
                 jump = true;
             } else if (fragment.matches("^R[0-7]")) {  //register
                 registers.add(fragment);
-            } else if (fragment.matches("^[x#]?-?[0-9]+")) {
+            } else if (fragment.matches("^[x#]-?[0-9]+")) {
                 //immediate value, literal or trap
                 //just skip this for now
-            } else if (fragment.matches("^[a-zA-Z0-9\\-_]+:")) {
+            } else if (fragment.matches("^[a-zA-Z0-9\\-_]+")) {
                 //this is the (optional) label for the line
                 label = fragment;
                 labelMap.put(label, i);
@@ -179,9 +181,53 @@ public class LC3Parser implements CodeReader {
         }
     }
 
+    /** Create flowchart objects. <b>Only</b> call after the file has been parsed.
+     *
+     */
     @Override
     public void getFlowObjects() {
+        //generate naive boxes for flowchart.
+        for (LC3TLine line : lines){
+            //This line has a label, start a new box:
+            if (!line.getLabel().isEmpty()){
+                //start new box
+                flowchart.add(new FlowChartObject());
+                flowchart.get(flowchart.size()-1).setStartLine(line.getLineNumber());
+            }
+            // Add the line to the current box.
+            flowchart.get(flowchart.size()-1).addLine(line);
+            flowchart.get(flowchart.size()-1).lineCount++;
+            //if the line is a jump/branch, end the box and start a new one.
+            if (line.isJumps()){
+                flowchart.get(flowchart.size()-1).jumps = true;
+                flowchart.add(new FlowChartObject());
+            }
+        }
 
+        //remove all empty boxes
+        flowchart.removeIf(box -> box.getLineCount() == 0);
+
+        //create linkages
+        for (FlowChartObject box : flowchart){
+            // If the box jumps, find where it targets and link them.
+            if (box.isJumps()){
+                for (FlowChartObject candidate : flowchart){
+                    if (candidate.label.equals(box.target)){
+                        box.connection = candidate;
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (verbose){
+            int n = 0;
+            for (FlowChartObject box : flowchart){
+                n++;
+                System.out.println("\nBox {" + n + "}");
+                System.out.println(box.getFullText(true));
+            }
+        }
     }
 
 

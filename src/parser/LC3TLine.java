@@ -46,7 +46,6 @@ public class LC3TLine extends TLine {
     }
 
     @Override
-    //TODO: Change if we want this to be something different. Remove comment and return super otherwise...
     public String toString() {
         return super.toString();
     }
