@@ -1,6 +1,8 @@
 package rendering.renderEngine;
 
 import gui.*;
+import gui.textBoxes.CodeWindow;
+import gui.textBoxes.TextBox;
 import org.lwjgl.util.vector.Vector3f;
 import rendering.cursor.CursorRenderer;
 import rendering.flowchartLine.FlowchartLineRenderer;

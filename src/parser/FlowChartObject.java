@@ -1,7 +1,5 @@
 package parser;
 
-import gui.TextBox;
-
 import java.util.ArrayList;
 
 public class FlowChartObject {

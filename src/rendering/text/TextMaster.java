@@ -5,11 +5,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import fontMeshCreator.FontType;
-import gui.CodeWindow;
+import gui.fontMeshCreator.FontType;
+import gui.textBoxes.CodeWindow;
 import gui.FlowChartWindow;
 import gui.GUIText;
-import fontMeshCreator.TextMeshData;
+import gui.fontMeshCreator.TextMeshData;
 import loaders.Loader;
 
 public class TextMaster {

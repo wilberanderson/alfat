@@ -1,5 +1,6 @@
 package gui;
 
+import gui.textBoxes.CodeWindow;
 import main.EngineTester;
 import main.GeneralSettings;
 import org.lwjgl.util.vector.Vector2f;
@@ -15,6 +16,8 @@ import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
+import gui.buttons.HeaderMenu;
+import gui.buttons.TextButton;
 
 public class Header {
     private List<HeaderMenu> menuList;

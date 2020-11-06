@@ -1,6 +1,8 @@
 package main;
-import fontMeshCreator.FontType;
+import gui.fontMeshCreator.FontType;
 import gui.*;
+import gui.textBoxes.FlowChartTextBox;
+import gui.textBoxes.TextBox;
 import loaders.*;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
@@ -20,7 +22,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Flow;
 
-//Can you see this???
 
 
 public class EngineTester {
@@ -172,7 +173,7 @@ public class EngineTester {
         textBoxes = new ArrayList<>();
         //Create sample text boxes
         //codeWindow = new CodeWindow(new Vector2f(0f,0f), new Vector2f(1f, header.getPosition().y+1), new Vector3f(0.1f,0.1f,0.1f), new Vector3f(1,1,1), new Vector3f(0,0,0), "", GeneralSettings.TACOMA, GeneralSettings.FONT_SIZE, GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE, GeneralSettings.TEXT_BOX_BORDER_WIDTH);
-        FlowChartTextBox flowChartTextBox = new FlowChartTextBox(new Vector2f(0.5f,1.5f), new Vector3f(1f,0f,0f), new Vector3f(1,1,1), new Vector3f(0,0,0), "Sample automatically sized textbox\nThis text box automatically sizes itself to match it's input", GeneralSettings.TACOMA, GeneralSettings.FONT_SIZE, GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE, GeneralSettings.TEXT_BOX_BORDER_WIDTH);
+        FlowChartTextBox flowChartTextBox = new FlowChartTextBox(new Vector2f(0.5f,1.5f), new Vector3f(1f,0f,0f), new Vector3f(1,1,1), new Vector3f(0,0,0), "Sample automatically sized textbox\nThis text box automatically sizes itself to match it's input", GeneralSettings.TACOMA, GeneralSettings.FONT_SIZE, GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE, GeneralSettings.TEXT_BOX_BORDER_WIDTH, 17);
         //textBoxes.add(codeWindow);
         textBoxes.add(flowChartTextBox);
 
@@ -291,8 +292,12 @@ public class EngineTester {
             renderer.renderScene(guis, textBoxes, new Vector3f(1,1,1), header.getCursor(), GeneralSettings.FONT_SIZE, header, flowchartLines, flowChartWindow, header.getCodeWindow());
 
             //Temporarily make changes for scrolling
-            if(InputManager.SCROLL_CHANGE != 0) {
-                header.getCodeWindow().scroll((float) -InputManager.SCROLL_CHANGE / 10);
+            if(header.getCodeWindow() != null) {
+                if (InputManager.SCROLL_CHANGE != 0) {
+                    header.getCodeWindow().scroll((float) -InputManager.SCROLL_CHANGE / 10);
+                }
+            }else{
+                InputManager.SCROLL_CHANGE = 0;
             }
             //Swap the color buffers to update the screen
             GLFW.glfwSwapBuffers(window);

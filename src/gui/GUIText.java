@@ -1,7 +1,7 @@
 package gui;
 
-import fontMeshCreator.FontType;
-import fontMeshCreator.TextMeshData;
+import gui.fontMeshCreator.FontType;
+import gui.fontMeshCreator.TextMeshData;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 
@@ -42,6 +42,7 @@ public class GUIText {
 	private boolean isGuiText;
 
 	private boolean isInFlowchart;
+	private boolean isCodeWindowText;
 
 	/**
 	 * Creates a new text, loads the text's quads into a VAO, and adds the text
@@ -59,7 +60,7 @@ public class GUIText {
 	 *            text should be rendered. The top left corner of the screen is
 	 *            (0, 0) and the bottom right is (1, 1).
 	 */
-	public GUIText(String text, float fontSize, FontType font, Vector2f position, float width, float edge, Vector3f colour, Vector4f positionBounds, boolean isGuiText, boolean isInFlowchart) {
+	public GUIText(String text, float fontSize, FontType font, Vector2f position, float width, float edge, Vector3f colour, Vector4f positionBounds, boolean isGuiText, boolean isInFlowchart, boolean isCodeWindowText) {
 		this.textString = text;
 		this.fontSize = fontSize;
 		this.font = font;
@@ -74,6 +75,7 @@ public class GUIText {
 		this.isGuiText = isGuiText;
 		this.isInFlowchart = isInFlowchart;
 		this.isGuiText = isGuiText;
+		this.isCodeWindowText = isCodeWindowText;
 		if(isGuiText){
 			this.textMeshData = TextMaster.loadGuiText(this);
 		}else{
@@ -87,9 +89,9 @@ public class GUIText {
 		this.textString = text;
 		this.fontSize = guiText.fontSize;
 		this.font = guiText.font;
-		this.position = guiText.position;
-		this.position.x = (position.x+1)/2;
-		this.position.y = -(position.y - 1)/2;
+		this.position = new Vector2f(guiText.position);
+		position.x = (position.x+1)/2;
+		position.y = -(position.y - 1)/2;
 		this.width = guiText.width;
 		this.edge = guiText.edge;
 		this.borderEdge = edge;
@@ -109,8 +111,8 @@ public class GUIText {
 				TextMaster.removeText(guiText);
 			}
 		}
-		this.position.x = this.position.x*2-1;
-		this.position.y = -this.position.y*2+1;
+		position.x = this.position.x*2-1;
+		position.y = -this.position.y*2+1;
 	}
 
 
@@ -313,5 +315,9 @@ public class GUIText {
 
 	public boolean isGuiText(){
 		return isGuiText;
+	}
+
+	public boolean isCodeWindowText(){
+		return isCodeWindowText;
 	}
 }

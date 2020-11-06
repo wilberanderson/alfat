@@ -1,4 +1,4 @@
-package fontMeshCreator;
+package gui.fontMeshCreator;
 
 import gui.GUIText;
 import utils.MyFile;

@@ -1,6 +1,7 @@
-package gui;
+package gui.buttons;
 
-import fontMeshCreator.FontType;
+import gui.buttons.TextButton;
+import gui.fontMeshCreator.FontType;
 import main.GeneralSettings;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
@@ -9,7 +10,7 @@ import utils.InputManager;
 
 import java.util.List;
 
-public class HeaderMenu extends TextButton{
+public class HeaderMenu extends TextButton {
 
     private List<TextButton> dropDownButtons;
 

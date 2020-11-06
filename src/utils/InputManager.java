@@ -1,17 +1,14 @@
 package utils;
 
-import fontMeshCreator.FontType;
-import gui.*;
+import gui.buttons.Button;
+import gui.buttons.HeaderMenu;
+import gui.buttons.HighlightableButton;
 import main.GeneralSettings;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.util.vector.Vector2f;
-import org.lwjgl.util.vector.Vector3f;
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowShouldClose;

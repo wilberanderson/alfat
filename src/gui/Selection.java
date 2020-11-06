@@ -1,5 +1,6 @@
 package gui;
 
+import gui.textBoxes.TextBox;
 import org.lwjgl.util.vector.Vector2f;
 
 public class Selection {

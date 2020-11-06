@@ -2,15 +2,12 @@ package rendering.selection;
 
 import dataStructures.RawModel;
 import gui.Selection;
-import gui.TextBox;
 import loaders.Loader;
 import main.GeneralSettings;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.util.vector.Matrix3f;
-
-import java.util.List;
 
 public class SelectionRenderer {
 

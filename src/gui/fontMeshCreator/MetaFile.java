@@ -1,4 +1,4 @@
-package fontMeshCreator;
+package gui.fontMeshCreator;
 
 import java.io.*;
 import java.util.HashMap;

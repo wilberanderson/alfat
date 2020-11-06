@@ -1,5 +1,6 @@
 package gui;
 
+import gui.textBoxes.CodeWindow;
 import main.GeneralSettings;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.util.vector.Vector2f;
@@ -176,7 +177,7 @@ public class Cursor {
             characterIndex--;
             String newContent = text.getTextString().substring(0, characterIndex) + text.getTextString().substring(characterIndex + 1);
             text = new GUIText(newContent, text, true);
-            texts.set(lineIndex, text);
+            codeWindow.getTexts().set(lineIndex, text);
             updateXPosition();
         } else if (lineIndex > 0) {
             lineIndex--;
@@ -190,10 +191,9 @@ public class Cursor {
         if (characterIndex < text.getCharacterEdges().length - 1){
             String newContent = text.getTextString().substring(0, characterIndex) + text.getTextString().substring(characterIndex + 1);
             text = new GUIText(newContent, text, true);
-            texts.set(lineIndex, text);
+            codeWindow.getTexts().set(lineIndex, text);
         } else if (lineIndex < texts.size() - 1) {
-            lineIndex++;
-            text = codeWindow.mergeTexts(text, texts.get(lineIndex));
+            text = codeWindow.mergeTexts(text, texts.get(lineIndex+1));
         }
     }
 
@@ -258,23 +258,27 @@ public class Cursor {
 
     private void updateXPosition(){
         position.x = text.getCharacterEdges()[characterIndex]*2 + text.getPosition().x;
-        if (position.x < codeWindow.getPosition().x-1){
-            codeWindow.changeContentsHorizontalPosition((codeWindow.getPosition().x-1) - (text.getPosition().x + text.getCharacterEdges()[characterIndex]*2));
-            position.x = codeWindow.getPosition().x-1;
-        }else if(position.x > codeWindow.getPosition().x + codeWindow.getSize().x - 1){
-            codeWindow.changeContentsHorizontalPosition(-(text.getPosition().x +text.getCharacterEdges()[characterIndex]*2 - (codeWindow.getPosition().x + codeWindow.getSize().x-1)));
-            position.x = codeWindow.getPosition().x + codeWindow.getSize().x - 1;
+        if (position.x < codeWindow.getCodeWindowPosition().x-1){
+            codeWindow.changeContentsHorizontalPosition((codeWindow.getCodeWindowPosition().x-1) - (text.getPosition().x + text.getCharacterEdges()[characterIndex]*2));
+            position.x = codeWindow.getCodeWindowPosition().x-1;
+        }else if(position.x > codeWindow.getCodeWindowPosition().x + codeWindow.getCodeWindowSize().x - 1){
+            codeWindow.changeContentsHorizontalPosition(-(text.getPosition().x +text.getCharacterEdges()[characterIndex]*2 - (codeWindow.getCodeWindowPosition().x + codeWindow.getCodeWindowSize().x-1)));
+            position.x = codeWindow.getCodeWindowPosition().x + codeWindow.getCodeWindowSize().x - 1;
         }
     }
 
     private void updateYPosition(){
         position.y = text.getPosition().y;
-        if(position.y > (codeWindow.getPosition().y + codeWindow.getSize().y) - 1){
-            codeWindow.changeContentsVerticalPosition((codeWindow.getPosition().y - 1 + codeWindow.getSize().y)-text.getPosition().y);
-            position.y = codeWindow.getPosition().y + codeWindow.getSize().y - 1;
-        }else if(position.y < codeWindow.getPosition().y-1+0.06*text.getFontSize()){
-            codeWindow.changeContentsVerticalPosition((codeWindow.getPosition().y-1)-(text.getPosition().y-0.06f*text.getFontSize()));
-            position.y = codeWindow.getPosition().y-1 + 0.06f*text.getFontSize();
+        if(position.y > (codeWindow.getCodeWindowPosition().y + codeWindow.getCodeWindowSize().y) - 1){
+            float change = (codeWindow.getCodeWindowPosition().y - 1 + codeWindow.getCodeWindowSize().y)-text.getPosition().y;
+            codeWindow.changeContentsVerticalPosition(change);
+            codeWindow.changeLineNumberVerticalPosition(change);
+            position.y = codeWindow.getCodeWindowPosition().y + codeWindow.getCodeWindowSize().y - 1;
+        }else if(position.y < codeWindow.getCodeWindowPosition().y-1+0.06*text.getFontSize()){
+            float change = (codeWindow.getCodeWindowPosition().y-1)-(text.getPosition().y-0.06f*text.getFontSize());
+            codeWindow.changeContentsVerticalPosition(change);
+            codeWindow.changeLineNumberVerticalPosition(change);
+            position.y = codeWindow.getCodeWindowPosition().y-1 + 0.06f*text.getFontSize();
         }
     }
 

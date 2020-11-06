@@ -4,11 +4,15 @@ import java.util.List;
 
 import dataStructures.RawModel;
 import gui.*;
+import gui.buttons.Button;
+import gui.buttons.TextButton;
+import gui.textBoxes.CodeWindow;
+import gui.textBoxes.FlowChartTextBox;
+import gui.textBoxes.TextBox;
 import loaders.Loader;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
-import org.lwjgl.util.vector.Matrix2f;
 import org.lwjgl.util.vector.Matrix3f;
 import utils.InputManager;
 
@@ -38,6 +42,9 @@ public class FilledBoxRenderer {
         if(header.getCodeWindow() != null) {
             shader.windowPosition.loadVec2(header.getCodeWindow().getPosition().x - 1, header.getCodeWindow().getPosition().y - 1);
             shader.windowSize.loadVec2(header.getCodeWindow().getSize());
+            renderFilledBox(header.getCodeWindow().getTextNumberFilledBox());
+            shader.windowPosition.loadVec2(header.getCodeWindow().getCodeWindowPosition().x - 1, header.getCodeWindow().getCodeWindowPosition().y - 1);
+            shader.windowSize.loadVec2(header.getCodeWindow().getCodeWindowSize());
             renderFilledBox(header.getCodeWindow().getGuiFilledBox());
         }
         for(TextBox textBox : textBoxes){
@@ -48,6 +55,7 @@ public class FilledBoxRenderer {
                 System.out.println("Undefined box rendering behavior");
             }
             renderFilledBox(textBox.getGuiFilledBox());
+            renderFilledBox(textBox.getTextNumberFilledBox());
         }
 
         GL20.glDisableVertexAttribArray(0);

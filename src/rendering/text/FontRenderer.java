@@ -3,13 +3,13 @@ package rendering.text;
 import java.util.List;
 import java.util.Map;
 
-import gui.CodeWindow;
+import gui.textBoxes.CodeWindow;
 import gui.FlowChartWindow;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
-import fontMeshCreator.FontType;
+import gui.fontMeshCreator.FontType;
 import gui.GUIText;
 
 public class FontRenderer {
@@ -63,6 +63,9 @@ public class FontRenderer {
 		}else if(text.isGuiText()){
 			shader.windowPosition.loadVec2(-1, -1);
 			shader.windowSize.loadVec2(2, 2);
+		}else if(text.isCodeWindowText()){
+			shader.windowPosition.loadVec2(codeWindow.getCodeWindowPosition().x-1, codeWindow.getCodeWindowPosition().y-1);
+			shader.windowSize.loadVec2(codeWindow.getCodeWindowSize());
 		}else{
 			if(codeWindow != null) {
 				shader.windowPosition.loadVec2(codeWindow.getPosition().x - 1, codeWindow.getPosition().y - 1);

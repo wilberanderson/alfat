@@ -1,10 +1,9 @@
-package gui;
+package gui.textBoxes;
 
-import fontMeshCreator.FontType;
+import gui.GUIFilledBox;
+import gui.GUIText;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
-import org.lwjgl.util.vector.Vector4f;
-import utils.InputManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +17,9 @@ public class TextBox {
     private Vector3f borderColor;
     private Vector3f textColor;
     private List<GUIText> texts = new ArrayList<>();
+    private List<GUIText> lineNumbers = new ArrayList<>();
     private GUIFilledBox guiFilledBox;
+    private GUIFilledBox textNumberFilledBox;
 
     public TextBox(){
     }
@@ -76,6 +77,12 @@ public class TextBox {
         return texts;
     }
 
+    public List<GUIText> getLineNumbers(){
+        return lineNumbers;
+    }
+
+
+
     public void setTextColor(Vector3f textColor){
         this.textColor = textColor;
     }
@@ -83,6 +90,14 @@ public class TextBox {
 
     public void setBorderColor(Vector3f borderColor){
         this.borderColor = borderColor;
+    }
+
+    public void setTextNumberFilledBox(GUIFilledBox textNumberFilledBox){
+        this.textNumberFilledBox = textNumberFilledBox;
+    }
+
+    public GUIFilledBox getTextNumberFilledBox(){
+        return textNumberFilledBox;
     }
 
 }

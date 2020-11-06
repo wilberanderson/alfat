@@ -1,7 +1,7 @@
 package gui;
 
+import gui.textBoxes.FlowChartTextBox;
 import main.GeneralSettings;
-import org.lwjgl.util.vector.Vector;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.util.List;

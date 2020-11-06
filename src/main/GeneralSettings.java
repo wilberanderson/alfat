@@ -1,6 +1,6 @@
 package main;
 
-import fontMeshCreator.FontType;
+import gui.fontMeshCreator.FontType;
 import loaders.Loader;
 import org.lwjgl.util.vector.Vector3f;
 import utils.MyFile;
@@ -77,6 +77,8 @@ public class GeneralSettings {
 	public static final Vector3f TEXT_BUTTON_BACKGROUND_COLOR = new Vector3f(0f, 0f, 0f);
 
 	public static String FILE_PATH;
+
+	public static final Vector3f LINE_NUMBER_BACKGROUND_COLOR = new Vector3f(0, 0, 1);
 	public static String SYNTAX_PATH = "CodeSyntax/LC3.json";
 
 }
