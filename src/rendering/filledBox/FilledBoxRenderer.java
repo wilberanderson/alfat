@@ -29,17 +29,19 @@ public class FilledBoxRenderer {
     }
 
 
-    public void render(List<TextBox> textBoxes, FlowChartWindow flowChartWindow){
+    public void render(List<TextBox> textBoxes, FlowChartWindow flowChartWindow, Header header){
         prepare();
 
         GL30.glBindVertexArray(square.getVaoID());
         GL20.glEnableVertexAttribArray(0);
 
+        if(header.getCodeWindow() != null) {
+            shader.windowPosition.loadVec2(header.getCodeWindow().getPosition().x - 1, header.getCodeWindow().getPosition().y - 1);
+            shader.windowSize.loadVec2(header.getCodeWindow().getSize());
+            renderFilledBox(header.getCodeWindow().getGuiFilledBox());
+        }
         for(TextBox textBox : textBoxes){
-            if(textBox instanceof CodeWindow){
-                shader.windowPosition.loadVec2(textBox.getPosition().x-1, textBox.getPosition().y-1);
-                shader.windowSize.loadVec2(textBox.getSize());
-            }else if(textBox instanceof FlowChartTextBox){
+            if(textBox instanceof FlowChartTextBox){
                 shader.windowPosition.loadVec2(flowChartWindow.getPosition());
                 shader.windowSize.loadVec2(flowChartWindow.getSize());
             }else{

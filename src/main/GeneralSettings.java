@@ -31,7 +31,6 @@ public class GeneralSettings {
 	public static final MyFile FLOWCHART_VERTEX = new MyFile("/rendering/flowchartLine/flowchartLineVertex.glsl");
 	public static final MyFile FLOWCHART_FRAGMENT = new MyFile("/rendering/flowchartLine/flowchartLineFragment.glsl");
 
-
     public static int DISPLAY_WIDTH = 1280;
 	public static int DISPLAY_HEIGHT = 720;
 
@@ -78,4 +77,6 @@ public class GeneralSettings {
 	public static final Vector3f TEXT_BUTTON_BACKGROUND_COLOR = new Vector3f(0f, 0f, 0f);
 
 	public static String FILE_PATH;
+	public static String SYNTAX_PATH = "CodeSyntax/LC3.json";
+
 }

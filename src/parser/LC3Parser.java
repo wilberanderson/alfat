@@ -1,4 +1,6 @@
 package parser;
+import main.GeneralSettings;
+
 import java.util.*;
 import java.io.*;
 import java.util.concurrent.Flow;
@@ -18,7 +20,7 @@ public class LC3Parser implements CodeReader {
     }
 
     //TODO: change from hardcoded to dynamically loaded from JSON
-    JsonReader jr = new JsonReader(new File("CodeSyntax/LC3-Operators.json"));
+    JsonReader jr = new JsonReader(new File(GeneralSettings.SYNTAX_PATH));
 
     LC3Syntax syn = jr.mapJsonLC3Syntax();
 

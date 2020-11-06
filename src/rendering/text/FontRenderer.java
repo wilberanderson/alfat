@@ -64,8 +64,10 @@ public class FontRenderer {
 			shader.windowPosition.loadVec2(-1, -1);
 			shader.windowSize.loadVec2(2, 2);
 		}else{
-			shader.windowPosition.loadVec2(codeWindow.getPosition().x-1, codeWindow.getPosition().y-1);
-			shader.windowSize.loadVec2(codeWindow.getSize());
+			if(codeWindow != null) {
+				shader.windowPosition.loadVec2(codeWindow.getPosition().x - 1, codeWindow.getPosition().y - 1);
+				shader.windowSize.loadVec2(codeWindow.getSize());
+			}
 		}
 		GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, text.getVertexCount());
 		GL20.glDisableVertexAttribArray(0);

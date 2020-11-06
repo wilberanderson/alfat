@@ -36,7 +36,6 @@ public class EngineTester {
     private Header header;
     private List<FlowchartLine> flowchartLines;
     private FlowChartWindow flowChartWindow;
-    private CodeWindow codeWindow;
     /**
      * Used for all operations of the program
      *  - Initializes all relevant objects
@@ -172,168 +171,17 @@ public class EngineTester {
         //Create list to store all text boxes
         textBoxes = new ArrayList<>();
         //Create sample text boxes
-        codeWindow = new CodeWindow(new Vector2f(0f,0f), new Vector2f(1f, header.getPosition().y+1), new Vector3f(0.1f,0.1f,0.1f), new Vector3f(1,1,1), new Vector3f(0,0,0), "    .ORIG    x3000\n" +
-                ";Start\n" +
-                "        LEA    R0, PROMPT1\n" +
-                "        PUTS            ;Display beginning prompt\n" +
-                "        LD    R2, WORD        \n" +
-                "        LD    R3, GUESS    ;Load address's\n" +
-                "        LD    R4, BLANK    ;Load \"_\"\n" +
-                "        AND    R5, R5, #0    ;Initialized to 0    \n" +
-                ";Word Input\n" +
-                "INPUT        GETC\n" +
-                "        LD    R1, BACKSP\n" +
-                "        NOT    R1, R1\n" +
-                "        ADD    R1, R1, #1\n" +
-                "        ADD    R1, R0, R1\n" +
-                "        BRz    INPUT        ;Goto [INPUT] backspace read skip it\n" +
-                "        LD     R1, NEWLN\n" +
-                "        NOT    R1, R1\n" +
-                "        ADD    R1, R1, #1\n" +
-                "        ADD     R1, R0, R1\n" +
-                "        BRz     INPUT_DONE    ;Goto [INPUT_DONE] if a new line was entered\n" +
-                "        STR    R0, R2, #0    ;Store char in word string\n" +
-                "        STR    R4, R3, #0    ;Store \"_\" in guess string\n" +
-                "        LD    R0, ASCII\n" +
-                "        ADD    R0, R0, #-6    \n" +
-                "        OUT            ;Echo \"*\"\n" +
-                "        ADD    R2, R2, #1    ;Increment word\n" +
-                "        ADD    R3, R3, #1    ;Increment guess\n" +
-                "        LD    R0, SPACE\n" +
-                "        STR    R0, R3, #0\n" +
-                "        ADD    R3, R3, #1    ;Put a space in between each char GUI use\n" +
-                "        ADD    R5, R5, #1    ;Increment word counter\n" +
-                "        BRnzp    INPUT        ;Goto [INPUT] we're not done\n" +
-                ";\n" +
-                "; Registers:\n" +
-                ";    R0 = Input/Output\n" +
-                ";    R1 = Temp variable\n" +
-                ";    R2 = Address of word\n" +
-                ";    R3 = Address of guess\n" +
-                ";    R4 = Length\n" +
-                ";    R5 = Address of Used\n" +
-                ";\n" +
-                ";Prepare word guessing\n" +
-                "INPUT_DONE    LEA    R0, PROMPT2    ;Display second prompt\n" +
-                "        PUTS\n" +
-                "        ST    R5, LENGTH\n" +
-                "        LD    R5, USED    ;Load address of used string\n" +
-                "        AND    R0, R0, #0\n" +
-                "        STR    R0, R2, #0\n" +
-                "        STR    R0, R3, #0\n" +
-                "        STR    R0, R5, #0    ;Null terminate the strings\n" +
-                "TOP        LD    R2, WORD    \n" +
-                "        LD    R3, GUESS    ;Load starting words\n" +
-                "        LD    R5, USED\n" +
-                "        LEA    R0, PROMPT3\n" +
-                "        PUTS\n" +
-                "        LD    R0, USED\n" +
-                "        PUTS\n" +
-                "        LD    R0, NEWLN\n" +
-                "        OUT\n" +
-                "        LD    R0, GUESS\n" +
-                "        PUTS\n" +
-                "        LD    R0, NEWLN\n" +
-                "        OUT\n" +
-                ";Word guessing\n" +
-                "        GETC\n" +
-                "        LD    R4, LENGTH\n" +
-                "        BRnzp    WORD1        ;Goto [WORD1] to get rid of pre changes.\n" +
-                ";Is char in the word?\n" +
-                "WORD0        ADD    R4, R4, #-1    ;Decrement counter\n" +
-                "        ADD    R2, R2, #1    ;Increment word\n" +
-                "        ADD    R3, R3, #2    ;Increment guess\n" +
-                "WORD1        ADD    R4, R4, #0\n" +
-                "        BRz    IN_USED        ;Goto [IN_USED] done going through word\n" +
-                "        LDR    R1, R2, #0\n" +
-                "        NOT    R1, R1\n" +
-                "        ADD    R1, R1, #1\n" +
-                "        ADD    R1, R0, R1    ;Subtract word char from input\n" +
-                "        BRnp    WORD0        ;Goto [WORD0] if char does not match\n" +
-                "        STR    R0, R3, #0\n" +
-                ";Is char everywhere in word?\n" +
-                "WORD2        ADD    R4, R4, #0\n" +
-                "        BRz    CHECK        ;Goto [CHECK] Done with input char checking\n" +
-                "        ADD    R4, R4, #-1    ;Decrement counter\n" +
-                "        ADD    R2, R2, #1    ;Increment word\n" +
-                "        ADD    R3, R3, #2    ;Increment guess\n" +
-                "        LDR    R1, R2, #0\n" +
-                "        NOT    R1, R1\n" +
-                "        ADD    R1, R1, #1    ;Inverse\n" +
-                "        ADD    R1, R0, R1    ;Subtract word char from\n" +
-                "        Brnp    WORD2        ;Goto [WORD2] Not a match, continue\n" +
-                "        STR    R0, R3, #0    ;Store the char matched into \"Guess\"\n" +
-                "        BRnzp    WORD2        ;Goto [WORD2] Is a match, continue\n" +
-                ";has char been in \"used\" already?\n" +
-                "IN_USED        LDR    R1, R5, #0\n" +
-                "        BRnp    IN_CHAR        ;Goto [CHAR] Not end, so check for char\n" +
-                "        STR    R0, R5, #0    ;Store char into used\n" +
-                "        ADD    R5, R5, #1    ;Increment used\n" +
-                "        AND    R0, R0, #0\n" +
-                "        STR    R0, R5, #0    ;Null terminate used\n" +
-                "        BRnzp    CHECK        ;Goto [CHECK] char stored\n" +
-                "IN_CHAR        NOT    R1, R1\n" +
-                "        ADD    R1, R1, #1\n" +
-                "        ADD    R1, R0, R1    ;Subtract Used value from char\n" +
-                "        BRz    CHECK        ;Goto [CHECK] char was already there\n" +
-                "        ADD    R5, R5, #1    ;Increment address of used\n" +
-                "        BRnzp    IN_USED        ;Goto [IN_USED] no match found try next.\n" +
-                ";Check to see if strings match\n" +
-                "CHECK        LD    R2, WORD    \n" +
-                "        LD    R3, GUESS\n" +
-                "        LD    R4, LENGTH\n" +
-                "CHECK_AGAIN    LDR    R0, R2, #0\n" +
-                "        LDR    R1, R3, #0\n" +
-                "        NOT    R1, R1\n" +
-                "        ADD    R1, R1, #1    ;Inverse R1\n" +
-                "        ADD    R1, R0, R1    ;subtract chars from word and guess\n" +
-                "        BRnp    TOP        ;Goto [TOP] They don't match\n" +
-                "        ADD    R4, R4, #0\n" +
-                "        Brz    DONE        ;Goto [Done] All chars match!\n" +
-                "        ADD    R4, R4, #-1    ;Decrement length\n" +
-                "        ADD    R2, R2, #1    ;Increment word\n" +
-                "        ADD    R3, R3, #2    ;Increment guess\n" +
-                "        BRnzp    CHECK_AGAIN    ;Goto [CHECK_AGAIN] chars so far have been equal\n" +
-                ";End\n" +
-                "DONE        LEA    R0, PROMPT2\n" +
-                "        PUTS\n" +
-                "        LEA    R0, PROMPT3\n" +
-                "        PUTS\n" +
-                "        LD    R0, USED\n" +
-                "        PUTS\n" +
-                "        LD    R0, NEWLN\n" +
-                "        OUT\n" +
-                "        LD    R0, GUESS\n" +
-                "        PUTS        \n" +
-                "        LEA    R0, PROMPT4\n" +
-                "        PUTS        \n" +
-                "        HALT\n" +
-                ";Data\n" +
-                "ASCII    .FILL    x0030\n" +
-                "SPACE    .FILL    x0020\n" +
-                "BACKSP    .FILL    x0008\n" +
-                "TAB    .FILL    x0009\n" +
-                "NEWLN    .FILL    x000A\n" +
-                "BLANK    .FILL    x005F\n" +
-                "LENGTH    .FILL    x0000\n" +
-                "PROMPT1    .STRINGZ    \"[Enter your word]\\n\"\n" +
-                "PROMPT2    .STRINGZ    \"\\n[Guess the word!]\\n\"\n" +
-                "PROMPT3    .STRINGZ    \"[Letters used] > \"\n" +
-                "PROMPT4    .STRINGZ    \"\\n[You got it right!]\\n\"\n" +
-                "WORD    .FILL    x3200\n" +
-                "GUESS    .FILL    x3240\n" +
-                "USED    .FILL    x3260\n" +
-                ";\n" +
-                "    .END", GeneralSettings.TACOMA, GeneralSettings.FONT_SIZE, GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE, GeneralSettings.TEXT_BOX_BORDER_WIDTH);
+        //codeWindow = new CodeWindow(new Vector2f(0f,0f), new Vector2f(1f, header.getPosition().y+1), new Vector3f(0.1f,0.1f,0.1f), new Vector3f(1,1,1), new Vector3f(0,0,0), "", GeneralSettings.TACOMA, GeneralSettings.FONT_SIZE, GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE, GeneralSettings.TEXT_BOX_BORDER_WIDTH);
         FlowChartTextBox flowChartTextBox = new FlowChartTextBox(new Vector2f(0.5f,1.5f), new Vector3f(1f,0f,0f), new Vector3f(1,1,1), new Vector3f(0,0,0), "Sample automatically sized textbox\nThis text box automatically sizes itself to match it's input", GeneralSettings.TACOMA, GeneralSettings.FONT_SIZE, GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE, GeneralSettings.TEXT_BOX_BORDER_WIDTH);
-        textBoxes.add(codeWindow);
+        //textBoxes.add(codeWindow);
         textBoxes.add(flowChartTextBox);
 
         //Testing stuff
 
 
+
 //        ObjectMapper objectMapper = new ObjectMapper();
-//        File file0 = new File("CodeSyntax\\LC3-Operators.json");
+//        File file0 = new File("CodeSyntax\\LC3.json");
 //        try {
 //
 //           // String jsonFile = objectMapper.writeValueAsString(file0);
@@ -346,7 +194,7 @@ public class EngineTester {
 //            e.printStackTrace();
 //        }
 
-//        JsonReader j = new JsonReader(new File("CodeSyntax\\LC3-Operators.json"));
+//        JsonReader j = new JsonReader(new File("CodeSyntax\\LC3.json"));
 //        LC3Syntax s = j.mapJsonLC3Syntax();
 //        System.out.println(s);
 //        String []foo = s.getJumps();
@@ -395,7 +243,7 @@ public class EngineTester {
         flowChartWindow = new FlowChartWindow(null, null);
 
         header.setFlowChartWindow(flowChartWindow);
-        header.setCodeWindow(codeWindow);
+        //header.setCodeWindow(codeWindow);
     }
 
     /**
@@ -424,8 +272,10 @@ public class EngineTester {
             if(InputManager.LEFT_CLICK){
                 Vector2f newPosition = new Vector2f((float)InputManager.MOUSE_X, (float)InputManager.MOUSE_Y);
 
-                if(newPosition.x > textBoxes.get(0).getPosition().x - 1 && newPosition.x < (textBoxes.get(0).getPosition().x + textBoxes.get(0).getSize().x)-1 && newPosition.y > textBoxes.get(0).getPosition().y - 1 && newPosition.y < (textBoxes.get(0).getPosition().y + textBoxes.get(0).getSize().y)-1) {
-                    cursor = new Cursor(newPosition, codeWindow);
+                if(header.getCodeWindow() != null) {
+                    if (newPosition.x > header.getCodeWindow().getPosition().x - 1 && newPosition.x < (header.getCodeWindow().getPosition().x + header.getCodeWindow().getSize().x) - 1 && newPosition.y > header.getCodeWindow().getPosition().y - 1 && newPosition.y < (header.getCodeWindow().getPosition().y + header.getCodeWindow().getSize().y) - 1) {
+                        header.setCursor(new Cursor(newPosition, header.getCodeWindow()));
+                    }
                 }
 
                 //Reset left click value to avoid checking for new position multiple times per click
@@ -433,16 +283,16 @@ public class EngineTester {
             }
 
             //If there is a cursor process all of the events
-            if(cursor != null) {
-                cursor.processInputs(window);
+            if(header.getCursor() != null) {
+                header.getCursor().processInputs(window);
             }
 
             //Render
-            renderer.renderScene(guis, textBoxes, new Vector3f(1,1,1), cursor, GeneralSettings.FONT_SIZE, header, flowchartLines, flowChartWindow, codeWindow);
+            renderer.renderScene(guis, textBoxes, new Vector3f(1,1,1), header.getCursor(), GeneralSettings.FONT_SIZE, header, flowchartLines, flowChartWindow, header.getCodeWindow());
 
             //Temporarily make changes for scrolling
             if(InputManager.SCROLL_CHANGE != 0) {
-                codeWindow.scroll((float) -InputManager.SCROLL_CHANGE / 10);
+                header.getCodeWindow().scroll((float) -InputManager.SCROLL_CHANGE / 10);
             }
             //Swap the color buffers to update the screen
             GLFW.glfwSwapBuffers(window);

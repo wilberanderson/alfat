@@ -3,6 +3,7 @@ package gui;
 import main.GeneralSettings;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.util.vector.Vector2f;
+import parser.CodeReader;
 import utils.InputManager;
 
 import java.util.List;
@@ -284,5 +285,9 @@ public class Cursor {
 
     public CodeWindow getCodeWindow(){
         return codeWindow;
+    }
+
+    public void setCodeWindow(CodeWindow codeWindow){
+        this.codeWindow = codeWindow;
     }
 }

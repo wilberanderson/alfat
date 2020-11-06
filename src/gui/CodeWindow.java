@@ -34,6 +34,7 @@ public class CodeWindow extends TextBox{
         }
         maxVerticalPosition = minHeight-size.y;
         super.setGuiFilledBox(new GUIFilledBox(position, size, backgroundColor));
+
     }
 
 
@@ -115,6 +116,12 @@ public class CodeWindow extends TextBox{
         super.getSize().x = 0f;
         super.getGuiFilledBox().setSize(new Vector2f(0f, 2f));
         positionBounds.z = super.getPosition().x + super.getSize().x;
+    }
+
+    public void clear(){
+        for(GUIText text: super.getTexts()){
+            text.remove(text);
+        }
     }
 
 }
