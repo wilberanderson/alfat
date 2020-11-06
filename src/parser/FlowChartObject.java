@@ -55,4 +55,18 @@ public class FlowChartObject {
     public void setLabel(String label){
         this.label = label;
     }
+
+    public ArrayList<String> getRegisters(){
+        ArrayList<String> registers = new ArrayList<>();
+        for (LC3TLine line : lines){
+            if (!line.getRegisters().isEmpty()){
+                for (String register : line.getRegisters()){
+                    if (!registers.contains(register)) {
+                        registers.add(register);
+                    }
+                }
+            }
+        }
+        return registers;
+    }
 }
