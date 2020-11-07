@@ -170,6 +170,9 @@ public class CodeWindow extends TextBox{
         for(GUIText text: super.getTexts()){
             text.remove(text);
         }
+        for(GUIText text: super.getLineNumbers()){
+            text.remove(text);
+        }
     }
 
     public Vector2f getCodeWindowPosition(){
