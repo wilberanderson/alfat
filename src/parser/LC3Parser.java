@@ -5,6 +5,7 @@ import gui.textBoxes.FlowChartTextBox;
 import main.GeneralSettings;
 import org.lwjgl.system.CallbackI;
 import org.lwjgl.util.vector.Vector2f;
+import org.lwjgl.util.vector.Vector3f;
 
 import java.util.*;
 import java.io.*;
@@ -339,9 +340,9 @@ public class LC3Parser implements CodeReader {
         List<FlowchartLine> linesList = new ArrayList<>();
         int jump_lines = 0;
 
-        for (int index = 0; index < flowchart.size(); index++){
+        for (int index = 0; index <= flowchart.size(); index++){
             // Draw line to next box (not in the last box)
-            if (index < flowchart.size()-2){
+            if (index < flowchart.size()-1){
                 if (verbose) {
                     System.out.println("Adding vertical line from box " + index + " to box " + (index + 1));
                     System.out.println(locations.get(index) + " -> " + locations.get(index+1));
@@ -359,22 +360,30 @@ public class LC3Parser implements CodeReader {
             }
 
             // If jump, draw line to target box:
-            if (flowchart.get(index).isJumps()){
-                if (verbose) System.out.println("Adding jumping line from box " + index + " to box " + (flowchart.get(index).connection.getBoxNumber()));
-                List<Vector2f> coordinates = new ArrayList<>();
+            Vector3f rainbow[] = {new Vector3f(0.862745f, 0.196078f, 0.184313f),new Vector3f(0.796078f, 0.294117f, 0.086274f),new Vector3f(0.709803f, 0.537254f, 0),
+                    new Vector3f(0.521568f, .6f, 0),new Vector3f(0.164705f, 0.631372f, 0.596078f),
+                    new Vector3f(0.149019f, 0.545098f, 0.823529f),new Vector3f(0.423529f, 0.443137f, 0.768627f),
+                    new Vector3f(0.82745f, 0.211764f, 0.509803f)};
+            if (index < flowchart.size()) {
+                if (flowchart.get(index).isJumps()) {
+                    if (verbose)
+                        System.out.println("Adding jumping line from box " + index + " to box " + (flowchart.get(index).connection.getBoxNumber()));
+                    List<Vector2f> coordinates = new ArrayList<>();
 
-                coordinates.add(new Vector2f((- 1 + locations.get(index).x) + 2 * sizes.get(index).x/3, (-1 + locations.get(index).y)));
-                coordinates.add(new Vector2f((- 1 + locations.get(index).x) + 2 * sizes.get(index).x/3, (-1 + locations.get(index).y) - (GeneralSettings.FLOWCHART_PAD_TOP/3)));
+                    coordinates.add(new Vector2f((-1 + locations.get(index).x) + 2 * sizes.get(index).x / 3, (-1 + locations.get(index).y)));
+                    coordinates.add(new Vector2f((-1 + locations.get(index).x) + 2 * sizes.get(index).x / 3, (-1 + locations.get(index).y) - (GeneralSettings.FLOWCHART_PAD_TOP / 3)));
 
-                coordinates.add(new Vector2f((max_right_width + jump_lines * GeneralSettings.LINE_OFFSET), (-1 + locations.get(index).y) - (GeneralSettings.FLOWCHART_PAD_TOP/3)));
-                coordinates.add(new Vector2f((max_right_width + jump_lines * GeneralSettings.LINE_OFFSET), (-1 + sizes.get(flowchart.get(index).connection.getBoxNumber()-1).y + locations.get(flowchart.get(index).connection.getBoxNumber()-1).y + (GeneralSettings.FLOWCHART_PAD_TOP/3))));
+                    coordinates.add(new Vector2f((max_right_width + jump_lines * GeneralSettings.LINE_OFFSET), (-1 + locations.get(index).y) - (GeneralSettings.FLOWCHART_PAD_TOP / 3)));
+                    coordinates.add(new Vector2f((max_right_width + jump_lines * GeneralSettings.LINE_OFFSET), (-1 + sizes.get(flowchart.get(index).connection.getBoxNumber() - 1).y + locations.get(flowchart.get(index).connection.getBoxNumber() - 1).y + (GeneralSettings.FLOWCHART_PAD_TOP / 3))));
 
-                coordinates.add(new Vector2f((- 1 + locations.get(index).x) + 2 * sizes.get(flowchart.get(index).connection.getBoxNumber()-1).x/3, (-1 + sizes.get(flowchart.get(index).connection.getBoxNumber()-1).y + locations.get(flowchart.get(index).connection.getBoxNumber()-1).y + (GeneralSettings.FLOWCHART_PAD_TOP/3))));
-                coordinates.add(new Vector2f((- 1 + locations.get(index).x) + 2 * sizes.get(flowchart.get(index).connection.getBoxNumber()-1).x/3, (-1 + sizes.get(flowchart.get(index).connection.getBoxNumber()-1).y + locations.get(flowchart.get(index).connection.getBoxNumber()-1).y)));
-                FlowchartLine line = new FlowchartLine(coordinates);
-                linesList.add(line);
+                    coordinates.add(new Vector2f((-1 + locations.get(index).x) + 2 * sizes.get(flowchart.get(index).connection.getBoxNumber() - 1).x / 3, (-1 + sizes.get(flowchart.get(index).connection.getBoxNumber() - 1).y + locations.get(flowchart.get(index).connection.getBoxNumber() - 1).y + (GeneralSettings.FLOWCHART_PAD_TOP / 3))));
+                    coordinates.add(new Vector2f((-1 + locations.get(index).x) + 2 * sizes.get(flowchart.get(index).connection.getBoxNumber() - 1).x / 3, (-1 + sizes.get(flowchart.get(index).connection.getBoxNumber() - 1).y + locations.get(flowchart.get(index).connection.getBoxNumber() - 1).y)));
+                    FlowchartLine line = new FlowchartLine(coordinates);
+                    line.setColor(rainbow[jump_lines % rainbow.length]);
+                    linesList.add(line);
 
-                jump_lines++;
+                    jump_lines++;
+                }
             }
         }
 

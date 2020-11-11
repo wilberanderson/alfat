@@ -27,9 +27,6 @@ public class FlowchartLineRenderer {
     public FlowchartLineRenderer() {
         shader = new FlowchartLineShader();
         lineSegment = Loader.loadToVAO(VERTICES, 2);
-        shader.start();
-        shader.color.loadVec3(GeneralSettings.FLOWCHART_LINE_COLOR);
-        shader.stop();
     }
 
 
@@ -37,6 +34,7 @@ public class FlowchartLineRenderer {
         prepare();
         shader.zoomTranslateMatrix.loadMatrix(flowChartWindow.getZoomTranslateMatrix());
         for(FlowchartLine line : flowchartLines) {
+            shader.color.loadVec3(line.getColor());
             GL30.glBindVertexArray(lineSegment.getVaoID());
             GL20.glEnableVertexAttribArray(0);
             Vector2f position = line.getPositions().get(0);
