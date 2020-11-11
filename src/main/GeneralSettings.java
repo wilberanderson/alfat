@@ -69,7 +69,10 @@ public class GeneralSettings {
 	public static final Vector3f TEXT_COLOR = new Vector3f(1, 1, 1);
 	public static FontType TACOMA;
 	public static void initializeFonts() {
-		TACOMA = new FontType(Loader.loadTexture(new MyFile("/res/fonts/arial/arial.png")), new MyFile("/res/fonts/arial/arial.fnt"));
+		//TACOMA = new FontType(Loader.loadTexture(new MyFile("/res/fonts/arial/arial.png")), new MyFile("/res/fonts/arial/arial.fnt"));
+		//TACOMA = new FontType(Loader.loadTexture(new MyFile("/res/fonts/courierNew/courierNew.png")), new MyFile("/res/fonts/courierNew/courierNew.fnt"));
+		TACOMA = new FontType(Loader.loadTexture(new MyFile("/res/fonts/consolas/consolas.png")), new MyFile("/res/fonts/consolas/consolas.fnt"));
+
 	}
 
 	public static final Vector3f CURSOR_COLOR = new Vector3f(1, 1, 1);
