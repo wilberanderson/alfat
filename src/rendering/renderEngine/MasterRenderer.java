@@ -2,6 +2,7 @@ package rendering.renderEngine;
 
 import gui.*;
 import gui.textBoxes.CodeWindow;
+import gui.textBoxes.FlowChartTextBox;
 import gui.textBoxes.TextBox;
 import org.lwjgl.util.vector.Vector3f;
 import rendering.cursor.CursorRenderer;
@@ -35,10 +36,12 @@ public class MasterRenderer {
 	/**
 	 * Renders the scene to the screen.
 	 */
-	public void renderScene(List<GuiTexture> guis, List<TextBox> textBoxes, Vector3f color, Cursor cursor, float fontSize, Header header, List<FlowchartLine> flowchartLines, FlowChartWindow flowChartWindow, CodeWindow codeWindow) {
+	public void renderScene(List<GuiTexture> guis, List<FlowChartTextBox> textBoxes, Vector3f color, Cursor cursor, float fontSize, Header header, List<FlowchartLine> flowchartLines, FlowChartWindow flowChartWindow, CodeWindow codeWindow) {
 		guiRenderer.render(guis);
 		filledBoxRenderer.render(textBoxes, flowChartWindow, header);
-		flowchartLineRenderer.render(flowchartLines, flowChartWindow);
+		if(flowchartLines != null) {
+			flowchartLineRenderer.render(flowchartLines, flowChartWindow);
+		}
 		TextMaster.render(flowChartWindow, codeWindow);
 		if(cursor != null) {
 			cursorRenderer.render(cursor);

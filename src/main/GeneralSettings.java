@@ -10,7 +10,7 @@ import utils.MyFile;
 
 /**
  * Just some configs. File locations mostly.
- * 
+ *
  * @author Karl
  *
  */
@@ -66,12 +66,14 @@ public class GeneralSettings {
 	public static final float FONT_WIDTH = 0.25f;
 	public static final float FONT_EDGE = 0.4f;
 	public static final float FONT_SCALING_FACTOR = 0.06f;
-	public static final Vector3f TEXT_COLOR = new Vector3f(1, 1, 1);
-	public static FontType TACOMA;
+	public static final Vector3f TEXT_COLOR = new Vector3f(0.98828125f, 0.9609375f, 0.88671875f);
+	public static final Vector3f TEXT_BOX_BACKGROUND_COLOR = new Vector3f(0.1f, 0.1f, 0.1f);
+	public static final Vector3f TEXT_BOX_BORDER_COLOR = new Vector3f(0, 0, 0);
+	public static FontType CONSOLAS;
 	public static void initializeFonts() {
 		//TACOMA = new FontType(Loader.loadTexture(new MyFile("/res/fonts/arial/arial.png")), new MyFile("/res/fonts/arial/arial.fnt"));
 		//TACOMA = new FontType(Loader.loadTexture(new MyFile("/res/fonts/courierNew/courierNew.png")), new MyFile("/res/fonts/courierNew/courierNew.fnt"));
-		TACOMA = new FontType(Loader.loadTexture(new MyFile("/res/fonts/consolas/consolas.png")), new MyFile("/res/fonts/consolas/consolas.fnt"));
+		CONSOLAS = new FontType(Loader.loadTexture(new MyFile("/res/fonts/consolas/consolas.png")), new MyFile("/res/fonts/consolas/consolas.fnt"));
 
 	}
 
@@ -84,7 +86,7 @@ public class GeneralSettings {
 
 	public static String FILE_PATH;
 
-	public static final Vector3f LINE_NUMBER_BACKGROUND_COLOR = new Vector3f(0, 0, 1);
+	public static final Vector3f LINE_NUMBER_BACKGROUND_COLOR = new Vector3f(0, 0.1686f, 0.2117f);
 	public static String SYNTAX_PATH = "CodeSyntax/LC3.json";
 
 
@@ -104,4 +106,9 @@ public class GeneralSettings {
 	public Matrix2f getAspectRatio(){
 		return ASPECT_RATIO;
 	}
+
+	public static final float FLOWCHART_PAD_TOP = .1f;
+	public static final float FLOWCHART_PAD_LEFT = FLOWCHART_PAD_TOP*(DEFAULT_WIDTH/DEFAULT_HEIGHT);	//left padding
+
+	public static final float LINE_OFFSET = .15f;
 }

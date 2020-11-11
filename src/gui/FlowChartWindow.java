@@ -5,22 +5,21 @@ import main.GeneralSettings;
 import org.lwjgl.util.vector.Matrix3f;
 import org.lwjgl.util.vector.Vector2f;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class FlowChartWindow {
     private Vector2f position = new Vector2f(0, -1);
     private Vector2f size = new Vector2f(1, 2- GeneralSettings.TEXT_BUTTON_PADDING*2 - GeneralSettings.FONT_SIZE*GeneralSettings.FONT_SCALING_FACTOR);
 
-    private List<FlowChartTextBox> flowChartTextBoxList;
-    private List<FlowchartLine> flowchartLineList;
+    private static List<FlowChartTextBox> flowChartTextBoxList = new ArrayList<>();
+    private static List<FlowchartLine> flowchartLineList = new ArrayList<>();
     private Matrix3f zoomTranslateMatrix = new Matrix3f();
     private Vector2f translation = new Vector2f(0,0);
     private float zoom = 1;
     private Vector2f zoomCenter = new Vector2f(0, 2- GeneralSettings.TEXT_BUTTON_PADDING*2 - GeneralSettings.FONT_SIZE*GeneralSettings.FONT_SCALING_FACTOR);
 
-    public FlowChartWindow(List<FlowChartTextBox> flowchartTextBoxList, List<FlowchartLine> flowchartLineList){
-        this.flowChartTextBoxList = flowchartTextBoxList;
-        this.flowchartLineList = flowchartLineList;
+    public FlowChartWindow(){
         zoomTranslateMatrix.setIdentity();
     }
 
@@ -40,12 +39,23 @@ public class FlowChartWindow {
         size.x = 0f;
     }
 
-    public List<FlowChartTextBox> getFlowChartTextBoxList() {
+    public static List<FlowChartTextBox> getFlowChartTextBoxList() {
         return flowChartTextBoxList;
     }
 
-    public List<FlowchartLine> getFlowchartLineList(){
+    public static List<FlowchartLine> getFlowchartLineList(){
         return flowchartLineList;
+    }
+
+
+    public static void setFlowChartTextBoxList(List<FlowChartTextBox> textBoxes){
+        flowChartTextBoxList.clear();
+        flowChartTextBoxList.addAll(textBoxes);
+    }
+
+    public static void setFlowchartLineList(List<FlowchartLine> lines){
+        flowchartLineList.clear();
+        flowchartLineList.addAll(lines);
     }
 
     public Vector2f getPosition() {

@@ -25,16 +25,20 @@ public class TextBox {
     }
 
     public void changeVerticalPosition(float change){
-        position.y += change;
         for(GUIText text : texts){
+            text.changeVerticalPosition(change);
+        }
+        for(GUIText text : lineNumbers){
             text.changeVerticalPosition(change);
         }
     }
 
     public void changeHorizontalPosition(float change){
-        position.x += change;
         for(GUIText text : texts){
             text.changeHorizontalPosition(change);
+        }
+        for(GUIText text : lineNumbers){
+            text.changeVerticalPosition(change);
         }
     }
 
@@ -100,4 +104,14 @@ public class TextBox {
         return textNumberFilledBox;
     }
 
+
+
+    public void clear(){
+        for(GUIText text: texts){
+            text.remove(text);
+        }
+        for(GUIText text: lineNumbers){
+            text.remove(text);
+        }
+    }
 }

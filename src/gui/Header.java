@@ -6,6 +6,7 @@ import main.GeneralSettings;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 import parser.CodeReader;
+import parser.LC3Parser;
 import utils.MyFile;
 
 
@@ -36,6 +37,8 @@ public class Header {
 
 
         List<TextButton> testMenuButtonList = new ArrayList<>();
+
+        //open file
         TextButton button = new TextButton("Open File") {
             @Override
             public void onPress() {
@@ -66,19 +69,28 @@ public class Header {
                         codeWindow.clear();
                     }
                     //create code window
-                    codeWindow = new CodeWindow(new Vector2f(0f,0f), new Vector2f(1f, 2-GeneralSettings.FONT_SCALING_FACTOR*GeneralSettings.FONT_SIZE), new Vector3f(0.1f,0.1f,0.1f), new Vector3f(1,1,1), new Vector3f(0,0,0), content, GeneralSettings.TACOMA, GeneralSettings.FONT_SIZE, GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE, GeneralSettings.TEXT_BOX_BORDER_WIDTH);
+                    codeWindow = new CodeWindow(new Vector2f(0f,0f), new Vector2f(1f, 2-GeneralSettings.FONT_SCALING_FACTOR*GeneralSettings.FONT_SIZE), new Vector3f(0.1f,0.1f,0.1f), new Vector3f(1,1,1), new Vector3f(0,0,0), content, GeneralSettings.CONSOLAS, GeneralSettings.FONT_SIZE, GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE, GeneralSettings.TEXT_BOX_BORDER_WIDTH);
                     cursor = new Cursor(new Vector2f(codeWindow.getPosition()), codeWindow);
                 }
             }
         };
         testMenuButtonList.add(button);
+
+        //generate from file
         button = new TextButton("Generate Flowchart") {
             @Override
             public void onPress() {
-                System.out.println("Test success Button 1");
+                LC3Parser parser = new LC3Parser(GeneralSettings.FILE_PATH, true);
+
+                parser.ReadFile(GeneralSettings.FILE_PATH);
+
+                parser.getFlowObjects();
+                parser.createFlowchart();
             }
         };
         testMenuButtonList.add(button);
+
+        //Generate from editor (TODO: save to temp file and generate from that)
         button = new TextButton("Regenerate Flowchart From Editor") {
             @Override
             public void onPress() {
@@ -125,7 +137,7 @@ public class Header {
 
 
         testMenuButtonList.add(button);
-        HeaderMenu file = new HeaderMenu(new Vector2f(-1f, 1-GeneralSettings.FONT_SIZE*GeneralSettings.FONT_SCALING_FACTOR - 2*GeneralSettings.TEXT_BUTTON_PADDING), "File", new Vector3f(0, 0, 0), GeneralSettings.HIGHLIGHT_COLOR, GeneralSettings.CURSOR_COLOR, GeneralSettings.TACOMA, GeneralSettings.FONT_SIZE, GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE, testMenuButtonList);
+        HeaderMenu file = new HeaderMenu(new Vector2f(-1f, 1-GeneralSettings.FONT_SIZE*GeneralSettings.FONT_SCALING_FACTOR - 2*GeneralSettings.TEXT_BUTTON_PADDING), "File", new Vector3f(0, 0, 0), GeneralSettings.HIGHLIGHT_COLOR, GeneralSettings.CURSOR_COLOR, GeneralSettings.CONSOLAS, GeneralSettings.FONT_SIZE, GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE, testMenuButtonList);
         menuList.add(file);
     }
 
@@ -173,5 +185,9 @@ public class Header {
         if(codeWindow != null) {
             codeWindow.setAspectRatio(aspectRatio, size.y);
         }
+    }
+
+    public FlowChartWindow getFlowChartWindow(){
+        return flowChartWindow;
     }
 }

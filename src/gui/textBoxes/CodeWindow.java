@@ -166,15 +166,6 @@ public class CodeWindow extends TextBox{
         positionBounds.z = super.getPosition().x + super.getSize().x;
     }
 
-    public void clear(){
-        for(GUIText text: super.getTexts()){
-            text.remove(text);
-        }
-        for(GUIText text: super.getLineNumbers()){
-            text.remove(text);
-        }
-    }
-
     public Vector2f getCodeWindowPosition(){
         return new Vector2f(super.getPosition().x + super.getTextNumberFilledBox().getSize().x, super.getPosition().y);
     }

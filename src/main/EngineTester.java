@@ -173,9 +173,7 @@ public class EngineTester {
         textBoxes = new ArrayList<>();
         //Create sample text boxes
         //codeWindow = new CodeWindow(new Vector2f(0f,0f), new Vector2f(1f, header.getPosition().y+1), new Vector3f(0.1f,0.1f,0.1f), new Vector3f(1,1,1), new Vector3f(0,0,0), "", GeneralSettings.TACOMA, GeneralSettings.FONT_SIZE, GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE, GeneralSettings.TEXT_BOX_BORDER_WIDTH);
-        FlowChartTextBox flowChartTextBox = new FlowChartTextBox(new Vector2f(0.5f,1.5f), new Vector3f(1f,0f,0f), new Vector3f(1,1,1), new Vector3f(0,0,0), "Sample automatically sized textbox\nThis text box automatically sizes itself to match it's input", GeneralSettings.TACOMA, GeneralSettings.FONT_SIZE, GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE, GeneralSettings.TEXT_BOX_BORDER_WIDTH, 17);
         //textBoxes.add(codeWindow);
-        textBoxes.add(flowChartTextBox);
 
         //Testing stuff
 
@@ -205,43 +203,7 @@ public class EngineTester {
 //        }
 //
 
-
-
-
-
-        flowchartLines = new ArrayList<>();
-        List<Vector2f> positions1 = new ArrayList<>();
-        List<Vector2f> positions2 = new ArrayList<>();
-        List<Vector2f> positions3 = new ArrayList<>();
-        Vector2f position = new Vector2f(0.5f, 0);
-        positions1.add(position);
-        position = new Vector2f(0.5f, 0.5f);
-        positions1.add(position);
-        position = new Vector2f(0.75f, 0.5f);
-        positions1.add(position);
-
-        position = new Vector2f(0.5f, -0.9f);
-        positions2.add(position);
-        position = new Vector2f(0.75f, -0.9f);
-        positions2.add(position);
-        position = new Vector2f(0.75f, 0);
-        positions2.add(position);
-
-        position = new Vector2f(-1, -1);
-        positions3.add(position);
-        position = new Vector2f(0.5f, 10);
-        positions3.add(position);
-        position = new Vector2f(1f, -1f);
-        positions3.add(position);
-
-        FlowchartLine flowchartLine = new FlowchartLine(positions1);
-        flowchartLines.add(flowchartLine);
-        flowchartLine = new FlowchartLine(positions2);
-        flowchartLines.add(flowchartLine);
-        flowchartLine = new FlowchartLine(positions3);
-        flowchartLines.add(flowchartLine);
-
-        flowChartWindow = new FlowChartWindow(null, null);
+        flowChartWindow = new FlowChartWindow();
 
         header.setFlowChartWindow(flowChartWindow);
         //header.setCodeWindow(codeWindow);
@@ -292,7 +254,7 @@ public class EngineTester {
             }
 
             //Render
-            renderer.renderScene(guis, textBoxes, new Vector3f(1,1,1), header.getCursor(), GeneralSettings.FONT_SIZE, header, flowchartLines, flowChartWindow, header.getCodeWindow());
+            renderer.renderScene(guis, FlowChartWindow.getFlowChartTextBoxList(), new Vector3f(1,1,1), header.getCursor(), GeneralSettings.FONT_SIZE, header, flowchartLines, flowChartWindow, header.getCodeWindow());
 
             //Temporarily make changes for scrolling
             if(header.getCodeWindow() != null) {

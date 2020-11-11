@@ -1,5 +1,8 @@
 package parser;
+import gui.FlowChartWindow;
+import gui.textBoxes.FlowChartTextBox;
 import main.GeneralSettings;
+import org.lwjgl.util.vector.Vector2f;
 
 import java.util.*;
 import java.io.*;
@@ -53,6 +56,7 @@ public class LC3Parser implements CodeReader {
                 //parse line:
                 i++;    //line numbers start at 1
                 if (verbose) System.out.println("\nparsing line #" + i + "`" + line + "`");
+                line = line.replace("\t","    ");
 
                 //take entire line before semicolon
                 int index = line.indexOf(";");
@@ -247,6 +251,7 @@ public class LC3Parser implements CodeReader {
                     flowchart.get(flowchart.size() - 1).jumps = true;
                     flowchart.get(flowchart.size() - 1).target = line.getTarget();
                     flowchart.add(new FlowChartObject());
+                    flowchart.get(flowchart.size() - 1).setStartLine(line.getLineNumber());
                 }
             }
         }
@@ -285,5 +290,28 @@ public class LC3Parser implements CodeReader {
                 System.out.println("└────────────────────────────────────────────────────────────────────────────────┘");
             }
         }
+    }
+
+    public void createFlowchart(){
+        for(FlowChartTextBox textBox : FlowChartWindow.getFlowChartTextBoxList()){
+            textBox.clear();
+        }
+
+        int i = 0;
+        Vector2f location = new Vector2f(GeneralSettings.FLOWCHART_PAD_LEFT,2);
+        List<FlowChartTextBox> textBoxes = new ArrayList<>();
+        float max_right_width = -1000;
+
+        //draw the boxes vertically offset
+        for (FlowChartObject box : flowchart){
+            System.out.println("box " + i + " @ " + location);
+            System.out.println("Starting line #: " + box.getStartLine());
+            FlowChartTextBox textBox = new FlowChartTextBox(new Vector2f(location), box.getFullText(true), box.getStartLine()+1);
+            textBoxes.add(textBox);
+            textBox.setPosition(new Vector2f(textBox.getPosition().x, textBox.getPosition().y-textBox.getSize().y));
+            location.y = (location.y - textBox.getSize().y - GeneralSettings.FLOWCHART_PAD_TOP);
+            i++;
+        }
+        FlowChartWindow.setFlowChartTextBoxList(textBoxes);
     }
 }

@@ -8,28 +8,30 @@ import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
 
+import java.awt.geom.GeneralPath;
+
 public class FlowChartTextBox extends TextBox{
 
     private float lineHeight = GeneralSettings.FONT_SIZE*GeneralSettings.FONT_SCALING_FACTOR;
 
-    public FlowChartTextBox(Vector2f position, Vector3f backgroundColor, Vector3f textColor, Vector3f borderColor, String content, FontType font, float fontSize, float thickness, float borderWidth, float padding, int lineNumber){
+    public FlowChartTextBox(Vector2f position, String content, int lineNumber){
         super();
         super.setPosition(position);
-        super.setBackgroundColor(backgroundColor);
-        super.setBorderColor(borderColor);
-        super.setTextColor(textColor);
+        super.setBackgroundColor(GeneralSettings.TEXT_BOX_BACKGROUND_COLOR);
+        super.setBorderColor(GeneralSettings.TEXT_BOX_BORDER_COLOR);
+        super.setTextColor(GeneralSettings.TEXT_COLOR);
         String[] lines = content.split("\n");
-        float minHeight = padding;
+        float minHeight = GeneralSettings.TEXT_BOX_BORDER_WIDTH;
         double greatestLength = 0;
         float longestLineNumber = 0;
         for (String line : lines){
-            GUIText text = new GUIText(line, fontSize, font, new Vector2f(padding + position.x-1,position.y-minHeight - 1 - padding + lineHeight*lines.length), thickness, borderWidth, textColor, null, false, true, false);
+            GUIText text = new GUIText(line, GeneralSettings.FONT_SIZE, GeneralSettings.CONSOLAS, new Vector2f(GeneralSettings.TEXT_BOX_BORDER_WIDTH + position.x-1,position.y-minHeight - 1 - GeneralSettings.TEXT_BOX_BORDER_WIDTH + lineHeight*lines.length), GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE, GeneralSettings.TEXT_COLOR, null, false, true, false);
             super.getTexts().add(text);
             if (text.getLength() > greatestLength){
                 greatestLength = text.getLength();
             }
 
-            GUIText lineNumberText = new GUIText(Integer.toString(lineNumber), fontSize, font, new Vector2f(padding + position.x-1, text.getPosition().y), thickness, borderWidth, textColor, null, false, true, false);
+            GUIText lineNumberText = new GUIText(Integer.toString(lineNumber), GeneralSettings.FONT_SIZE, GeneralSettings.CONSOLAS, new Vector2f(GeneralSettings.TEXT_BOX_BORDER_WIDTH + position.x-1, text.getPosition().y), GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE, GeneralSettings.TEXT_COLOR, null, false, true, false);
             super.getLineNumbers().add(lineNumberText);
             if(lineNumberText.getLength() > longestLineNumber){
                 longestLineNumber = (float) lineNumberText.getLength();
@@ -38,9 +40,9 @@ public class FlowChartTextBox extends TextBox{
             minHeight+=lineHeight;
             lineNumber++;
         }
-        super.setTextNumberFilledBox(new GUIFilledBox(position, new Vector2f(longestLineNumber*2 + 2*padding, minHeight), GeneralSettings.LINE_NUMBER_BACKGROUND_COLOR));
-        super.setSize(new Vector2f((float)greatestLength*2 + 4*padding + super.getTextNumberFilledBox().getSize().x,lineHeight*lines.length + padding));
-        super.setGuiFilledBox(new GUIFilledBox(position, super.getSize(), backgroundColor));
+        super.setTextNumberFilledBox(new GUIFilledBox(position, new Vector2f(longestLineNumber*2 + 2*GeneralSettings.TEXT_BOX_BORDER_WIDTH, minHeight), GeneralSettings.LINE_NUMBER_BACKGROUND_COLOR));
+        super.setSize(new Vector2f((float)greatestLength*2 + 4*GeneralSettings.TEXT_BOX_BORDER_WIDTH + super.getTextNumberFilledBox().getSize().x,lineHeight*lines.length + GeneralSettings.TEXT_BOX_BORDER_WIDTH));
+        super.setGuiFilledBox(new GUIFilledBox(position, super.getSize(), GeneralSettings.TEXT_BOX_BACKGROUND_COLOR));
         for(GUIText text : super.getTexts()){
             text.setPosition(new Vector2f(super.getTextNumberFilledBox().getPosition().x+super.getTextNumberFilledBox().getSize().x-1, text.getPosition().y));
         }
@@ -49,5 +51,14 @@ public class FlowChartTextBox extends TextBox{
                 text.setPositionBounds(new Vector4f(position.x, position.y, position.x+super.getSize().x, position.y+super.getSize().y));
             }
         }
+    }
+
+    @Override
+    public void setPosition(Vector2f position){
+        changeHorizontalPosition(super.getPosition().x - position.x);
+        changeVerticalPosition(-(super.getPosition().y - position.y));
+        super.setPosition(position);
+        super.getTextNumberFilledBox().setPosition(position);
+        super.getGuiFilledBox().setPosition(new Vector2f(position.x + super.getTextNumberFilledBox().getSize().x, position.y));
     }
 }

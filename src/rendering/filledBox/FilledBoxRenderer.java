@@ -41,7 +41,7 @@ public class FilledBoxRenderer {
     }
 
 
-    public void render(List<TextBox> textBoxes, FlowChartWindow flowChartWindow, Header header){
+    public void render(List<FlowChartTextBox> textBoxes, FlowChartWindow flowChartWindow, Header header){
         prepare();
 
         GL30.glBindVertexArray(square.getVaoID());
