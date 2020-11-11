@@ -78,7 +78,7 @@ public class EngineTester {
         GLFW.glfwWindowHint(GLFW.GLFW_RESIZABLE, GLFW.GLFW_TRUE); // the window will not be resizable
 
         // Create the window
-        window = GLFW.glfwCreateWindow(GeneralSettings.DISPLAY_WIDTH, GeneralSettings.DISPLAY_HEIGHT, "ALFAT", MemoryUtil.NULL, MemoryUtil.NULL);
+        window = GLFW.glfwCreateWindow(GeneralSettings.DEFAULT_WIDTH, GeneralSettings.DEFAULT_HEIGHT, "ALFAT", MemoryUtil.NULL, MemoryUtil.NULL);
         if ( window == MemoryUtil.NULL )
             throw new RuntimeException("Failed to create the GLFW window");
 
@@ -245,6 +245,9 @@ public class EngineTester {
 
         header.setFlowChartWindow(flowChartWindow);
         //header.setCodeWindow(codeWindow);
+        InputManager.setFlowChartWindow(flowChartWindow);
+        GeneralSettings.updateAspectRatio(GeneralSettings.DEFAULT_WIDTH, GeneralSettings.DEFAULT_HEIGHT);
+        InputManager.setHeader(header);
     }
 
     /**
@@ -296,9 +299,8 @@ public class EngineTester {
                 if (InputManager.SCROLL_CHANGE != 0) {
                     header.getCodeWindow().scroll((float) -InputManager.SCROLL_CHANGE / 10);
                 }
-            }else{
-                InputManager.SCROLL_CHANGE = 0;
             }
+            InputManager.SCROLL_CHANGE = 0;
             //Swap the color buffers to update the screen
             GLFW.glfwSwapBuffers(window);
 

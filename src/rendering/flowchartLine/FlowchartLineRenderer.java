@@ -8,6 +8,7 @@ import main.GeneralSettings;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
+import org.lwjgl.util.vector.Matrix3f;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
@@ -34,7 +35,7 @@ public class FlowchartLineRenderer {
 
     public void render(List<FlowchartLine> flowchartLines, FlowChartWindow flowChartWindow){
         prepare();
-
+        shader.zoomTranslateMatrix.loadMatrix(flowChartWindow.getZoomTranslateMatrix());
         for(FlowchartLine line : flowchartLines) {
             GL30.glBindVertexArray(lineSegment.getVaoID());
             GL20.glEnableVertexAttribArray(0);

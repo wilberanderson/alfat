@@ -5,24 +5,29 @@ import java.util.Map;
 
 import gui.textBoxes.CodeWindow;
 import gui.FlowChartWindow;
+import main.GeneralSettings;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 import gui.fontMeshCreator.FontType;
 import gui.GUIText;
+import org.lwjgl.util.vector.Matrix3f;
 
 public class FontRenderer {
 
 	private FontShader shader;
+	private Matrix3f zoomTranslateMatrix = new Matrix3f();
 
 	public FontRenderer() {
 		shader = new FontShader();
+		zoomTranslateMatrix.setIdentity();
 	}
 
 
 	public void render(Map<FontType, List<GUIText>> texts, FlowChartWindow flowChartWindow, CodeWindow codeWindow){
 		prepare();
+		shader.aspectRatio.loadMatrix(GeneralSettings.ASPECT_RATIO);
 		for(FontType font : texts.keySet()){
 			GL13.glActiveTexture(GL13.GL_TEXTURE0);
 			GL11.glBindTexture(GL11.GL_TEXTURE_2D, font.getTextureAtlas());
@@ -60,16 +65,20 @@ public class FontRenderer {
 		if(text.isInFlowchart()){
 			shader.windowPosition.loadVec2(flowChartWindow.getPosition());
 			shader.windowSize.loadVec2(flowChartWindow.getSize());
+			shader.zoomTranslateMatrix.loadMatrix(flowChartWindow.getZoomTranslateMatrix());
 		}else if(text.isGuiText()){
 			shader.windowPosition.loadVec2(-1, -1);
 			shader.windowSize.loadVec2(2, 2);
+			shader.zoomTranslateMatrix.loadMatrix(zoomTranslateMatrix);
 		}else if(text.isCodeWindowText()){
 			shader.windowPosition.loadVec2(codeWindow.getCodeWindowPosition().x-1, codeWindow.getCodeWindowPosition().y-1);
 			shader.windowSize.loadVec2(codeWindow.getCodeWindowSize());
+			shader.zoomTranslateMatrix.loadMatrix(zoomTranslateMatrix);
 		}else{
 			if(codeWindow != null) {
 				shader.windowPosition.loadVec2(codeWindow.getPosition().x - 1, codeWindow.getPosition().y - 1);
 				shader.windowSize.loadVec2(codeWindow.getSize());
+				shader.zoomTranslateMatrix.loadMatrix(zoomTranslateMatrix);
 			}
 		}
 		GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, text.getVertexCount());
