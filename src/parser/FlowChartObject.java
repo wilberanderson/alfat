@@ -9,6 +9,7 @@ public class FlowChartObject {
     public int lineCount = 0;   //number of lines in the box
     public int startLine;   //the starting line number of the box
     public String alert = "";
+    public int boxNumber;
 
     public boolean jumps = false;
     public FlowChartObject connection = null;
@@ -66,5 +67,13 @@ public class FlowChartObject {
             }
         }
         return registers;
+    }
+
+    public void setBoxNumber(int boxNumber) {
+        this.boxNumber = boxNumber;
+    }
+
+    public int getBoxNumber() {
+        return boxNumber;
     }
 }

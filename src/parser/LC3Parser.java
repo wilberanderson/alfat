@@ -1,7 +1,9 @@
 package parser;
 import gui.FlowChartWindow;
+import gui.FlowchartLine;
 import gui.textBoxes.FlowChartTextBox;
 import main.GeneralSettings;
+import org.lwjgl.system.CallbackI;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.util.*;
@@ -225,6 +227,7 @@ public class LC3Parser implements CodeReader {
         //generate naive boxes for flowchart.
         if (verbose) System.out.println("\n\nBeginning flowchart parsing:");
         flowchart.add(new FlowChartObject());
+        flowchart.get(flowchart.size() - 1).setBoxNumber(flowchart.size()-1);
 
         for (LC3TLine line : lines){
             if (!line.getLineText(true).isEmpty()) {
@@ -250,6 +253,7 @@ public class LC3Parser implements CodeReader {
                     if (verbose) System.out.println("Line jumps, box ended.");
                     flowchart.get(flowchart.size() - 1).jumps = true;
                     flowchart.get(flowchart.size() - 1).target = line.getTarget();
+
                     flowchart.add(new FlowChartObject());
                     flowchart.get(flowchart.size() - 1).setStartLine(line.getLineNumber());
                 }
@@ -260,7 +264,9 @@ public class LC3Parser implements CodeReader {
         flowchart.removeIf(box -> box.getLineCount() == 0);
 
         //create linkages
+        int i = 1;
         for (FlowChartObject box : flowchart){
+            box.setBoxNumber(i);
             // If the box jumps, find where it targets and link them.
             if (box.isJumps()){
                 if (verbose) System.out.println("Creating linkage for box " + box.label + " targeting " + box.target);
@@ -277,41 +283,103 @@ public class LC3Parser implements CodeReader {
                     box.alert += "BRANCH DOES NOT EXIST";
                 }
             }
+            i++;
         }
 
         if (verbose){
             int n = 0;
             for (FlowChartObject box : flowchart){
                 n++;
-                System.out.println("┌────────────────────────────────────────────────────────────────────────────────┐");
+                System.out.println("┌─ "+ box.getBoxNumber() + "\t──────────────────────────────────────────────────────────────────────────┐");
                 System.out.println(box.getFullText(true));
-                if (box.isJumps()) System.out.println("┌╼ Target label: " +box.connection.label);
+                if (box.isJumps()) System.out.println("┌╼ Target label: " +box.connection.label + " @ box " + box.connection.getBoxNumber());
                 else if (!box.alert.isEmpty()) System.out.println("┌╼ " + box.alert);
                 System.out.println("└────────────────────────────────────────────────────────────────────────────────┘");
             }
         }
     }
 
+    /** Create flowchart.
+     * Creates flowchart boxes and draws lines.
+     *
+     */
     public void createFlowchart(){
         for(FlowChartTextBox textBox : FlowChartWindow.getFlowChartTextBoxList()){
             textBox.clear();
         }
 
         int i = 0;
-        Vector2f location = new Vector2f(GeneralSettings.FLOWCHART_PAD_LEFT,2);
+        Vector2f location = new Vector2f(GeneralSettings.FLOWCHART_PAD_LEFT,1);
         List<FlowChartTextBox> textBoxes = new ArrayList<>();
-        float max_right_width = -1000;
+        float max_right_width = -1000f;
+        List<Vector2f> locations = new ArrayList<>();
+        List<Vector2f> sizes = new ArrayList<>();
 
         //draw the boxes vertically offset
         for (FlowChartObject box : flowchart){
-            System.out.println("box " + i + " @ " + location);
-            System.out.println("Starting line #: " + box.getStartLine());
+            if (verbose){
+                System.out.println("box " + i + " @ " + location);
+                System.out.println("Starting line #: " + box.getStartLine());
+            }
             FlowChartTextBox textBox = new FlowChartTextBox(new Vector2f(location), box.getFullText(true), box.getStartLine()+1);
             textBoxes.add(textBox);
             textBox.setPosition(new Vector2f(textBox.getPosition().x, textBox.getPosition().y-textBox.getSize().y));
             location.y = (location.y - textBox.getSize().y - GeneralSettings.FLOWCHART_PAD_TOP);
             i++;
+
+            // Line helpers:
+            max_right_width = Math.max(max_right_width,textBox.getSize().y);
+            locations.add(textBox.getPosition());
+            sizes.add(textBox.getSize());
         }
+        // Pass flowchart boxes out:
         FlowChartWindow.setFlowChartTextBoxList(textBoxes);
+
+        // Draw lines:
+        List<FlowchartLine> linesList = new ArrayList<>();
+        int jump_lines = 0;
+
+        for (int index = 0; index < flowchart.size(); index++){
+            // Draw line to next box (not in the last box)
+            if (index < flowchart.size()-2){
+                if (verbose) {
+                    System.out.println("Adding vertical line from box " + index + " to box " + (index + 1));
+                    System.out.println(locations.get(index) + " -> " + locations.get(index+1));
+                }
+                List<Vector2f> coordinates = new ArrayList<>();
+                //first point: bottom of current box:
+                coordinates.add(new Vector2f((- 1 + locations.get(index).x) + .05f, (-1 + locations.get(index).y)));
+                //second point: top of next box:
+                coordinates.add(new Vector2f((- 1 + locations.get(index).x) + .05f, (-1 + locations.get(index+1).y + sizes.get(index+1).y)));
+                if (verbose) System.out.println("from " + (locations.get(index).y) + " to " + (-1 + locations.get(index+1).y + sizes.get(index+1).y) + "\n");
+
+                FlowchartLine line = new FlowchartLine(coordinates);
+                linesList.add(line);
+                if (verbose) System.out.println();
+            }
+
+            // If jump, draw line to target box:
+            if (flowchart.get(index).isJumps()){
+                if (verbose) System.out.println("Adding jumping line from box " + index + " to box " + (flowchart.get(index).connection.getBoxNumber()));
+                List<Vector2f> coordinates = new ArrayList<>();
+
+                coordinates.add(new Vector2f((- 1 + locations.get(index).x) + 2 * sizes.get(index).x/3, (-1 + locations.get(index).y)));
+                coordinates.add(new Vector2f((- 1 + locations.get(index).x) + 2 * sizes.get(index).x/3, (-1 + locations.get(index).y) - (GeneralSettings.FLOWCHART_PAD_TOP/3)));
+
+                coordinates.add(new Vector2f((max_right_width + jump_lines * GeneralSettings.LINE_OFFSET), (-1 + locations.get(index).y) - (GeneralSettings.FLOWCHART_PAD_TOP/3)));
+                coordinates.add(new Vector2f((max_right_width + jump_lines * GeneralSettings.LINE_OFFSET), (-1 + sizes.get(flowchart.get(index).connection.getBoxNumber()-1).y + locations.get(flowchart.get(index).connection.getBoxNumber()-1).y + (GeneralSettings.FLOWCHART_PAD_TOP/3))));
+
+                coordinates.add(new Vector2f((- 1 + locations.get(index).x) + 2 * sizes.get(flowchart.get(index).connection.getBoxNumber()-1).x/3, (-1 + sizes.get(flowchart.get(index).connection.getBoxNumber()-1).y + locations.get(flowchart.get(index).connection.getBoxNumber()-1).y + (GeneralSettings.FLOWCHART_PAD_TOP/3))));
+                coordinates.add(new Vector2f((- 1 + locations.get(index).x) + 2 * sizes.get(flowchart.get(index).connection.getBoxNumber()-1).x/3, (-1 + sizes.get(flowchart.get(index).connection.getBoxNumber()-1).y + locations.get(flowchart.get(index).connection.getBoxNumber()-1).y)));
+                FlowchartLine line = new FlowchartLine(coordinates);
+                linesList.add(line);
+
+                jump_lines++;
+            }
+        }
+
+        System.out.println("Lines added: " + linesList.size());
+        FlowChartWindow.setFlowchartLineList(linesList);
+
     }
 }

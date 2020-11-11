@@ -254,7 +254,7 @@ public class EngineTester {
             }
 
             //Render
-            renderer.renderScene(guis, FlowChartWindow.getFlowChartTextBoxList(), new Vector3f(1,1,1), header.getCursor(), GeneralSettings.FONT_SIZE, header, flowchartLines, flowChartWindow, header.getCodeWindow());
+            renderer.renderScene(guis, FlowChartWindow.getFlowChartTextBoxList(), new Vector3f(1,1,1), header.getCursor(), GeneralSettings.FONT_SIZE, header, flowChartWindow.getFlowchartLineList(), flowChartWindow, header.getCodeWindow());
 
             //Temporarily make changes for scrolling
             if(header.getCodeWindow() != null) {
