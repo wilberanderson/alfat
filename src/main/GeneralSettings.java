@@ -2,6 +2,7 @@ package main;
 
 import gui.fontMeshCreator.FontType;
 import loaders.Loader;
+import org.lwjgl.util.vector.Matrix2f;
 import org.lwjgl.util.vector.Vector3f;
 import utils.MyFile;
 
@@ -33,6 +34,8 @@ public class GeneralSettings {
 
     public static int DISPLAY_WIDTH = 1280;
 	public static int DISPLAY_HEIGHT = 720;
+	public static final int DEFAULT_WIDTH = 1280;
+	public static final int DEFAULT_HEIGHT = 720;
 
 
     public static float delta;
@@ -81,4 +84,21 @@ public class GeneralSettings {
 	public static final Vector3f LINE_NUMBER_BACKGROUND_COLOR = new Vector3f(0, 0, 1);
 	public static String SYNTAX_PATH = "CodeSyntax/LC3.json";
 
+
+	public static final float MIN_ZOOM = 0.1f;
+
+	public static Matrix2f ASPECT_RATIO = new Matrix2f();
+
+	public static void updateAspectRatio(int width, int height){
+		ASPECT_RATIO.m00 = (float)DEFAULT_WIDTH/width;
+		ASPECT_RATIO.m11 = (float)DEFAULT_HEIGHT/height;
+		ASPECT_RATIO.m10 = 0;
+		ASPECT_RATIO.m01 = 0;
+		DISPLAY_WIDTH = width;
+		DISPLAY_HEIGHT = height;
+	}
+
+	public Matrix2f getAspectRatio(){
+		return ASPECT_RATIO;
+	}
 }

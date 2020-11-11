@@ -26,7 +26,7 @@ public class Header {
     private FlowChartWindow flowChartWindow;
     private CodeWindow codeWindow;
     private Cursor cursor;
-
+    private Vector2f aspectRatio = new Vector2f(1, 1);
 
     public Header(Vector2f position, Vector2f size){
         menuList = new ArrayList<>();
@@ -158,5 +158,20 @@ public class Header {
 
     public void setCursor(Cursor cursor) {
         this.cursor = cursor;
+    }
+
+    public void setAspectRatio(Vector2f aspectRatio){
+        Vector2f size = guiFilledBox.getSize();
+        size.y /= this.aspectRatio.y;
+        size.y *= aspectRatio.y;
+        guiFilledBox.setSize(size);
+        for(HeaderMenu menu : menuList){
+            menu.setAspectRatio(new Vector2f(aspectRatio));
+        }
+        guiFilledBox.setPosition(new Vector2f(-1, 1-(1-guiFilledBox.getPosition().y)/this.aspectRatio.y*aspectRatio.y));
+        this.aspectRatio = aspectRatio;
+        if(codeWindow != null) {
+            codeWindow.setAspectRatio(aspectRatio, size.y);
+        }
     }
 }

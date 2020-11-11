@@ -2,6 +2,7 @@ package gui.textBoxes;
 
 import gui.GUIFilledBox;
 import gui.GUIText;
+import gui.buttons.HeaderMenu;
 import gui.fontMeshCreator.FontType;
 import main.GeneralSettings;
 import org.lwjgl.util.vector.Vector;
@@ -21,6 +22,7 @@ public class CodeWindow extends TextBox{
     private Vector4f positionBounds;
     private float lineHeight;
     private float padding;
+    private Vector2f aspectRatio = new Vector2f(1, 1);
 
     public CodeWindow(Vector2f position, Vector2f size, Vector3f backgroundColor, Vector3f textColor, Vector3f borderColor, String content, FontType font, float fontSize, float thickness, float borderWidth, float border) {
         super();
@@ -68,10 +70,10 @@ public class CodeWindow extends TextBox{
         if(oldNumber.getTextString().length() != super.getLineNumbers().get(super.getLineNumbers().size()-1).getTextString().length()){
             float oldWidth = super.getTextNumberFilledBox().getSize().x;
             float newWidth = (float)super.getLineNumbers().get(super.getLineNumbers().size()-1).getLength()*2 + 2*padding;
-            super.getTextNumberFilledBox().getSize().x = newWidth;
-            super.getGuiFilledBox().getPosition().x = 0 + newWidth;
-            super.getGuiFilledBox().setSize(new Vector2f(super.getSize().x-super.getGuiFilledBox().getPosition().x, super.getSize().y));
-            changeContentsHorizontalPosition(newWidth-oldWidth);
+            super.getTextNumberFilledBox().getSize().x = newWidth*aspectRatio.x;
+            super.getGuiFilledBox().getPosition().x = 0 + newWidth*aspectRatio.x;
+            super.getGuiFilledBox().setSize(new Vector2f((super.getSize().x-super.getGuiFilledBox().getPosition().x)*aspectRatio.x, super.getSize().y));
+            changeContentsHorizontalPosition((newWidth-oldWidth)*aspectRatio.x);
         }
     }
 
@@ -90,10 +92,10 @@ public class CodeWindow extends TextBox{
         if(lastText.getTextString().length() != newText.getLength()){
             float oldWidth = super.getTextNumberFilledBox().getSize().x;
             float newWidth = (float)super.getLineNumbers().get(super.getLineNumbers().size()-1).getLength()*2 + 2*padding;
-            super.getTextNumberFilledBox().getSize().x = newWidth;
-            super.getGuiFilledBox().getPosition().x = 0 + newWidth;
-            super.getGuiFilledBox().setSize(new Vector2f(super.getSize().x-super.getGuiFilledBox().getPosition().x, super.getSize().y));
-            changeContentsHorizontalPosition(newWidth-oldWidth);
+            super.getTextNumberFilledBox().getSize().x = newWidth*aspectRatio.x;
+            super.getGuiFilledBox().getPosition().x = 0 + newWidth*aspectRatio.x;
+            super.getGuiFilledBox().setSize(new Vector2f((super.getSize().x-super.getGuiFilledBox().getPosition().x)*aspectRatio.x, super.getSize().y));
+            changeContentsHorizontalPosition((newWidth-oldWidth)*aspectRatio.x);
         }
     }
 
@@ -128,6 +130,7 @@ public class CodeWindow extends TextBox{
 
 
     public void scroll(float scrollChange){
+        scrollChange*= aspectRatio.y;
         if(maxVerticalPosition > super.getPosition().x) {
             float newPosition = contentsVerticalPosition + scrollChange;
             if (newPosition < 0) {
@@ -141,9 +144,6 @@ public class CodeWindow extends TextBox{
                 changeContentsVerticalPosition(scrollChange);
             }
             InputManager.SCROLL_CHANGE = 0;
-        }
-        else{
-            System.out.println(maxVerticalPosition);
         }
     }
 
@@ -170,6 +170,9 @@ public class CodeWindow extends TextBox{
         for(GUIText text: super.getTexts()){
             text.remove(text);
         }
+        for(GUIText text: super.getLineNumbers()){
+            text.remove(text);
+        }
     }
 
     public Vector2f getCodeWindowPosition(){
@@ -178,6 +181,33 @@ public class CodeWindow extends TextBox{
 
     public Vector2f getCodeWindowSize(){
         return new Vector2f(super.getSize().x-super.getTextNumberFilledBox().getSize().x, super.getSize().y);
+    }
+
+    public void setAspectRatio(Vector2f aspectRatio, float headerHeight){
+        float lineNumberWidth = super.getTextNumberFilledBox().getSize().x/this.aspectRatio.x*aspectRatio.x;
+        float height = 2-headerHeight;
+        float codeWindowWidth = super.getSize().x-lineNumberWidth;
+        super.setSize(new Vector2f(super.getSize().x, height));
+        super.getTextNumberFilledBox().setSize(new Vector2f(lineNumberWidth, height));
+        super.getGuiFilledBox().setPosition(new Vector2f(lineNumberWidth, 0));
+        super.getGuiFilledBox().setSize(new Vector2f(super.getSize().x-lineNumberWidth, height));
+        //changeLineNumberVerticalPosition(-contentsVerticalPosition - ((this.getSize().y-1)-this.aspectRatio.y));
+        contentsVerticalPosition = contentsVerticalPosition/this.aspectRatio.y*aspectRatio.y;
+        maxVerticalPosition = maxVerticalPosition/this.aspectRatio.y*aspectRatio.y;
+        //changeLineNumberVerticalPosition(contentsVerticalPosition+((this.getSize().y-1)-aspectRatio.y));
+        float startingHeight = this.getSize().y - 1;
+        startingHeight /= aspectRatio.y;
+        for(GUIText text : super.getLineNumbers()){
+            text.setPosition(new Vector2f(-1/aspectRatio.x, startingHeight));//+contentsVerticalPosition));
+            startingHeight -= lineHeight;
+        }
+        startingHeight = this.getSize().y - 1;
+        startingHeight /= aspectRatio.y;
+        for(GUIText text : super.getTexts()){
+            text.setPosition(new Vector2f((getCodeWindowPosition().x-1)/aspectRatio.x, startingHeight));//+contentsVerticalPosition));
+            startingHeight -= lineHeight;
+        }
+        this.aspectRatio = aspectRatio;
     }
 
 }

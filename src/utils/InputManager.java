@@ -1,11 +1,14 @@
 package utils;
 
+import gui.FlowChartWindow;
+import gui.Header;
 import gui.buttons.Button;
 import gui.buttons.HeaderMenu;
 import gui.buttons.HighlightableButton;
 import main.GeneralSettings;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.util.vector.Vector2f;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,6 +41,7 @@ public class InputManager {
     public static double MOUSE_Y_CHANGE = 0.0;
     private static double previousMouseX = 0;
     private static double previousMouseY = 0;
+    private static boolean LEFT_MOUSE_HELD = false;
     private static GLFWKeyCallback keyCallback;
     private static GLFWScrollCallback scrollCallback;
     private static GLFWMouseButtonCallback mouseButtonCallback;
@@ -47,18 +51,13 @@ public class InputManager {
     private static GLFWFramebufferSizeCallback framebufferSizeCallback;
     public static List<Character> codepoints = new ArrayList<>();
     private static HeaderMenu openMenu = null;
+    private static FlowChartWindow flowChartWindow;
+    private static Header header;
+    private static Vector2f aspectRatio = new Vector2f(1, 1);
 
     public static void init(long window){
         buttons = new ArrayList<>();
 
-//        TextButton button = new TextButton(new Vector2f(-1f, 1-GeneralSettings.FONT_SIZE*GeneralSettings.FONT_SCALING_FACTOR - 2*GeneralSettings.TEXT_BUTTON_PADDING), "Text creation test", new Vector3f(0, 0, 0), GeneralSettings.HIGHLIGHT_COLOR, new Vector3f(1, 1, 1), GeneralSettings.TACOMA, GeneralSettings.FONT_SIZE, GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE) {
-//            @Override
-//            public void onPress() {
-//                System.out.println("Test success");
-//            }
-//        };
-//        buttons.add(button);
-        // Setup a key callback. It will be called every time a key is pressed, repeated or released
         glfwSetKeyCallback(window, keyCallback = new GLFWKeyCallback() {
             @Override
             public void invoke(long window, int key, int scancode, int action, int mods) {
@@ -116,7 +115,7 @@ public class InputManager {
             public void invoke(long window, int button, int action, int mods) {
                 if(button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
                     LEFT_CLICK = true;
-
+                    LEFT_MOUSE_HELD = true;
                     for(Button b: buttons){
                         if(MOUSE_X >= b.getPosition().x && MOUSE_Y >= b.getPosition().y && MOUSE_X < b.getPosition().x+b.getSize().x && MOUSE_Y < b.getPosition().y+b.getSize().y){
                             b.onPress();
@@ -130,6 +129,9 @@ public class InputManager {
                             break;
                         }
                     }
+                }else if(button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE){
+                    LEFT_CLICK = false;
+                    LEFT_MOUSE_HELD = false;
                 }else if(button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS) {
                     RIGHT_CLICK = true;
                 }else if(button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_RELEASE) {
@@ -140,11 +142,13 @@ public class InputManager {
         glfwSetCursorPosCallback(window, cursorPosCallback = new GLFWCursorPosCallback() {
             @Override
             public void invoke(long window, double xpos, double ypos) {
+                previousMouseX = MOUSE_X;
+                previousMouseY = MOUSE_Y;
                 MOUSE_X = xpos/GeneralSettings.DISPLAY_WIDTH*2 - 1f;
                 MOUSE_Y = 1-ypos/GeneralSettings.DISPLAY_HEIGHT*2;
                 for(Button b: buttons){
                     if(b instanceof HighlightableButton) {
-                        if (MOUSE_X >= b.getPosition().x && MOUSE_Y >= b.getPosition().y && MOUSE_X < b.getPosition().x + b.getSize().x && MOUSE_Y < b.getPosition().y + b.getSize().y) {
+                        if (MOUSE_X >= b.getPosition().x && MOUSE_Y >= b.getPosition().y && MOUSE_X< b.getPosition().x + b.getSize().x && MOUSE_Y< b.getPosition().y + b.getSize().y) {
                             if(!((HighlightableButton) b).isHighlighted()) {
                                 ((HighlightableButton) b).highlight();
                             }
@@ -157,8 +161,6 @@ public class InputManager {
                 }
             }
         });
-        previousMouseX = MOUSE_X;
-        previousMouseY = MOUSE_Y;
 
         glfwSetCharCallback(window, charCallback = new GLFWCharCallback() {
             @Override
@@ -170,9 +172,10 @@ public class InputManager {
         glfwSetFramebufferSizeCallback(window, framebufferSizeCallback = new GLFWFramebufferSizeCallback() {
             @Override
             public void invoke(long window, int width, int height) {
-                GeneralSettings.DISPLAY_WIDTH = width;
-                GeneralSettings.DISPLAY_HEIGHT = height;
-                GL11.glViewport(0, 0, GeneralSettings.DISPLAY_WIDTH, GeneralSettings.DISPLAY_HEIGHT);
+                GeneralSettings.updateAspectRatio(width, height);
+                GL11.glViewport(0, 0, width, height);
+                header.setAspectRatio(new Vector2f(GeneralSettings.ASPECT_RATIO.m00, GeneralSettings.ASPECT_RATIO.m11));
+                aspectRatio = new Vector2f(GeneralSettings.ASPECT_RATIO.m00, GeneralSettings.ASPECT_RATIO.m11);
             }
         });
     }
@@ -200,6 +203,20 @@ public class InputManager {
         MOUSE_Y_CHANGE = MOUSE_Y - previousMouseY;
         previousMouseX = MOUSE_X;
         previousMouseY = MOUSE_Y;
+        if(SCROLL_CHANGE != 0){
+            flowChartWindow.updateZoom((float)SCROLL_CHANGE/10);
+        }
+        if(LEFT_MOUSE_HELD && (MOUSE_X_CHANGE != 0 || MOUSE_Y_CHANGE != 0)){
+            flowChartWindow.updateTranslation(new Vector2f((float)MOUSE_X_CHANGE, (float)MOUSE_Y_CHANGE));
+        }
+    }
+
+    public static void setFlowChartWindow(FlowChartWindow newFlowChartWindow){
+        flowChartWindow = newFlowChartWindow;
+    }
+
+    public static void setHeader(Header newHeader){
+        header = newHeader;
     }
 
 }

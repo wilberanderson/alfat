@@ -10,10 +10,13 @@ import gui.textBoxes.CodeWindow;
 import gui.textBoxes.FlowChartTextBox;
 import gui.textBoxes.TextBox;
 import loaders.Loader;
+import main.GeneralSettings;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
+import org.lwjgl.util.vector.Matrix2f;
 import org.lwjgl.util.vector.Matrix3f;
+import rendering.shaders.uniforms.UniformMat2;
 import utils.InputManager;
 
 public class FilledBoxRenderer {
@@ -26,10 +29,15 @@ public class FilledBoxRenderer {
             2, 2
     };
     private RawModel square;
+    private Matrix3f zoomTranslateMatrix = new Matrix3f();
+    private Matrix2f aspectRatio = new Matrix2f();
+
 
     public FilledBoxRenderer() {
         shader = new FilledBoxShader();
         square = Loader.loadToVAO(VERTICES, 2);
+        zoomTranslateMatrix.setIdentity();
+        aspectRatio.setIdentity();
     }
 
 
@@ -41,16 +49,20 @@ public class FilledBoxRenderer {
 
         if(header.getCodeWindow() != null) {
             shader.windowPosition.loadVec2(header.getCodeWindow().getPosition().x - 1, header.getCodeWindow().getPosition().y - 1);
+            shader.aspectRatio.loadMatrix(aspectRatio);
             shader.windowSize.loadVec2(header.getCodeWindow().getSize());
+            shader.zoomTranslateMatrix.loadMatrix(zoomTranslateMatrix);
             renderFilledBox(header.getCodeWindow().getTextNumberFilledBox());
             shader.windowPosition.loadVec2(header.getCodeWindow().getCodeWindowPosition().x - 1, header.getCodeWindow().getCodeWindowPosition().y - 1);
             shader.windowSize.loadVec2(header.getCodeWindow().getCodeWindowSize());
             renderFilledBox(header.getCodeWindow().getGuiFilledBox());
         }
+        shader.zoomTranslateMatrix.loadMatrix(flowChartWindow.getZoomTranslateMatrix());
         for(TextBox textBox : textBoxes){
             if(textBox instanceof FlowChartTextBox){
                 shader.windowPosition.loadVec2(flowChartWindow.getPosition());
                 shader.windowSize.loadVec2(flowChartWindow.getSize());
+                shader.aspectRatio.loadMatrix(GeneralSettings.ASPECT_RATIO);
             }else{
                 System.out.println("Undefined box rendering behavior");
             }
@@ -71,7 +83,9 @@ public class FilledBoxRenderer {
 
         GL30.glBindVertexArray(square.getVaoID());
         GL20.glEnableVertexAttribArray(0);
+        shader.aspectRatio.loadMatrix(aspectRatio);
 
+        shader.zoomTranslateMatrix.loadMatrix(zoomTranslateMatrix);
         shader.color.loadVec3(header.getGuiFilledBox().getColor());
         Matrix3f transformationMatrix = new Matrix3f();
         transformationMatrix.m00 = header.getGuiFilledBox().getSize().x/2;
@@ -82,6 +96,7 @@ public class FilledBoxRenderer {
         shader.windowPosition.loadVec2(-1, -1);
         shader.windowSize.loadVec2(2, 2);
         GL11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 0, 4);
+
 
         for(Button button : InputManager.buttons){
             if(button instanceof TextButton){

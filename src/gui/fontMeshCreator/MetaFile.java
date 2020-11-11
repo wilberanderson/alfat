@@ -46,7 +46,7 @@ public class MetaFile {
 	 *            - the font file.
 	 */
 	protected MetaFile(MyFile file) {
-		this.aspectRatio = (double) GeneralSettings.DISPLAY_WIDTH / (double) GeneralSettings.DISPLAY_HEIGHT;
+		this.aspectRatio = (double) GeneralSettings.DEFAULT_WIDTH / (double) GeneralSettings.DEFAULT_HEIGHT;
 		openFile(file);
 		loadPaddingData();
 		loadLineSizes();
