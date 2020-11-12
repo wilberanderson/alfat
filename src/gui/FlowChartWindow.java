@@ -2,6 +2,7 @@ package gui;
 
 import gui.textBoxes.FlowChartTextBox;
 import main.GeneralSettings;
+import org.lwjgl.util.vector.Matrix2f;
 import org.lwjgl.util.vector.Matrix3f;
 import org.lwjgl.util.vector.Vector2f;
 
@@ -18,9 +19,11 @@ public class FlowChartWindow {
     private Vector2f translation = new Vector2f(0,0);
     private float zoom = 1;
     private Vector2f zoomCenter = new Vector2f(0, 2- GeneralSettings.TEXT_BUTTON_PADDING*2 - GeneralSettings.FONT_SIZE*GeneralSettings.FONT_SCALING_FACTOR);
+    private Matrix2f aspectRatio = new Matrix2f();
 
     public FlowChartWindow(){
         zoomTranslateMatrix.setIdentity();
+        aspectRatio.setIdentity();
     }
 
 
@@ -89,4 +92,11 @@ public class FlowChartWindow {
 
     }
 
+    public Matrix2f getAspectRatio() {
+        return aspectRatio;
+    }
+
+    public void setAspectRatio(Matrix2f aspectRatio) {
+        this.aspectRatio = aspectRatio;
+    }
 }

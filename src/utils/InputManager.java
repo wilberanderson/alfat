@@ -175,6 +175,7 @@ public class InputManager {
                 GeneralSettings.updateAspectRatio(width, height);
                 GL11.glViewport(0, 0, width, height);
                 header.setAspectRatio(new Vector2f(GeneralSettings.ASPECT_RATIO.m00, GeneralSettings.ASPECT_RATIO.m11));
+                flowChartWindow.setAspectRatio(GeneralSettings.ASPECT_RATIO);
                 aspectRatio = new Vector2f(GeneralSettings.ASPECT_RATIO.m00, GeneralSettings.ASPECT_RATIO.m11);
             }
         });

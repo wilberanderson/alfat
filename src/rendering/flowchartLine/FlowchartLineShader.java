@@ -2,10 +2,7 @@ package rendering.flowchartLine;
 
 import main.GeneralSettings;
 import rendering.shaders.ShaderProgram;
-import rendering.shaders.uniforms.UniformFloat;
-import rendering.shaders.uniforms.UniformMat3;
-import rendering.shaders.uniforms.UniformVec2;
-import rendering.shaders.uniforms.UniformVec3;
+import rendering.shaders.uniforms.*;
 
 /**
  * Handles the interaction with the {@link gui.Cursor} vertex and fragment shaders.
@@ -19,6 +16,7 @@ public class FlowchartLineShader extends ShaderProgram{
     protected UniformVec2 windowPosition = new UniformVec2("windowPosition");
     protected UniformVec2 windowSize = new UniformVec2("windowSize");
     protected UniformMat3 zoomTranslateMatrix = new UniformMat3("zoomTranslateMatrix");
+    protected UniformMat2 aspectRatio = new UniformMat2("aspectRatio");
 
     /**
      * Performs setup for a {@link FlowchartLineShader}
@@ -28,7 +26,7 @@ public class FlowchartLineShader extends ShaderProgram{
      */
     public FlowchartLineShader() {
         super(GeneralSettings.FLOWCHART_VERTEX, GeneralSettings.FLOWCHART_FRAGMENT, "position");
-        super.storeAllUniformLocations(color, startPosition, endPosition, windowPosition, windowSize, zoomTranslateMatrix);
+        super.storeAllUniformLocations(color, startPosition, endPosition, windowPosition, windowSize, zoomTranslateMatrix, aspectRatio);
     }
 
 
