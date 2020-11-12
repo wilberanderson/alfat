@@ -31,7 +31,7 @@ public class FlowChartTextBox extends TextBox{
                 greatestLength = text.getLength();
             }
 
-            GUIText lineNumberText = new GUIText(Integer.toString(lineNumber), GeneralSettings.FONT_SIZE, GeneralSettings.CONSOLAS, new Vector2f(GeneralSettings.TEXT_BOX_BORDER_WIDTH + position.x-1, text.getPosition().y), GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE, GeneralSettings.TEXT_COLOR, null, false, true, false);
+            GUIText lineNumberText = new GUIText(Integer.toString(lineNumber), GeneralSettings.FONT_SIZE, GeneralSettings.CONSOLAS, new Vector2f(GeneralSettings.TEXT_BOX_BORDER_WIDTH + position.x-1, text.getPosition().y), GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE, GeneralSettings.LINE_NUMBER_COLOR, null, false, true, false);
             super.getLineNumbers().add(lineNumberText);
             if(lineNumberText.getLength() > longestLineNumber){
                 longestLineNumber = (float) lineNumberText.getLength();

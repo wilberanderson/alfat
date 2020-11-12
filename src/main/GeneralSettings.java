@@ -60,7 +60,7 @@ public class GeneralSettings {
 	public static final int DEFAULT_TAB_WIDTH = 4;
 	public static final Vector3f HIGHLIGHT_COLOR = new Vector3f(0, 0.35f, 0.465f);
 	public static final float TEXT_BOX_BORDER_WIDTH = 0.003f;
-	public static final Vector3f HEADER_COLOR = new Vector3f(0.25f, 0.25f, 0.25f);
+	public static final Vector3f HEADER_COLOR = new Vector3f(0, 0.168627f, 0.211764f);
 
 	public static final float FONT_SIZE = 1f;
 	public static final float FONT_WIDTH = 0.25f;
@@ -87,6 +87,7 @@ public class GeneralSettings {
 	public static String FILE_PATH;
 
 	public static final Vector3f LINE_NUMBER_BACKGROUND_COLOR = new Vector3f(0.02745f, 0.211764f, 0.258823f);
+	public static final Vector3f LINE_NUMBER_COLOR = new Vector3f(0.576470f, 0.631372f, 0.631372f);
 	public static String SYNTAX_PATH = "CodeSyntax/LC3.json";
 
 

@@ -135,7 +135,7 @@ public class EngineTester {
         GL.createCapabilities();
 
         // Set the clear color
-        GL11.glClearColor(0.2f, 0.2f, 0.2f, 0.0f);
+        GL11.glClearColor(0.02745f, 0.211764f, 0.258823f, 0.0f);
 
         //Initializes the render engine
         renderer = new MasterRenderer();
