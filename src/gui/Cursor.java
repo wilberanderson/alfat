@@ -4,7 +4,6 @@ import gui.textBoxes.CodeWindow;
 import main.GeneralSettings;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.util.vector.Vector2f;
-import parser.CodeReader;
 import utils.InputManager;
 
 import java.util.List;
@@ -15,7 +14,7 @@ public class Cursor {
     private int characterIndex;
     private CodeWindow codeWindow;
     private GUIText text;
-    private Vector2f position;
+    private final Vector2f position;
     private int rapidCounter = 0;
     private List<GUIText> texts;
     private Vector2f aspectRatio;
@@ -102,7 +101,10 @@ public class Cursor {
                 delete();
             }
         }else if(InputManager.PASTE){
-            paste(GLFW.glfwGetClipboardString(window));
+            String clipboard = GLFW.glfwGetClipboardString(window);
+            if(clipboard != null) {
+                paste(clipboard);
+            }
             InputManager.PASTE = false;
         }
         if(!InputManager.codepoints.isEmpty()) {
@@ -209,6 +211,7 @@ public class Cursor {
         String originalText = text.getTextString();
         String textString = originalText.substring(0, characterIndex);
         String endText = originalText.substring(characterIndex);
+        StringBuilder stringBuilder = new StringBuilder(textString);
         char[] pastedChars = new char[clipboardContents.length()];
         for(int i = 0; i < clipboardContents.length(); i++) {
             pastedChars[i] = clipboardContents.charAt(i);
@@ -216,21 +219,21 @@ public class Cursor {
 
         for(char c : pastedChars){
             if(c == '\n'){
-                GUIText newText = new GUIText(textString, text, true);
+                GUIText newText = new GUIText(stringBuilder.toString(), text, true);
                 texts.set(lineIndex, newText);
                 text = new GUIText(endText, newText, false);
                 text.setPosition(new Vector2f(text.getPosition().x, text.getPosition().y - text.getFontSize()*0.06f));
                 lineIndex++;
                 codeWindow.addText(text, lineIndex);
-                textString = "";
+                stringBuilder = new StringBuilder();
                 characterIndex = 0;
                 updateYPosition();
             }else{
-                textString += c;
+                stringBuilder.append(c);
                 characterIndex++;
             }
         }
-        text = new GUIText(textString + endText, text, true);
+        text = new GUIText(stringBuilder.toString() + endText, text, true);
         texts.set(lineIndex, text);
         updateXPosition();
         InputManager.PASTE = false;
@@ -240,24 +243,24 @@ public class Cursor {
         String originalText = text.getTextString();
         String textString = originalText.substring(0, characterIndex);
         String endText = originalText.substring(characterIndex);
-        StringBuilder stringBuilder = new StringBuilder();
+        StringBuilder stringBuilder = new StringBuilder(textString);
         for(char c : InputManager.codepoints){
             if(c == '\n'){
-                GUIText newText = new GUIText(textString, text, true);
+                GUIText newText = new GUIText(stringBuilder.toString(), text, true);
                 texts.set(lineIndex, newText);
                 text = new GUIText(endText, newText, false);
                 text.setPosition(new Vector2f(text.getPosition().x, text.getPosition().y - text.getFontSize()*GeneralSettings.FONT_SCALING_FACTOR));
                 lineIndex++;
                 codeWindow.addText(text, lineIndex);
-                textString = "";
+                stringBuilder = new StringBuilder();
                 characterIndex = 0;
                 updateYPosition();
             }else{
-                textString += c;
+                stringBuilder.append(c);
                 characterIndex++;
             }
         }
-        text = new GUIText(textString + endText, text, true);
+        text = new GUIText(stringBuilder.toString() + endText, text, true);
         texts.set(lineIndex, text);
         updateXPosition();
 

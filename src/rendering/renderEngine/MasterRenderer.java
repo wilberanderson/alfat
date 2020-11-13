@@ -9,6 +9,7 @@ import rendering.cursor.CursorRenderer;
 import rendering.flowchartLine.FlowchartLineRenderer;
 import rendering.guis.GuiRenderer;
 import rendering.filledBox.FilledBoxRenderer;
+import rendering.terminators.TerminatorRenderer;
 import rendering.text.TextMaster;
 
 import java.util.List;
@@ -24,6 +25,7 @@ public class MasterRenderer {
 	private FilledBoxRenderer filledBoxRenderer;
 	private CursorRenderer cursorRenderer;
 	private FlowchartLineRenderer flowchartLineRenderer;
+	private TerminatorRenderer terminatorRenderer;
 
 	public MasterRenderer() {
 		guiRenderer = new GuiRenderer();
@@ -31,6 +33,7 @@ public class MasterRenderer {
 		TextMaster.init();
 		cursorRenderer = new CursorRenderer();
 		flowchartLineRenderer = new FlowchartLineRenderer();
+		terminatorRenderer = new TerminatorRenderer();
 	}
 
 	/**
@@ -41,6 +44,7 @@ public class MasterRenderer {
 		filledBoxRenderer.render(textBoxes, flowChartWindow, header);
 		if(flowchartLines != null) {
 			flowchartLineRenderer.render(flowchartLines, flowChartWindow);
+			terminatorRenderer.render(flowchartLines, flowChartWindow);
 		}
 		TextMaster.render(flowChartWindow, codeWindow);
 		if(cursor != null) {
@@ -59,5 +63,6 @@ public class MasterRenderer {
 		filledBoxRenderer.cleanUp();
 		cursorRenderer.cleanUp();
 		flowchartLineRenderer.cleanUp();
+		terminatorRenderer.cleanUp();
 	}
 }

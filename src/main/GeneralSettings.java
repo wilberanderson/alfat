@@ -31,6 +31,8 @@ public class GeneralSettings {
 	public static final MyFile SELECTION_FRAGMENT = new MyFile("/rendering/selection/fragment.glsl");
 	public static final MyFile FLOWCHART_VERTEX = new MyFile("/rendering/flowchartLine/flowchartLineVertex.glsl");
 	public static final MyFile FLOWCHART_FRAGMENT = new MyFile("/rendering/flowchartLine/flowchartLineFragment.glsl");
+	public static final MyFile TERMINATOR_VERTEX = new MyFile("/rendering/terminators/terminatorVertex.glsl");
+	public static final MyFile TERMINATOR_FRAGMENT = new MyFile("/rendering/terminators/terminatorFragment.glsl");
 
     public static int DISPLAY_WIDTH = 1280;
 	public static int DISPLAY_HEIGHT = 720;
