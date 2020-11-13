@@ -85,6 +85,19 @@ public class mainTester {
         TempFileManager tfm = new TempFileManager(GeneralSettings.TEMP_DIR);
 
 
+        tfm.update();
+        tfm.printFiles();
+
+
+
+
+
+
+
+
+
+
+
     }
 
 }

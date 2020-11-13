@@ -105,6 +105,10 @@ public class TempFileManager {
      * Updates list of tempFiles from the temp files folder path.
      */
     public void update() {
+        if(!tempFiles.isEmpty()) {
+            tempFiles.removeAll(tempFiles);
+        }
+
         try {
             File folder = new File(this.folderPath);
             File[] listOfFiles = folder.listFiles();
@@ -169,7 +173,7 @@ public class TempFileManager {
     /**
      * Exist only for debug...
      * */
-    private void printFiles() {
+    public void printFiles() {
         for (int i = 0; i < tempFiles.size(); i++) {
             System.out.println(tempFiles.get(i).getName());
         }

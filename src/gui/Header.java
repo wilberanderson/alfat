@@ -3,31 +3,22 @@ package gui;
 import gui.textBoxes.CodeWindow;
 import main.EngineTester;
 import main.GeneralSettings;
-import org.lwjgl.BufferUtils;
-import org.lwjgl.glfw.GLFW;
-import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 import parser.CodeReader;
 import parser.LC3Parser;
-import rendering.renderEngine.MasterRenderer;
 import utils.MyFile;
 
 
 import java.awt.geom.GeneralPath;
-import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 import gui.buttons.HeaderMenu;
 import gui.buttons.TextButton;
-
-import javax.imageio.ImageIO;
 
 public class Header {
     private List<HeaderMenu> menuList;
@@ -88,29 +79,6 @@ public class Header {
                     codeWindow = new CodeWindow(new Vector2f(0f,0f), new Vector2f(1f, 2-GeneralSettings.FONT_SCALING_FACTOR*GeneralSettings.FONT_SIZE), new Vector3f(0.1f,0.1f,0.1f), new Vector3f(1,1,1), new Vector3f(0,0,0), content, GeneralSettings.CONSOLAS, GeneralSettings.FONT_SIZE, GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE, GeneralSettings.TEXT_BOX_BORDER_WIDTH, size.y);
                     cursor = new Cursor(new Vector2f(codeWindow.getPosition()), codeWindow);
                 }
-
-                //Create temp file
-
-                //Save To Temp Location
-                if (!GeneralSettings.FILE_PATH.equals("null")) {
-                    TempFileOperations tfo = new TempFileOperations(GeneralSettings.TEMP_DIR);
-                    if (codeWindow != null) {
-                        tfo.saveTempFile(GeneralSettings.FILE_PATH);
-                    }
-                }
-
-                //LC3Parser parser = new LC3Parser(GeneralSettings.FILE_PATH, true);
-                //parser.ReadFile(GeneralSettings.FILE_PATH);
-
-                tfm.update();
-                if(tfm.getMostRecent().equals("null")) {
-                    return;
-                }
-                LC3Parser parser = new LC3Parser(tfm.getMostRecent(), true);
-                parser.ReadFile(tfm.getMostRecent());
-
-                parser.getFlowObjects();
-                parser.createFlowchart();
             }
         };
         testMenuButtonList.add(button);
@@ -150,6 +118,36 @@ public class Header {
                     tfo.tempSave(codeWindow.getTexts(), GeneralSettings.FILE_PATH);
                 }
 
+            }
+        };
+        testMenuButtonList.add(button);
+
+        //generate from file
+        button = new TextButton("Generate Flowchart") {
+            @Override
+            public void onPress() {
+                //Create temp file
+
+                //Save To Temp Location
+                if (!GeneralSettings.FILE_PATH.equals("null")) {
+                    TempFileOperations tfo = new TempFileOperations(GeneralSettings.TEMP_DIR);
+                    if (codeWindow != null) {
+                        tfo.saveTempFile(GeneralSettings.FILE_PATH);
+                    }
+                }
+
+                //LC3Parser parser = new LC3Parser(GeneralSettings.FILE_PATH, true);
+                //parser.ReadFile(GeneralSettings.FILE_PATH);
+
+                tfm.update();
+                if(tfm.getMostRecent().equals("null")) {
+                   return;
+                }
+                LC3Parser parser = new LC3Parser(tfm.getMostRecent(), true);
+                parser.ReadFile(tfm.getMostRecent());
+
+                parser.getFlowObjects();
+                parser.createFlowchart();
             }
         };
         testMenuButtonList.add(button);
@@ -199,52 +197,7 @@ public class Header {
             }
         };
 
-        testMenuButtonList.add(button);
-        button = new TextButton("Save Image") {
-            @Override
-            public void onPress() {
-                MasterRenderer.renderScreenshot();
-                GLFW.glfwSwapBuffers(EngineTester.getWindow());
 
-                String filePath;
-                OpenFileDialog of = new OpenFileDialog();
-                of.saveFileWindow();
-                filePath = of.getFilePath();
-
-                if(filePath.equals("null")) {
-                    return; //Prevent save if no file lol
-                }
-
-
-                GL11.glReadBuffer(GL11.GL_FRONT);
-                int width = GeneralSettings.DISPLAY_WIDTH;
-                int height= GeneralSettings.DISPLAY_HEIGHT;
-                int bpp = 4; // Assuming a 32-bit display with a byte each for red, green, blue, and alpha.
-                ByteBuffer buffer = BufferUtils.createByteBuffer(width * height * bpp);
-                GL11.glReadPixels(0, 0, width, height, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, buffer );
-
-                //File file = new File("scrot.png"); // The file to save to.
-                File file = new File(filePath); // The file to save to.
-                String format = "PNG"; // Example: "PNG" or "JPG"
-                BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-
-                for(int x = 0; x < width; x++)
-                {
-                    for(int y = 0; y < height; y++)
-                    {
-                        int i = (x + (width * y)) * bpp;
-                        int r = buffer.get(i) & 0xFF;
-                        int g = buffer.get(i + 1) & 0xFF;
-                        int b = buffer.get(i + 2) & 0xFF;
-                        image.setRGB(x, height - (y + 1), (0xFF << 24) | (r << 16) | (g << 8) | b);
-                    }
-                }
-
-                try {
-                    ImageIO.write(image, format, file);
-                } catch (IOException e) { e.printStackTrace(); }
-            }
-        };
         testMenuButtonList.add(button);
         HeaderMenu file = new HeaderMenu(new Vector2f(-1f, 1-GeneralSettings.FONT_SIZE*GeneralSettings.FONT_SCALING_FACTOR - 2*GeneralSettings.TEXT_BUTTON_PADDING), "File", new Vector3f(0, 0, 0), GeneralSettings.HIGHLIGHT_COLOR, GeneralSettings.CURSOR_COLOR, GeneralSettings.CONSOLAS, GeneralSettings.FONT_SIZE, GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE, testMenuButtonList);
         menuList.add(file);

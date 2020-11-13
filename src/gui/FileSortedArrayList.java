@@ -50,8 +50,8 @@ public class FileSortedArrayList extends ArrayList<File> {
         try{
             BasicFileAttributes attrsCurr = Files.readAttributes(current.toPath(), BasicFileAttributes.class);
             BasicFileAttributes attrsStored = Files.readAttributes(stored.toPath(), BasicFileAttributes.class);
-            FileTime timeCurr = attrsCurr.lastModifiedTime();
-            FileTime timeStored = attrsStored.lastModifiedTime();
+            FileTime timeCurr = attrsCurr.creationTime();
+            FileTime timeStored = attrsStored.creationTime();
 
 
             //String pattern = "MM-dd-yyyy HH-mm-ss";
