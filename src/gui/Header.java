@@ -102,6 +102,11 @@ public class Header {
 
                 parser.getFlowObjects();
                 parser.createFlowchart();
+
+                if(codeWindow != null && flowChartWindow != null) {
+                    codeWindow.minimize();
+                    flowChartWindow.maximize();
+                }
             }
         };
         testMenuButtonList.add(button);

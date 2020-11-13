@@ -368,8 +368,10 @@ public class LC3Parser implements CodeReader {
                 Terminator terminator;
                 if(coordinates.get(coordinates.size()-1).y < coordinates.get((coordinates.size()-2)).y){
                     terminator = new ArrowHead(coordinates.get(coordinates.size()-1), false);
+                    terminator = new Junction(coordinates.get(coordinates.size()-1));
                 }else{
                     terminator = new ArrowHead(coordinates.get(coordinates.size()-1), true);
+                    terminator = new Junction(coordinates.get(coordinates.size()-1));
                 }
                 FlowchartLine line = new FlowchartLine(coordinates, terminator);
                 linesList.add(line);
@@ -430,8 +432,10 @@ public class LC3Parser implements CodeReader {
                     Terminator terminator;
                     if(coordinates.get(coordinates.size()-1).y < coordinates.get((coordinates.size()-2)).y){
                         terminator = new ArrowHead(coordinates.get(coordinates.size()-1), false);
+                        terminator = new Junction(coordinates.get(coordinates.size()-1));
                     }else{
                         terminator = new ArrowHead(coordinates.get(coordinates.size()-1), true);
+                        terminator = new Junction(coordinates.get(coordinates.size()-1));
                     }
                     FlowchartLine line = new FlowchartLine(coordinates, terminator);
                     line.setColor(rainbow[jump_lines % rainbow.length]);
