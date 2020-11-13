@@ -1,7 +1,5 @@
 package main;
-import gui.fontMeshCreator.FontType;
 import gui.*;
-import gui.textBoxes.FlowChartTextBox;
 import gui.textBoxes.TextBox;
 import loaders.*;
 import org.lwjgl.glfw.*;
@@ -9,19 +7,12 @@ import org.lwjgl.opengl.*;
 import org.lwjgl.system.*;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
-import org.lwjgl.util.vector.Vector4f;
-import parser.JsonReader;
-import parser.LC3Syntax;
 import rendering.renderEngine.MasterRenderer;
 import utils.InputManager;
-import utils.MyFile;
 
-import java.io.File;
 import java.nio.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Flow;
-
 
 
 public class EngineTester {
@@ -245,14 +236,26 @@ public class EngineTester {
         }
     }
 
+
+    /**
+     * Save content from code editor to temp file.
+     * */
+    private void saveIfCrash() {
+        TempFileOperations tfm = new TempFileOperations(GeneralSettings.TEMP_DIR);
+        if(header.getCodeWindow() != null) {
+            tfm.tempSave(header.getCodeWindow().getTexts(),GeneralSettings.FILE_PATH);
+        }
+    }
+
+
     /**Used for a graceful crash of the program
-     *  - TODO: Saves changes to files (DONE!!!)
+     *  - TODO: Saves changes to files
      *  - Frees up memory
      *  - Exits with an error code
      */
     public void crash(){
         exit();
-
+        saveIfCrash();
         System.exit(-1);
     }
 

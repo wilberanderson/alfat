@@ -1,101 +1,179 @@
 package gui;
 
-import java.io.File;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
+import main.GeneralSettings;
 
+import java.io.File;
+import java.util.ArrayList;
 
 
 /**
- * Manages Temp Files in the following ways:
- * (1) Used to fave contents of code editor upon crash,
+ * Manages the paths of the current files in the temp folder.
  * @author Thomas
- * */
-public class TempFileManager extends SaveToFile {
-    //Boolean to show console prints
-    private Boolean verbose;
+ */
+public class TempFileManager {
+    private String folderPath;
+    private FileSortedArrayList tempFiles;
+    private int current;
 
 
     /**
-     * Must set the string literal file path to where the file is to be saved.
-     * @param saveFilepath
+     * Must set the directory of the temp folder
+     * */
+    public TempFileManager(String tempDir) {
+        folderPath = tempDir;
+        tempFiles = new FileSortedArrayList();
+        current = -1; //Does not exist
+        update();
+        //printFiles();
+    }
+
+
+    /**
+     * A hard delete of temple. Removes from tempFiles and the temp folder.
+     * Careful!!! MUST ENSURE that ONLY the tempfolder is set.
+     * */
+    public void deleteCurrentTempFile() {
+        if(!tempFiles.isEmpty()) {
+            deleteCurrent(current);
+        }
+    }
+
+
+
+    //TODO: Add a soft remove that does not remove file but excludes it from tempFiles during run time
+
+    /**
+     * Returns the most recently modified file of the temp list
+     * @return String, a string literal filepath if it exist otherwise returns
+     * string literal "null"
+     * */
+    public String getMostRecent() {
+        String result = "null";
+
+        if(!tempFiles.isEmpty()) {
+            tempFiles.resort();
+            result = getFilePath(0);
+        }
+        return result;
+    }
+
+
+    /**
+     * Returns the current index to the filePath
+     * @return String, a string literal filepath if it exist otherwise returns
+     * string literal "null"
+     * */
+    public String getCurrent() {
+        String result = "null";
+        if(!tempFiles.isEmpty()) {
+            result = getFilePath(current);
+        }
+        return result;
+    }
+
+    /**
+     * Moves the current index of the tempFiles back one place
+     * and returns the current index to the filePath
+     * @return String, a string literal filepath if it exist otherwise returns
+     * string literal "null"
+     * */
+    public String rollback() {
+        String result = "null";
+        if(!tempFiles.isEmpty()) {
+            currBack();
+            result = getFilePath(current);
+        }
+        return result;
+    }
+
+    /**
+     * Moves the current index of the tempFiles back one place
+     * and returns the current index to the filePath
+     * @return String, a string literal filepath if it exist otherwise returns
+     * string literal "null"
+     * */
+    public String moveForeword() {
+        String result = "null";
+        if(!tempFiles.isEmpty()) {
+            currForeword();
+            result = getFilePath(current);
+        }
+        return result;
+    }
+
+    /**
+     * Updates list of tempFiles from the temp files folder path.
      */
-    public TempFileManager(String saveFilepath) {
-        super(saveFilepath);
-        verbose = false;
-    }
-
-    /**
-     * Set the flag to see debug text...
-     * @see private void printFolder()
-     * @param verbose boolean ture to show print, set false in constructor.
-    * */
-    public void showPrints(Boolean verbose) {
-        this.verbose = verbose;
-    }
-
-
-    /**
-     * Saves the current the list of code editor contents to a temp file in a temp folder.
-     * @see gui.SaveToFile
-     * @see gui.GUIText
-     * @param textLines A java LIST<GUIText>
-     * @param currentFilePath java string literal
-     * */
-    public void exitSave(List<GUIText> textLines, String currentFilePath) {
-        //Gets date from system
-        Date date = new Date();
-        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH-mm-ss");
-
-        //Add date to string
-        String timeStamp = formatter.format(date);
-        File tempFile;
-
-        //If the file loaded from the current file path then it saves it's and adds
-        //a timestamp. Otherwise it just adds the timestamp and a tempSave
-        if(currentFilePath != null && !currentFilePath.equals("null")) {
-            tempFile = new File(currentFilePath);
-            tempFile = new File(super.getSaveFilepath(),timeStamp+"_"+tempFile.getName());
-        } else {
-            tempFile = new File(super.getSaveFilepath(),timeStamp+"_tempSave");
-        }
-        super.save(textLines, tempFile);
-
-        printFolder();
-    }
-
-
-    /**
-     * Deletes the contents of a folder.
-     * SHOULD NEVER BE ANYTHING but the temp folder if called.
-     * You have been warned!!!
-     * */
-    public void clearTempFolder(String tempFolderPath) {
-        File folder = new File(tempFolderPath);
-        File[] listOfFiles = folder.listFiles();
-        for (int i = 0; i < listOfFiles.length; i++) {
-            if (listOfFiles[i].isFile()) {
-                listOfFiles[i].delete();
-            }
-        }
-    }
-
-    /**
-     * Only exist for debug...
-     * */
-    private void printFolder() {
-        if(verbose == true) {
-            File folder = new File(super.getSaveFilepath());
+    public void update() {
+        try {
+            File folder = new File(this.folderPath);
             File[] listOfFiles = folder.listFiles();
             for (int i = 0; i < listOfFiles.length; i++) {
                 if (listOfFiles[i].isFile()) {
-                    System.out.println("File " + listOfFiles[i].getName());
+                    tempFiles.addSort(listOfFiles[i]);
                 } else if (listOfFiles[i].isDirectory()) {
-                    System.out.println("Directory " + listOfFiles[i].getName());
+                    //Should ignore might need to dig by date...
                 }
             }
+            current = 0;
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
+
+
+    /**
+     * Deletes the current file from tempFiles and temp folder
+     * and move current foreword.
+     * */
+    private void deleteCurrent(int index) {
+        tempFiles.get(index).delete();
+        tempFiles.remove(index);
+        currForeword();
+
+
+    }
+
+
+    /**
+     * returns the string file path of tempFiles based on a provided index.
+     * @see public String getMostRecent()
+     * @see public String getCurrent()
+     * @see public String rollback()
+     * @see public String moveForeword()
+     * @return String, a string literal filepath
+     * */
+    private String getFilePath(int index) {
+        return tempFiles.get(index).getAbsolutePath();
+    }
+
+
+    /**
+    * move current back by 1 if possible
+    * */
+    private void currBack() {
+        if(current < tempFiles.size()-1) {
+            current++;
+        }
+    }
+
+    /**
+     * move current foreword
+     * */
+    private void currForeword() {
+        if(current > 0) {
+            current--;
+        }
+    }
+
+    /**
+     * Exist only for debug...
+     * */
+    private void printFiles() {
+        for (int i = 0; i < tempFiles.size(); i++) {
+            System.out.println(tempFiles.get(i).getName());
+        }
+    }
+
 
 }

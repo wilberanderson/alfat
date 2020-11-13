@@ -97,6 +97,7 @@ public class OpenFileDialog {
      */
     public void saveFileWindow() {
         PointerBuffer outPath = memAllocPointer(1);
+
         try {
             if (isOpenFromDefault == true) {
                 checkResult(NFD_SaveDialog(filterList, null, outPath), outPath);
