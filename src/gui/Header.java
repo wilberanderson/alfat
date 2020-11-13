@@ -79,6 +79,29 @@ public class Header {
                     codeWindow = new CodeWindow(new Vector2f(0f,0f), new Vector2f(1f, 2-GeneralSettings.FONT_SCALING_FACTOR*GeneralSettings.FONT_SIZE), new Vector3f(0.1f,0.1f,0.1f), new Vector3f(1,1,1), new Vector3f(0,0,0), content, GeneralSettings.CONSOLAS, GeneralSettings.FONT_SIZE, GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE, GeneralSettings.TEXT_BOX_BORDER_WIDTH, size.y);
                     cursor = new Cursor(new Vector2f(codeWindow.getPosition()), codeWindow);
                 }
+
+                //Create temp file
+
+                //Save To Temp Location
+                if (!GeneralSettings.FILE_PATH.equals("null")) {
+                    TempFileOperations tfo = new TempFileOperations(GeneralSettings.TEMP_DIR);
+                    if (codeWindow != null) {
+                        tfo.saveTempFile(GeneralSettings.FILE_PATH);
+                    }
+                }
+
+                //LC3Parser parser = new LC3Parser(GeneralSettings.FILE_PATH, true);
+                //parser.ReadFile(GeneralSettings.FILE_PATH);
+
+                tfm.update();
+                if(tfm.getMostRecent().equals("null")) {
+                    return;
+                }
+                LC3Parser parser = new LC3Parser(tfm.getMostRecent(), true);
+                parser.ReadFile(tfm.getMostRecent());
+
+                parser.getFlowObjects();
+                parser.createFlowchart();
             }
         };
         testMenuButtonList.add(button);
@@ -118,36 +141,6 @@ public class Header {
                     tfo.tempSave(codeWindow.getTexts(), GeneralSettings.FILE_PATH);
                 }
 
-            }
-        };
-        testMenuButtonList.add(button);
-
-        //generate from file
-        button = new TextButton("Generate Flowchart") {
-            @Override
-            public void onPress() {
-                //Create temp file
-
-                //Save To Temp Location
-                if (!GeneralSettings.FILE_PATH.equals("null")) {
-                    TempFileOperations tfo = new TempFileOperations(GeneralSettings.TEMP_DIR);
-                    if (codeWindow != null) {
-                        tfo.saveTempFile(GeneralSettings.FILE_PATH);
-                    }
-                }
-
-                //LC3Parser parser = new LC3Parser(GeneralSettings.FILE_PATH, true);
-                //parser.ReadFile(GeneralSettings.FILE_PATH);
-
-                tfm.update();
-                if(tfm.getMostRecent().equals("null")) {
-                   return;
-                }
-                LC3Parser parser = new LC3Parser(tfm.getMostRecent(), true);
-                parser.ReadFile(tfm.getMostRecent());
-
-                parser.getFlowObjects();
-                parser.createFlowchart();
             }
         };
         testMenuButtonList.add(button);
