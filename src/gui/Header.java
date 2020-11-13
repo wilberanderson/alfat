@@ -1,18 +1,22 @@
 package gui;
 
 import gui.textBoxes.CodeWindow;
+import main.EngineTester;
 import main.GeneralSettings;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
+import parser.CodeReader;
 import parser.LC3Parser;
+import utils.MyFile;
 
 
+import java.awt.geom.GeneralPath;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
-
+import java.util.Vector;
 import gui.buttons.HeaderMenu;
 import gui.buttons.TextButton;
 
@@ -28,7 +32,7 @@ public class Header {
     private TempFileManager tfm;
 
 
-    public Header(Vector2f position, Vector2f size) {
+    public Header(Vector2f position, Vector2f size){
         menuList = new ArrayList<>();
         guiFilledBox = new GUIFilledBox(position, size, GeneralSettings.HEADER_COLOR);
         this.position = position;
@@ -60,24 +64,24 @@ public class Header {
                 }
 
                 // If the file exists, load it into the text editor.
-                if (!GeneralSettings.FILE_PATH.equals("null")) {
+                if (!GeneralSettings.FILE_PATH.equals("null")){
                     String content = "";
-                    try {
+                    try{
                         File file = new File(GeneralSettings.FILE_PATH);
                         BufferedReader reader = new BufferedReader(new FileReader(file));
                         String line;
                         while ((line = reader.readLine()) != null) {
-                            content += line.replace("\t", "    ");
+                            content += line.replace("\t","    ");
                             content += '\n';
                         }
-                    } catch (Exception e) {
+                    }catch(Exception e){
                         e.printStackTrace();
                     }
-                    if (codeWindow != null) {
+                    if(codeWindow != null) {
                         codeWindow.clear();
                     }
                     //create code window
-                    codeWindow = new CodeWindow(new Vector2f(0f, 0f), new Vector2f(1f, 2 - GeneralSettings.FONT_SCALING_FACTOR * GeneralSettings.FONT_SIZE), new Vector3f(0.1f, 0.1f, 0.1f), new Vector3f(1, 1, 1), new Vector3f(0, 0, 0), content, GeneralSettings.CONSOLAS, GeneralSettings.FONT_SIZE, GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE, GeneralSettings.TEXT_BOX_BORDER_WIDTH);
+                    codeWindow = new CodeWindow(new Vector2f(0f,0f), new Vector2f(1f, 2-GeneralSettings.FONT_SCALING_FACTOR*GeneralSettings.FONT_SIZE), new Vector3f(0.1f,0.1f,0.1f), new Vector3f(1,1,1), new Vector3f(0,0,0), content, GeneralSettings.CONSOLAS, GeneralSettings.FONT_SIZE, GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE, GeneralSettings.TEXT_BOX_BORDER_WIDTH, size.y);
                     cursor = new Cursor(new Vector2f(codeWindow.getPosition()), codeWindow);
                 }
             }
@@ -155,7 +159,7 @@ public class Header {
         button = new TextButton("Text Editor View") {
             @Override
             public void onPress() {
-                if (codeWindow != null && flowChartWindow != null) {
+                if(codeWindow != null && flowChartWindow != null) {
                     codeWindow.maximize();
                     flowChartWindow.minimize();
                 }
@@ -165,7 +169,7 @@ public class Header {
         button = new TextButton("Flowchart View") {
             @Override
             public void onPress() {
-                if (codeWindow != null && flowChartWindow != null) {
+                if(codeWindow != null && flowChartWindow != null) {
                     codeWindow.minimize();
                     flowChartWindow.maximize();
                 }
@@ -175,7 +179,7 @@ public class Header {
         button = new TextButton("Splitscreen View") {
             @Override
             public void onPress() {
-                if (codeWindow != null && flowChartWindow != null) {
+                if(codeWindow != null && flowChartWindow != null) {
                     codeWindow.goSplitScreen();
                     flowChartWindow.goSplitScreen();
                 }
@@ -184,7 +188,7 @@ public class Header {
 
 
         testMenuButtonList.add(button);
-        HeaderMenu file = new HeaderMenu(new Vector2f(-1f, 1 - GeneralSettings.FONT_SIZE * GeneralSettings.FONT_SCALING_FACTOR - 2 * GeneralSettings.TEXT_BUTTON_PADDING), "File", new Vector3f(0, 0, 0), GeneralSettings.HIGHLIGHT_COLOR, GeneralSettings.CURSOR_COLOR, GeneralSettings.CONSOLAS, GeneralSettings.FONT_SIZE, GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE, testMenuButtonList);
+        HeaderMenu file = new HeaderMenu(new Vector2f(-1f, 1-GeneralSettings.FONT_SIZE*GeneralSettings.FONT_SCALING_FACTOR - 2*GeneralSettings.TEXT_BUTTON_PADDING), "File", new Vector3f(0, 0, 0), GeneralSettings.HIGHLIGHT_COLOR, GeneralSettings.CURSOR_COLOR, GeneralSettings.CONSOLAS, GeneralSettings.FONT_SIZE, GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE, testMenuButtonList);
         menuList.add(file);
     }
 
@@ -192,27 +196,26 @@ public class Header {
         return guiFilledBox;
     }
 
-    public Vector2f getPosition() {
+    public Vector2f getPosition(){
         return position;
     }
 
-    public List<HeaderMenu> getMenuList() {
+    public List<HeaderMenu> getMenuList(){
         return menuList;
     }
 
-    public void setFlowChartWindow(FlowChartWindow flowChartWindow) {
+    public void setFlowChartWindow(FlowChartWindow flowChartWindow){
         this.flowChartWindow = flowChartWindow;
     }
-
-    public void setCodeWindow(CodeWindow codeWindow) {
+    public void setCodeWindow(CodeWindow codeWindow){
         this.codeWindow = codeWindow;
     }
 
-    public CodeWindow getCodeWindow() {
+    public CodeWindow getCodeWindow(){
         return codeWindow;
     }
 
-    public Cursor getCursor() {
+    public Cursor getCursor(){
         return cursor;
     }
 
@@ -220,22 +223,22 @@ public class Header {
         this.cursor = cursor;
     }
 
-    public void setAspectRatio(Vector2f aspectRatio) {
+    public void setAspectRatio(Vector2f aspectRatio){
         Vector2f size = guiFilledBox.getSize();
         size.y /= this.aspectRatio.y;
         size.y *= aspectRatio.y;
         guiFilledBox.setSize(size);
-        for (HeaderMenu menu : menuList) {
+        for(HeaderMenu menu : menuList){
             menu.setAspectRatio(new Vector2f(aspectRatio));
         }
-        guiFilledBox.setPosition(new Vector2f(-1, 1 - (1 - guiFilledBox.getPosition().y) / this.aspectRatio.y * aspectRatio.y));
+        guiFilledBox.setPosition(new Vector2f(-1, 1-(1-guiFilledBox.getPosition().y)/this.aspectRatio.y*aspectRatio.y));
         this.aspectRatio = aspectRatio;
-        if (codeWindow != null) {
+        if(codeWindow != null) {
             codeWindow.setAspectRatio(aspectRatio, size.y);
         }
     }
 
-    public FlowChartWindow getFlowChartWindow() {
+    public FlowChartWindow getFlowChartWindow(){
         return flowChartWindow;
     }
 }

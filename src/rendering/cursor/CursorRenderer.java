@@ -7,6 +7,7 @@ import main.GeneralSettings;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
+import org.lwjgl.util.vector.Matrix2f;
 
 public class CursorRenderer {
 
@@ -31,6 +32,11 @@ public class CursorRenderer {
 
         GL30.glBindVertexArray(this.cursor.getVaoID());
         GL20.glEnableVertexAttribArray(0);
+        Matrix2f aspectRatio = new Matrix2f();
+        aspectRatio.setIdentity();
+        aspectRatio.m00 = cursor.getCodeWindow().getAspectRatio().x;
+        aspectRatio.m11 = cursor.getCodeWindow().getAspectRatio().y;
+        shader.aspectRatio.loadMatrix(aspectRatio);
         shader.mousePosition.loadVec2(cursor.getPosition());
         shader.fontHeight.loadFloat(GeneralSettings.FONT_SCALING_FACTOR*GeneralSettings.FONT_SIZE);
         shader.windowPosition.loadVec2(cursor.getCodeWindow().getPosition().x-1, cursor.getCodeWindow().getPosition().y-1);

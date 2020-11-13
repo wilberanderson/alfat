@@ -1,6 +1,9 @@
 package parser;
 import gui.FlowChartWindow;
 import gui.FlowchartLine;
+import gui.terminators.ArrowHead;
+import gui.terminators.Junction;
+import gui.terminators.Terminator;
 import gui.textBoxes.FlowChartTextBox;
 import main.GeneralSettings;
 import org.lwjgl.system.CallbackI;
@@ -362,8 +365,13 @@ public class LC3Parser implements CodeReader {
                 //second point: top of next box:
                 coordinates.add(new Vector2f((- 1 + locations.get(index).x) + .05f, (-1 + locations.get(index+1).y + sizes.get(index+1).y)));
                 //if (verbose) System.out.println("from " + (locations.get(index).y) + " to " + (-1 + locations.get(index+1).y + sizes.get(index+1).y) + "\n");
-
-                FlowchartLine line = new FlowchartLine(coordinates);
+                Terminator terminator;
+                if(coordinates.get(coordinates.size()-1).y < coordinates.get((coordinates.size()-2)).y){
+                    terminator = new ArrowHead(coordinates.get(coordinates.size()-1), false);
+                }else{
+                    terminator = new ArrowHead(coordinates.get(coordinates.size()-1), true);
+                }
+                FlowchartLine line = new FlowchartLine(coordinates, terminator);
                 linesList.add(line);
                 //if (verbose) System.out.println();
             }
@@ -419,7 +427,13 @@ public class LC3Parser implements CodeReader {
                     }
                     coordinates.add(new Vector2f((-1 + locations.get(index).x) + 2 * sizes.get(flowchart.get(index).connection.getBoxNumber() - 1).x / 3, (-1 + sizes.get(flowchart.get(index).connection.getBoxNumber() - 1).y + locations.get(flowchart.get(index).connection.getBoxNumber() - 1).y + (GeneralSettings.FLOWCHART_PAD_TOP / 3))));
                     coordinates.add(new Vector2f((-1 + locations.get(index).x) + 2 * sizes.get(flowchart.get(index).connection.getBoxNumber() - 1).x / 3, (-1 + sizes.get(flowchart.get(index).connection.getBoxNumber() - 1).y + locations.get(flowchart.get(index).connection.getBoxNumber() - 1).y)));
-                    FlowchartLine line = new FlowchartLine(coordinates);
+                    Terminator terminator;
+                    if(coordinates.get(coordinates.size()-1).y < coordinates.get((coordinates.size()-2)).y){
+                        terminator = new ArrowHead(coordinates.get(coordinates.size()-1), false);
+                    }else{
+                        terminator = new ArrowHead(coordinates.get(coordinates.size()-1), true);
+                    }
+                    FlowchartLine line = new FlowchartLine(coordinates, terminator);
                     line.setColor(rainbow[jump_lines % rainbow.length]);
                     linesList.add(line);
 

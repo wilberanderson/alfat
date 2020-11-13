@@ -33,6 +33,7 @@ public class FlowchartLineRenderer {
     public void render(List<FlowchartLine> flowchartLines, FlowChartWindow flowChartWindow){
         prepare();
         shader.zoomTranslateMatrix.loadMatrix(flowChartWindow.getZoomTranslateMatrix());
+        shader.aspectRatio.loadMatrix(flowChartWindow.getAspectRatio());
         for(FlowchartLine line : flowchartLines) {
             shader.color.loadVec3(line.getColor());
             GL30.glBindVertexArray(lineSegment.getVaoID());
