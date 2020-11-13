@@ -89,6 +89,7 @@ public class GeneralSettings {
 	public static final Vector3f LINE_NUMBER_BACKGROUND_COLOR = new Vector3f(0.02745f, 0.211764f, 0.258823f);
 	public static final Vector3f LINE_NUMBER_COLOR = new Vector3f(0.576470f, 0.631372f, 0.631372f);
 	public static String SYNTAX_PATH = "CodeSyntax/LC3.json";
+	public static String TEMP_DIR = "temp";
 
 
 	public static final float MIN_ZOOM = 0.1f;

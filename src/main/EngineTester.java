@@ -175,34 +175,6 @@ public class EngineTester {
         //codeWindow = new CodeWindow(new Vector2f(0f,0f), new Vector2f(1f, header.getPosition().y+1), new Vector3f(0.1f,0.1f,0.1f), new Vector3f(1,1,1), new Vector3f(0,0,0), "", GeneralSettings.TACOMA, GeneralSettings.FONT_SIZE, GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE, GeneralSettings.TEXT_BOX_BORDER_WIDTH);
         //textBoxes.add(codeWindow);
 
-        //Testing stuff
-
-
-
-//        ObjectMapper objectMapper = new ObjectMapper();
-//        File file0 = new File("CodeSyntax\\LC3.json");
-//        try {
-//
-//           // String jsonFile = objectMapper.writeValueAsString(file0);
-//
-//            LC3Syntax s = objectMapper.readValue(file0, LC3Syntax.class);
-//            //System.out.println(jsonFile);
-//            System.out.println(s);
-//        }
-//        catch(Exception e){
-//            e.printStackTrace();
-//        }
-
-//        JsonReader j = new JsonReader(new File("CodeSyntax\\LC3.json"));
-//        LC3Syntax s = j.mapJsonLC3Syntax();
-//        System.out.println(s);
-//        String []foo = s.getJumps();
-//
-//        for(int i = 0; i < foo.length; i++) {
-//            System.out.println(foo[i]);
-//        }
-//
-
         flowChartWindow = new FlowChartWindow();
 
         header.setFlowChartWindow(flowChartWindow);
@@ -274,12 +246,13 @@ public class EngineTester {
     }
 
     /**Used for a graceful crash of the program
-     *  - TODO: Saves changes to files
+     *  - TODO: Saves changes to files (DONE!!!)
      *  - Frees up memory
      *  - Exits with an error code
      */
     public void crash(){
         exit();
+
         System.exit(-1);
     }
 

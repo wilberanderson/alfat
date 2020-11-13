@@ -1,22 +1,18 @@
 package gui;
 
 import gui.textBoxes.CodeWindow;
-import main.EngineTester;
 import main.GeneralSettings;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
-import parser.CodeReader;
 import parser.LC3Parser;
-import utils.MyFile;
 
 
-import java.awt.geom.GeneralPath;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
+
 import gui.buttons.HeaderMenu;
 import gui.buttons.TextButton;
 
@@ -48,7 +44,7 @@ public class Header {
                 GeneralSettings.FILE_PATH = "";
                 OpenFileDialog of = new OpenFileDialog();
                 //of.displayConsole(true);
-                of.openWindow();
+                of.openFileWindow();
                 GeneralSettings.FILE_PATH = of.getFilePath();
 
                 // If the file exists, load it into the text editor.
@@ -75,6 +71,45 @@ public class Header {
             }
         };
         testMenuButtonList.add(button);
+
+        //save file
+         button = new TextButton("Save As") {
+            @Override
+            public void onPress() {
+                //System.out.println("Open File");
+
+                //Test example notice that file path isn't hello world
+                //GeneralSettings.FILE_PATH = "";
+                OpenFileDialog of = new OpenFileDialog();
+                //of.displayConsole(true);
+                of.saveFileWindow();
+                System.out.println(of.getFilePath());
+
+                //If the use saved a file
+                if(!of.getFilePath().equals("null")) {
+                    SaveToFile stf = new SaveToFile(of.getFilePath());
+                    //Prevent crash if codeWindow doe not have anything in it
+                    if(codeWindow != null) {
+                        stf.save(codeWindow.getTexts());
+                   }
+                }
+
+            }
+        };
+        testMenuButtonList.add(button);
+        button = new TextButton("TEST") {
+            @Override
+            public void onPress() {
+                TempFileManager tfm = new TempFileManager(GeneralSettings.TEMP_DIR);
+                if(codeWindow != null) {
+                    tfm.exitSave(codeWindow.getTexts(),GeneralSettings.FILE_PATH);
+                }
+                tfm.clearTempFolder(GeneralSettings.TEMP_DIR);
+            }
+        };
+        testMenuButtonList.add(button);
+
+
 
         //generate from file
         button = new TextButton("Generate Flowchart") {
