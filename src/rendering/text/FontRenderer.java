@@ -25,14 +25,14 @@ public class FontRenderer {
 	}
 
 
-	public void render(Map<FontType, List<GUIText>> texts, FlowChartWindow flowChartWindow, CodeWindow codeWindow){
+	public void render(Map<FontType, List<GUIText>> texts, FlowChartWindow flowChartWindow, CodeWindow codeWindow, boolean doClipping){
 		prepare();
 		shader.aspectRatio.loadMatrix(GeneralSettings.ASPECT_RATIO);
 		for(FontType font : texts.keySet()){
 			GL13.glActiveTexture(GL13.GL_TEXTURE0);
 			GL11.glBindTexture(GL11.GL_TEXTURE_2D, font.getTextureAtlas());
 			for(GUIText text : texts.get(font)){
-				renderText(text, flowChartWindow, codeWindow);
+				renderText(text, flowChartWindow, codeWindow, doClipping);
 			}
 		}
 		endRendering();
@@ -50,7 +50,7 @@ public class FontRenderer {
 		shader.start();
 	}
 	
-	private void renderText(GUIText text, FlowChartWindow flowChartWindow, CodeWindow codeWindow){
+	private void renderText(GUIText text, FlowChartWindow flowChartWindow, CodeWindow codeWindow, boolean doClipping){
 		GL30.glBindVertexArray(text.getMesh());
 		GL20.glEnableVertexAttribArray(0);
 		GL20.glEnableVertexAttribArray(1);
@@ -62,15 +62,28 @@ public class FontRenderer {
 		shader.offset.loadVec2(text.getOffset());
 		shader.outlineColor.loadVec3(text.getOutlineColor());
 		shader.translation.loadVec2(text.getPosition());
+		shader.windowPosition.loadVec2(-1, -1);
+		shader.windowSize.loadVec2(2, 2);
 		if(text.isInFlowchart()){
+			if(doClipping){
 			shader.windowPosition.loadVec2(flowChartWindow.getPosition());
 			shader.windowSize.loadVec2(flowChartWindow.getSize());
+			}else{
+				shader.windowPosition.loadVec2(-1, -1);
+				shader.windowSize.loadVec2(2, 2);
+			}
 			shader.zoomTranslateMatrix.loadMatrix(flowChartWindow.getZoomTranslateMatrix());
+			if(codeWindow == null){
+				GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, text.getVertexCount());
+			}
 		}else if(text.isGuiText()){
 			shader.windowPosition.loadVec2(-1, -1);
 			shader.windowSize.loadVec2(2, 2);
 			shader.zoomTranslateMatrix.loadMatrix(zoomTranslateMatrix);
-		}else if(text.isCodeWindowText()){
+			if(codeWindow == null) {
+				GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, text.getVertexCount());
+			}
+		}else if(text.isCodeWindowText() && codeWindow != null){
 			shader.windowPosition.loadVec2(codeWindow.getCodeWindowPosition().x-1, codeWindow.getCodeWindowPosition().y-1);
 			shader.windowSize.loadVec2(codeWindow.getCodeWindowSize());
 			shader.zoomTranslateMatrix.loadMatrix(zoomTranslateMatrix);
@@ -81,7 +94,9 @@ public class FontRenderer {
 				shader.zoomTranslateMatrix.loadMatrix(zoomTranslateMatrix);
 			}
 		}
-		GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, text.getVertexCount());
+		if(codeWindow != null) {
+			GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, text.getVertexCount());
+		}
 		GL20.glDisableVertexAttribArray(0);
 		GL20.glDisableVertexAttribArray(1);
 		GL30.glBindVertexArray(0);

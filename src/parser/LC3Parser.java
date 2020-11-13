@@ -345,8 +345,6 @@ public class LC3Parser implements CodeReader {
         List<FlowchartLine> linesList = new ArrayList<>();
         int jump_lines = 0;
 
-        List<Integer> coverage = new ArrayList<Integer>(Collections.nCopies(flowchart.size()*2, 0));
-
         Vector3f rainbow[] = {new Vector3f(0.862745f, 0.196078f, 0.184313f),new Vector3f(0.796078f, 0.294117f, 0.086274f),new Vector3f(0.709803f, 0.537254f, 0),
                 new Vector3f(0.521568f, .6f, 0),new Vector3f(0.164705f, 0.631372f, 0.596078f),
                 new Vector3f(0.149019f, 0.545098f, 0.823529f),new Vector3f(0.423529f, 0.443137f, 0.768627f),
@@ -385,16 +383,6 @@ public class LC3Parser implements CodeReader {
                         System.out.println(Math.min(index,flowchart.get(index).connection.getBoxNumber()) + " -> " + Math.max(index,flowchart.get(index).connection.getBoxNumber()));
                     }
 
-                    // Mark the nodes that have been covered
-                    if (index == flowchart.get(index).connection.getBoxNumber() + 1){
-                        coverage.set(index, coverage.get(index)+1);
-                    } else {
-                        for (int k = Math.min(index, flowchart.get(index).connection.getBoxNumber()); k < Math.max(index, flowchart.get(index).connection.getBoxNumber()); k++) {
-                            coverage.set(k,coverage.get(k)+1);
-                        }
-                    }
-                    if (verbose) System.out.println("coverage " + coverage);
-
                     List<Vector2f> coordinates = new ArrayList<>();
 
                     coordinates.add(new Vector2f((-1 + locations.get(index).x) + 2 * sizes.get(index).x / 3, (-1 + locations.get(index).y)));
@@ -419,18 +407,18 @@ public class LC3Parser implements CodeReader {
                     }
 
                     if (index == flowchart.get(index).connection.getBoxNumber()){
-                        coordinates.add(new Vector2f((temp + coverage.get(index) * GeneralSettings.LINE_OFFSET), (-1 + locations.get(index).y) - (GeneralSettings.FLOWCHART_PAD_TOP / 3)));
-                        coordinates.add(new Vector2f((temp + coverage.get(index) * GeneralSettings.LINE_OFFSET), (-1 + sizes.get(flowchart.get(index).connection.getBoxNumber() - 1).y + locations.get(flowchart.get(index).connection.getBoxNumber() - 1).y + (GeneralSettings.FLOWCHART_PAD_TOP / 3))));
+                        coordinates.add(new Vector2f((temp + jump_lines * GeneralSettings.LINE_OFFSET), (-1 + locations.get(index).y) - (GeneralSettings.FLOWCHART_PAD_TOP / 3)));
+                        coordinates.add(new Vector2f((temp + jump_lines * GeneralSettings.LINE_OFFSET), (-1 + sizes.get(flowchart.get(index).connection.getBoxNumber() - 1).y + locations.get(flowchart.get(index).connection.getBoxNumber() - 1).y + (GeneralSettings.FLOWCHART_PAD_TOP / 3))));
                     } else {
-                        coordinates.add(new Vector2f((temp + Collections.max(coverage.subList(Math.min(index, flowchart.get(index).connection.getBoxNumber()), Math.max(index, flowchart.get(index).connection.getBoxNumber()))) * GeneralSettings.LINE_OFFSET), (-1 + locations.get(index).y) - (GeneralSettings.FLOWCHART_PAD_TOP / 3)));
-                        coordinates.add(new Vector2f((temp + Collections.max(coverage.subList(Math.min(index, flowchart.get(index).connection.getBoxNumber()), Math.max(index, flowchart.get(index).connection.getBoxNumber()))) * GeneralSettings.LINE_OFFSET), (-1 + sizes.get(flowchart.get(index).connection.getBoxNumber() - 1).y + locations.get(flowchart.get(index).connection.getBoxNumber() - 1).y + (GeneralSettings.FLOWCHART_PAD_TOP / 3))));
+                        coordinates.add(new Vector2f((temp + jump_lines * GeneralSettings.LINE_OFFSET), (-1 + locations.get(index).y) - (GeneralSettings.FLOWCHART_PAD_TOP / 3)));
+                        coordinates.add(new Vector2f((temp + jump_lines * GeneralSettings.LINE_OFFSET), (-1 + sizes.get(flowchart.get(index).connection.getBoxNumber() - 1).y + locations.get(flowchart.get(index).connection.getBoxNumber() - 1).y + (GeneralSettings.FLOWCHART_PAD_TOP / 3))));
                     }
                     coordinates.add(new Vector2f((-1 + locations.get(index).x) + 2 * sizes.get(flowchart.get(index).connection.getBoxNumber() - 1).x / 3, (-1 + sizes.get(flowchart.get(index).connection.getBoxNumber() - 1).y + locations.get(flowchart.get(index).connection.getBoxNumber() - 1).y + (GeneralSettings.FLOWCHART_PAD_TOP / 3))));
                     coordinates.add(new Vector2f((-1 + locations.get(index).x) + 2 * sizes.get(flowchart.get(index).connection.getBoxNumber() - 1).x / 3, (-1 + sizes.get(flowchart.get(index).connection.getBoxNumber() - 1).y + locations.get(flowchart.get(index).connection.getBoxNumber() - 1).y)));
                     Terminator terminator;
                     if(coordinates.get(coordinates.size()-1).y < coordinates.get((coordinates.size()-2)).y){
                         terminator = new ArrowHead(coordinates.get(coordinates.size()-1), false);
-                    }else{
+                    } else {
                         terminator = new ArrowHead(coordinates.get(coordinates.size()-1), true);
                     }
                     FlowchartLine line = new FlowchartLine(coordinates, terminator);
@@ -444,6 +432,26 @@ public class LC3Parser implements CodeReader {
 
         System.out.println("Lines added: " + linesList.size());
         System.out.println("width " + max_right_width + GeneralSettings.FLOWCHART_PAD_LEFT);
+
+        //Find line overlaps:
+        for (FlowchartLine line1 : linesList){
+            for (FlowchartLine line2 : linesList){
+                if ((line1.getPositions().size() > 2 && line2.getPositions().size() > 2) && linesList.indexOf(line1) < linesList.indexOf(line2)){
+                    if (line1.getPositions().get(line1.getPositions().size()-3).y == line2.getPositions().get(line2.getPositions().size()-3).y){
+                        if (line1.getPositions().get(line1.getPositions().size()-3).x > line2.getPositions().get(line2.getPositions().size()-3).x ) {
+                            line2.getPositions().remove(line2.getPositions().size() - 1);
+                            line2.getPositions().remove(line2.getPositions().size() - 1);
+                            line2.setTerminator(new Junction(line2.getPositions().get(line2.getPositions().size() - 1)));
+                        } else {
+                            line1.getPositions().remove(line1.getPositions().size() - 1);
+                            line1.getPositions().remove(line1.getPositions().size() - 1);
+                            line1.setTerminator(new Junction(line1.getPositions().get(line1.getPositions().size() - 1)));
+                        }
+                    }
+                }
+            }
+        }
+
         FlowChartWindow.setFlowchartLineList(linesList);
 
     }

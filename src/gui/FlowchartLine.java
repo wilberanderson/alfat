@@ -31,4 +31,8 @@ public class FlowchartLine {
     public Terminator getTerminator() {
         return terminator;
     }
+
+    public void setTerminator(Terminator terminator) {
+        this.terminator = terminator;
+    }
 }

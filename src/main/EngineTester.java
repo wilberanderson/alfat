@@ -18,8 +18,7 @@ import java.util.List;
 public class EngineTester {
 
     // The window handle
-    private long window;
-    private MasterRenderer renderer;
+    private static long window;
 
     //Temporary attributes
     private Cursor cursor;
@@ -129,7 +128,7 @@ public class EngineTester {
         GL11.glClearColor(0.02745f, 0.211764f, 0.258823f, 0.0f);
 
         //Initializes the render engine
-        renderer = new MasterRenderer();
+        MasterRenderer.init();
 
         //************************************Initialize guis************************************
         //Create the FontTypes in GeneralSettings, must happen before using any font
@@ -173,6 +172,7 @@ public class EngineTester {
         InputManager.setFlowChartWindow(flowChartWindow);
         GeneralSettings.updateAspectRatio(GeneralSettings.DEFAULT_WIDTH, GeneralSettings.DEFAULT_HEIGHT);
         InputManager.setHeader(header);
+        MasterRenderer.setFlowChartWindow(flowChartWindow);
     }
 
     /**
@@ -217,7 +217,7 @@ public class EngineTester {
             }
 
             //Render
-            renderer.renderScene(guis, FlowChartWindow.getFlowChartTextBoxList(), new Vector3f(1,1,1), header.getCursor(), GeneralSettings.FONT_SIZE, header, flowChartWindow.getFlowchartLineList(), flowChartWindow, header.getCodeWindow());
+            MasterRenderer.renderScene(guis, FlowChartWindow.getFlowChartTextBoxList(), new Vector3f(1,1,1), header.getCursor(), GeneralSettings.FONT_SIZE, header, flowChartWindow.getFlowchartLineList(), flowChartWindow, header.getCodeWindow());
 
             //Temporarily make changes for scrolling
             if(header.getCodeWindow() != null) {
@@ -282,7 +282,7 @@ public class EngineTester {
         Loader.cleanUp();
 
         //Close the render engine
-        renderer.cleanUp();
+        MasterRenderer.cleanUp();
     }
 
     /**
@@ -291,6 +291,10 @@ public class EngineTester {
     public static void main(String[] args) {
         new EngineTester().run();
         System.exit(0);
+    }
+
+    public static long getWindow(){
+        return window;
     }
 
 }
