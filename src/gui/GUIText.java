@@ -99,6 +99,7 @@ public class GUIText {
 		this.positionBounds = guiText.positionBounds;
 		this.isGuiText = guiText.isGuiText;
 		this.isInFlowchart = guiText.isInFlowchart;
+		this.isCodeWindowText = guiText.isCodeWindowText;
 		if(isGuiText){
 			this.textMeshData = TextMaster.loadGuiText(this);
 		}else{
