@@ -37,7 +37,10 @@ public class Header {
         guiFilledBox = new GUIFilledBox(position, size, GeneralSettings.HEADER_COLOR);
         this.position = position;
 
+        //Set up temp file manager
         tfm = new TempFileManager(GeneralSettings.TEMP_DIR);
+        //Please set this to null if not file has been opened on launch
+        GeneralSettings.FILE_PATH = "null";
 
 
         List<TextButton> testMenuButtonList = new ArrayList<>();
@@ -54,14 +57,6 @@ public class Header {
                 //of.displayConsole(true);
                 of.openFileWindow();
                 GeneralSettings.FILE_PATH = of.getFilePath();
-
-                //Save To Temp Location
-                if (!GeneralSettings.FILE_PATH.equals("null")) {
-                    TempFileOperations tfo = new TempFileOperations(GeneralSettings.TEMP_DIR);
-                    if (codeWindow != null) {
-                        tfo.saveTempFile(GeneralSettings.FILE_PATH);
-                    }
-                }
 
                 // If the file exists, load it into the text editor.
                 if (!GeneralSettings.FILE_PATH.equals("null")){
@@ -131,9 +126,25 @@ public class Header {
         button = new TextButton("Generate Flowchart") {
             @Override
             public void onPress() {
-                LC3Parser parser = new LC3Parser(GeneralSettings.FILE_PATH, true);
+                //Create temp file
 
-                parser.ReadFile(GeneralSettings.FILE_PATH);
+                //Save To Temp Location
+                if (!GeneralSettings.FILE_PATH.equals("null")) {
+                    TempFileOperations tfo = new TempFileOperations(GeneralSettings.TEMP_DIR);
+                    if (codeWindow != null) {
+                        tfo.saveTempFile(GeneralSettings.FILE_PATH);
+                    }
+                }
+
+                //LC3Parser parser = new LC3Parser(GeneralSettings.FILE_PATH, true);
+                //parser.ReadFile(GeneralSettings.FILE_PATH);
+
+                tfm.update();
+                if(tfm.getMostRecent().equals("null")) {
+                   return;
+                }
+                LC3Parser parser = new LC3Parser(tfm.getMostRecent(), true);
+                parser.ReadFile(tfm.getMostRecent());
 
                 parser.getFlowObjects();
                 parser.createFlowchart();

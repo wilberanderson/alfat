@@ -23,7 +23,7 @@ import java.util.List;
 public class TempFileOperations extends SaveToFile {
     //Boolean to show console prints
     private Boolean verbose;
-    private String tempTag;
+    private String timePattern = "(MM-dd-yyyy HH-mm-ss)_";
 
 
     /**
@@ -51,10 +51,16 @@ public class TempFileOperations extends SaveToFile {
      * @param filePath string literal
      * */
     public void saveTempFile(String filePath) {
+        //Gets date from system
+        Date date = new Date();
+        SimpleDateFormat formatter = new SimpleDateFormat(timePattern);
+        //Add date to string
+        String timeStamp = formatter.format(date);
+
         try {
             File src = new File(filePath);
             File dest = new File(super.getSaveFilepath());
-            Files.copy(src.toPath(), new File(dest.getAbsolutePath() + File.separator + src.getName()).toPath(),StandardCopyOption.REPLACE_EXISTING);
+            Files.copy(src.toPath(), new File(dest.getAbsolutePath() + File.separator + timeStamp + src.getName()).toPath(),StandardCopyOption.REPLACE_EXISTING);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -70,7 +76,7 @@ public class TempFileOperations extends SaveToFile {
     public void tempSave(List<GUIText> textLines, String currentFilePath) {
         //Gets date from system
         Date date = new Date();
-        SimpleDateFormat formatter = new SimpleDateFormat("(MM-dd-yyyy HH-mm-ss)");
+        SimpleDateFormat formatter = new SimpleDateFormat(timePattern);
 
         //Add date to string
         String timeStamp = formatter.format(date);
@@ -80,9 +86,9 @@ public class TempFileOperations extends SaveToFile {
         //a timestamp. Otherwise it just adds the timestamp and a tempSave
         if(currentFilePath != null && !currentFilePath.equals("null")) {
             tempFile = new File(currentFilePath);
-            tempFile = new File(super.getSaveFilepath(),timeStamp+"_"+tempFile.getName());
+            tempFile = new File(super.getSaveFilepath(),timeStamp+tempFile.getName());
         } else {
-            tempFile = new File(super.getSaveFilepath(),timeStamp+"_tempSave");
+            tempFile = new File(super.getSaveFilepath(),timeStamp+"tempSave");
         }
         super.save(textLines, tempFile);
 
