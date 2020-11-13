@@ -28,12 +28,19 @@ public class Header {
     private CodeWindow codeWindow;
     private Cursor cursor;
     private Vector2f aspectRatio = new Vector2f(1, 1);
+    //Manages the temp file paths
+    private TempFileManager tfm;
+
 
     public Header(Vector2f position, Vector2f size){
         menuList = new ArrayList<>();
         guiFilledBox = new GUIFilledBox(position, size, GeneralSettings.HEADER_COLOR);
         this.position = position;
 
+        //Set up temp file manager
+        tfm = new TempFileManager(GeneralSettings.TEMP_DIR);
+        //Please set this to null if not file has been opened on launch
+        GeneralSettings.FILE_PATH = "null";
 
 
         List<TextButton> testMenuButtonList = new ArrayList<>();
@@ -48,7 +55,7 @@ public class Header {
                 GeneralSettings.FILE_PATH = "";
                 OpenFileDialog of = new OpenFileDialog();
                 //of.displayConsole(true);
-                of.openWindow();
+                of.openFileWindow();
                 GeneralSettings.FILE_PATH = of.getFilePath();
 
                 // If the file exists, load it into the text editor.
@@ -71,15 +78,76 @@ public class Header {
                     //create code window
                     codeWindow = new CodeWindow(new Vector2f(0f,0f), new Vector2f(1f, 2-GeneralSettings.FONT_SCALING_FACTOR*GeneralSettings.FONT_SIZE), new Vector3f(0.1f,0.1f,0.1f), new Vector3f(1,1,1), new Vector3f(0,0,0), content, GeneralSettings.CONSOLAS, GeneralSettings.FONT_SIZE, GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE, GeneralSettings.TEXT_BOX_BORDER_WIDTH, size.y);
                     cursor = new Cursor(new Vector2f(codeWindow.getPosition()), codeWindow);
-
-                    //Generate the flowchart
-                    LC3Parser parser = new LC3Parser(GeneralSettings.FILE_PATH, true);
-
-                    parser.ReadFile(GeneralSettings.FILE_PATH);
-
-                    parser.getFlowObjects();
-                    parser.createFlowchart();
                 }
+            }
+        };
+        testMenuButtonList.add(button);
+
+        //save file
+        button = new TextButton("Save As") {
+            @Override
+            public void onPress() {
+                //System.out.println("Open File");
+
+                //Test example notice that file path isn't hello world
+                //GeneralSettings.FILE_PATH = "";
+                OpenFileDialog of = new OpenFileDialog();
+                //of.displayConsole(true);
+                of.saveFileWindow();
+                System.out.println(of.getFilePath());
+
+                //If the use saved a file
+                if (!of.getFilePath().equals("null")) {
+                    SaveToFile stf = new SaveToFile(of.getFilePath());
+                    //Prevent crash if codeWindow doe not have anything in it
+                    if (codeWindow != null) {
+                        stf.save(codeWindow.getTexts());
+                    }
+                }
+
+            }
+        };
+        testMenuButtonList.add(button);
+        button = new TextButton("Temp Save") {
+            @Override
+            public void onPress() {
+                //Saves in temporary location
+                TempFileOperations tfo = new TempFileOperations(GeneralSettings.TEMP_DIR);
+                if (codeWindow != null) {
+                    tfo.showPrints(false);
+                    tfo.tempSave(codeWindow.getTexts(), GeneralSettings.FILE_PATH);
+                }
+
+            }
+        };
+        testMenuButtonList.add(button);
+
+        //generate from file
+        button = new TextButton("Generate Flowchart") {
+            @Override
+            public void onPress() {
+                //Create temp file
+
+                //Save To Temp Location
+                if (!GeneralSettings.FILE_PATH.equals("null")) {
+                    TempFileOperations tfo = new TempFileOperations(GeneralSettings.TEMP_DIR);
+                    if (codeWindow != null) {
+                        tfo.saveTempFile(GeneralSettings.FILE_PATH);
+                    }
+                }
+
+                //LC3Parser parser = new LC3Parser(GeneralSettings.FILE_PATH, true);
+                //parser.ReadFile(GeneralSettings.FILE_PATH);
+
+                tfm.update();
+                if(tfm.getMostRecent().equals("null")) {
+                   return;
+                }
+                LC3Parser parser = new LC3Parser(tfm.getMostRecent(), true);
+                parser.ReadFile(tfm.getMostRecent());
+
+                parser.getFlowObjects();
+                parser.createFlowchart();
             }
         };
         testMenuButtonList.add(button);

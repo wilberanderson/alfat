@@ -6,7 +6,8 @@ import static org.lwjgl.system.MemoryUtil.memFree;
 import static org.lwjgl.util.nfd.NativeFileDialog.*;
 
 /**
- * Opens the native file dialog and supports choosing a single file to return its file path has a string literal.
+ * Opens the native file dialog and supports choosing a single file to return its file path has a string literal,
+ * and saving a file using the file dialog.
  * There are additional methods to see the source path that the file dialog will open from, set the filter list
  * for files, and a toggle for displaying console logs of actions.
  * @author Thomas
@@ -22,7 +23,6 @@ public class OpenFileDialog {
     private Boolean isOpenFromDefault;
     //Boolean to display console prints
     private Boolean showPrint;
-
     /**
      * Constructor to sets the initial file dialog settings to be:
      * (1) filter list is set for .asm and .txt files,
@@ -73,11 +73,11 @@ public class OpenFileDialog {
     }
 
     /**
-     * Opens the file dialog from either the default os path or a defined path.
+     * Opens the file dialog from either the default os path or a defined path to open a file.
      * @see public setDefaultFilePath(String fpath)
      * @see private void checkResult(int result, PointerBuffer path)
      */
-    public void openWindow() {
+    public void openFileWindow() {
         PointerBuffer outPath = memAllocPointer(1);
         try {
             if (isOpenFromDefault == true) {
@@ -90,11 +90,30 @@ public class OpenFileDialog {
         }
     }
 
+    /**
+     * Opens the file dialog from either the default os path or a defined path to save a file.
+     * @see public setDefaultFilePath(String fpath)
+     * @see private void checkResult(int result, PointerBuffer path)
+     */
+    public void saveFileWindow() {
+        PointerBuffer outPath = memAllocPointer(1);
+
+        try {
+            if (isOpenFromDefault == true) {
+                checkResult(NFD_SaveDialog(filterList, null, outPath), outPath);
+            } else {
+                checkResult(NFD_SaveDialog(filterList, openFromPath, outPath), outPath);
+            }
+        } finally {
+            memFree(outPath);
+        }
+    }
 
     /**
      * Handles the file dialog options. A single file path is set to <code>filePath<code/>.
      * Whether prints to console display depends if <code>showPrint</code> was set to <code>true<code/> or <code>false<code/>
      * @see public OpenFileDialog()
+     * @see public saveFileWindow()
      * @see public void displayConsole(boolean option)
      */
     private void checkResult(int result, PointerBuffer path) {
