@@ -30,10 +30,12 @@ public class FlowchartLineRenderer {
     }
 
 
-    public void render(List<FlowchartLine> flowchartLines, FlowChartWindow flowChartWindow){
+    public void render(List<FlowchartLine> flowchartLines, FlowChartWindow flowChartWindow, boolean doClipping){
         prepare();
         shader.zoomTranslateMatrix.loadMatrix(flowChartWindow.getZoomTranslateMatrix());
         shader.aspectRatio.loadMatrix(flowChartWindow.getAspectRatio());
+        shader.windowPosition.loadVec2(-1, -1);
+        shader.windowSize.loadVec2(2, 2);
         for(FlowchartLine line : flowchartLines) {
             shader.color.loadVec3(line.getColor());
             GL30.glBindVertexArray(lineSegment.getVaoID());
@@ -43,8 +45,10 @@ public class FlowchartLineRenderer {
                 shader.startPosition.loadVec2(position);
                 position = line.getPositions().get(i);
                 shader.endPosition.loadVec2(position);
-                shader.windowPosition.loadVec2(flowChartWindow.getPosition());
-                shader.windowSize.loadVec2(flowChartWindow.getSize());
+                if(doClipping) {
+                    shader.windowPosition.loadVec2(flowChartWindow.getPosition());
+                    shader.windowSize.loadVec2(flowChartWindow.getSize());
+                }
                 GL11.glDrawArrays(GL11.GL_LINES, 0, 2);
             }
             GL20.glDisableVertexAttribArray(0);

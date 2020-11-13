@@ -30,13 +30,22 @@ public class TerminatorRenderer {
     }
 
 
-    public void render(List<FlowchartLine> flowchartLines, FlowChartWindow flowChartWindow){
+    public void render(List<FlowchartLine> flowchartLines, FlowChartWindow flowChartWindow, boolean doClipping){
         prepare();
         shader.zoomTranslateMatrix.loadMatrix(flowChartWindow.getZoomTranslateMatrix());
         shader.aspectRatio.loadMatrix(flowChartWindow.getAspectRatio());
-        shader.windowPosition.loadVec2(flowChartWindow.getPosition());
-        shader.windowSize.loadVec2(flowChartWindow.getSize());
-        GL11.glPointSize(5f);
+        if(doClipping) {
+            shader.windowPosition.loadVec2(flowChartWindow.getPosition());
+            shader.windowSize.loadVec2(flowChartWindow.getSize());
+        }else{
+            shader.windowPosition.loadVec2(-1, -1);
+            shader.windowSize.loadVec2(2, 2);
+        }
+        float pointSize = 10f*flowChartWindow.getZoomTranslateMatrix().m00;
+        if(pointSize < 2){
+            pointSize = 2;
+        }
+        GL11.glPointSize(pointSize);
         GL11.glEnable(GL11.GL_POINT_SMOOTH);
         Matrix3f transformationMatrix = new Matrix3f();
         for(FlowchartLine line : flowchartLines) {

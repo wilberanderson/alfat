@@ -74,8 +74,30 @@ public class FilledBoxRenderer {
         GL30.glBindVertexArray(0);
 
         endRendering();
+    }
 
+    public void renderScreenshot(List<FlowChartTextBox> textBoxes, FlowChartWindow flowChartWindow){
+        prepare();
 
+        GL30.glBindVertexArray(square.getVaoID());
+        GL20.glEnableVertexAttribArray(0);
+        shader.zoomTranslateMatrix.loadMatrix(flowChartWindow.getZoomTranslateMatrix());
+        for(TextBox textBox : textBoxes){
+            if(textBox instanceof FlowChartTextBox){
+                shader.windowPosition.loadVec2(-1, -1);
+                shader.windowSize.loadVec2(2, 2);
+                shader.aspectRatio.loadMatrix(GeneralSettings.ASPECT_RATIO);
+            }else{
+                System.out.println("Undefined box rendering behavior");
+            }
+            renderFilledBox(textBox.getGuiFilledBox());
+            renderFilledBox(textBox.getTextNumberFilledBox());
+        }
+
+        GL20.glDisableVertexAttribArray(0);
+        GL30.glBindVertexArray(0);
+
+        endRendering();
     }
 
     public void renderGuis(Header header){
