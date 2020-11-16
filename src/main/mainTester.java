@@ -83,17 +83,33 @@ public class mainTester {
 //        }
 
         TempFileManager tfm = new TempFileManager(GeneralSettings.TEMP_DIR);
+        tfm.printFiles();
 
-        tfm.deleteCurrentTempFile();
+        tfm.removeTempFilesOverLimit();
+
+        System.out.println("----------------");
+        tfm.printFiles();
+
+        tfm.setFileLimit(3);
+
+        tfm.removeTempFilesOverLimit();
+
+        System.out.println("----------------");
+        tfm.printFiles();
 
 
+        tfm.setFileLimit(1);
+        tfm.removeTempFilesOverLimit();
+
+        System.out.println("----------------");
+        tfm.printFiles();
 
 
+        tfm.setFileLimit(0);
+        tfm.removeTempFilesOverLimit();
 
-
-
-
-
+        System.out.println("----------------");
+        tfm.printFiles();
 
 
 

@@ -35,6 +35,7 @@ public class Header {
 
         //Set up temp file manager
         tfm = new TempFileManager(GeneralSettings.TEMP_DIR);
+        tfm.setFileLimit(5);
         //Please set this to null if not file has been opened on launch
         GeneralSettings.FILE_PATH = "null";
 

@@ -16,7 +16,7 @@ import java.util.List;
 /**
  * Manages the paths of the current files in the temp folder.
  * @author Thomas
- * TODO: Get deletes to work, make sure no crashes, add limit to backup files
+ * TODO: Get deletes to work
  */
 public class TempFileManager {
     private String directoryPath;
@@ -24,6 +24,7 @@ public class TempFileManager {
     private int current;
     private String timePattern = "(MM-dd-yyyy HH-mm-ss)_";
     private Boolean verbose;
+    private int fileLimit;
 
     /**
      * Must set the directory of the temp folder
@@ -32,10 +33,24 @@ public class TempFileManager {
         initializeDirectory(dirPath);
         tempFiles = new FileSortedArrayList();
         current = 0;
-        update();
+        fileLimit = 1000;
         verbose = false;
-        //printFiles();
+        update();
+
+
     }
+
+
+    /**
+     * Set the number of temp files to keep track of
+     * */
+    public void setFileLimit(int fileLimit) {
+        this.fileLimit = fileLimit;
+    }
+
+
+
+
 
     /**
      * If the directory path doesn't exist create it.
@@ -166,6 +181,9 @@ public class TempFileManager {
                     //Should ignore might need to dig by date...
                 }
             }
+
+            //remove any temp files over limit
+            removeTempFilesOverLimit();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -174,6 +192,18 @@ public class TempFileManager {
 
 
     //                          Delete Temp Files                           //
+
+    /**
+     * Remove oldest files not within set temp file limit
+     * */
+    public void removeTempFilesOverLimit() {
+        if(!tempFiles.isEmpty()) {
+            for(int i = tempFiles.size()-1; tempFiles.size() > this.fileLimit; i--) {
+                tempFiles.get(i).delete();
+                tempFiles.remove(i);
+            }
+        }
+    }
 
 
     /**
@@ -197,6 +227,23 @@ public class TempFileManager {
      * */
     public void clearTempFolder(String FolderPath) {
         File folder = new File(FolderPath);
+        File[] listOfFiles = folder.listFiles();
+        for (int i = 0; i < listOfFiles.length; i++) {
+            if (listOfFiles[i].isFile()) {
+                listOfFiles[i].delete();
+            }
+        }
+    }
+
+
+    /**
+     * Deletes the contents of a folder.
+     * SHOULD NEVER BE ANYTHING but the temp folder if called.
+     * Uses the directoryPath set in the constructor
+     * You have been warned!!!
+     * */
+    public void clearTempFolder() {
+        File folder = new File(directoryPath);
         File[] listOfFiles = folder.listFiles();
         for (int i = 0; i < listOfFiles.length; i++) {
             if (listOfFiles[i].isFile()) {
@@ -289,16 +336,16 @@ public class TempFileManager {
      * */
     private void printFolder() {
         if(verbose == true) {
-//            File folder = new File(super.getSaveFilepath());
-//            File[] listOfFiles = folder.listFiles();
-//            for (int i = 0; i < listOfFiles.length; i++) {
-//                if (listOfFiles[i].isFile()) {
-//                    System.out.println("File " + listOfFiles[i].getName());
-//                    printFileDate(listOfFiles[i]);
-//                } else if (listOfFiles[i].isDirectory()) {
-//                    System.out.println("Directory " + listOfFiles[i].getName());
-//                }
-//            }
+            File folder = new File(this.directoryPath);
+            File[] listOfFiles = folder.listFiles();
+            for (int i = 0; i < listOfFiles.length; i++) {
+                if (listOfFiles[i].isFile()) {
+                    System.out.println("File " + listOfFiles[i].getName());
+                    printFileDate(listOfFiles[i]);
+                } else if (listOfFiles[i].isDirectory()) {
+                    System.out.println("Directory " + listOfFiles[i].getName());
+                }
+            }
         }
     }
 
