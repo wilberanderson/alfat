@@ -119,14 +119,13 @@ public class InputManager {
                     for(Button b: buttons){
                         if(MOUSE_X >= b.getPosition().x && MOUSE_Y >= b.getPosition().y && MOUSE_X < b.getPosition().x+b.getSize().x && MOUSE_Y < b.getPosition().y+b.getSize().y){
                             b.onPress();
-                            if(openMenu != null){
-                                openMenu.close();
-                                openMenu = null;
-                            }
-                            if(b instanceof HeaderMenu){
-                                openMenu = (HeaderMenu) b;
-                            }
                             break;
+                        }else if(b instanceof HeaderMenu){
+                            if(((HeaderMenu) b).isOpen){
+                                ((HeaderMenu) b).close();
+                                ((HeaderMenu) b).isOpen = false;
+                                System.out.println("Clicked outside of the menu");
+                            }
                         }
                     }
                 }else if(button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE){

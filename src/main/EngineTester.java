@@ -230,9 +230,6 @@ public class EngineTester {
             GLFW.glfwSwapBuffers(window);
 
 
-
-
-
         }
     }
 

@@ -159,7 +159,6 @@ public class Header {
         };
         testMenuButtonList.add(button);
 
-
         button = new TextButton("Regenerate Flowchart From Editor") {
             @Override
             public void onPress() {
@@ -185,10 +184,10 @@ public class Header {
             }
         };
         testMenuButtonList.add(button);
+
         button = new TextButton("Regenerate Flowchart From Source") {
             @Override
             public void onPress() {
-
 
                 if(GeneralSettings.FILE_PATH.equals("null")) {
                     return;
@@ -202,6 +201,7 @@ public class Header {
             }
         };
         testMenuButtonList.add(button);
+
         button = new TextButton("Text Editor View") {
             @Override
             public void onPress() {
@@ -212,6 +212,7 @@ public class Header {
             }
         };
         testMenuButtonList.add(button);
+
         button = new TextButton("Flowchart View") {
             @Override
             public void onPress() {
@@ -222,6 +223,7 @@ public class Header {
             }
         };
         testMenuButtonList.add(button);
+
         button = new TextButton("Splitscreen View") {
             @Override
             public void onPress() {
@@ -231,11 +233,10 @@ public class Header {
                 }
             }
         };
-
-
         testMenuButtonList.add(button);
-        HeaderMenu file = new HeaderMenu(new Vector2f(-1f, 1-GeneralSettings.FONT_SIZE*GeneralSettings.FONT_SCALING_FACTOR - 2*GeneralSettings.TEXT_BUTTON_PADDING), "File", new Vector3f(0, 0, 0), GeneralSettings.HIGHLIGHT_COLOR, GeneralSettings.CURSOR_COLOR, GeneralSettings.CONSOLAS, GeneralSettings.FONT_SIZE, GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE, testMenuButtonList);
-        menuList.add(file);
+
+        HeaderMenu fileButton = new HeaderMenu(new Vector2f(-1f, 1-GeneralSettings.FONT_SIZE*GeneralSettings.FONT_SCALING_FACTOR - 2*GeneralSettings.TEXT_BUTTON_PADDING), "File", new Vector3f(0, 0, 0), GeneralSettings.HIGHLIGHT_COLOR, GeneralSettings.CURSOR_COLOR, GeneralSettings.CONSOLAS, GeneralSettings.FONT_SIZE, GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE, testMenuButtonList);
+        menuList.add(fileButton);
     }
 
     public GUIFilledBox getGuiFilledBox() {

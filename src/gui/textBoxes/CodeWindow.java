@@ -90,7 +90,6 @@ public class CodeWindow extends TextBox{
         super.getLineNumbers().add(newText);
         maxVerticalPosition += lineHeight;
         if(lastText.getTextString().length() == newText.getTextString().length()){
-            System.out.println("Fake news");
             float oldWidth = super.getTextNumberFilledBox().getSize().x;
             float newWidth = (float)super.getLineNumbers().get(super.getLineNumbers().size()-1).getLength()*2 + 2*padding;
             super.getTextNumberFilledBox().getSize().x = newWidth*aspectRatio.x;
