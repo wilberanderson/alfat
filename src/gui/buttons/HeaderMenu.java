@@ -42,10 +42,10 @@ public class HeaderMenu extends TextButton {
                 InputManager.buttons.add(button);
                 TextMaster.loadGuiText(button.getText());
             }
+            this.isOpen = true;
         } else {
             close();
         }
-        this.isOpen = !this.isOpen;
     }
 
     public void close(){
@@ -53,6 +53,7 @@ public class HeaderMenu extends TextButton {
             InputManager.buttons.remove(button);
             TextMaster.removeGuiText(button.getText());
         }
+        this.isOpen = false;
     }
 
     public void setAspectRatio(Vector2f aspectRatio){

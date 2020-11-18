@@ -123,7 +123,6 @@ public class InputManager {
                         }else if(b instanceof HeaderMenu){
                             if(((HeaderMenu) b).isOpen){
                                 ((HeaderMenu) b).close();
-                                ((HeaderMenu) b).isOpen = false;
                                 System.out.println("Clicked outside of the menu");
                             }
                         }
