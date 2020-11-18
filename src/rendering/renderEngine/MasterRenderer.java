@@ -77,10 +77,12 @@ public class MasterRenderer {
 	}
 
 	public static void renderScreenshot(){
+		FilledBoxRenderer filledBoxRenderer = new FilledBoxRenderer();
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 		filledBoxRenderer.renderScreenshot(FlowChartWindow.getFlowChartTextBoxList(), flowChartWindow);
 		flowchartLineRenderer.render(FlowChartWindow.getFlowchartLineList(), flowChartWindow, false);
 		terminatorRenderer.render(FlowChartWindow.getFlowchartLineList(), flowChartWindow, false);
 		TextMaster.render(flowChartWindow, null, false);
+		filledBoxRenderer.cleanUp();
 	}
 }

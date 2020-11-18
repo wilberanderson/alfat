@@ -3,6 +3,8 @@ package main;
 import gui.fontMeshCreator.FontType;
 import loaders.Loader;
 import org.lwjgl.util.vector.Matrix2f;
+import org.lwjgl.util.vector.Matrix3f;
+import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 import utils.MyFile;
 
@@ -115,4 +117,7 @@ public class GeneralSettings {
 	public static final float FLOWCHART_PAD_LEFT = FLOWCHART_PAD_TOP*(DEFAULT_WIDTH/DEFAULT_HEIGHT);	//left padding
 
 	public static final float LINE_OFFSET = .05f;
+	public static Matrix3f SCREENSHOT_TRANSLATION;
+	public static Vector2f SCREENSHOT_SIZE;
+	public static boolean SCREENSHOT_IN_PROGRESS = false;
 }

@@ -1,5 +1,6 @@
 package rendering.filledBox;
 
+import java.awt.geom.GeneralPath;
 import java.util.List;
 
 import dataStructures.RawModel;
@@ -46,6 +47,7 @@ public class FilledBoxRenderer {
 
         GL30.glBindVertexArray(square.getVaoID());
         GL20.glEnableVertexAttribArray(0);
+        shader.doClipping.loadBoolean(true);
 
         if(header.getCodeWindow() != null) {
             shader.windowPosition.loadVec2(header.getCodeWindow().getPosition().x - 1, header.getCodeWindow().getPosition().y - 1);
@@ -81,15 +83,13 @@ public class FilledBoxRenderer {
 
         GL30.glBindVertexArray(square.getVaoID());
         GL20.glEnableVertexAttribArray(0);
-        shader.zoomTranslateMatrix.loadMatrix(flowChartWindow.getZoomTranslateMatrix());
+        System.out.println(GeneralSettings.SCREENSHOT_TRANSLATION);
+        shader.zoomTranslateMatrix.loadMatrix(GeneralSettings.SCREENSHOT_TRANSLATION);
+        Matrix2f aspectRatio = new Matrix2f();
+        aspectRatio.setIdentity();
+        shader.aspectRatio.loadMatrix(aspectRatio);
+        shader.doClipping.loadBoolean(false);
         for(TextBox textBox : textBoxes){
-            if(textBox instanceof FlowChartTextBox){
-                shader.windowPosition.loadVec2(-1, -1);
-                shader.windowSize.loadVec2(2, 2);
-                shader.aspectRatio.loadMatrix(GeneralSettings.ASPECT_RATIO);
-            }else{
-                System.out.println("Undefined box rendering behavior");
-            }
             renderFilledBox(textBox.getGuiFilledBox());
             renderFilledBox(textBox.getTextNumberFilledBox());
         }

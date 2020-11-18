@@ -163,7 +163,7 @@ public class Header {
         button = new TextButton("Regenerate Flowchart From Editor") {
             @Override
             public void onPress() {
-                //TODO: Nee way to keep track whether changes have been made in editor to know if we need to save or not...
+                //TODO: Need way to keep track whether changes have been made in editor to know if we need to save or not...
 
                 //Save what is in codeWindow
                 if (codeWindow != null && GeneralSettings.FILE_PATH != null & !GeneralSettings.FILE_PATH.equals("null")) {

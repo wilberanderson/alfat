@@ -13,6 +13,7 @@ public class FilledBoxShader extends ShaderProgram{
     protected UniformVec2 windowSize = new UniformVec2("windowSize");
     protected UniformMat3 zoomTranslateMatrix = new UniformMat3("zoomTranslateMatrix");
     protected UniformMat2 aspectRatio = new UniformMat2("aspectRatio");
+    protected UniformBoolean doClipping = new UniformBoolean("doClipping");
 
     /**
      * Handles the interaction with the TextBox vertex and fragment shaders.
@@ -22,7 +23,7 @@ public class FilledBoxShader extends ShaderProgram{
      */
     public FilledBoxShader() {
         super(GeneralSettings.FILLED_BOX_VERTEX, GeneralSettings.FILLED_BOX_FRAGMENT, "position");
-        super.storeAllUniformLocations(color, transformation, windowPosition, windowSize, zoomTranslateMatrix, aspectRatio);
+        super.storeAllUniformLocations(color, transformation, windowPosition, windowSize, zoomTranslateMatrix, aspectRatio, doClipping);
     }
 
 

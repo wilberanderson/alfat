@@ -64,6 +64,7 @@ public class FontRenderer {
 		shader.translation.loadVec2(text.getPosition());
 		shader.windowPosition.loadVec2(-1, -1);
 		shader.windowSize.loadVec2(2, 2);
+		shader.doClipping.loadBoolean(true);
 		if(text.isInFlowchart()){
 			if(doClipping){
 			shader.windowPosition.loadVec2(flowChartWindow.getPosition());
@@ -74,6 +75,8 @@ public class FontRenderer {
 			}
 			shader.zoomTranslateMatrix.loadMatrix(flowChartWindow.getZoomTranslateMatrix());
 			if(codeWindow == null){
+				shader.doClipping.loadBoolean(false);
+				shader.zoomTranslateMatrix.loadMatrix(GeneralSettings.SCREENSHOT_TRANSLATION);
 				GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, text.getVertexCount());
 			}
 		}else if(text.isGuiText()){

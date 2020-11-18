@@ -164,13 +164,10 @@ public class TempFileManager {
      * Updates list of tempFiles from the temp files folder path.
      */
     public void update() {
-
         //Clears currently stored files
         if(!tempFiles.isEmpty()) {
             tempFiles.removeAll(tempFiles);
         }
-
-        //Rebuilds file list
         try {
             File folder = new File(this.directoryPath);
             File[] listOfFiles = folder.listFiles();
@@ -188,8 +185,6 @@ public class TempFileManager {
             e.printStackTrace();
         }
     }
-
-
 
     //                          Delete Temp Files                           //
 

@@ -21,10 +21,13 @@ uniform vec3 outlineColor;
 uniform vec2 windowPosition;
 uniform vec2 windowSize;
 
-void main(void){
+uniform float doClipping;
 
-	if(vertexPosition.x < windowPosition.x || vertexPosition.y < windowPosition.y || vertexPosition.x > windowPosition.x+windowSize.x || vertexPosition.y > windowPosition.y+windowSize.y){
-		discard;
+void main(void){
+	if (doClipping == 1){
+		if (vertexPosition.x < windowPosition.x || vertexPosition.y < windowPosition.y || vertexPosition.x > windowPosition.x+windowSize.x || vertexPosition.y > windowPosition.y+windowSize.y){
+			discard;
+		}
 	}
 	float distance = 1.0 - texture(fontAtlas, pass_textureCoords).a;
 	float alpha = 1.0 - smoothstep(width, width + edge, distance);

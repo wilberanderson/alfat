@@ -6,20 +6,20 @@ import gui.terminators.Junction;
 import gui.terminators.Terminator;
 import gui.textBoxes.FlowChartTextBox;
 import main.GeneralSettings;
-import org.lwjgl.system.CallbackI;
+import org.lwjgl.util.vector.Matrix3f;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 
-import java.lang.reflect.Array;
 import java.util.*;
 import java.io.*;
-import java.util.concurrent.Flow;
 
 public class LC3Parser implements CodeReader {
     // attributes
     String infile;  // file path
     boolean verbose; // final release should have this changed to false
     ArrayList<FlowChartObject> flowchart = new ArrayList<>();
+    public float x_bound = -10;
+    public float y_bound = -10;
 
     HashMap<String, Integer> labelMap = new HashMap<>(); // map of labels -> line numbers
     List<LC3TLine> lines = new ArrayList<>();
@@ -406,12 +406,14 @@ public class LC3Parser implements CodeReader {
                         }
                     }
 
+                    x_bound = Math.max(x_bound,(temp + jump_lines * GeneralSettings.LINE_OFFSET));
+
                     if (index == flowchart.get(index).connection.getBoxNumber()){
-                        coordinates.add(new Vector2f((temp + jump_lines * GeneralSettings.LINE_OFFSET), (-1 + locations.get(index).y) - (GeneralSettings.FLOWCHART_PAD_TOP / 3)));
-                        coordinates.add(new Vector2f((temp + jump_lines * GeneralSettings.LINE_OFFSET), (-1 + sizes.get(flowchart.get(index).connection.getBoxNumber() - 1).y + locations.get(flowchart.get(index).connection.getBoxNumber() - 1).y + (GeneralSettings.FLOWCHART_PAD_TOP / 3))));
+                        coordinates.add(new Vector2f((.25f + temp + jump_lines * GeneralSettings.LINE_OFFSET), (-1 + locations.get(index).y) - (GeneralSettings.FLOWCHART_PAD_TOP / 3)));
+                        coordinates.add(new Vector2f((.25f + temp + jump_lines * GeneralSettings.LINE_OFFSET), (-1 + sizes.get(flowchart.get(index).connection.getBoxNumber() - 1).y + locations.get(flowchart.get(index).connection.getBoxNumber() - 1).y + (GeneralSettings.FLOWCHART_PAD_TOP / 3))));
                     } else {
-                        coordinates.add(new Vector2f((temp + jump_lines * GeneralSettings.LINE_OFFSET), (-1 + locations.get(index).y) - (GeneralSettings.FLOWCHART_PAD_TOP / 3)));
-                        coordinates.add(new Vector2f((temp + jump_lines * GeneralSettings.LINE_OFFSET), (-1 + sizes.get(flowchart.get(index).connection.getBoxNumber() - 1).y + locations.get(flowchart.get(index).connection.getBoxNumber() - 1).y + (GeneralSettings.FLOWCHART_PAD_TOP / 3))));
+                        coordinates.add(new Vector2f((.25f + temp + jump_lines * GeneralSettings.LINE_OFFSET), (-1 + locations.get(index).y) - (GeneralSettings.FLOWCHART_PAD_TOP / 3)));
+                        coordinates.add(new Vector2f((.25f + temp + jump_lines * GeneralSettings.LINE_OFFSET), (-1 + sizes.get(flowchart.get(index).connection.getBoxNumber() - 1).y + locations.get(flowchart.get(index).connection.getBoxNumber() - 1).y + (GeneralSettings.FLOWCHART_PAD_TOP / 3))));
                     }
                     coordinates.add(new Vector2f((-1 + locations.get(index).x) + 2 * sizes.get(flowchart.get(index).connection.getBoxNumber() - 1).x / 3, (-1 + sizes.get(flowchart.get(index).connection.getBoxNumber() - 1).y + locations.get(flowchart.get(index).connection.getBoxNumber() - 1).y + (GeneralSettings.FLOWCHART_PAD_TOP / 3))));
                     coordinates.add(new Vector2f((-1 + locations.get(index).x) + 2 * sizes.get(flowchart.get(index).connection.getBoxNumber() - 1).x / 3, (-1 + sizes.get(flowchart.get(index).connection.getBoxNumber() - 1).y + locations.get(flowchart.get(index).connection.getBoxNumber() - 1).y)));
@@ -431,8 +433,16 @@ public class LC3Parser implements CodeReader {
         }
 
         System.out.println("Lines added: " + linesList.size());
-        System.out.println("width " + max_right_width + GeneralSettings.FLOWCHART_PAD_LEFT);
 
+        // get y_bound coordinate:
+        y_bound = locations.get(locations.size()-1).y;
+        System.out.println("(" + (Math.abs(x_bound) + 1f) + ", " + (Math.abs(y_bound) + 1f + GeneralSettings.FLOWCHART_PAD_TOP) + ")");
+        GeneralSettings.SCREENSHOT_SIZE = new Vector2f(Math.abs(x_bound) + 1f, Math.abs(y_bound) + 1f + GeneralSettings.FLOWCHART_PAD_TOP);
+        Matrix3f translation = new Matrix3f();
+        translation.setIdentity();
+        translation.m20 = 0;
+        translation.m21 = -(y_bound);
+        GeneralSettings.SCREENSHOT_TRANSLATION = translation;
         //Find line overlaps:
         for (FlowchartLine line1 : linesList){
             for (FlowchartLine line2 : linesList){

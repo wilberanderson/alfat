@@ -172,11 +172,15 @@ public class InputManager {
         glfwSetFramebufferSizeCallback(window, framebufferSizeCallback = new GLFWFramebufferSizeCallback() {
             @Override
             public void invoke(long window, int width, int height) {
-                GeneralSettings.updateAspectRatio(width, height);
-                GL11.glViewport(0, 0, width, height);
-                header.setAspectRatio(new Vector2f(GeneralSettings.ASPECT_RATIO.m00, GeneralSettings.ASPECT_RATIO.m11));
-                flowChartWindow.setAspectRatio(GeneralSettings.ASPECT_RATIO);
-                aspectRatio = new Vector2f(GeneralSettings.ASPECT_RATIO.m00, GeneralSettings.ASPECT_RATIO.m11);
+                if(!GeneralSettings.SCREENSHOT_IN_PROGRESS) {
+                    GeneralSettings.updateAspectRatio(width, height);
+                    GL11.glViewport(0, 0, width, height);
+                    header.setAspectRatio(new Vector2f(GeneralSettings.ASPECT_RATIO.m00, GeneralSettings.ASPECT_RATIO.m11));
+                    flowChartWindow.setAspectRatio(GeneralSettings.ASPECT_RATIO);
+                    aspectRatio = new Vector2f(GeneralSettings.ASPECT_RATIO.m00, GeneralSettings.ASPECT_RATIO.m11);
+                }else{
+                    GL11.glViewport(0, 0, width, height);
+                }
             }
         });
     }
