@@ -54,7 +54,6 @@ public class FontRenderer {
 		GL30.glBindVertexArray(text.getMesh());
 		GL20.glEnableVertexAttribArray(0);
 		GL20.glEnableVertexAttribArray(1);
-		shader.color.loadVec3(text.getColour());
 		shader.width.loadFloat(text.getWidth());
 		shader.edge.loadFloat(text.getEdge());
 		shader.borderWidth.loadFloat(text.getBorderWidth());
@@ -64,6 +63,7 @@ public class FontRenderer {
 		shader.translation.loadVec2(text.getPosition());
 		shader.windowPosition.loadVec2(-1, -1);
 		shader.windowSize.loadVec2(2, 2);
+		shader.doClipping.loadBoolean(true);
 		if(text.isInFlowchart()){
 			if(doClipping){
 			shader.windowPosition.loadVec2(flowChartWindow.getPosition());
@@ -74,6 +74,9 @@ public class FontRenderer {
 			}
 			shader.zoomTranslateMatrix.loadMatrix(flowChartWindow.getZoomTranslateMatrix());
 			if(codeWindow == null){
+				shader.doClipping.loadBoolean(false);
+				shader.zoomTranslateMatrix.loadMatrix(GeneralSettings.SCREENSHOT_TRANSLATION);
+				shader.color.loadVec3(text.getColor());
 				GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, text.getVertexCount());
 			}
 		}else if(text.isGuiText()){
@@ -81,6 +84,7 @@ public class FontRenderer {
 			shader.windowSize.loadVec2(2, 2);
 			shader.zoomTranslateMatrix.loadMatrix(zoomTranslateMatrix);
 			if(codeWindow == null) {
+				shader.color.loadVec3(text.getColor());
 				GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, text.getVertexCount());
 			}
 		}else if(text.isCodeWindowText() && codeWindow != null){
@@ -95,6 +99,7 @@ public class FontRenderer {
 			}
 		}
 		if(codeWindow != null) {
+			shader.color.loadVec3(text.getColor());
 			GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, text.getVertexCount());
 		}
 		GL20.glDisableVertexAttribArray(0);

@@ -1,33 +1,21 @@
 package gui;
 
 import gui.textBoxes.CodeWindow;
-import main.EngineTester;
 import main.GeneralSettings;
-import org.lwjgl.BufferUtils;
-import org.lwjgl.glfw.GLFW;
-import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
-import parser.CodeReader;
 import parser.LC3Parser;
-import rendering.renderEngine.MasterRenderer;
-import utils.MyFile;
 
 
-import java.awt.geom.GeneralPath;
-import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
+
 import gui.buttons.HeaderMenu;
 import gui.buttons.TextButton;
-
-import javax.imageio.ImageIO;
 
 public class Header {
     private List<HeaderMenu> menuList;
@@ -39,6 +27,7 @@ public class Header {
     private Vector2f aspectRatio = new Vector2f(1, 1);
     //Manages the temp file paths
     private TempFileManager tfm;
+    private LC3Parser parser = null;
 
 
     public Header(Vector2f position, Vector2f size){
@@ -48,22 +37,19 @@ public class Header {
 
         //Set up temp file manager
         tfm = new TempFileManager(GeneralSettings.TEMP_DIR);
+        tfm.setFileLimit(5);
         //Please set this to null if not file has been opened on launch
         GeneralSettings.FILE_PATH = "null";
 
 
         List<TextButton> testMenuButtonList = new ArrayList<>();
+        List<TextButton> registerMenuButtonList = new ArrayList<>();
 
         //open file
         TextButton button = new TextButton("Open File") {
             @Override
             public void onPress() {
-                //System.out.println("Open File");
-
-                //Test example notice that file path isn't hello world
-                GeneralSettings.FILE_PATH = "";
                 OpenFileDialog of = new OpenFileDialog();
-                //of.displayConsole(true);
                 of.openFileWindow();
                 GeneralSettings.FILE_PATH = of.getFilePath();
 
@@ -85,36 +71,8 @@ public class Header {
                         codeWindow.clear();
                     }
                     //create code window
-                    codeWindow = new CodeWindow(new Vector2f(0f,0f), new Vector2f(1f, 2-GeneralSettings.FONT_SCALING_FACTOR*GeneralSettings.FONT_SIZE), new Vector3f(0.1f,0.1f,0.1f), new Vector3f(1,1,1), new Vector3f(0,0,0), content, GeneralSettings.CONSOLAS, GeneralSettings.FONT_SIZE, GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE, GeneralSettings.TEXT_BOX_BORDER_WIDTH, size.y);
+                    codeWindow = new CodeWindow(new Vector2f(0f,0f), new Vector2f(1f, 2-GeneralSettings.FONT_SCALING_FACTOR*GeneralSettings.FONT_SIZE), new Vector3f(0.1f,0.1f,0.1f), GeneralSettings.TEXT_COLOR, new Vector3f(0,0,0), content, GeneralSettings.CONSOLAS, GeneralSettings.FONT_SIZE, GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE, GeneralSettings.TEXT_BOX_BORDER_WIDTH, size.y);
                     cursor = new Cursor(new Vector2f(codeWindow.getPosition()), codeWindow);
-                }
-
-                //Create temp file
-
-                //Save To Temp Location
-                if (!GeneralSettings.FILE_PATH.equals("null")) {
-                    TempFileOperations tfo = new TempFileOperations(GeneralSettings.TEMP_DIR);
-                    if (codeWindow != null) {
-                        tfo.saveTempFile(GeneralSettings.FILE_PATH);
-                    }
-                }
-
-                //LC3Parser parser = new LC3Parser(GeneralSettings.FILE_PATH, true);
-                //parser.ReadFile(GeneralSettings.FILE_PATH);
-
-                tfm.update();
-                if(tfm.getMostRecent().equals("null")) {
-                    return;
-                }
-                LC3Parser parser = new LC3Parser(tfm.getMostRecent(), true);
-                parser.ReadFile(tfm.getMostRecent());
-
-                parser.getFlowObjects();
-                parser.createFlowchart();
-
-                if(codeWindow != null && flowChartWindow != null) {
-                    codeWindow.minimize();
-                    flowChartWindow.maximize();
                 }
             }
         };
@@ -124,10 +82,6 @@ public class Header {
         button = new TextButton("Save As") {
             @Override
             public void onPress() {
-                //System.out.println("Open File");
-
-                //Test example notice that file path isn't hello world
-                //GeneralSettings.FILE_PATH = "";
                 OpenFileDialog of = new OpenFileDialog();
                 //of.displayConsole(true);
                 of.saveFileWindow();
@@ -145,35 +99,117 @@ public class Header {
             }
         };
         testMenuButtonList.add(button);
-        button = new TextButton("Temp Save") {
+
+        button = new TextButton("Save") {
             @Override
             public void onPress() {
-                //Saves in temporary location
-                TempFileOperations tfo = new TempFileOperations(GeneralSettings.TEMP_DIR);
-                if (codeWindow != null) {
-                    tfo.showPrints(false);
-                    tfo.tempSave(codeWindow.getTexts(), GeneralSettings.FILE_PATH);
+                //Saves contents of the text editor over the original source file
+                //TempFileOperations tfo = new TempFileOperations();
+                if (codeWindow != null && GeneralSettings.FILE_PATH != null & !GeneralSettings.FILE_PATH.equals("null")) {
+                   SaveToFile stf = new SaveToFile(GeneralSettings.FILE_PATH);
+                   stf.save(codeWindow.getTexts());
                 }
 
             }
         };
         testMenuButtonList.add(button);
 
-        //Generate from editor (TODO: save to temp file and generate from that)
+
+        button = new TextButton("Temp Save") {
+            @Override
+            public void onPress() {
+                //Saves in temporary location
+                //TempFileOperations tfo = new TempFileOperations();
+                if (codeWindow != null) {
+                   // tfo.showPrints(false);
+                   // tfo.saveCodeEditorTextToFile(codeWindow.getTexts(), GeneralSettings.FILE_PATH, GeneralSettings.TEMP_DIR);
+                    tfm.saveCodeEditorTextToFile(codeWindow.getTexts(), GeneralSettings.FILE_PATH, GeneralSettings.TEMP_DIR);
+                }
+
+            }
+        };
+        testMenuButtonList.add(button);
+
+        //generate from file
+        button = new TextButton("Generate Flowchart") {
+            @Override
+            public void onPress() {
+                //Create temp file
+
+                //Save To Temp Location
+                if (!GeneralSettings.FILE_PATH.equals("null")) {
+                    if (codeWindow != null) {
+                        tfm.copyFiletoTempFile(GeneralSettings.FILE_PATH, GeneralSettings.TEMP_DIR);
+
+                    }
+                } else {
+                    return;
+                }
+
+                //LC3Parser parser = new LC3Parser(GeneralSettings.FILE_PATH, true);
+                //parser.ReadFile(GeneralSettings.FILE_PATH);
+
+                tfm.update(); // Must be called if you change the files in temp!
+                if(tfm.getMostRecent().equals("null")) {
+                   return;
+                }
+                parser = new LC3Parser(tfm.getMostRecent(), false);
+                parser.ReadFile(tfm.getMostRecent());
+
+                parser.generateFlowObjects();
+                parser.createFlowchart();
+
+                if(codeWindow != null && flowChartWindow != null) {
+                    codeWindow.minimize();
+                    flowChartWindow.maximize();
+                }
+            }
+        };
+        testMenuButtonList.add(button);
+
         button = new TextButton("Regenerate Flowchart From Editor") {
             @Override
             public void onPress() {
-                System.out.println("Test success Button 2");
+                //TODO: Need way to keep track whether changes have been made in editor to know if we need to save or not...
+
+                //Save what is in codeWindow
+                if (codeWindow != null && GeneralSettings.FILE_PATH != null & !GeneralSettings.FILE_PATH.equals("null")) {
+                    tfm.saveCodeEditorTextToFile(codeWindow.getTexts(), GeneralSettings.FILE_PATH, GeneralSettings.TEMP_DIR);
+                } else {
+                    return;
+                }
+
+                tfm.update(); // Must be called if you change the files in temp!
+                if(tfm.getMostRecent().equals("null")) {
+                    return;
+                }
+                parser  = new LC3Parser(tfm.getMostRecent(), false);
+                parser.ReadFile(tfm.getMostRecent());
+
+                parser.generateFlowObjects();
+                parser.createFlowchart();
+
             }
         };
         testMenuButtonList.add(button);
+
         button = new TextButton("Regenerate Flowchart From Source") {
             @Override
             public void onPress() {
-                System.out.println("Test success Button 3");
+
+                if(GeneralSettings.FILE_PATH.equals("null")) {
+                    return;
+                }
+
+                parser = new LC3Parser(GeneralSettings.FILE_PATH, true);
+                parser.ReadFile(GeneralSettings.FILE_PATH);
+                parser.generateFlowObjects();
+                parser.createFlowchart();
+
             }
         };
         testMenuButtonList.add(button);
+
         button = new TextButton("Text Editor View") {
             @Override
             public void onPress() {
@@ -184,6 +220,7 @@ public class Header {
             }
         };
         testMenuButtonList.add(button);
+
         button = new TextButton("Flowchart View") {
             @Override
             public void onPress() {
@@ -194,6 +231,7 @@ public class Header {
             }
         };
         testMenuButtonList.add(button);
+
         button = new TextButton("Splitscreen View") {
             @Override
             public void onPress() {
@@ -203,56 +241,96 @@ public class Header {
                 }
             }
         };
-
         testMenuButtonList.add(button);
-        button = new TextButton("Save Image") {
+
+        HeaderMenu fileButton = new HeaderMenu(new Vector2f(-1f, 1-GeneralSettings.FONT_SIZE*GeneralSettings.FONT_SCALING_FACTOR - 2*GeneralSettings.TEXT_BUTTON_PADDING), "File", GeneralSettings.TEXT_BUTTON_BACKGROUND_COLOR, GeneralSettings.HIGHLIGHT_COLOR, GeneralSettings.TEXT_COLOR, GeneralSettings.CONSOLAS, GeneralSettings.FONT_SIZE, GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE, testMenuButtonList);
+        menuList.add(fileButton);
+
+        button = new TextButton("Clear") {
             @Override
             public void onPress() {
-                MasterRenderer.renderScreenshot();
-                GLFW.glfwSwapBuffers(EngineTester.getWindow());
-
-                String filePath;
-                OpenFileDialog of = new OpenFileDialog();
-                of.saveFileWindow();
-                filePath = of.getFilePath();
-
-                if(filePath.equals("null")) {
-                    return; //Prevent save if no file lol
+                if(parser != null) {
+                    parser.locateRegisters(null);
                 }
-
-
-                GL11.glReadBuffer(GL11.GL_FRONT);
-                int width = GeneralSettings.DISPLAY_WIDTH;
-                int height= GeneralSettings.DISPLAY_HEIGHT;
-                int bpp = 4; // Assuming a 32-bit display with a byte each for red, green, blue, and alpha.
-                ByteBuffer buffer = BufferUtils.createByteBuffer(width * height * bpp);
-                GL11.glReadPixels(0, 0, width, height, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, buffer );
-
-                //File file = new File("scrot.png"); // The file to save to.
-                File file = new File(filePath); // The file to save to.
-                String format = "PNG"; // Example: "PNG" or "JPG"
-                BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-
-                for(int x = 0; x < width; x++)
-                {
-                    for(int y = 0; y < height; y++)
-                    {
-                        int i = (x + (width * y)) * bpp;
-                        int r = buffer.get(i) & 0xFF;
-                        int g = buffer.get(i + 1) & 0xFF;
-                        int b = buffer.get(i + 2) & 0xFF;
-                        image.setRGB(x, height - (y + 1), (0xFF << 24) | (r << 16) | (g << 8) | b);
-                    }
-                }
-
-                try {
-                    ImageIO.write(image, format, file);
-                } catch (IOException e) { e.printStackTrace(); }
             }
         };
-        testMenuButtonList.add(button);
-        HeaderMenu file = new HeaderMenu(new Vector2f(-1f, 1-GeneralSettings.FONT_SIZE*GeneralSettings.FONT_SCALING_FACTOR - 2*GeneralSettings.TEXT_BUTTON_PADDING), "File", new Vector3f(0, 0, 0), GeneralSettings.HIGHLIGHT_COLOR, GeneralSettings.CURSOR_COLOR, GeneralSettings.CONSOLAS, GeneralSettings.FONT_SIZE, GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE, testMenuButtonList);
-        menuList.add(file);
+        registerMenuButtonList.add(button);
+        button = new TextButton("R0") {
+            @Override
+            public void onPress() {
+                if(parser != null) {
+                    parser.locateRegisters("R0");
+                }
+            }
+        };
+        registerMenuButtonList.add(button);
+        button = new TextButton("R1") {
+            @Override
+            public void onPress() {
+                if(parser != null) {
+                    parser.locateRegisters("R1");
+                }
+            }
+        };
+        registerMenuButtonList.add(button);
+        button = new TextButton("R2") {
+            @Override
+            public void onPress() {
+                if(parser != null) {
+                    parser.locateRegisters("R2");
+                }
+            }
+        };
+        registerMenuButtonList.add(button);
+        button = new TextButton("R3") {
+            @Override
+            public void onPress() {
+                if(parser != null) {
+                    parser.locateRegisters("R3");
+                }
+            }
+        };
+        registerMenuButtonList.add(button);
+        button = new TextButton("R4") {
+            @Override
+            public void onPress() {
+                if(parser != null) {
+                    parser.locateRegisters("R4");
+                }
+            }
+        };
+        registerMenuButtonList.add(button);
+        button = new TextButton("R5") {
+            @Override
+            public void onPress() {
+                if(parser != null) {
+                    parser.locateRegisters("R5");
+                }
+            }
+        };
+        registerMenuButtonList.add(button);
+        button = new TextButton("R6") {
+            @Override
+            public void onPress() {
+                if(parser != null) {
+                    parser.locateRegisters("R6");
+                }
+            }
+        };
+        registerMenuButtonList.add(button);
+        button = new TextButton("R7") {
+            @Override
+            public void onPress() {
+                if(parser != null) {
+                    parser.locateRegisters("R7");
+                }
+            }
+        };
+        registerMenuButtonList.add(button);
+
+        HeaderMenu registerButton = new HeaderMenu(new Vector2f(-1f + fileButton.getSize().y, 1-GeneralSettings.FONT_SIZE*GeneralSettings.FONT_SCALING_FACTOR - 2*GeneralSettings.TEXT_BUTTON_PADDING), "Registers", GeneralSettings.TEXT_BUTTON_BACKGROUND_COLOR, GeneralSettings.HIGHLIGHT_COLOR, GeneralSettings.TEXT_COLOR, GeneralSettings.CONSOLAS, GeneralSettings.FONT_SIZE, GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE, registerMenuButtonList);
+        menuList.add(registerButton);
+
     }
 
     public GUIFilledBox getGuiFilledBox() {
@@ -293,6 +371,10 @@ public class Header {
         guiFilledBox.setSize(size);
         for(HeaderMenu menu : menuList){
             menu.setAspectRatio(new Vector2f(aspectRatio));
+        }
+        for(int i = 1; i < menuList.size(); i++){
+            HeaderMenu lastMenu = menuList.get(i-1);
+            menuList.get(i).setPosition(new Vector2f(lastMenu.getPosition().x + lastMenu.getSize().x, lastMenu.getPosition().y));
         }
         guiFilledBox.setPosition(new Vector2f(-1, 1-(1-guiFilledBox.getPosition().y)/this.aspectRatio.y*aspectRatio.y));
         this.aspectRatio = aspectRatio;

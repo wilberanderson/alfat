@@ -1,9 +1,7 @@
 package gui.buttons;
 
-import gui.buttons.TextButton;
 import gui.fontMeshCreator.FontType;
 import main.GeneralSettings;
-import org.lwjgl.system.CallbackI;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 import rendering.text.TextMaster;
@@ -15,6 +13,7 @@ public class HeaderMenu extends TextButton {
 
     private List<TextButton> dropDownButtons;
     private Vector2f aspectRatio = new Vector2f(1, 1);
+    public boolean isOpen = false;
 
     public HeaderMenu(Vector2f position, String text, Vector3f backgroundColor, Vector3f highlightColor, Vector3f textColor, FontType font, float fontSize, float width, float edge, List<TextButton> buttons) {
         super(position, text, backgroundColor, highlightColor, textColor, font, fontSize, width, edge);
@@ -38,9 +37,14 @@ public class HeaderMenu extends TextButton {
 
     @Override
     public void onPress(){
-        for(TextButton button : dropDownButtons){
-            InputManager.buttons.add(button);
-            TextMaster.loadGuiText(button.getText());
+        if (!isOpen) {
+            for (TextButton button : dropDownButtons) {
+                InputManager.buttons.add(button);
+                TextMaster.loadGuiText(button.getText());
+            }
+            this.isOpen = true;
+        } else {
+            close();
         }
     }
 
@@ -49,6 +53,7 @@ public class HeaderMenu extends TextButton {
             InputManager.buttons.remove(button);
             TextMaster.removeGuiText(button.getText());
         }
+        this.isOpen = false;
     }
 
     public void setAspectRatio(Vector2f aspectRatio){
@@ -69,4 +74,13 @@ public class HeaderMenu extends TextButton {
         this.aspectRatio = aspectRatio;
     }
 
+
+    @Override
+    public void setPosition(Vector2f position){
+        super.setPosition(position);
+        for(TextButton button : dropDownButtons){
+            button.setPosition(new Vector2f(position.x, button.getPosition().y));
+        }
+        this.getText().getPosition().x = (position.x/aspectRatio.x);
+    }
 }

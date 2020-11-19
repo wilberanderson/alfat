@@ -116,19 +116,37 @@ public class InputManager {
                 if(button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
                     LEFT_CLICK = true;
                     LEFT_MOUSE_HELD = true;
+                    boolean buttonPressed = false;
+                    List<HeaderMenu> toClose = new ArrayList<>();
+
                     for(Button b: buttons){
                         if(MOUSE_X >= b.getPosition().x && MOUSE_Y >= b.getPosition().y && MOUSE_X < b.getPosition().x+b.getSize().x && MOUSE_Y < b.getPosition().y+b.getSize().y){
-                            b.onPress();
-                            if(openMenu != null){
-                                openMenu.close();
+                            if (b instanceof HeaderMenu){
+                                if(openMenu != b && openMenu != null){
+                                    toClose.add((HeaderMenu) openMenu);
+                                }
+                                openMenu = (HeaderMenu) b;
+                            } else {
+                                toClose.add(openMenu);
                                 openMenu = null;
                             }
-                            if(b instanceof HeaderMenu){
-                                openMenu = (HeaderMenu) b;
-                            }
+                            b.onPress();
+                            buttonPressed = true;
                             break;
                         }
                     }
+
+                    if (!buttonPressed) for (Button b : buttons) {
+                        if (b instanceof HeaderMenu) {
+                            if (((HeaderMenu) b).isOpen) {
+                                toClose.add((HeaderMenu)b);
+                            }
+                        }
+                    }
+                    for(HeaderMenu b : toClose){
+                        b.close();
+                    }
+
                 }else if(button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE){
                     LEFT_CLICK = false;
                     LEFT_MOUSE_HELD = false;
@@ -172,11 +190,15 @@ public class InputManager {
         glfwSetFramebufferSizeCallback(window, framebufferSizeCallback = new GLFWFramebufferSizeCallback() {
             @Override
             public void invoke(long window, int width, int height) {
-                GeneralSettings.updateAspectRatio(width, height);
-                GL11.glViewport(0, 0, width, height);
-                header.setAspectRatio(new Vector2f(GeneralSettings.ASPECT_RATIO.m00, GeneralSettings.ASPECT_RATIO.m11));
-                flowChartWindow.setAspectRatio(GeneralSettings.ASPECT_RATIO);
-                aspectRatio = new Vector2f(GeneralSettings.ASPECT_RATIO.m00, GeneralSettings.ASPECT_RATIO.m11);
+                if(!GeneralSettings.SCREENSHOT_IN_PROGRESS) {
+                    GeneralSettings.updateAspectRatio(width, height);
+                    GL11.glViewport(0, 0, width, height);
+                    header.setAspectRatio(new Vector2f(GeneralSettings.ASPECT_RATIO.m00, GeneralSettings.ASPECT_RATIO.m11));
+                    flowChartWindow.setAspectRatio(GeneralSettings.ASPECT_RATIO);
+                    aspectRatio = new Vector2f(GeneralSettings.ASPECT_RATIO.m00, GeneralSettings.ASPECT_RATIO.m11);
+                }else{
+                    GL11.glViewport(0, 0, width, height);
+                }
             }
         });
     }

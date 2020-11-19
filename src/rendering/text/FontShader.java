@@ -22,10 +22,11 @@ public class FontShader extends ShaderProgram{
 	protected UniformVec2 windowSize = new UniformVec2("windowSize");
 	protected UniformMat3 zoomTranslateMatrix = new UniformMat3("zoomTranslateMatrix");
 	protected UniformMat2 aspectRatio = new UniformMat2("aspectRatio");
+	protected UniformBoolean doClipping = new UniformBoolean("doClipping");
 
 	public FontShader() {
 		super(GeneralSettings.FONT_VERTEX, GeneralSettings.FONT_FRAGMENT, "position", "textureCoords");
-		super.storeAllUniformLocations(color, outlineColor, translation, offset, width, edge, borderWidth, borderEdge, windowPosition, windowSize, zoomTranslateMatrix, aspectRatio);
+		super.storeAllUniformLocations(color, outlineColor, translation, offset, width, edge, borderWidth, borderEdge, windowPosition, windowSize, zoomTranslateMatrix, aspectRatio, doClipping);
 	}
 
 

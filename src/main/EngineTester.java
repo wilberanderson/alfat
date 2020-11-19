@@ -230,9 +230,6 @@ public class EngineTester {
             GLFW.glfwSwapBuffers(window);
 
 
-
-
-
         }
     }
 
@@ -241,9 +238,9 @@ public class EngineTester {
      * Save content from code editor to temp file.
      * */
     private void saveIfCrash() {
-        TempFileOperations tfm = new TempFileOperations(GeneralSettings.TEMP_DIR);
         if(header.getCodeWindow() != null) {
-            tfm.tempSave(header.getCodeWindow().getTexts(),GeneralSettings.FILE_PATH);
+            TempFileManager tfm = new TempFileManager(GeneralSettings.TEMP_DIR);
+            tfm.saveCodeEditorTextToFile(header.getCodeWindow().getTexts(),GeneralSettings.FILE_PATH, GeneralSettings.TEMP_DIR);
         }
     }
 

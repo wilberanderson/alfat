@@ -89,7 +89,17 @@ public class TextButton extends HighlightableButton{
         guiFilledBox.setPosition(new Vector2f(-1, 1-(1-guiFilledBox.getPosition().y)/this.aspectRatio.y*aspectRatio.y));
         super.setPosition(guiFilledBox.getPosition());
         text.setPosition(new Vector2f(guiFilledBox.getPosition().x/aspectRatio.x, guiFilledBox.getPosition().y/aspectRatio.y + GeneralSettings.FONT_SCALING_FACTOR*GeneralSettings.FONT_SIZE));
+        System.out.println("New aspect Ratio " + aspectRatio);
+        System.out.println("Old aspect Ratio " + this.aspectRatio);
         this.aspectRatio = aspectRatio;
+        System.out.println("Set aspect Ratio"  + this.aspectRatio);
+    }
+
+    @Override
+    public void setPosition(Vector2f position){
+        super.setPosition(position);
+        this.getGuiFilledBox().setPosition(position);
+        this.getText().getPosition().x = (position.x/aspectRatio.x);
     }
 
 }

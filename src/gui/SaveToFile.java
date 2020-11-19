@@ -58,6 +58,7 @@ public class SaveToFile {
             FileWriter fw = new FileWriter(file.getAbsoluteFile());
             BufferedWriter bw = new BufferedWriter(fw);
             for(int i = 0; i < textLines.size(); i++) {
+
                 bw.write(textLines.get(i).textString + "\n");
             }
             bw.close();

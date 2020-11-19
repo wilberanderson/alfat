@@ -21,7 +21,7 @@ public class GUIText {
 
 	private int textMeshVao;
 	private int vertexCount;
-	private Vector3f colour;
+	private Vector3f color;
 
 	private Vector2f position;
 
@@ -60,7 +60,7 @@ public class GUIText {
 	 *            text should be rendered. The top left corner of the screen is
 	 *            (0, 0) and the bottom right is (1, 1).
 	 */
-	public GUIText(String text, float fontSize, FontType font, Vector2f position, float width, float edge, Vector3f colour, Vector4f positionBounds, boolean isGuiText, boolean isInFlowchart, boolean isCodeWindowText) {
+	public GUIText(String text, float fontSize, FontType font, Vector2f position, float width, float edge, Vector3f color, Vector4f positionBounds, boolean isGuiText, boolean isInFlowchart, boolean isCodeWindowText) {
 		this.textString = text;
 		this.fontSize = fontSize;
 		this.font = font;
@@ -70,7 +70,7 @@ public class GUIText {
 		this.width = width;
 		this.edge = edge;
 		this.borderEdge = edge;
-		this.colour = colour;
+		this.color = new Vector3f(color);
 		this.positionBounds = positionBounds;
 		this.isGuiText = isGuiText;
 		this.isInFlowchart = isInFlowchart;
@@ -95,7 +95,7 @@ public class GUIText {
 		this.width = guiText.width;
 		this.edge = guiText.edge;
 		this.borderEdge = edge;
-		this.colour = guiText.colour;
+		this.color = guiText.color;
 		this.positionBounds = guiText.positionBounds;
 		this.isGuiText = guiText.isGuiText;
 		this.isInFlowchart = guiText.isInFlowchart;
@@ -136,7 +136,7 @@ public class GUIText {
 	}
 
 	/**
-	 * Set the colour of the text.
+	 * Set the color of the text.
 	 * 
 	 * @param r
 	 *            - red value, between 0 and 1.
@@ -145,15 +145,15 @@ public class GUIText {
 	 * @param b
 	 *            - blue value, between 0 and 1.
 	 */
-	public void setColour(float r, float g, float b) {
-		colour.set(r, g, b);
+	public void setColor(float r, float g, float b) {
+		color.set(r, g, b);
 	}
 
 	/**
-	 * @return the colour of the text.
+	 * @return the color of the text.
 	 */
-	public Vector3f getColour() {
-		return colour;
+	public Vector3f getColor() {
+		return color;
 	}
 
 	/**
