@@ -34,13 +34,8 @@ public class LC3Parser implements CodeReader {
 
     LC3Syntax syn = jr.mapJsonLC3Syntax();
 
-    //normal commands or reserved operations:
-    //String[] commands = {"ADD","AND","LD","LDI","LDR","LEA","NOT","RET","RTI","ST","STI","STR","TRAP",".ORIG",".FILL",".BLKW",".STRING",".END","PUTS","GETC","OUT","HALT"};
-
     String[] commands = syn.getCommands();
 
-    //commands that can result in a jump to a new code block
-    //String[] jumps = {"JMP","JSR","JSRR"};
     String[] jumps = syn.getJumps();
 
     /**Read an input file. Parse the input file line by line, and store them in the arrayList of LC3TLine objects.
@@ -68,7 +63,7 @@ public class LC3Parser implements CodeReader {
                 //take entire line before semicolon
                 int index = line.indexOf(";");
                 if (index == -1) index = line.length();
-                String[] arrLine = line.substring(0, index).split(" ");
+                String[] arrLine = line.substring(0, index).split("[ ,\t]");
 
                 //temp variables:
                 Optional<String> comm = Optional.empty();
@@ -228,7 +223,7 @@ public class LC3Parser implements CodeReader {
      *
      */
     @Override
-    public void getFlowObjects() {
+    public void generateFlowObjects() {
         //generate naive boxes for flowchart.
         if (verbose) System.out.println("\n\nBeginning flowchart parsing:");
         flowchart.add(new FlowChartObject());
@@ -326,7 +321,7 @@ public class LC3Parser implements CodeReader {
                 System.out.println("Box " + i + " @ " + location);
                 System.out.println("Starting @ line #" + box.getStartLine());
             }
-            FlowChartTextBox textBox = new FlowChartTextBox(new Vector2f(location), box.getFullText(true), box.getStartLine()+1);
+            FlowChartTextBox textBox = new FlowChartTextBox(new Vector2f(location), box.getFullText(true), box.getStartLine()+1, box.getRegisters());
             textBoxes.add(textBox);
             textBox.setPosition(new Vector2f(textBox.getPosition().x, textBox.getPosition().y-textBox.getSize().y));
             if (verbose) System.out.println("Position: " + textBox.getPosition() + " Size: " + textBox.getSize());
@@ -345,10 +340,7 @@ public class LC3Parser implements CodeReader {
         List<FlowchartLine> linesList = new ArrayList<>();
         int jump_lines = 0;
 
-        Vector3f rainbow[] = {new Vector3f(0.862745f, 0.196078f, 0.184313f),new Vector3f(0.796078f, 0.294117f, 0.086274f),new Vector3f(0.709803f, 0.537254f, 0),
-                new Vector3f(0.521568f, .6f, 0),new Vector3f(0.164705f, 0.631372f, 0.596078f),
-                new Vector3f(0.149019f, 0.545098f, 0.823529f),new Vector3f(0.423529f, 0.443137f, 0.768627f),
-                new Vector3f(0.82745f, 0.211764f, 0.509803f)};
+        Vector3f rainbow[] = {GeneralSettings.magenta, GeneralSettings.red, GeneralSettings.orange, GeneralSettings.yellow, GeneralSettings.green, GeneralSettings.cyan, GeneralSettings.blue, GeneralSettings.violet};
 
         for (int index = 0; index <= flowchart.size(); index++){
             // Draw line to next box (not in the last box)
@@ -432,11 +424,11 @@ public class LC3Parser implements CodeReader {
             }
         }
 
-        System.out.println("Lines added: " + linesList.size());
+        if (verbose) System.out.println("Lines added: " + linesList.size());
 
         // get y_bound coordinate:
         y_bound = locations.get(locations.size()-1).y;
-        System.out.println("(" + (Math.abs(x_bound) + 1f) + ", " + (Math.abs(y_bound) + 1f + GeneralSettings.FLOWCHART_PAD_TOP) + ")");
+        if (verbose) System.out.println("(" + (Math.abs(x_bound) + 1f) + ", " + (Math.abs(y_bound) + 1f + GeneralSettings.FLOWCHART_PAD_TOP) + ")");
         GeneralSettings.SCREENSHOT_SIZE = new Vector2f(Math.abs(x_bound) + 1f, Math.abs(y_bound) + 1f + GeneralSettings.FLOWCHART_PAD_TOP);
         Matrix3f translation = new Matrix3f();
         translation.setIdentity();
@@ -464,5 +456,20 @@ public class LC3Parser implements CodeReader {
 
         FlowChartWindow.setFlowchartLineList(linesList);
 
+    }
+
+    public void locateRegisters(String register){
+        for (FlowChartTextBox box : FlowChartWindow.getFlowChartTextBoxList()){
+            if (verbose) System.out.println("Checking box " + box + " for register " + register);
+            if (verbose) System.out.println("Contains registers: " + box.getRegisters());
+            if (register != null && box.getRegisters().contains(register)){
+                if (verbose) System.out.println("Match found");
+                box.setBackgroundColor(GeneralSettings.TEXT_COLOR);
+                box.setTextColor(GeneralSettings.TEXT_BOX_BACKGROUND_COLOR);
+            } else {
+                box.setBackgroundColor(GeneralSettings.TEXT_BOX_BACKGROUND_COLOR);
+                box.setTextColor(GeneralSettings.TEXT_COLOR);
+            }
+        }
     }
 }

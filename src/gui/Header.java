@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 
 import gui.buttons.HeaderMenu;
 import gui.buttons.TextButton;
@@ -26,6 +27,7 @@ public class Header {
     private Vector2f aspectRatio = new Vector2f(1, 1);
     //Manages the temp file paths
     private TempFileManager tfm;
+    private LC3Parser parser = null;
 
 
     public Header(Vector2f position, Vector2f size){
@@ -41,6 +43,7 @@ public class Header {
 
 
         List<TextButton> testMenuButtonList = new ArrayList<>();
+        List<TextButton> registerMenuButtonList = new ArrayList<>();
 
         //open file
         TextButton button = new TextButton("Open File") {
@@ -68,7 +71,7 @@ public class Header {
                         codeWindow.clear();
                     }
                     //create code window
-                    codeWindow = new CodeWindow(new Vector2f(0f,0f), new Vector2f(1f, 2-GeneralSettings.FONT_SCALING_FACTOR*GeneralSettings.FONT_SIZE), new Vector3f(0.1f,0.1f,0.1f), new Vector3f(1,1,1), new Vector3f(0,0,0), content, GeneralSettings.CONSOLAS, GeneralSettings.FONT_SIZE, GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE, GeneralSettings.TEXT_BOX_BORDER_WIDTH, size.y);
+                    codeWindow = new CodeWindow(new Vector2f(0f,0f), new Vector2f(1f, 2-GeneralSettings.FONT_SCALING_FACTOR*GeneralSettings.FONT_SIZE), new Vector3f(0.1f,0.1f,0.1f), GeneralSettings.TEXT_COLOR, new Vector3f(0,0,0), content, GeneralSettings.CONSOLAS, GeneralSettings.FONT_SIZE, GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE, GeneralSettings.TEXT_BOX_BORDER_WIDTH, size.y);
                     cursor = new Cursor(new Vector2f(codeWindow.getPosition()), codeWindow);
                 }
             }
@@ -150,11 +153,16 @@ public class Header {
                 if(tfm.getMostRecent().equals("null")) {
                    return;
                 }
-                LC3Parser parser = new LC3Parser(tfm.getMostRecent(), false);
+                parser = new LC3Parser(tfm.getMostRecent(), false);
                 parser.ReadFile(tfm.getMostRecent());
 
-                parser.getFlowObjects();
+                parser.generateFlowObjects();
                 parser.createFlowchart();
+
+                if(codeWindow != null && flowChartWindow != null) {
+                    codeWindow.minimize();
+                    flowChartWindow.maximize();
+                }
             }
         };
         testMenuButtonList.add(button);
@@ -175,10 +183,10 @@ public class Header {
                 if(tfm.getMostRecent().equals("null")) {
                     return;
                 }
-                LC3Parser parser = new LC3Parser(tfm.getMostRecent(), false);
+                parser  = new LC3Parser(tfm.getMostRecent(), false);
                 parser.ReadFile(tfm.getMostRecent());
 
-                parser.getFlowObjects();
+                parser.generateFlowObjects();
                 parser.createFlowchart();
 
             }
@@ -193,9 +201,9 @@ public class Header {
                     return;
                 }
 
-                LC3Parser parser = new LC3Parser(GeneralSettings.FILE_PATH, true);
+                parser = new LC3Parser(GeneralSettings.FILE_PATH, true);
                 parser.ReadFile(GeneralSettings.FILE_PATH);
-                parser.getFlowObjects();
+                parser.generateFlowObjects();
                 parser.createFlowchart();
 
             }
@@ -235,8 +243,94 @@ public class Header {
         };
         testMenuButtonList.add(button);
 
-        HeaderMenu fileButton = new HeaderMenu(new Vector2f(-1f, 1-GeneralSettings.FONT_SIZE*GeneralSettings.FONT_SCALING_FACTOR - 2*GeneralSettings.TEXT_BUTTON_PADDING), "File", new Vector3f(0, 0, 0), GeneralSettings.HIGHLIGHT_COLOR, GeneralSettings.CURSOR_COLOR, GeneralSettings.CONSOLAS, GeneralSettings.FONT_SIZE, GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE, testMenuButtonList);
+        HeaderMenu fileButton = new HeaderMenu(new Vector2f(-1f, 1-GeneralSettings.FONT_SIZE*GeneralSettings.FONT_SCALING_FACTOR - 2*GeneralSettings.TEXT_BUTTON_PADDING), "File", GeneralSettings.TEXT_BUTTON_BACKGROUND_COLOR, GeneralSettings.HIGHLIGHT_COLOR, GeneralSettings.TEXT_COLOR, GeneralSettings.CONSOLAS, GeneralSettings.FONT_SIZE, GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE, testMenuButtonList);
         menuList.add(fileButton);
+
+        button = new TextButton("Clear") {
+            @Override
+            public void onPress() {
+                if(parser != null) {
+                    parser.locateRegisters(null);
+                }
+            }
+        };
+        registerMenuButtonList.add(button);
+        button = new TextButton("R0") {
+            @Override
+            public void onPress() {
+                if(parser != null) {
+                    parser.locateRegisters("R0");
+                }
+            }
+        };
+        registerMenuButtonList.add(button);
+        button = new TextButton("R1") {
+            @Override
+            public void onPress() {
+                if(parser != null) {
+                    parser.locateRegisters("R1");
+                }
+            }
+        };
+        registerMenuButtonList.add(button);
+        button = new TextButton("R2") {
+            @Override
+            public void onPress() {
+                if(parser != null) {
+                    parser.locateRegisters("R2");
+                }
+            }
+        };
+        registerMenuButtonList.add(button);
+        button = new TextButton("R3") {
+            @Override
+            public void onPress() {
+                if(parser != null) {
+                    parser.locateRegisters("R3");
+                }
+            }
+        };
+        registerMenuButtonList.add(button);
+        button = new TextButton("R4") {
+            @Override
+            public void onPress() {
+                if(parser != null) {
+                    parser.locateRegisters("R4");
+                }
+            }
+        };
+        registerMenuButtonList.add(button);
+        button = new TextButton("R5") {
+            @Override
+            public void onPress() {
+                if(parser != null) {
+                    parser.locateRegisters("R5");
+                }
+            }
+        };
+        registerMenuButtonList.add(button);
+        button = new TextButton("R6") {
+            @Override
+            public void onPress() {
+                if(parser != null) {
+                    parser.locateRegisters("R6");
+                }
+            }
+        };
+        registerMenuButtonList.add(button);
+        button = new TextButton("R7") {
+            @Override
+            public void onPress() {
+                if(parser != null) {
+                    parser.locateRegisters("R7");
+                }
+            }
+        };
+        registerMenuButtonList.add(button);
+
+        HeaderMenu registerButton = new HeaderMenu(new Vector2f(-1f + fileButton.getSize().y, 1-GeneralSettings.FONT_SIZE*GeneralSettings.FONT_SCALING_FACTOR - 2*GeneralSettings.TEXT_BUTTON_PADDING), "Registers", GeneralSettings.TEXT_BUTTON_BACKGROUND_COLOR, GeneralSettings.HIGHLIGHT_COLOR, GeneralSettings.TEXT_COLOR, GeneralSettings.CONSOLAS, GeneralSettings.FONT_SIZE, GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE, registerMenuButtonList);
+        menuList.add(registerButton);
+
     }
 
     public GUIFilledBox getGuiFilledBox() {
@@ -277,6 +371,10 @@ public class Header {
         guiFilledBox.setSize(size);
         for(HeaderMenu menu : menuList){
             menu.setAspectRatio(new Vector2f(aspectRatio));
+        }
+        for(int i = 1; i < menuList.size(); i++){
+            HeaderMenu lastMenu = menuList.get(i-1);
+            menuList.get(i).setPosition(new Vector2f(lastMenu.getPosition().x + lastMenu.getSize().x, lastMenu.getPosition().y));
         }
         guiFilledBox.setPosition(new Vector2f(-1, 1-(1-guiFilledBox.getPosition().y)/this.aspectRatio.y*aspectRatio.y));
         this.aspectRatio = aspectRatio;

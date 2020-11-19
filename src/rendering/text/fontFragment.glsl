@@ -38,5 +38,4 @@ void main(void){
 	float overallAlpha = alpha + (1.0 - alpha) * outlineAlpha;
 	vec3 overallColor = mix(outlineColor, color, alpha / overallAlpha); 
 	out_color = vec4(overallColor, overallAlpha);
-
 }

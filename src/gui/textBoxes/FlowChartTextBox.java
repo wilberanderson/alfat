@@ -9,17 +9,21 @@ import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
 
 import java.awt.geom.GeneralPath;
+import java.util.ArrayList;
+import java.util.List;
 
 public class FlowChartTextBox extends TextBox{
 
     private float lineHeight = GeneralSettings.FONT_SIZE*GeneralSettings.FONT_SCALING_FACTOR;
+    private List<String> registers = new ArrayList<>();
 
-    public FlowChartTextBox(Vector2f position, String content, int lineNumber){
+    public FlowChartTextBox(Vector2f position, String content, int lineNumber, List<String> registers){
         super();
         super.setPosition(position);
         super.setBackgroundColor(GeneralSettings.TEXT_BOX_BACKGROUND_COLOR);
         super.setBorderColor(GeneralSettings.TEXT_BOX_BORDER_COLOR);
         super.setTextColor(GeneralSettings.TEXT_COLOR);
+        this.registers = registers;
         String[] lines = content.split("\n");
         float minHeight = GeneralSettings.TEXT_BOX_BORDER_WIDTH;
         double greatestLength = 0;
@@ -60,5 +64,9 @@ public class FlowChartTextBox extends TextBox{
         super.setPosition(position);
         super.getTextNumberFilledBox().setPosition(position);
         super.getGuiFilledBox().setPosition(new Vector2f(position.x + super.getTextNumberFilledBox().getSize().x, position.y));
+    }
+
+    public List<String> getRegisters(){
+        return registers;
     }
 }

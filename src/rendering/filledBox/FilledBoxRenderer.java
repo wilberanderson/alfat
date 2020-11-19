@@ -65,6 +65,7 @@ public class FilledBoxRenderer {
                 shader.windowPosition.loadVec2(flowChartWindow.getPosition());
                 shader.windowSize.loadVec2(flowChartWindow.getSize());
                 shader.aspectRatio.loadMatrix(GeneralSettings.ASPECT_RATIO);
+                shader.color.loadVec3(textBox.getBackgroundColor());
             }else{
                 System.out.println("Undefined box rendering behavior");
             }

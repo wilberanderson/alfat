@@ -116,17 +116,37 @@ public class InputManager {
                 if(button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
                     LEFT_CLICK = true;
                     LEFT_MOUSE_HELD = true;
+                    boolean buttonPressed = false;
+                    List<HeaderMenu> toClose = new ArrayList<>();
+
                     for(Button b: buttons){
                         if(MOUSE_X >= b.getPosition().x && MOUSE_Y >= b.getPosition().y && MOUSE_X < b.getPosition().x+b.getSize().x && MOUSE_Y < b.getPosition().y+b.getSize().y){
+                            if (b instanceof HeaderMenu){
+                                if(openMenu != b && openMenu != null){
+                                    toClose.add((HeaderMenu) openMenu);
+                                }
+                                openMenu = (HeaderMenu) b;
+                            } else {
+                                toClose.add(openMenu);
+                                openMenu = null;
+                            }
                             b.onPress();
+                            buttonPressed = true;
                             break;
-                        }else if(b instanceof HeaderMenu){
-                            if(((HeaderMenu) b).isOpen){
-                                ((HeaderMenu) b).close();
-                                System.out.println("Clicked outside of the menu");
+                        }
+                    }
+
+                    if (!buttonPressed) for (Button b : buttons) {
+                        if (b instanceof HeaderMenu) {
+                            if (((HeaderMenu) b).isOpen) {
+                                toClose.add((HeaderMenu)b);
                             }
                         }
                     }
+                    for(HeaderMenu b : toClose){
+                        b.close();
+                    }
+
                 }else if(button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE){
                     LEFT_CLICK = false;
                     LEFT_MOUSE_HELD = false;

@@ -74,4 +74,13 @@ public class HeaderMenu extends TextButton {
         this.aspectRatio = aspectRatio;
     }
 
+
+    @Override
+    public void setPosition(Vector2f position){
+        super.setPosition(position);
+        for(TextButton button : dropDownButtons){
+            button.setPosition(new Vector2f(position.x, button.getPosition().y));
+        }
+        this.getText().getPosition().x = (position.x/aspectRatio.x);
+    }
 }

@@ -63,6 +63,9 @@ public class TextBox {
 
     public void setBackgroundColor(Vector3f backgroundColor){
         this.backgroundColor = backgroundColor;
+        if(this.guiFilledBox != null) {
+            this.guiFilledBox.setColor(backgroundColor);
+        }
     }
 
 
@@ -89,6 +92,9 @@ public class TextBox {
 
     public void setTextColor(Vector3f textColor){
         this.textColor = textColor;
+        for(GUIText text : getTexts()){
+            text.setColor(textColor.x, textColor.y, textColor.z);
+        }
     }
 
 
