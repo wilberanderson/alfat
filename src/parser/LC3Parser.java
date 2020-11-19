@@ -230,38 +230,50 @@ public class LC3Parser implements CodeReader {
         flowchart.get(flowchart.size() - 1).setBoxNumber(flowchart.size()-1);
 
         for (LC3TLine line : lines){
-            if (!line.getLineText(true).isEmpty()) {
-                if (verbose) {
-                    System.out.println();
-                    System.out.println("line text \"" + line.getLineText(true) + "\"");
-                    System.out.println("jumps = " + line.isJumps());
+            if (verbose) {
+                System.out.println();
+                System.out.println("line text \"" + line.getLineText(true) + "\"");
+                System.out.println("jumps = " + line.isJumps());
+            }
+            //This line has a label, start a new box:
+            if (verbose) System.out.println("line label: \"" + line.getLabel() + "\"");
+            if (!line.getLabel().isEmpty()) {
+                //start new box
+                if (verbose) System.out.println("label found \"" + line.getLabel() + "\"");
+                flowchart.add(new FlowChartObject());
+                flowchart.get(flowchart.size() - 1).setStartLine(line.getLineNumber() - 1);
+                flowchart.get(flowchart.size() - 1).setLabel(line.getLabel());
+            }
+
+            // Add the line to the current box.
+            if (flowchart.get(flowchart.size()-1).getStartLine() == line.getLineNumber()-1){
+                //first line in box, don't add if blank
+                if (!line.getLineText(true).isBlank()){
+                    flowchart.get(flowchart.size() - 1).addLine(line);
+                    flowchart.get(flowchart.size() - 1).lineCount++;
+                } else {
+                    flowchart.get(flowchart.size()-1).setStartLine(flowchart.get(flowchart.size()-1).getStartLine()+1);
                 }
-                //This line has a label, start a new box:
-                if (verbose) System.out.println("line label: \"" + line.getLabel() + "\"");
-                if (!line.getLabel().isEmpty()) {
-                    //start new box
-                    if (verbose) System.out.println("label found \"" + line.getLabel() + "\"");
-                    flowchart.add(new FlowChartObject());
-                    flowchart.get(flowchart.size() - 1).setStartLine(line.getLineNumber());
-                    flowchart.get(flowchart.size() - 1).setLabel(line.getLabel());
-                }
-                // Add the line to the current box.
+            } else {
                 flowchart.get(flowchart.size() - 1).addLine(line);
                 flowchart.get(flowchart.size() - 1).lineCount++;
-                //if the line is a jump/branch, end the box and start a new one.
-                if (line.isJumps()) {
-                    if (verbose) System.out.println("Line jumps, box ended.");
-                    flowchart.get(flowchart.size() - 1).jumps = true;
-                    flowchart.get(flowchart.size() - 1).target = line.getTarget();
+            }
 
-                    flowchart.add(new FlowChartObject());
-                    flowchart.get(flowchart.size() - 1).setStartLine(line.getLineNumber());
-                }
+
+            //if the line is a jump/branch, end the box and start a new one.
+            if (line.isJumps()) {
+                if (verbose) System.out.println("Line jumps, box ended.");
+                flowchart.get(flowchart.size() - 1).jumps = true;
+                flowchart.get(flowchart.size() - 1).target = line.getTarget();
+
+                flowchart.add(new FlowChartObject());
+                flowchart.get(flowchart.size() - 1).setStartLine(line.getLineNumber());
             }
         }
 
         //remove all empty boxes
         flowchart.removeIf(box -> box.getLineCount() == 0);
+        flowchart.removeIf(box -> box.getFullText(true).isBlank());
 
         //create linkages
         int i = 1;

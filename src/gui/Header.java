@@ -53,8 +53,13 @@ public class Header {
                 of.openFileWindow();
                 GeneralSettings.FILE_PATH = of.getFilePath();
 
+
                 // If the file exists, load it into the text editor.
                 if (!GeneralSettings.FILE_PATH.equals("null")){
+                    if (flowChartWindow != null){
+                        //hide current flowchart
+                    }
+
                     String content = "";
                     try{
                         File file = new File(GeneralSettings.FILE_PATH);
@@ -71,7 +76,7 @@ public class Header {
                         codeWindow.clear();
                     }
                     //create code window
-                    codeWindow = new CodeWindow(new Vector2f(0f,0f), new Vector2f(1f, 2-GeneralSettings.FONT_SCALING_FACTOR*GeneralSettings.FONT_SIZE), new Vector3f(0.1f,0.1f,0.1f), GeneralSettings.TEXT_COLOR, new Vector3f(0,0,0), content, GeneralSettings.CONSOLAS, GeneralSettings.FONT_SIZE, GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE, GeneralSettings.TEXT_BOX_BORDER_WIDTH, size.y);
+                    codeWindow = new CodeWindow(new Vector2f(0f,0f), new Vector2f(1f, 2-GeneralSettings.FONT_SCALING_FACTOR*GeneralSettings.FONT_SIZE), GeneralSettings.TEXT_BOX_BACKGROUND_COLOR, GeneralSettings.TEXT_COLOR, new Vector3f(0,0,0), content, GeneralSettings.CONSOLAS, GeneralSettings.FONT_SIZE, GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE, GeneralSettings.TEXT_BOX_BORDER_WIDTH, size.y);
                     cursor = new Cursor(new Vector2f(codeWindow.getPosition()), codeWindow);
                 }
             }
@@ -113,23 +118,6 @@ public class Header {
             }
         };
         testMenuButtonList.add(button);
-
-
-        button = new TextButton("Temp Save") {
-            @Override
-            public void onPress() {
-                //Saves in temporary location
-                //TempFileOperations tfo = new TempFileOperations();
-                if (codeWindow != null) {
-                   // tfo.showPrints(false);
-                   // tfo.saveCodeEditorTextToFile(codeWindow.getTexts(), GeneralSettings.FILE_PATH, GeneralSettings.TEMP_DIR);
-                    tfm.saveCodeEditorTextToFile(codeWindow.getTexts(), GeneralSettings.FILE_PATH, GeneralSettings.TEMP_DIR);
-                }
-
-            }
-        };
-        testMenuButtonList.add(button);
-
         //generate from file
         button = new TextButton("Generate Flowchart") {
             @Override
@@ -238,6 +226,17 @@ public class Header {
                 if(codeWindow != null && flowChartWindow != null) {
                     codeWindow.goSplitScreen();
                     flowChartWindow.goSplitScreen();
+                }
+            }
+        };
+        testMenuButtonList.add(button);
+
+        button = new TextButton("Reset zoom") {
+            @Override
+            public void onPress() {
+                if(flowChartWindow != null) {
+                    flowChartWindow.setPanning(new Vector2f(0, 0.9f));
+                    flowChartWindow.setZoom(1f);
                 }
             }
         };

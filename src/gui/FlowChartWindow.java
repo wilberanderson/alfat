@@ -16,13 +16,15 @@ public class FlowChartWindow {
     private static List<FlowChartTextBox> flowChartTextBoxList = new ArrayList<>();
     private static List<FlowchartLine> flowchartLineList = new ArrayList<>();
     private Matrix3f zoomTranslateMatrix = new Matrix3f();
-    private Vector2f translation = new Vector2f(0,0);
+    private Vector2f translation = new Vector2f(0, 0.9f);
     private float zoom = 1;
     private Vector2f zoomCenter = new Vector2f(0, 2- GeneralSettings.TEXT_BUTTON_PADDING*2 - GeneralSettings.FONT_SIZE*GeneralSettings.FONT_SCALING_FACTOR);
     private Matrix2f aspectRatio = new Matrix2f();
 
     public FlowChartWindow(){
         zoomTranslateMatrix.setIdentity();
+        zoomTranslateMatrix.m20 = translation.x;
+        zoomTranslateMatrix.m21 = translation.y;
         aspectRatio.setIdentity();
     }
 
@@ -102,5 +104,19 @@ public class FlowChartWindow {
 
     public float getZoom(){
         return zoom;
+    }
+
+    public void setPosition(Vector2f position) {
+        this.position = position;
+    }
+
+    public void setZoom(float zoom){
+        updateZoom(zoom - this.zoom);
+    }
+
+    public void setPanning(Vector2f panning){
+        this.translation = panning;
+        zoomTranslateMatrix.m20 = translation.x /zoom;
+        zoomTranslateMatrix.m21 = translation.y / zoom;
     }
 }

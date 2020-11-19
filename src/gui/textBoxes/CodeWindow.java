@@ -97,9 +97,6 @@ public class CodeWindow extends TextBox{
             super.getGuiFilledBox().setSize(new Vector2f((super.getSize().x-super.getGuiFilledBox().getPosition().x), super.getSize().y));
             //changeContentsHorizontalPosition((newWidth-oldWidth)*aspectRatio.x);
         }
-
-        System.out.println(super.getGuiFilledBox().getSize());
-        System.out.println(super.getGuiFilledBox().getPosition());
     }
 
     public GUIText mergeTexts(GUIText left, GUIText right){
