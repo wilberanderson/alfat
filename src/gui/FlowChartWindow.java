@@ -99,4 +99,8 @@ public class FlowChartWindow {
     public void setAspectRatio(Matrix2f aspectRatio) {
         this.aspectRatio = aspectRatio;
     }
+
+    public float getZoom(){
+        return zoom;
+    }
 }

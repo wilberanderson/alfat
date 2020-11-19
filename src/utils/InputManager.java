@@ -208,7 +208,7 @@ public class InputManager {
             flowChartWindow.updateZoom((float)SCROLL_CHANGE/10);
         }
         if(LEFT_MOUSE_HELD && (MOUSE_X_CHANGE != 0 || MOUSE_Y_CHANGE != 0)){
-            flowChartWindow.updateTranslation(new Vector2f((float)MOUSE_X_CHANGE, (float)MOUSE_Y_CHANGE));
+            flowChartWindow.updateTranslation(new Vector2f((float)MOUSE_X_CHANGE*flowChartWindow.getZoom()*2, (float)MOUSE_Y_CHANGE*flowChartWindow.getZoom()*2));
         }
     }
 
