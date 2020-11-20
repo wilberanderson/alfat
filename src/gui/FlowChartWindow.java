@@ -18,8 +18,8 @@ public class FlowChartWindow {
     private Matrix3f zoomTranslateMatrix = new Matrix3f();
     private Vector2f translation = new Vector2f(0, 0.9f);
     private float zoom = 1;
-    private Vector2f zoomCenter = new Vector2f(0, 2- GeneralSettings.TEXT_BUTTON_PADDING*2 - GeneralSettings.FONT_SIZE*GeneralSettings.FONT_SCALING_FACTOR);
     private Matrix2f aspectRatio = new Matrix2f();
+    private boolean isZoomable;
 
     public FlowChartWindow(){
         zoomTranslateMatrix.setIdentity();
@@ -42,6 +42,7 @@ public class FlowChartWindow {
     public void minimize(){
         position.x = 0f;
         size.x = 0f;
+        setZoomable(false);
     }
 
     public static List<FlowChartTextBox> getFlowChartTextBoxList() {
@@ -82,16 +83,23 @@ public class FlowChartWindow {
     }
 
     public void updateZoom(float scaleChange){
-        float oldZoom = zoom;
-        zoom += scaleChange;
-        if(zoom < GeneralSettings.MIN_ZOOM){
-            zoom = GeneralSettings.MIN_ZOOM;
-        }
-        zoomTranslateMatrix.m00 = zoom;
-        zoomTranslateMatrix.m11 = zoom;
-        zoomTranslateMatrix.m20 = zoomTranslateMatrix.m20*oldZoom/zoom;
-        zoomTranslateMatrix.m21 = zoomTranslateMatrix.m21*oldZoom/zoom;
+        if(isZoomable) {
+            float oldZoom = zoom;
+            zoom += scaleChange;
+            if (zoom < GeneralSettings.MIN_ZOOM) {
+                zoom = GeneralSettings.MIN_ZOOM;
+            }
+            zoomTranslateMatrix.m00 = zoom;
+            zoomTranslateMatrix.m11 = zoom;
 
+
+            zoomTranslateMatrix.m20 = zoomTranslateMatrix.m20 * zoom / oldZoom;
+            zoomTranslateMatrix.m21 = zoomTranslateMatrix.m21 * zoom / oldZoom;
+            //Logic for a zoom focus point of 0, 1, does not work currently
+//        if(scaleChange > 0){
+//            zoomTranslateMatrix.m21 = zoomTranslateMatrix.m21 - 1*oldZoom + 1/zoom;
+//        }
+        }
     }
 
     public Matrix2f getAspectRatio() {
@@ -104,6 +112,11 @@ public class FlowChartWindow {
 
     public float getZoom(){
         return zoom;
+    }
+
+    public void setZoomable(boolean zoomable){
+        this.isZoomable = zoomable;
+        System.out.println("Zoomable is now " + zoomable);
     }
 
     public void setPosition(Vector2f position) {

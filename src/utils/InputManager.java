@@ -57,7 +57,6 @@ public class InputManager {
 
     public static void init(long window){
         buttons = new ArrayList<>();
-
         glfwSetKeyCallback(window, keyCallback = new GLFWKeyCallback() {
             @Override
             public void invoke(long window, int key, int scancode, int action, int mods) {
@@ -116,6 +115,12 @@ public class InputManager {
                 if(button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
                     LEFT_CLICK = true;
                     LEFT_MOUSE_HELD = true;
+
+
+                }else if(button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE){
+                    LEFT_CLICK = false;
+                    LEFT_MOUSE_HELD = false;
+
                     boolean buttonPressed = false;
                     List<HeaderMenu> toClose = new ArrayList<>();
 
@@ -136,10 +141,26 @@ public class InputManager {
                         }
                     }
 
-                    if (!buttonPressed) for (Button b : buttons) {
-                        if (b instanceof HeaderMenu) {
-                            if (((HeaderMenu) b).isOpen) {
-                                toClose.add((HeaderMenu)b);
+                    if (!buttonPressed){
+                        for (Button b : buttons) {
+                            if (b instanceof HeaderMenu) {
+                                if (((HeaderMenu) b).isOpen) {
+                                    toClose.add((HeaderMenu)b);
+                                }
+                            }
+                        }
+                        if(header.getCodeWindow() != null) {
+                            if (MOUSE_X < header.getCodeWindow().getSize().x - 1 && MOUSE_Y < header.getCodeWindow().getSize().y - 1) {
+                                header.getCodeWindow().setScrollable(true);
+                            } else {
+                                header.getCodeWindow().setScrollable(false);
+                            }
+                        }
+                        if(header.getFlowChartWindow() != null) {
+                            if (MOUSE_X > header.getFlowChartWindow().getPosition().x && MOUSE_Y < header.getFlowChartWindow().getSize().y - 1) {
+                                header.getFlowChartWindow().setZoomable(true);
+                            } else {
+                                header.getFlowChartWindow().setZoomable(false);
                             }
                         }
                     }
@@ -147,9 +168,7 @@ public class InputManager {
                         b.close();
                     }
 
-                }else if(button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE){
-                    LEFT_CLICK = false;
-                    LEFT_MOUSE_HELD = false;
+
                 }else if(button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS) {
                     RIGHT_CLICK = true;
                 }else if(button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_RELEASE) {

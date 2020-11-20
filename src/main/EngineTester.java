@@ -99,6 +99,7 @@ public class EngineTester {
 
         //Restrict fps to 60 fps
         GLFW.glfwSwapInterval(1);
+        //GLFW.glfwSwapInterval(0);
 
 
         //********************************Change the icon***************************************
@@ -228,8 +229,6 @@ public class EngineTester {
             InputManager.SCROLL_CHANGE = 0;
             //Swap the color buffers to update the screen
             GLFW.glfwSwapBuffers(window);
-
-
         }
     }
 

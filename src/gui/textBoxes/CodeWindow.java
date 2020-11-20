@@ -24,6 +24,7 @@ public class CodeWindow extends TextBox{
     private float lineHeight;
     private float padding;
     private Vector2f aspectRatio = new Vector2f(1, 1);
+    private boolean scrollable = false;
 
     public CodeWindow(Vector2f position, Vector2f size, Vector3f backgroundColor, Vector3f textColor, Vector3f borderColor, String content, FontType font, float fontSize, float thickness, float borderWidth, float border, float headerHeight) {
         super();
@@ -130,20 +131,22 @@ public class CodeWindow extends TextBox{
 
 
     public void scroll(float scrollChange){
-        scrollChange*= aspectRatio.y;
-        if(maxVerticalPosition > super.getPosition().x) {
-            float newPosition = contentsVerticalPosition + scrollChange;
-            if (newPosition < 0) {
-                changeLineNumberVerticalPosition(-contentsVerticalPosition);
-                changeContentsVerticalPosition(-contentsVerticalPosition);
-            } else if (newPosition > maxVerticalPosition) {
-                changeLineNumberVerticalPosition(maxVerticalPosition - contentsVerticalPosition);
-                changeContentsVerticalPosition(maxVerticalPosition - contentsVerticalPosition);
-            } else {
-                changeLineNumberVerticalPosition(scrollChange);
-                changeContentsVerticalPosition(scrollChange);
+        if(scrollable) {
+            scrollChange *= aspectRatio.y;
+            if (maxVerticalPosition > super.getPosition().x) {
+                float newPosition = contentsVerticalPosition + scrollChange;
+                if (newPosition < 0) {
+                    changeLineNumberVerticalPosition(-contentsVerticalPosition);
+                    changeContentsVerticalPosition(-contentsVerticalPosition);
+                } else if (newPosition > maxVerticalPosition) {
+                    changeLineNumberVerticalPosition(maxVerticalPosition - contentsVerticalPosition);
+                    changeContentsVerticalPosition(maxVerticalPosition - contentsVerticalPosition);
+                } else {
+                    changeLineNumberVerticalPosition(scrollChange);
+                    changeContentsVerticalPosition(scrollChange);
+                }
+                InputManager.SCROLL_CHANGE = 0;
             }
-            InputManager.SCROLL_CHANGE = 0;
         }
     }
 
@@ -152,6 +155,7 @@ public class CodeWindow extends TextBox{
         super.getSize().x = 2f;
         super.getGuiFilledBox().setSize(new Vector2f(2f, 2f));
         positionBounds.z = super.getPosition().x + super.getSize().x;
+        setScrollable(true);
     }
 
     public void goSplitScreen(){
@@ -164,6 +168,7 @@ public class CodeWindow extends TextBox{
         super.getSize().x = 0f;
         super.getGuiFilledBox().setSize(new Vector2f(0f, 2f));
         positionBounds.z = super.getPosition().x + super.getSize().x;
+        setScrollable(false);
     }
 
     public Vector2f getCodeWindowPosition(){
@@ -205,4 +210,8 @@ public class CodeWindow extends TextBox{
         return aspectRatio;
     }
 
+    public void setScrollable(boolean scrollable) {
+        this.scrollable = scrollable;
+        System.out.println("Scrollable is now " + scrollable);
+    }
 }
