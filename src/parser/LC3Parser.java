@@ -39,7 +39,6 @@ public class LC3Parser implements CodeReader {
     String[] jumps = syn.getJumps();
 
     /**Read an input file. Parse the input file line by line, and store them in the arrayList of LC3TLine objects.
-     *  Create a hashmap of all labels and their line numbers, to make searching easier later.
      *
      * @param infile The absolute or relative location of the file, as a string.
      */
@@ -292,7 +291,7 @@ public class LC3Parser implements CodeReader {
                 }
                 if (box.connection == null){
                     box.jumps = false;
-                    box.alert += "BRANCH DOES NOT EXIST";
+                    box.alert += "invalid_label";
                 }
             }
             i++;
@@ -333,7 +332,7 @@ public class LC3Parser implements CodeReader {
                 System.out.println("Box " + i + " @ " + location);
                 System.out.println("Starting @ line #" + box.getStartLine());
             }
-            FlowChartTextBox textBox = new FlowChartTextBox(new Vector2f(location), box.getFullText(true), box.getStartLine()+1, box.getRegisters());
+            FlowChartTextBox textBox = new FlowChartTextBox(new Vector2f(location), box.getFullText(true), box.getStartLine()+1, box.getRegisters(), box.alert);
             textBoxes.add(textBox);
             textBox.setPosition(new Vector2f(textBox.getPosition().x, textBox.getPosition().y-textBox.getSize().y));
             if (verbose) System.out.println("Position: " + textBox.getPosition() + " Size: " + textBox.getSize());
@@ -394,7 +393,7 @@ public class LC3Parser implements CodeReader {
 
                     float temp = max_right_width + GeneralSettings.FLOWCHART_PAD_LEFT;
 
-                    if (index == flowchart.get(index).connection.getBoxNumber() - 1){
+                    if (flowchart.get(index) == flowchart.get(index).connection){
                         temp = sizes.get(index).x + GeneralSettings.FLOWCHART_PAD_LEFT;
                     } else if (index < flowchart.get(index).connection.getBoxNumber()){
                         temp = -1f;
@@ -412,9 +411,9 @@ public class LC3Parser implements CodeReader {
 
                     x_bound = Math.max(x_bound,(temp + jump_lines * GeneralSettings.LINE_OFFSET));
 
-                    if (index == flowchart.get(index).connection.getBoxNumber()){
-                        coordinates.add(new Vector2f((.25f + temp + jump_lines * GeneralSettings.LINE_OFFSET), (-1 + locations.get(index).y) - (GeneralSettings.FLOWCHART_PAD_TOP / 3)));
-                        coordinates.add(new Vector2f((.25f + temp + jump_lines * GeneralSettings.LINE_OFFSET), (-1 + sizes.get(flowchart.get(index).connection.getBoxNumber() - 1).y + locations.get(flowchart.get(index).connection.getBoxNumber() - 1).y + (GeneralSettings.FLOWCHART_PAD_TOP / 3))));
+                    if (flowchart.get(index) == flowchart.get(index).connection){
+                        coordinates.add(new Vector2f((-.95f + temp), (-1 + locations.get(index).y) - (GeneralSettings.FLOWCHART_PAD_TOP / 3)));
+                        coordinates.add(new Vector2f((-.95f + temp), (-1 + sizes.get(flowchart.get(index).connection.getBoxNumber() - 1).y + locations.get(flowchart.get(index).connection.getBoxNumber() - 1).y + (GeneralSettings.FLOWCHART_PAD_TOP / 3))));
                     } else {
                         coordinates.add(new Vector2f((.25f + temp + jump_lines * GeneralSettings.LINE_OFFSET), (-1 + locations.get(index).y) - (GeneralSettings.FLOWCHART_PAD_TOP / 3)));
                         coordinates.add(new Vector2f((.25f + temp + jump_lines * GeneralSettings.LINE_OFFSET), (-1 + sizes.get(flowchart.get(index).connection.getBoxNumber() - 1).y + locations.get(flowchart.get(index).connection.getBoxNumber() - 1).y + (GeneralSettings.FLOWCHART_PAD_TOP / 3))));
@@ -465,9 +464,7 @@ public class LC3Parser implements CodeReader {
                 }
             }
         }
-
         FlowChartWindow.setFlowchartLineList(linesList);
-
     }
 
     public void locateRegisters(String register){
@@ -475,6 +472,21 @@ public class LC3Parser implements CodeReader {
             if (verbose) System.out.println("Checking box " + box + " for register " + register);
             if (verbose) System.out.println("Contains registers: " + box.getRegisters());
             if (register != null && box.getRegisters().contains(register)){
+                if (verbose) System.out.println("Match found");
+                box.setBackgroundColor(GeneralSettings.TEXT_COLOR);
+                box.setTextColor(GeneralSettings.TEXT_BOX_BACKGROUND_COLOR);
+            } else {
+                box.setBackgroundColor(GeneralSettings.TEXT_BOX_BACKGROUND_COLOR);
+                box.setTextColor(GeneralSettings.TEXT_COLOR);
+            }
+        }
+    }
+
+    public void locateAlert(String alert){
+        for (FlowChartTextBox box : FlowChartWindow.getFlowChartTextBoxList()){
+            if (verbose) System.out.println("Checking box " + box + " for alert " + alert);
+            if (verbose) System.out.println("Contains registers: " + box.getRegisters());
+            if (alert != null && box.getAlert().equals(alert)){
                 if (verbose) System.out.println("Match found");
                 box.setBackgroundColor(GeneralSettings.TEXT_COLOR);
                 box.setTextColor(GeneralSettings.TEXT_BOX_BACKGROUND_COLOR);
