@@ -124,7 +124,13 @@ public class FlowChartWindow {
     }
 
     public void setZoom(float zoom){
-        updateZoom(zoom - this.zoom);
+        if(isZoomable){
+            updateZoom(zoom - this.zoom);
+        }else{
+            isZoomable = true;
+            updateZoom(zoom - this.zoom);
+            isZoomable = false;
+        }
     }
 
     public void setPanning(Vector2f panning){
