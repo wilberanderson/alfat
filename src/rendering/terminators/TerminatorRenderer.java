@@ -7,6 +7,7 @@ import gui.terminators.ArrowHead;
 import gui.terminators.Junction;
 import gui.terminators.Terminator;
 import loaders.Loader;
+import main.GeneralSettings;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
@@ -30,9 +31,13 @@ public class TerminatorRenderer {
     }
 
 
-    public void render(List<FlowchartLine> flowchartLines, FlowChartWindow flowChartWindow, boolean doClipping){
+    public void render(List<FlowchartLine> flowchartLines, FlowChartWindow flowChartWindow, boolean doClipping, boolean isScreenshot){
         prepare();
-        shader.zoomTranslateMatrix.loadMatrix(flowChartWindow.getZoomTranslateMatrix());
+        if(isScreenshot){
+            shader.zoomTranslateMatrix.loadMatrix(GeneralSettings.SCREENSHOT_TRANSLATION);
+        }else {
+            shader.zoomTranslateMatrix.loadMatrix(flowChartWindow.getZoomTranslateMatrix());
+        }
         shader.aspectRatio.loadMatrix(flowChartWindow.getAspectRatio());
         if(doClipping) {
             shader.windowPosition.loadVec2(flowChartWindow.getPosition());

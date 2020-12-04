@@ -53,8 +53,8 @@ public class MasterRenderer {
 		guiRenderer.render(guis);
 		filledBoxRenderer.render(textBoxes, flowChartWindow, header);
 		if(flowchartLines != null) {
-			flowchartLineRenderer.render(flowchartLines, flowChartWindow, true);
-			terminatorRenderer.render(flowchartLines, flowChartWindow, true);
+			flowchartLineRenderer.render(flowchartLines, flowChartWindow, true, false);
+			terminatorRenderer.render(flowchartLines, flowChartWindow, true, false);
 		}
 		TextMaster.render(flowChartWindow, codeWindow, true);
 		if(cursor != null) {
@@ -80,8 +80,8 @@ public class MasterRenderer {
 		FilledBoxRenderer filledBoxRenderer = new FilledBoxRenderer();
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 		filledBoxRenderer.renderScreenshot(FlowChartWindow.getFlowChartTextBoxList(), flowChartWindow);
-		flowchartLineRenderer.render(FlowChartWindow.getFlowchartLineList(), flowChartWindow, false);
-		terminatorRenderer.render(FlowChartWindow.getFlowchartLineList(), flowChartWindow, false);
+		flowchartLineRenderer.render(FlowChartWindow.getFlowchartLineList(), flowChartWindow, false, true);
+		terminatorRenderer.render(FlowChartWindow.getFlowchartLineList(), flowChartWindow, false, true);
 		TextMaster.render(flowChartWindow, null, false);
 		filledBoxRenderer.cleanUp();
 	}

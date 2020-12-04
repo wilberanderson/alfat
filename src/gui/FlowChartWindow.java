@@ -116,7 +116,6 @@ public class FlowChartWindow {
 
     public void setZoomable(boolean zoomable){
         this.isZoomable = zoomable;
-        System.out.println("Zoomable is now " + zoomable);
     }
 
     public void setPosition(Vector2f position) {

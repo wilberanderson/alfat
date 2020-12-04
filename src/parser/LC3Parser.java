@@ -443,8 +443,10 @@ public class LC3Parser implements CodeReader {
         GeneralSettings.SCREENSHOT_SIZE = new Vector2f(Math.abs(x_bound) + 1f, Math.abs(y_bound) + 1f + GeneralSettings.FLOWCHART_PAD_TOP);
         Matrix3f translation = new Matrix3f();
         translation.setIdentity();
+        translation.m00 = 2/GeneralSettings.SCREENSHOT_SIZE.x;
+        translation.m11 = 2/GeneralSettings.SCREENSHOT_SIZE.y;
         translation.m20 = 0;
-        translation.m21 = -(y_bound);
+        translation.m21 = -(y_bound*translation.m11)-1;
         GeneralSettings.SCREENSHOT_TRANSLATION = translation;
         //Find line overlaps:
         for (FlowchartLine line1 : linesList){

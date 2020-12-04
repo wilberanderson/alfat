@@ -1,21 +1,33 @@
 package gui;
 
 import gui.textBoxes.CodeWindow;
+import main.EngineTester;
 import main.GeneralSettings;
+import org.lwjgl.BufferUtils;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL30;
+import org.lwjgl.util.Display;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 import parser.LC3Parser;
 
 
+import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
 import gui.buttons.HeaderMenu;
 import gui.buttons.TextButton;
+import org.lwjgl.glfw.GLFW;
+import rendering.renderEngine.MasterRenderer;
+
+import javax.imageio.ImageIO;
 
 public class Header {
     private List<HeaderMenu> menuList;
@@ -78,6 +90,9 @@ public class Header {
                     }
                     //create code window
                     codeWindow = new CodeWindow(new Vector2f(0f,0f), new Vector2f(1f, 2-GeneralSettings.FONT_SCALING_FACTOR*GeneralSettings.FONT_SIZE), GeneralSettings.TEXT_BOX_BACKGROUND_COLOR, GeneralSettings.TEXT_COLOR, new Vector3f(0,0,0), content, GeneralSettings.CONSOLAS, GeneralSettings.FONT_SIZE, GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE, GeneralSettings.TEXT_BOX_BORDER_WIDTH, size.y);
+                    if(flowChartWindow != null){
+                        flowChartWindow.goSplitScreen();
+                    }
                     cursor = new Cursor(new Vector2f(codeWindow.getPosition()), codeWindow);
                 }
             }
@@ -119,6 +134,86 @@ public class Header {
             }
         };
         testMenuButtonList.add(button);
+
+        button = new TextButton("Save flowchart") {
+            @Override
+            public void onPress() {
+
+                if(GeneralSettings.SCREENSHOT_SIZE == null){
+                    return;
+                }
+//                resizeWindow();
+                GeneralSettings.SCREENSHOT_IN_PROGRESS = true;
+                int width = (int)GeneralSettings.SCREENSHOT_SIZE.x*GeneralSettings.DEFAULT_WIDTH/2;
+                int height= (int)GeneralSettings.SCREENSHOT_SIZE.y*GeneralSettings.DEFAULT_HEIGHT/2;
+//                GLFW.glfwSetWindowSize(EngineTester.getWindow(), width, height);
+
+                //Create a frame buffer to render the image to
+                int renderBuffer = GL30.glGenFramebuffers();
+                GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, renderBuffer);
+
+                //Create a texture to load the data into
+                int imageIndex = GL11.glGenTextures();
+                GL11.glBindTexture(GL11.GL_TEXTURE_2D, imageIndex);
+                GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGB8, width, height, 0, GL11.GL_RGB, GL11.GL_UNSIGNED_BYTE, 0);
+                GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_NEAREST);
+                GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_NEAREST);
+
+                //Configure frame buffer
+                GL30.glFramebufferTexture2D(GL30.GL_FRAMEBUFFER, GL30.GL_COLOR_ATTACHMENT0, GL11.GL_TEXTURE_2D, imageIndex, 0);
+                GL30.glDrawBuffers(GL30.GL_COLOR_ATTACHMENT0);
+
+                GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, renderBuffer);
+                GL11.glViewport(0, 0, width, height);
+
+
+                MasterRenderer.renderScreenshot();
+//                GLFW.glfwSwapBuffers(EngineTester.getWindow());
+
+
+//                GL11.glReadBuffer(GL11.GL_FRONT);
+                int bpp = 4; // Assuming a 32-bit display with a byte each for red, green, blue, and alpha.
+                ByteBuffer buffer = BufferUtils.createByteBuffer(width * height * bpp);
+                GL11.glReadPixels(0, 0, width, height, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, buffer );
+
+                OpenFileDialog openFileDialog = new OpenFileDialog();
+//                openFileDialog.setFilterList("Image files png");
+                openFileDialog.saveFileWindow();
+                File file = new File(openFileDialog.getFilePath());
+//                File file = ...; // The file to save to.
+                String format = "PNG"; // Example: "PNG" or "JPG"
+                BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+
+                for(int x = 0; x < width; x++)
+                {
+                    for(int y = 0; y < height; y++)
+                    {
+                        int i = (x + (width * y)) * bpp;
+                        int r = buffer.get(i) & 0xFF;
+                        int g = buffer.get(i + 1) & 0xFF;
+                        int b = buffer.get(i + 2) & 0xFF;
+                        image.setRGB(x, height - (y + 1), (0xFF << 24) | (r << 16) | (g << 8) | b);
+                    }
+                }
+
+                try {
+                    ImageIO.write(image, format, file);
+                } catch (IOException e) { e.printStackTrace(); }
+
+//                reresizeWindow();
+//                MasterRenderer.renderScene(new ArrayList<>(), FlowChartWindow.getFlowChartTextBoxList(), new Vector3f(1, 1, 1), cursor, 1, this, FlowChartWindow.getFlowchartLineList(), flowChartWindow, codeWindow);
+
+                GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0);
+                GL11.glViewport(0, 0, GeneralSettings.DISPLAY_WIDTH, GeneralSettings.DISPLAY_HEIGHT);
+                GL11.glDeleteTextures(imageIndex);
+                GL30.glDeleteFramebuffers(renderBuffer);
+//                GLFW.glfwSetWindowSize(EngineTester.getWindow(), GeneralSettings.DISPLAY_WIDTH, GeneralSettings.DISPLAY_HEIGHT);
+                GeneralSettings.SCREENSHOT_IN_PROGRESS = false;
+
+            }
+        };
+        testMenuButtonList.add(button);
+
         //generate from file
         button = new TextButton("Generate Flowchart") {
             @Override

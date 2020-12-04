@@ -30,9 +30,13 @@ public class FlowchartLineRenderer {
     }
 
 
-    public void render(List<FlowchartLine> flowchartLines, FlowChartWindow flowChartWindow, boolean doClipping){
+    public void render(List<FlowchartLine> flowchartLines, FlowChartWindow flowChartWindow, boolean doClipping, boolean isScreenshot){
         prepare();
-        shader.zoomTranslateMatrix.loadMatrix(flowChartWindow.getZoomTranslateMatrix());
+        if(isScreenshot){
+            shader.zoomTranslateMatrix.loadMatrix(GeneralSettings.SCREENSHOT_TRANSLATION);
+        }else{
+            shader.zoomTranslateMatrix.loadMatrix(flowChartWindow.getZoomTranslateMatrix());
+        }
         shader.aspectRatio.loadMatrix(flowChartWindow.getAspectRatio());
         shader.windowPosition.loadVec2(-1, -1);
         shader.windowSize.loadVec2(2, 2);

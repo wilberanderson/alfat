@@ -46,6 +46,7 @@ public class InputManager {
     private static GLFWScrollCallback scrollCallback;
     private static GLFWMouseButtonCallback mouseButtonCallback;
     private static GLFWCursorPosCallback cursorPosCallback;
+    private static GLFWWindowFocusCallback windowFocusCallback;
     public static List<Button> buttons;
     private static GLFWCharCallback charCallback;
     private static GLFWFramebufferSizeCallback framebufferSizeCallback;

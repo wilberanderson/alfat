@@ -17,7 +17,7 @@ public abstract class TLine {
     private List<String> registers = new ArrayList<>();
     private boolean jump;
 
-    TLine() {
+    private TLine() {
         /* this space intentionally left blank
         *  please do not call the default constructor */
     }

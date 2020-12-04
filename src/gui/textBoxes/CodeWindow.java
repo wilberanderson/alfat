@@ -212,6 +212,5 @@ public class CodeWindow extends TextBox{
 
     public void setScrollable(boolean scrollable) {
         this.scrollable = scrollable;
-        System.out.println("Scrollable is now " + scrollable);
     }
 }

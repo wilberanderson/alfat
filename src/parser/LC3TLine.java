@@ -21,7 +21,7 @@ public class LC3TLine {
     private boolean jump;
 
     //general constructor:
-    LC3TLine(){
+    private LC3TLine(){
         //left blank
     }
 

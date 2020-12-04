@@ -84,7 +84,6 @@ public class FilledBoxRenderer {
 
         GL30.glBindVertexArray(square.getVaoID());
         GL20.glEnableVertexAttribArray(0);
-        System.out.println(GeneralSettings.SCREENSHOT_TRANSLATION);
         shader.zoomTranslateMatrix.loadMatrix(GeneralSettings.SCREENSHOT_TRANSLATION);
         Matrix2f aspectRatio = new Matrix2f();
         aspectRatio.setIdentity();
