@@ -90,7 +90,7 @@ public class Header {
                     }
                     //create code window
                     codeWindow = new CodeWindow(new Vector2f(0f,0f), new Vector2f(1f, 2-GeneralSettings.FONT_SCALING_FACTOR*GeneralSettings.FONT_SIZE), GeneralSettings.TEXT_BOX_BACKGROUND_COLOR, GeneralSettings.TEXT_COLOR, new Vector3f(0,0,0), content, GeneralSettings.CONSOLAS, GeneralSettings.FONT_SIZE, GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE, GeneralSettings.TEXT_BOX_BORDER_WIDTH, size.y);
-                    if(flowChartWindow != null){
+                    if (flowChartWindow != null){
                         flowChartWindow.goSplitScreen();
                     }
                     cursor = new Cursor(new Vector2f(codeWindow.getPosition()), codeWindow);
@@ -177,7 +177,7 @@ public class Header {
                 GL11.glReadPixels(0, 0, width, height, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, buffer );
 
                 OpenFileDialog openFileDialog = new OpenFileDialog();
-//                openFileDialog.setFilterList("Image files png");
+                openFileDialog.setFilterList("png,jpg");
                 openFileDialog.saveFileWindow();
                 File file = new File(openFileDialog.getFilePath());
 //                File file = ...; // The file to save to.

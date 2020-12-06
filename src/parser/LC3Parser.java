@@ -445,8 +445,8 @@ public class LC3Parser implements CodeReader {
         translation.setIdentity();
         translation.m00 = 2/GeneralSettings.SCREENSHOT_SIZE.x;
         translation.m11 = 2/GeneralSettings.SCREENSHOT_SIZE.y;
-        translation.m20 = 0;
-        translation.m21 = -(y_bound*translation.m11)-1;
+        translation.m20 = -.2f;
+        translation.m21 = -(y_bound*translation.m11)-.875f;
         GeneralSettings.SCREENSHOT_TRANSLATION = translation;
         //Find line overlaps:
         for (FlowchartLine line1 : linesList){

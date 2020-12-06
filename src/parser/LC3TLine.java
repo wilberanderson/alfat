@@ -4,10 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-/*
-* A LC3TLine stands for LC-3 Text Line.
-* It contains the line number, full text of a single line and..
-* TODO: define the rest of the stuff it should contain...
+/** A LC3TLine stands for LC-3 Text Line.
+ *
+ * It contains the line number, full text of a single line and other attributes of the parsed line.
+ *
+ * @author wilber
+ * 
+ *
 *
 * */
 

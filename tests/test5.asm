@@ -27,7 +27,7 @@ START
     JSR DISPLAY_USER_INPUT_TO_SCREEN ; prints char >> screen
     ;-------------------------------
 
-    JSR	COMPARE_AND_UPDATE_INPUT     ;check user input update string
+    JSR    COMPARE_AND_UPDATE_INPUT     ;check user input update string
     JSR IS_STRINGS_MATCHED           ;checks if strings match and updates the loop ctrl
     LD R0, LOOP_CTRL                 ;load the current loop control into r0 t0 check game state     
 
@@ -52,11 +52,11 @@ LOOP_CTRL .FILL #1
 ;current user input
 USER_INPUT .FILL #0
 ;Here is where the word to guess is stored ------------------------------------------------------------------- |  READ ME!!!!
-WORD_TO_GUESS .STRINGZ	"AWKWARD"          ; <==  Change this string to change the word the user has to        |
+WORD_TO_GUESS .STRINGZ    "AWKWARD"          ; <==  Change this string to change the word the user has to        |
 WORD_TO_GUESS_LEN .FILL #0                 ;      guess. It can be up to 30 characters long                    |
 ; ------------------------------------------------------------------------------------------------------------ |
 ;secret word 
-SECRET_WORD   .BLKW	31
+SECRET_WORD   .BLKW    31
 ;variable for the number of attempts left
 ATTEMPTS_LEFT .FILL 4
 ;----------- Subroutines -----------
@@ -79,7 +79,7 @@ DISPLAY_USER_INPUT_TO_SCREEN
     ST R7, REG_7       ;save R7
     ST R0, REG_0       ;save R0
 
-    LD	R0,	USER_INPUT ;load user input
+    LD    R0,    USER_INPUT ;load user input
     TRAP x21           ; Write character to screen
 
     LD R0, REG_0       ;restore R0    
@@ -174,7 +174,7 @@ SET_LEN_OF_WORD_TO_GUESS
         AND R1, R1, #0 ;set R1 to 0 to cmp char to check if end of str  
         ADD R0, R0, #1 ;inc pointer R0++
         ADD R7, R7, #1 ;R7++
-        LDR	R2,	R0,	#0 ;Load char into R2 if its NULL then it will stop
+        LDR    R2,    R0,    #0 ;Load char into R2 if its NULL then it will stop
     BRp LOOP_1
     ; SHOULD I (--) the R7??? 
     ST  R7, WORD_TO_GUESS_LEN ;save the len of the word
@@ -200,12 +200,12 @@ CREATE_SECRET_WORD
     LOOP_2 
         AND R1, R1, #0  ;set R1 to 0 to cmp char to check if end of str  
         ADD R0, R0, #1  ;inc pointer R0++
-        STR	R2,	R0,	#0  ;store the * into the spot of the array
+        STR    R2,    R0,    #0  ;store the * into the spot of the array
         ADD R7, R7, #-1 ;R7-- 
     BRp LOOP_2
 
     AND  R2, R2, #0 ;load R2 with address of null
-    STR	R2,	R0,	#0  ;store the null into the spot of the array
+    STR    R2,    R0,    #0  ;store the null into the spot of the array
     
     ;debug check to see if the right amount of stars work
     ;LEA R0, SECRET_WORD        ;set R0 to be index of secret word
@@ -251,11 +251,11 @@ COMPARE_AND_UPDATE_INPUT
     LD  R2, USER_INPUT         ;loads R2 with user input
     NOT R2, R2                 ;not the user input
     ADD R2, R2, #1             ;set user input to 2's comp. to compare 
-    JSR	LOOP_3 
+    JSR    LOOP_3 
     STORE_CHAR
         ADD R5, R5, #1      ;R5++ if letters have been added
         LD  R2, USER_INPUT  ;loads R2 with user input
-        STR	R2,	R0,	#0      ;store the matching user input into the secret string
+        STR    R2,    R0,    #0      ;store the matching user input into the secret string
         NOT R2, R2          ;not the user input
         ADD R2, R2, #1      ;set user input to 2's comp. to compare   
     LOOP_3 
@@ -307,7 +307,7 @@ IS_STRINGS_MATCHED
     LEA R6, WORD_TO_GUESS      ;set R6 to be index of word_to_guess
     ADD R6, R6, #-1            ;dec pointer so that it can start at "0" in the loop
     LD  R5, WORD_TO_GUESS_LEN  ;set R2 to be the len of word_to_guess so that it can be used to end the loop
-        ADD	R0,	R0,	#-1 ;set register 1 to zero b/c the word           
+        ADD    R0,    R0,    #-1 ;set register 1 to zero b/c the word           
     LOOP_4 
         ADD R7, R7, #1  ;inc pointer R0++ (secret word)
         ADD R6, R6, #1  ;inc pointer R1++ (word_to_guess)
@@ -315,14 +315,14 @@ IS_STRINGS_MATCHED
         LDR R3, R6, #0  ;load a char from the (secret word) into R3
         
         ;twos comp on (secret word) char 
-        NOT	R3,	R3
-        ADD	R3,	R3,	#1
+        NOT    R3,    R3
+        ADD    R3,    R3,    #1
 
         ADD R2, R3, R4  ;subtract R3-R4 if its p then not the 
         BRnp NOT_THE_SAME
         ADD R5, R5, #-1 ;R6-- 
     BRp LOOP_4
-    AND	R0,	R0,	#0 ;clear the R0 register
+    AND    R0,    R0,    #0 ;clear the R0 register
     ST R0, LOOP_CTRL ;switch LOOP_CTRL to 0 because we want to end the program
     NOT_THE_SAME ;if not the same don't change LOOP_CTRL
 
@@ -396,22 +396,22 @@ RET
 
 ;-----------      Data     -----------
 ;Program massages 
-MSG_0 .STRINGZ	"\nInput a character > "
-MSG_1 .STRINGZ	"\n"
-MSG_2 .STRINGZ	"\nGuess again\n"
-MSG_3 .STRINGZ	"\nYOU WIN\n"
-MSG_4 .STRINGZ	"\nYOU LOSE\n"
-MSG_5 .STRINGZ	"Word was\n"
+MSG_0 .STRINGZ    "\nInput a character > "
+MSG_1 .STRINGZ    "\n"
+MSG_2 .STRINGZ    "\nGuess again\n"
+MSG_3 .STRINGZ    "\nYOU WIN\n"
+MSG_4 .STRINGZ    "\nYOU LOSE\n"
+MSG_5 .STRINGZ    "Word was\n"
 
 ;hang man ascii art
-C_STAR	     .FILL x2A  ;'*'
-EMPTY_POLL .STRINGZ	"\n|"                    
-TOP_BEAM   .STRINGZ	"\n|>>>>>>"             
-POLL_ROPE  .STRINGZ	"\n|    |"               
-HEAD       .STRINGZ	"    0 <-dis is you"  ;1
-BODY       .STRINGZ	"  +-|-+"             ;2
-LEGS       .STRINGZ	"   | |"              ;3
-BASE       .STRINGZ	"\n|============|\n"       
+C_STAR         .FILL x2A  ;'*'
+EMPTY_POLL .STRINGZ    "\n|"                    
+TOP_BEAM   .STRINGZ    "\n|>>>>>>"             
+POLL_ROPE  .STRINGZ    "\n|    |"               
+HEAD       .STRINGZ    "    0 <-dis is you"  ;1
+BODY       .STRINGZ    "  +-|-+"             ;2
+LEGS       .STRINGZ    "   | |"              ;3
+BASE       .STRINGZ    "\n|============|\n"       
 
 QUIT_NOW .FILL #0
 .END
