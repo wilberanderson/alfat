@@ -40,7 +40,7 @@ public class Header {
     //Manages the temp file paths
     private TempFileManager tfm;
     private LC3Parser parser = null;
-
+    private String windowTitle = null;
 
     public Header(Vector2f position, Vector2f size){
         menuList = new ArrayList<>();
@@ -69,6 +69,14 @@ public class Header {
 
                 // If the file exists, load it into the text editor.
                 if (!GeneralSettings.FILE_PATH.equals("null")){
+                    if (GeneralSettings.FILE_PATH.contains("/")){
+                        windowTitle = "ALFAT – " + GeneralSettings.FILE_PATH.substring(GeneralSettings.FILE_PATH.lastIndexOf('/')+1);
+                        GLFW.glfwSetWindowTitle(EngineTester.getWindow(), "ALFAT – " + GeneralSettings.FILE_PATH.substring(GeneralSettings.FILE_PATH.lastIndexOf('/')+1));
+                    } else {
+                        windowTitle = "ALFAT " + GeneralSettings.FILE_PATH;
+                        GLFW.glfwSetWindowTitle(EngineTester.getWindow(), "ALFAT " + GeneralSettings.FILE_PATH);
+                    }
+
                     if (flowChartWindow != null){
                         //hide current flowchart
                     }
@@ -346,6 +354,7 @@ public class Header {
             public void onPress() {
                 if(parser != null) {
                     parser.locateRegisters(null);
+                    GLFW.glfwSetWindowTitle(EngineTester.getWindow(), windowTitle);
                 }
             }
         };
@@ -355,6 +364,7 @@ public class Header {
             public void onPress() {
                 if(parser != null) {
                     parser.locateRegisters("R0");
+                    GLFW.glfwSetWindowTitle(EngineTester.getWindow(), windowTitle + " [R0]");
                 }
             }
         };
@@ -364,6 +374,7 @@ public class Header {
             public void onPress() {
                 if(parser != null) {
                     parser.locateRegisters("R1");
+                    GLFW.glfwSetWindowTitle(EngineTester.getWindow(), windowTitle + " [R1]");
                 }
             }
         };
@@ -373,6 +384,7 @@ public class Header {
             public void onPress() {
                 if(parser != null) {
                     parser.locateRegisters("R2");
+                    GLFW.glfwSetWindowTitle(EngineTester.getWindow(), windowTitle + " [R2]");
                 }
             }
         };
@@ -382,6 +394,7 @@ public class Header {
             public void onPress() {
                 if(parser != null) {
                     parser.locateRegisters("R3");
+                    GLFW.glfwSetWindowTitle(EngineTester.getWindow(), windowTitle + " [R3]");
                 }
             }
         };
@@ -391,6 +404,7 @@ public class Header {
             public void onPress() {
                 if(parser != null) {
                     parser.locateRegisters("R4");
+                    GLFW.glfwSetWindowTitle(EngineTester.getWindow(), windowTitle + " [R4]");
                 }
             }
         };
@@ -400,6 +414,7 @@ public class Header {
             public void onPress() {
                 if(parser != null) {
                     parser.locateRegisters("R5");
+                    GLFW.glfwSetWindowTitle(EngineTester.getWindow(), windowTitle + " [R5]");
                 }
             }
         };
@@ -409,6 +424,7 @@ public class Header {
             public void onPress() {
                 if(parser != null) {
                     parser.locateRegisters("R6");
+                    GLFW.glfwSetWindowTitle(EngineTester.getWindow(), windowTitle + " [R6]");
                 }
             }
         };
@@ -418,6 +434,7 @@ public class Header {
             public void onPress() {
                 if(parser != null) {
                     parser.locateRegisters("R7");
+                    GLFW.glfwSetWindowTitle(EngineTester.getWindow(), windowTitle + " [R7]");
                 }
             }
         };
@@ -431,6 +448,7 @@ public class Header {
             public void onPress() {
                 if(parser != null) {
                     parser.locateAlert(null);
+                    GLFW.glfwSetWindowTitle(EngineTester.getWindow(), windowTitle);
                 }
             }
         };
@@ -441,6 +459,7 @@ public class Header {
             public void onPress() {
                 if(parser != null) {
                     parser.locateAlert("invalid_label");
+                    GLFW.glfwSetWindowTitle(EngineTester.getWindow(), windowTitle + " [Invalid labels]");
                 }
             }
         };
