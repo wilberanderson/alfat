@@ -24,44 +24,32 @@ import static org.lwjgl.system.MemoryUtil.memAllocInt;
 import static org.lwjgl.system.MemoryUtil.memFree;
 
 public class IconLoader {
-    public static void setIcons(String path, long window){
+    public static void setIcons(String path, long window, int iconWidth){
         IntBuffer w = memAllocInt(1);
         IntBuffer h = memAllocInt(1);
         IntBuffer comp = memAllocInt(1);
 
         // Icons
         {
-            ByteBuffer icon16;
-            ByteBuffer icon32;
+            ByteBuffer icon;
             try {
-                icon16 = ioResourceToByteBuffer(path + "Icon16.png", 2048);
-                icon32 = ioResourceToByteBuffer(path + "Icon32.png", 4096);
+                icon = ioResourceToByteBuffer(path, iconWidth * iconWidth);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
 
-            try ( GLFWImage.Buffer icons = GLFWImage.malloc(2) ) {
-                ByteBuffer pixels16 = STBImage.stbi_load_from_memory(icon16, w, h, comp, 4);
-                if(pixels16 != null)
+            try ( GLFWImage.Buffer icons = GLFWImage.malloc(1) ) {
+                ByteBuffer pixels = STBImage.stbi_load_from_memory(icon, w, h, comp, 4);
+                if(pixels != null)
                     icons
                             .position(0)
                             .width(w.get(0))
                             .height(h.get(0))
-                            .pixels(pixels16);
+                            .pixels(pixels);
 
-                ByteBuffer pixels32 = STBImage.stbi_load_from_memory(icon32, w, h, comp, 4);
-                if(pixels32 != null)
-                    icons
-                            .position(1)
-                            .width(w.get(0))
-                            .height(h.get(0))
-                            .pixels(pixels32);
-
-                icons.position(0);
                 glfwSetWindowIcon(window, icons);
 
-                STBImage.stbi_image_free(pixels32);
-                STBImage.stbi_image_free(pixels16);
+                STBImage.stbi_image_free(pixels);
             }
         }
 
