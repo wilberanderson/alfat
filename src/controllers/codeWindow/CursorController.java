@@ -207,7 +207,7 @@ public class CursorController {
     }
 
     public void scroll(float scrollChange){
-        cursor.getPosition().y -= scrollChange;
+        cursor.getPosition().y += scrollChange;
     }
 
     private void updateXPosition(){

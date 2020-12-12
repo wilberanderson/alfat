@@ -82,26 +82,6 @@ public class GeneralSettings {
 	public static final int DEFAULT_WIDTH = 1280;
 	public static final int DEFAULT_HEIGHT = 720;
 
-
-    public static float delta;
-	public static long lastFrameTime = System.currentTimeMillis();
-
-	public static void update() {
-		long currentFrameTime = getCurrentTime();
-		delta = (currentFrameTime - lastFrameTime) / 1000f;
-		lastFrameTime = currentFrameTime;
-	}
-
-	private static long getCurrentTime() {
-		return System.currentTimeMillis();
-	}
-
-	public static float getFrameTime(){
-		return delta;
-	}
-
-	public static final float RAPID_MODE_DURATION = 1.0f;
-	public static final int RAPID_MODE_FREQUENCY = 3;
 	public static final int DEFAULT_TAB_WIDTH = 4;
 	public static final Vector3f HIGHLIGHT_COLOR = base01;//new Vector3f(0, 0.35f, 0.465f);
 	public static final float TEXT_BOX_BORDER_WIDTH = 0.003f;

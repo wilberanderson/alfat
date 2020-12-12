@@ -2,6 +2,10 @@ package controllers.gui;
 
 public class GUIController {
 
-//    public void
+    GUIWindowController guiWindowController;
+
+    GUIController(){
+        guiWindowController = new GUIWindowController();
+    }
 
 }

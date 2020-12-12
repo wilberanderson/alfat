@@ -2,8 +2,6 @@ package gui;
 
 import controllers.ApplicationController;
 import controllers.codeWindow.CodeWindowController;
-import controllers.flowchartWindow.FlowchartWindow;
-import controllers.flowchartWindow.FlowchartWindowController;
 import controllers.gui.ButtonController;
 import main.GeneralSettings;
 import org.lwjgl.BufferUtils;
@@ -87,8 +85,8 @@ public class Header {
                     //create code window
                     controller.setCodeWindowController(new CodeWindowController(new Vector2f(0f,0f), new Vector2f(1f, 2-GeneralSettings.FONT_SCALING_FACTOR*GeneralSettings.FONT_SIZE), GeneralSettings.TEXT_BOX_BACKGROUND_COLOR, GeneralSettings.TEXT_COLOR, new Vector3f(0,0,0), content, GeneralSettings.CONSOLAS, GeneralSettings.FONT_SIZE, GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE, GeneralSettings.TEXT_BOX_BORDER_WIDTH, size.y));
 
-                    if (controller.getFlowChartWindowController() != null){
-                        controller.getFlowChartWindowController().goSplitScreen();
+                    if (controller.getFlowchartWindowController() != null){
+                        controller.getFlowchartWindowController().goSplitScreen();
                     }
                 }
             }
@@ -163,7 +161,7 @@ public class Header {
                 GL11.glViewport(0, 0, width, height);
 
 
-                MasterRenderer.renderScreenshot(controller.getFlowChartWindowController());
+                MasterRenderer.renderScreenshot(controller.getFlowchartWindowController());
 //                GLFW.glfwSwapBuffers(EngineTester.getWindow());
 
 
@@ -237,13 +235,10 @@ public class Header {
                 parser.ReadFile(tfm.getMostRecent());
 
                 parser.generateFlowObjects();
-                controller.setFlowChartWindowController(parser.createFlowchart(controller.getFlowChartWindowController()));
-                System.out.println(controller.getFlowChartWindowController());
+                controller.setFlowchartWindowController(parser.createFlowchart(controller.getFlowchartWindowController()));
+                System.out.println(controller.getFlowchartWindowController());
 
-                if(controller.getCodeWindowController() != null && controller.getFlowChartWindowController() != null) {
-                    controller.getCodeWindowController().minimize();
-                    controller.getFlowChartWindowController().maximize();
-                }
+                controller.flowchartView();
             }
         };
         testMenuButtonList.add(button);
@@ -268,7 +263,7 @@ public class Header {
                 parser.ReadFile(tfm.getMostRecent());
 
                 parser.generateFlowObjects();
-                parser.createFlowchart(controller.getFlowChartWindowController());
+                parser.createFlowchart(controller.getFlowchartWindowController());
 
             }
         };
@@ -285,7 +280,7 @@ public class Header {
                 parser = new LC3Parser(GeneralSettings.FILE_PATH, true);
                 parser.ReadFile(GeneralSettings.FILE_PATH);
                 parser.generateFlowObjects();
-                parser.createFlowchart(controller.getFlowChartWindowController());
+                parser.createFlowchart(controller.getFlowchartWindowController());
 
             }
         };
@@ -294,10 +289,7 @@ public class Header {
         button = new TextButton("Text Editor View") {
             @Override
             public void onPress() {
-                if(controller.getCodeWindowController() != null && controller.getFlowChartWindowController() != null) {
-                    controller.getCodeWindowController().maximize();
-                    controller.getFlowChartWindowController().minimize();
-                }
+                controller.textEditorView();
             }
         };
         testMenuButtonList.add(button);
@@ -305,10 +297,7 @@ public class Header {
         button = new TextButton("Flowchart View") {
             @Override
             public void onPress() {
-                if(controller.getCodeWindowController() != null && controller.getFlowChartWindowController() != null) {
-                    controller.getCodeWindowController().minimize();
-                    controller.getFlowChartWindowController().maximize();
-                }
+                controller.flowchartView();
             }
         };
         testMenuButtonList.add(button);
@@ -316,10 +305,7 @@ public class Header {
         button = new TextButton("Splitscreen View") {
             @Override
             public void onPress() {
-                if(controller.getCodeWindowController() != null && controller.getFlowChartWindowController() != null) {
-                    controller.getCodeWindowController().goSplitScreen();
-                    controller.getFlowChartWindowController().goSplitScreen();
-                }
+                controller.splitScreen();
             }
         };
         testMenuButtonList.add(button);
@@ -327,8 +313,8 @@ public class Header {
         button = new TextButton("Reset zoom") {
             @Override
             public void onPress() {
-                if(controller.getFlowChartWindowController() != null) {
-                    controller.getFlowChartWindowController().resetZoom();
+                if(controller.getFlowchartWindowController() != null) {
+                    controller.getFlowchartWindowController().resetZoom();
                     //TODO: Ensure this works after simplifying Header
                 }
             }
@@ -341,8 +327,8 @@ public class Header {
         button = new TextButton("Clear") {
             @Override
             public void onPress() {
-                if(controller.getFlowChartWindowController() != null) {
-                    controller.getFlowChartWindowController().locateRegister(null);
+                if(controller.getFlowchartWindowController() != null) {
+                    controller.getFlowchartWindowController().locateRegister(null);
                 }
             }
         };
@@ -351,8 +337,8 @@ public class Header {
         button = new TextButton("R0") {
             @Override
             public void onPress() {
-                if(controller.getFlowChartWindowController() != null) {
-                    controller.getFlowChartWindowController().locateRegister("R0");
+                if(controller.getFlowchartWindowController() != null) {
+                    controller.getFlowchartWindowController().locateRegister("R0");
                 }
             }
         };
@@ -361,8 +347,8 @@ public class Header {
         button = new TextButton("R1") {
             @Override
             public void onPress() {
-                if(controller.getFlowChartWindowController() != null) {
-                    controller.getFlowChartWindowController().locateRegister("R1");
+                if(controller.getFlowchartWindowController() != null) {
+                    controller.getFlowchartWindowController().locateRegister("R1");
                 }
             }
         };
@@ -371,8 +357,8 @@ public class Header {
         button = new TextButton("R2") {
             @Override
             public void onPress() {
-                if(controller.getFlowChartWindowController() != null) {
-                    controller.getFlowChartWindowController().locateRegister("R2");
+                if(controller.getFlowchartWindowController() != null) {
+                    controller.getFlowchartWindowController().locateRegister("R2");
                 }
             }
         };
@@ -381,8 +367,8 @@ public class Header {
         button = new TextButton("R3") {
             @Override
             public void onPress() {
-                if(controller.getFlowChartWindowController() != null) {
-                    controller.getFlowChartWindowController().locateRegister("R3");
+                if(controller.getFlowchartWindowController() != null) {
+                    controller.getFlowchartWindowController().locateRegister("R3");
                 }
             }
         };
@@ -391,8 +377,8 @@ public class Header {
         button = new TextButton("R4") {
             @Override
             public void onPress() {
-                if(controller.getFlowChartWindowController() != null) {
-                    controller.getFlowChartWindowController().locateRegister("R4");
+                if(controller.getFlowchartWindowController() != null) {
+                    controller.getFlowchartWindowController().locateRegister("R4");
                 }
             }
         };
@@ -401,8 +387,8 @@ public class Header {
         button = new TextButton("R5") {
             @Override
             public void onPress() {
-                if(controller.getFlowChartWindowController() != null) {
-                    controller.getFlowChartWindowController().locateRegister("R5");
+                if(controller.getFlowchartWindowController() != null) {
+                    controller.getFlowchartWindowController().locateRegister("R5");
                 }
             }
         };
@@ -411,8 +397,8 @@ public class Header {
         button = new TextButton("R6") {
             @Override
             public void onPress() {
-                if(controller.getFlowChartWindowController() != null) {
-                    controller.getFlowChartWindowController().locateRegister("R6");
+                if(controller.getFlowchartWindowController() != null) {
+                    controller.getFlowchartWindowController().locateRegister("R6");
                 }
             }
         };
@@ -421,8 +407,8 @@ public class Header {
         button = new TextButton("R7") {
             @Override
             public void onPress() {
-                if(controller.getFlowChartWindowController() != null) {
-                    controller.getFlowChartWindowController().locateRegister("R7");
+                if(controller.getFlowchartWindowController() != null) {
+                    controller.getFlowchartWindowController().locateRegister("R7");
                 }
             }
         };
@@ -434,8 +420,8 @@ public class Header {
         button = new TextButton("Clear") {
             @Override
             public void onPress() {
-                if(controller.getFlowChartWindowController() != null) {
-                    controller.getFlowChartWindowController().locateAlert(null);
+                if(controller.getFlowchartWindowController() != null) {
+                    controller.getFlowchartWindowController().locateAlert(null);
                 }
             }
         };
@@ -444,8 +430,8 @@ public class Header {
         button = new TextButton("Invalid Labels") {
             @Override
             public void onPress() {
-                if(controller.getFlowChartWindowController() != null) {
-                    controller.getFlowChartWindowController().locateAlert("invalid_label");
+                if(controller.getFlowchartWindowController() != null) {
+                    controller.getFlowchartWindowController().locateAlert("invalid_label");
                 }
             }
         };

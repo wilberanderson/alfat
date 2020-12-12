@@ -5,15 +5,10 @@ import controllers.flowchartWindow.FlowchartWindowController;
 import controllers.gui.ButtonController;
 import controllers.gui.GUIController;
 import gui.Header;
-import gui.buttons.Button;
 import gui.buttons.HeaderMenu;
-import gui.buttons.HighlightableButton;
 import main.GeneralSettings;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector2f;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.lwjgl.glfw.GLFW.*;
 
@@ -24,7 +19,6 @@ public class ApplicationController {
     public static boolean PASTE = false;
     public static boolean LEFT_CLICK = false;
     public static boolean RIGHT_CLICK = false;
-    public static double SCROLL_CHANGE = 0.0;
     public static double MOUSE_X = 0.0;
     public static double MOUSE_Y = 0.0;
     private static double previousMouseX = 0;
@@ -37,13 +31,14 @@ public class ApplicationController {
 
     //Permanent variables
     CodeWindowController codeWindowController;
-    FlowchartWindowController flowChartWindowController;
+    FlowchartWindowController flowchartWindowController;
     GUIController guiController;
+    int activeWindow = ControllerSettings.GUI_WINDOW;
 
 
 
     public ApplicationController(){
-//        ApplicationController.buttons = new ArrayList<>();
+        header = new Header(new Vector2f(-1, 1-(GeneralSettings.FONT_SIZE*GeneralSettings.FONT_SCALING_FACTOR + GeneralSettings.TEXT_BUTTON_PADDING*2)), new Vector2f(2f, GeneralSettings.FONT_SIZE*GeneralSettings.FONT_SCALING_FACTOR + GeneralSettings.TEXT_BUTTON_PADDING*2), this);
     }
 
     /**
@@ -69,7 +64,7 @@ public class ApplicationController {
         GeneralSettings.updateAspectRatio(width, height);
         header.setAspectRatio(new Vector2f(GeneralSettings.ASPECT_RATIO.m00, GeneralSettings.ASPECT_RATIO.m11));
         codeWindowController.updateAspectRatio(new Vector2f(GeneralSettings.ASPECT_RATIO.m00, GeneralSettings.ASPECT_RATIO.m11), header.getGuiFilledBox().getSize().y);
-        flowChartWindowController.updateAspectRatio(GeneralSettings.ASPECT_RATIO);
+        flowchartWindowController.updateAspectRatio(GeneralSettings.ASPECT_RATIO);
         aspectRatio = new Vector2f(GeneralSettings.ASPECT_RATIO.m00, GeneralSettings.ASPECT_RATIO.m11);
     }
 
@@ -108,9 +103,11 @@ public class ApplicationController {
      */
     public void scroll(double scrollChange){
         //Scrolling is processed on frame, hold the net value of the scrolling
-        SCROLL_CHANGE += scrollChange;
-        codeWindowController.scroll((float)scrollChange/10);
-        flowChartWindowController.updateZoom((float)scrollChange/10);
+        if(activeWindow == ControllerSettings.CODE_WINDOW) {
+            codeWindowController.scroll((float) scrollChange / 10);
+        }else if(flowchartWindowController != null){
+            flowchartWindowController.updateZoom((float) scrollChange / 10);
+        }
     }
 
     /**
@@ -126,7 +123,11 @@ public class ApplicationController {
 
             if(codeWindowController != null) {
                 //Process the mouse click in code window
-                codeWindowController.mouseLeftClick();
+                if(codeWindowController.mouseLeftClick()){
+                    activeWindow = ControllerSettings.CODE_WINDOW;
+                }else{
+                    activeWindow = ControllerSettings.FLOWCHART_WINDOW;
+                }
             }
         }else if(button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE){
             LEFT_CLICK = false;
@@ -169,30 +170,55 @@ public class ApplicationController {
 
         ButtonController.hover(new Vector2f((float)MOUSE_X, (float)MOUSE_Y));
 
-        if(LEFT_MOUSE_HELD && flowChartWindowController != null) {
+        if(LEFT_MOUSE_HELD && flowchartWindowController != null) {
             float xChange = (float)(MOUSE_X - previousMouseX);
             float yChange = (float)(MOUSE_Y - previousMouseY);
-            flowChartWindowController.updateTranslation(new Vector2f((float) xChange, (float) yChange));
+            flowchartWindowController.updateTranslation(new Vector2f((float) xChange, (float) yChange));
         }
     }
 
-    public static void setHeader(Header newHeader){
-        header = newHeader;
+
+    public Header getHeader(){
+        return header;
     }
 
     public void setCodeWindowController(CodeWindowController codeWindowController){
         this.codeWindowController = codeWindowController;
+        activeWindow = ControllerSettings.CODE_WINDOW;
     }
 
     public CodeWindowController getCodeWindowController(){
         return codeWindowController;
     }
 
-    public FlowchartWindowController getFlowChartWindowController() {
-        return flowChartWindowController;
+    public FlowchartWindowController getFlowchartWindowController() {
+        return flowchartWindowController;
     }
 
-    public void setFlowChartWindowController(FlowchartWindowController flowChartWindowController) {
-        this.flowChartWindowController = flowChartWindowController;
+    public void setFlowchartWindowController(FlowchartWindowController flowchartWindowController) {
+        this.flowchartWindowController = flowchartWindowController;
+    }
+    
+    public void textEditorView(){
+        if(codeWindowController != null && flowchartWindowController != null) {
+            codeWindowController.maximize();
+            flowchartWindowController.minimize();
+            activeWindow = ControllerSettings.CODE_WINDOW;
+        }
+    }
+    
+    public void flowchartView(){
+        if(codeWindowController != null && flowchartWindowController != null) {
+            codeWindowController.minimize();
+            flowchartWindowController.maximize();
+            activeWindow = ControllerSettings.FLOWCHART_WINDOW;
+        }
+    }
+    
+    public void splitScreen(){
+        if(codeWindowController != null && flowchartWindowController != null) {
+            codeWindowController.goSplitScreen();
+            flowchartWindowController.goSplitScreen();
+        }
     }
 }

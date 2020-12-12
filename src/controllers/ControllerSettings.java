@@ -9,5 +9,8 @@ public class ControllerSettings {
     public static final int CURSOR_BACKSPACE = 4;
     public static final int CURSOR_DELETE = 5;
 
+    public static final int CODE_WINDOW = 0;
+    public static final int FLOWCHART_WINDOW = 1;
+    public static final int GUI_WINDOW = 2;
 
 }

@@ -9,6 +9,7 @@ import org.lwjgl.opengl.*;
 import org.lwjgl.system.*;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
+import org.lwjgl.util.vector.Vector4f;
 import rendering.renderEngine.MasterRenderer;
 import controllers.GLFWEventController;
 
@@ -23,12 +24,7 @@ public class EngineTester {
     private static long window;
 
     //Temporary attributes
-    private Cursor cursor;
-    private List<TextBox> textBoxes;
     private List<GuiTexture> guis;
-    private Header header;
-    private List<FlowchartLine> flowchartLines;
-    private FlowchartWindow flowChartWindow;
     private ApplicationController applicationController;
     /**
      * Used for all operations of the program
@@ -100,9 +96,8 @@ public class EngineTester {
         // Make the OpenGL context current
         GLFW.glfwMakeContextCurrent(window);
 
-        //Restrict fps to 60 fps
-        GLFW.glfwSwapInterval(1);
-        //GLFW.glfwSwapInterval(0);
+        //Allow rendering as fast as inputs are received
+        GLFW.glfwSwapInterval(0);
 
 
         //********************************Change the icon***************************************
@@ -129,7 +124,7 @@ public class EngineTester {
         GL.createCapabilities();
 
         // Set the clear color
-        GL11.glClearColor(0.02745f, 0.211764f, 0.258823f, 0.0f);
+        GL11.glClearColor(GeneralSettings.base02.x, GeneralSettings.base02.y, GeneralSettings.base02.z, 1);
 
         //Initializes the render engine
         MasterRenderer.init();
@@ -143,6 +138,8 @@ public class EngineTester {
         GLFWEventController.init(window, applicationController);
 
 
+        //************************************Initialize the aspect ratio********************************
+        GeneralSettings.updateAspectRatio(GeneralSettings.DEFAULT_WIDTH, GeneralSettings.DEFAULT_HEIGHT);
 
 
         //****************************************Perform temporary initializations****************************
@@ -150,31 +147,11 @@ public class EngineTester {
     }
 
     private void tempInit(){
-
-
         //********************************************Initialize guis************************************************************
         //Create list to store all gui elements on screen
         guis = new ArrayList<>();
         //guis.add(new GuiTexture(engine.getRenderer().getReflectionTexture(), new Vector2f(0.5f, 0.5f), new Vector2f(0.5f, 0.5f)));
 
-        //*********************************************Initialize text boxes*****************************************************
-        //Create a font to use for rendering files
-
-
-        header = new Header(new Vector2f(-1, 1-(GeneralSettings.FONT_SIZE*GeneralSettings.FONT_SCALING_FACTOR + GeneralSettings.TEXT_BUTTON_PADDING*2)), new Vector2f(2f, GeneralSettings.FONT_SIZE*GeneralSettings.FONT_SCALING_FACTOR + GeneralSettings.TEXT_BUTTON_PADDING*2), applicationController);
-
-
-        //Create list to store all text boxes
-        textBoxes = new ArrayList<>();
-        //Create sample text boxes
-        //codeWindow = new CodeWindow(new Vector2f(0f,0f), new Vector2f(1f, header.getPosition().y+1), new Vector3f(0.1f,0.1f,0.1f), new Vector3f(1,1,1), new Vector3f(0,0,0), "", GeneralSettings.TACOMA, GeneralSettings.FONT_SIZE, GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE, GeneralSettings.TEXT_BOX_BORDER_WIDTH);
-        //textBoxes.add(codeWindow);
-
-        //header.setCodeWindow(codeWindow);
-//        applicationController.setFlowChartWindowController(header.getFlowchartWindowController());
-        GeneralSettings.updateAspectRatio(GeneralSettings.DEFAULT_WIDTH, GeneralSettings.DEFAULT_HEIGHT);
-        applicationController.setHeader(header);
-//        MasterRenderer.setFlowChartWindowController(header.getFlowchartWindowController());
     }
 
     /**
@@ -186,71 +163,14 @@ public class EngineTester {
         // Run the rendering loop until the user has attempted to close
         // the window or has pressed the ESCAPE key.
         while ( !GLFW.glfwWindowShouldClose(window) ) {
-            //Clear the framebuffer
-            GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 
-            //Update the frame time
-            GeneralSettings.update();
-
-            // Poll for window events. The key callback above will only be
-            // invoked during this call.
-            GLFW.glfwPollEvents();
-//            applicationController.processEvents();
-
-            GL11.glEnable(GL30.GL_CLIP_DISTANCE0);
-
-            //If the user is clicking and their mouse is in a text box recreate the cursor at the new position
-//            if(applicationController.LEFT_CLICK){
-//                Vector2f newPosition = new Vector2f((float)applicationController.MOUSE_X, (float)applicationController.MOUSE_Y);
-//
-//                if(header.getCodeWindowController() != null) {
-//                    if (newPosition.x > header.getCodeWindowController().getCodeWindow().getPosition().x - 1 && newPosition.x < (header.getCodeWindowController().getCodeWindow().getPosition().x + header.getCodeWindowController().getCodeWindow().getSize().x) - 1 && newPosition.y > header.getCodeWindowController().getCodeWindow().getPosition().y - 1 && newPosition.y < (header.getCodeWindowController().getCodeWindow().getPosition().y + header.getCodeWindowController().getCodeWindow().getSize().y) - 1) {
-//                        header.setCursor(new Cursor());
-//                    }
-//                }
-//
-//                //Reset left click value to avoid checking for new position multiple times per click
-//                applicationController.LEFT_CLICK = false;
-//            }
-
-            //If there is a cursor process all of the events
-//            if(header.getCursor() != null) {
-//                header.getCursor().processInputs(window);
-//            }
-
-//            if(header.getCursor() != null){
-//                if(applicationController.getCodeWindowController() != null && applicationController.getCodeWindowController().getCursorController() == null){
-//                    applicationController.getCodeWindowController().setCursorController(new CursorController(header.getCursor(), header.getCodeWindow()));
-//                }
-//            }
-
-//            if(header.getFlowchartWindowController() != applicationController.getFlowChartWindowController()){
-//                applicationController.setFlowChartWindowController(header.getFlowchartWindowController());
-//            }
-//            if(header.getCodeWindowController() != applicationController.getCodeWindowController()){
-//                applicationController.setCodeWindowController(header.getCodeWindowController());
-//            }
+            // Poll for window events. The event callbacks will be called when an event is received
+//            GLFW.glfwPollEvents();
+            GLFW.glfwWaitEvents();
 
             //Render
-            if(applicationController.getCodeWindowController() != null) {
-                MasterRenderer.renderScene(guis, applicationController.getCodeWindowController().getCursorController(), header, applicationController);
-            }
-            else{
-                MasterRenderer.renderScene(guis, null, header, applicationController);
+            MasterRenderer.renderScene(guis, applicationController, window);
 
-            }
-            //Temporarily make changes for scrolling
-//            if(header.getCodeWindowController() != null) {
-//                if(applicationController.getCodeWindowController() == null){
-//                    applicationController.setCodeWindowController(header.getCodeWindowController());
-//                }
-////                if (applicationController.SCROLL_CHANGE != 0) {
-////                    header.getCodeWindow().scroll((float) -applicationController.SCROLL_CHANGE / 10);
-////                }
-//            }
-            applicationController.SCROLL_CHANGE = 0;
-            //Swap the color buffers to update the screen
-            GLFW.glfwSwapBuffers(window);
         }
     }
 

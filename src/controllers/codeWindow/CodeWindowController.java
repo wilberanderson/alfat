@@ -64,9 +64,12 @@ public class CodeWindowController {
 
     }
 
-    public void mouseLeftClick(){
+    public boolean mouseLeftClick(){
         if(inBounds){
             cursorController.moveCursor(mousePosition, this);
+            return true;
+        }else{
+            return false;
         }
     }
 
@@ -92,7 +95,6 @@ public class CodeWindowController {
     }
 
     public void scroll(float scrollChange){
-        cursorController.scroll(scrollChange);
         scrollChange = -scrollChange;
         scrollChange *= aspectRatio.y;
         if (maxVerticalPosition > codeWindow.getPosition().x) {
@@ -100,12 +102,15 @@ public class CodeWindowController {
             if (newPosition < 0) {
                 changeLineNumberVerticalPosition(-contentsVerticalPosition);
                 changeContentsVerticalPosition(-contentsVerticalPosition);
+                cursorController.scroll(-contentsVerticalPosition);
             } else if (newPosition > maxVerticalPosition) {
                 changeLineNumberVerticalPosition(maxVerticalPosition - contentsVerticalPosition);
                 changeContentsVerticalPosition(maxVerticalPosition - contentsVerticalPosition);
+                cursorController.scroll(maxVerticalPosition - contentsVerticalPosition);
             } else {
                 changeLineNumberVerticalPosition(scrollChange);
                 changeContentsVerticalPosition(scrollChange);
+                cursorController.scroll(scrollChange);
             }
         }
     }
