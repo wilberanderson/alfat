@@ -1,4 +1,7 @@
 package main;
+import controllers.ApplicationController;
+import controllers.codeWindow.CodeWindowController;
+import controllers.codeWindow.CursorController;
 import gui.*;
 import gui.textBoxes.TextBox;
 import loaders.*;
@@ -8,7 +11,7 @@ import org.lwjgl.system.*;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 import rendering.renderEngine.MasterRenderer;
-import utils.InputManager;
+import controllers.GLFWEventController;
 
 import java.nio.*;
 import java.util.ArrayList;
@@ -27,6 +30,7 @@ public class EngineTester {
     private Header header;
     private List<FlowchartLine> flowchartLines;
     private FlowChartWindow flowChartWindow;
+    private ApplicationController applicationController;
     /**
      * Used for all operations of the program
      *  - Initializes all relevant objects
@@ -136,7 +140,8 @@ public class EngineTester {
         GeneralSettings.initializeFonts();
 
         //************************************Initialize input*************************************
-        InputManager.init(window);
+        applicationController = new ApplicationController();
+        GLFWEventController.init(window, applicationController);
 
 
 
@@ -170,9 +175,9 @@ public class EngineTester {
 
         header.setFlowChartWindow(flowChartWindow);
         //header.setCodeWindow(codeWindow);
-        InputManager.setFlowChartWindow(flowChartWindow);
+        applicationController.setFlowChartWindow(flowChartWindow);
         GeneralSettings.updateAspectRatio(GeneralSettings.DEFAULT_WIDTH, GeneralSettings.DEFAULT_HEIGHT);
-        InputManager.setHeader(header);
+        applicationController.setHeader(header);
         MasterRenderer.setFlowChartWindow(flowChartWindow);
     }
 
@@ -194,39 +199,53 @@ public class EngineTester {
             // Poll for window events. The key callback above will only be
             // invoked during this call.
             GLFW.glfwPollEvents();
-            InputManager.processEvents();
+            applicationController.processEvents();
 
             GL11.glEnable(GL30.GL_CLIP_DISTANCE0);
 
             //If the user is clicking and their mouse is in a text box recreate the cursor at the new position
-            if(InputManager.LEFT_CLICK){
-                Vector2f newPosition = new Vector2f((float)InputManager.MOUSE_X, (float)InputManager.MOUSE_Y);
+            if(applicationController.LEFT_CLICK){
+                Vector2f newPosition = new Vector2f((float)applicationController.MOUSE_X, (float)applicationController.MOUSE_Y);
 
                 if(header.getCodeWindow() != null) {
-                    if (newPosition.x > header.getCodeWindow().getPosition().x - 1 && newPosition.x < (header.getCodeWindow().getPosition().x + header.getCodeWindow().getSize().x) - 1 && newPosition.y > header.getCodeWindow().getPosition().y - 1 && newPosition.y < (header.getCodeWindow().getPosition().y + header.getCodeWindow().getSize().y) - 1) {
-                        header.setCursor(new Cursor(newPosition, header.getCodeWindow()));
+                    if (newPosition.x > header.getCodeWindow().getCodeWindow().getPosition().x - 1 && newPosition.x < (header.getCodeWindow().getCodeWindow().getPosition().x + header.getCodeWindow().getCodeWindow().getSize().x) - 1 && newPosition.y > header.getCodeWindow().getCodeWindow().getPosition().y - 1 && newPosition.y < (header.getCodeWindow().getCodeWindow().getPosition().y + header.getCodeWindow().getCodeWindow().getSize().y) - 1) {
+                        header.setCursor(new Cursor());
                     }
                 }
 
                 //Reset left click value to avoid checking for new position multiple times per click
-                InputManager.LEFT_CLICK = false;
+                applicationController.LEFT_CLICK = false;
             }
 
             //If there is a cursor process all of the events
-            if(header.getCursor() != null) {
-                header.getCursor().processInputs(window);
-            }
+//            if(header.getCursor() != null) {
+//                header.getCursor().processInputs(window);
+//            }
+
+//            if(header.getCursor() != null){
+//                if(applicationController.getCodeWindowController() != null && applicationController.getCodeWindowController().getCursorController() == null){
+//                    applicationController.getCodeWindowController().setCursorController(new CursorController(header.getCursor(), header.getCodeWindow()));
+//                }
+//            }
 
             //Render
-            MasterRenderer.renderScene(guis, FlowChartWindow.getFlowChartTextBoxList(), new Vector3f(1,1,1), header.getCursor(), GeneralSettings.FONT_SIZE, header, flowChartWindow.getFlowchartLineList(), flowChartWindow, header.getCodeWindow());
+            if(applicationController.getCodeWindowController() != null) {
+                MasterRenderer.renderScene(guis, FlowChartWindow.getFlowChartTextBoxList(), new Vector3f(1, 1, 1), applicationController.getCodeWindowController().getCursorController(), GeneralSettings.FONT_SIZE, header, flowChartWindow.getFlowchartLineList(), flowChartWindow, header.getCodeWindow().getCodeWindow());
+            }
+            else{
+                MasterRenderer.renderScene(guis, FlowChartWindow.getFlowChartTextBoxList(), new Vector3f(1, 1, 1), null, GeneralSettings.FONT_SIZE, header, flowChartWindow.getFlowchartLineList(), flowChartWindow, null);
 
+            }
             //Temporarily make changes for scrolling
             if(header.getCodeWindow() != null) {
-                if (InputManager.SCROLL_CHANGE != 0) {
-                    header.getCodeWindow().scroll((float) -InputManager.SCROLL_CHANGE / 10);
+                if(applicationController.getCodeWindowController() == null){
+                    applicationController.setCodeWindowController(header.getCodeWindow());
                 }
+//                if (applicationController.SCROLL_CHANGE != 0) {
+//                    header.getCodeWindow().scroll((float) -applicationController.SCROLL_CHANGE / 10);
+//                }
             }
-            InputManager.SCROLL_CHANGE = 0;
+            applicationController.SCROLL_CHANGE = 0;
             //Swap the color buffers to update the screen
             GLFW.glfwSwapBuffers(window);
         }

@@ -51,7 +51,7 @@ public class TerminatorRenderer {
             pointSize = 2;
         }
         GL11.glPointSize(pointSize);
-        GL11.glEnable(GL11.GL_POINT_SMOOTH);
+//        GL11.glEnable(GL11.GL_POINT_SMOOTH);
         Matrix3f transformationMatrix = new Matrix3f();
         for(FlowchartLine line : flowchartLines) {
             shader.color.loadVec3(line.getColor());

@@ -7,7 +7,6 @@ import main.GeneralSettings;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
-import utils.InputManager;
 
 public class TextButton extends HighlightableButton{
     private GUIFilledBox guiFilledBox;

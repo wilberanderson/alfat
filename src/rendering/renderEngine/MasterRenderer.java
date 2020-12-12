@@ -1,5 +1,6 @@
 package rendering.renderEngine;
 
+import controllers.codeWindow.CursorController;
 import gui.*;
 import gui.textBoxes.CodeWindow;
 import gui.textBoxes.FlowChartTextBox;
@@ -49,7 +50,7 @@ public class MasterRenderer {
 	/**
 	 * Renders the scene to the screen.
 	 */
-	public static void renderScene(List<GuiTexture> guis, List<FlowChartTextBox> textBoxes, Vector3f color, Cursor cursor, float fontSize, Header header, List<FlowchartLine> flowchartLines, FlowChartWindow flowChartWindow, CodeWindow codeWindow) {
+	public static void renderScene(List<GuiTexture> guis, List<FlowChartTextBox> textBoxes, Vector3f color, CursorController cursor, float fontSize, Header header, List<FlowchartLine> flowchartLines, FlowChartWindow flowChartWindow, CodeWindow codeWindow) {
 		guiRenderer.render(guis);
 		filledBoxRenderer.render(textBoxes, flowChartWindow, header);
 		if(flowchartLines != null) {

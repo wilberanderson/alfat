@@ -1,5 +1,6 @@
 package rendering.cursor;
 
+import controllers.codeWindow.CursorController;
 import dataStructures.RawModel;
 import gui.Cursor;
 import loaders.Loader;
@@ -27,20 +28,20 @@ public class CursorRenderer {
     }
 
 
-    public void render(Cursor cursor){
+    public void render(CursorController cursor){
         prepare();
 
         GL30.glBindVertexArray(this.cursor.getVaoID());
         GL20.glEnableVertexAttribArray(0);
         Matrix2f aspectRatio = new Matrix2f();
         aspectRatio.setIdentity();
-        aspectRatio.m00 = cursor.getCodeWindow().getAspectRatio().x;
-        aspectRatio.m11 = cursor.getCodeWindow().getAspectRatio().y;
+        aspectRatio.m00 = cursor.getAspectRatio().x;
+        aspectRatio.m11 = cursor.getAspectRatio().y;
         shader.aspectRatio.loadMatrix(aspectRatio);
-        shader.mousePosition.loadVec2(cursor.getPosition());
+        shader.mousePosition.loadVec2(cursor.getCursor().getPosition());
         shader.fontHeight.loadFloat(GeneralSettings.FONT_SCALING_FACTOR*GeneralSettings.FONT_SIZE);
-        shader.windowPosition.loadVec2(cursor.getCodeWindow().getPosition().x-1, cursor.getCodeWindow().getPosition().y-1);
-        shader.windowSize.loadVec2(cursor.getCodeWindow().getSize());
+        shader.windowPosition.loadVec2(cursor.getCodeWindow().getCodeWindow().getPosition().x-1, cursor.getCodeWindow().getCodeWindow().getPosition().y-1);
+        shader.windowSize.loadVec2(cursor.getCodeWindow().getCodeWindow().getSize());
         GL11.glDrawArrays(GL11.GL_LINES, 0, 2);
         GL20.glDisableVertexAttribArray(0);
         GL30.glBindVertexArray(0);

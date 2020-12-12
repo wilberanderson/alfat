@@ -1,0 +1,260 @@
+package controllers;
+
+import controllers.codeWindow.CodeWindowController;
+import gui.FlowChartWindow;
+import gui.Header;
+import gui.buttons.Button;
+import gui.buttons.HeaderMenu;
+import gui.buttons.HighlightableButton;
+import main.GeneralSettings;
+import org.lwjgl.glfw.*;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.util.vector.Vector2f;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Vector;
+
+import static org.lwjgl.glfw.GLFW.*;
+
+public class ApplicationController {
+
+    //Temporary variables
+    public static boolean CTRL_PRESSED = false;
+    public static boolean PASTE = false;
+    public static boolean LEFT_CLICK = false;
+    public static boolean RIGHT_CLICK = false;
+    public static double SCROLL_CHANGE = 0.0;
+    public static double MOUSE_X = 0.0;
+    public static double MOUSE_Y = 0.0;
+    public static double MOUSE_X_CHANGE = 0.0;
+    public static double MOUSE_Y_CHANGE = 0.0;
+    private static double previousMouseX = 0;
+    private static double previousMouseY = 0;
+    private static boolean LEFT_MOUSE_HELD = false;
+    public static List<Button> buttons;
+    private static HeaderMenu openMenu = null;
+    private static FlowChartWindow flowChartWindow;
+    private static Header header;
+    private static Vector2f aspectRatio = new Vector2f(1, 1);
+
+    //Permanent variables
+    CodeWindowController codeWindowController;
+
+
+
+    public ApplicationController(){
+        ApplicationController.buttons = new ArrayList<>();
+    }
+
+    /**
+     * Types a single character
+     * @param codepoint the 32 bit UTF codepoint for the character
+     * TODO: Consider supporting more characters than just ascii characters
+     */
+    public void type(int codepoint){
+        //Process the typed character
+        codeWindowController.type((char)codepoint);
+    }
+
+    /**
+     * Sets the framebuffer to the new width and height
+     * @param width the new width of the window in pixels
+     * @param height the new height of the window in pixels
+     */
+    public void setFrameBufferSize(int width, int height){
+        //Resize the windows viewport to cause the application to fill the full window
+        GL11.glViewport(0, 0, width, height);
+
+        //Update the aspect ratio
+        GeneralSettings.updateAspectRatio(width, height);
+        header.setAspectRatio(new Vector2f(GeneralSettings.ASPECT_RATIO.m00, GeneralSettings.ASPECT_RATIO.m11));
+        codeWindowController.updateAspectRatio(new Vector2f(GeneralSettings.ASPECT_RATIO.m00, GeneralSettings.ASPECT_RATIO.m11), header.getGuiFilledBox().getSize().y);
+        flowChartWindow.setAspectRatio(GeneralSettings.ASPECT_RATIO);
+        aspectRatio = new Vector2f(GeneralSettings.ASPECT_RATIO.m00, GeneralSettings.ASPECT_RATIO.m11);
+    }
+
+    /**
+     * Updates internal parameters about whether a key should currently be pressed
+     * @param key the GLFW key representation of which key on the keyboard is pressed
+     * @param action the GLFW action of the key, is either GLFW_PRESS, GLFW_RELEASE, or GLFW_REPEAT
+     * TODO: Switch from using turbo mode to triggering events on GLFW_PRESS or GLFW_RELEASE
+     */
+    public void pressKey(int key, int action){
+        if(key == GLFW_KEY_UP && (action == GLFW_PRESS || action == GLFW_REPEAT)) {
+            codeWindowController.keyPress(ControllerSettings.CURSOR_UP);
+        }else if(key == GLFW_KEY_DOWN && (action == GLFW_PRESS || action == GLFW_REPEAT)) {
+            codeWindowController.keyPress(ControllerSettings.CURSOR_DOWN);
+        }else if(key == GLFW_KEY_LEFT && (action == GLFW_PRESS || action == GLFW_REPEAT)) {
+            codeWindowController.keyPress(ControllerSettings.CURSOR_LEFT);
+        }else if(key == GLFW_KEY_RIGHT && (action == GLFW_PRESS || action == GLFW_REPEAT)) {
+            codeWindowController.keyPress(ControllerSettings.CURSOR_RIGHT);
+        }else if(key == GLFW_KEY_BACKSPACE && (action == GLFW_PRESS || action == GLFW_REPEAT)) {
+            codeWindowController.keyPress(ControllerSettings.CURSOR_BACKSPACE);
+        }else if(key == GLFW_KEY_DELETE && (action == GLFW_PRESS || action == GLFW_REPEAT)) {
+            codeWindowController.keyPress(ControllerSettings.CURSOR_DELETE);
+        }else if((key == GLFW_KEY_LEFT_CONTROL || key == GLFW_KEY_RIGHT_CONTROL) && action == GLFW_PRESS) {
+            CTRL_PRESSED = true;
+        }else if((key == GLFW_KEY_LEFT_CONTROL || key == GLFW_KEY_RIGHT_CONTROL) && action == GLFW_RELEASE) {
+            CTRL_PRESSED = false;
+        }else if(key == GLFW_KEY_V && CTRL_PRESSED && action == GLFW_PRESS){
+            PASTE = true;
+        }else if(key == GLFW_KEY_ENTER && action == GLFW_PRESS) {
+            codeWindowController.type('\n');
+        }
+    }
+
+    /**
+     * Performs on scroll actions
+     * @param scrollChange the amount by which the cursor was scrolled
+     * TODO: Process scroll when the event happens rather than on frame
+     */
+    public void scroll(double scrollChange){
+        //Scrolling is processed on frame, hold the net value of the scrolling
+        SCROLL_CHANGE += scrollChange;
+        codeWindowController.scroll((float)scrollChange/10);
+    }
+
+    /**
+     * Processes the events that should be executed when the mouse is either clicked or released
+     * @param button the GLFW mouse button representation of which mouse button was pressed
+     * @param action the GLFW action of the button press, either GLFW_PRESS or GLFW_RELEASE
+     */
+    public void click(int button, int action){
+
+        if(button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
+            LEFT_CLICK = true;
+            LEFT_MOUSE_HELD = true;
+
+            if(codeWindowController != null) {
+                //Process the mouse click in code window
+                codeWindowController.mouseLeftClick();
+            }
+        }else if(button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE){
+            LEFT_CLICK = false;
+            LEFT_MOUSE_HELD = false;
+
+            if(codeWindowController != null) {
+                //Process the mouse release in code window
+                codeWindowController.mouseLeftRelease();
+            }
+
+            boolean buttonPressed = false;
+            List<HeaderMenu> toClose = new ArrayList<>();
+
+            for(Button b: buttons){
+                if(MOUSE_X >= b.getPosition().x && MOUSE_Y >= b.getPosition().y && MOUSE_X < b.getPosition().x+b.getSize().x && MOUSE_Y < b.getPosition().y+b.getSize().y){
+                    if (b instanceof HeaderMenu){
+                        if(openMenu != b && openMenu != null){
+                            toClose.add((HeaderMenu) openMenu);
+                        }
+                        openMenu = (HeaderMenu) b;
+                    } else {
+                        toClose.add(openMenu);
+                        openMenu = null;
+                    }
+                    b.onPress();
+                    buttonPressed = true;
+                    break;
+                }
+            }
+
+            if (!buttonPressed){
+                for (Button b : buttons) {
+                    if (b instanceof HeaderMenu) {
+                        if (((HeaderMenu) b).isOpen) {
+                            toClose.add((HeaderMenu)b);
+                        }
+                    }
+                }
+                if(header.getCodeWindow() != null) {
+                    if (MOUSE_X < header.getCodeWindow().getCodeWindow().getSize().x - 1 && MOUSE_Y < header.getCodeWindow().getCodeWindow().getSize().y - 1) {
+                        header.getCodeWindow().setScrollable(true);
+                    } else {
+                        header.getCodeWindow().setScrollable(false);
+                    }
+                }
+                if(header.getFlowChartWindow() != null) {
+                    if (MOUSE_X > header.getFlowChartWindow().getPosition().x && MOUSE_Y < header.getFlowChartWindow().getSize().y - 1) {
+                        header.getFlowChartWindow().setZoomable(true);
+                    } else {
+                        header.getFlowChartWindow().setZoomable(false);
+                    }
+                }
+            }
+            for(HeaderMenu b : toClose){
+                b.close();
+            }
+
+
+        }else if(button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS) {
+            RIGHT_CLICK = true;
+        }else if(button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_RELEASE) {
+            RIGHT_CLICK = false;
+        }
+    }
+
+    /**
+     * Moves the mouse to a new position
+     * @param xPosition the mouses new x position in pixels
+     * @param yPosition the mouses new y position in pixels
+     */
+    public void moveMouse(double xPosition, double yPosition){
+        //Save the old mouse position for processing position changes
+        previousMouseX = MOUSE_X;
+        previousMouseY = MOUSE_Y;
+
+        //Convert xPosition and yPosition and convert them into the standard coordinate system
+        MOUSE_X = xPosition/GeneralSettings.DISPLAY_WIDTH*2 - 1f;
+        MOUSE_Y = 1-yPosition/GeneralSettings.DISPLAY_HEIGHT*2;
+
+        if(codeWindowController != null){
+            //Process the mouse movement in the code window
+            codeWindowController.moveMouse(new Vector2f((float)MOUSE_X, (float)MOUSE_Y));
+        }
+
+        //Process button highlights
+        for(Button b: buttons){
+            if(b instanceof HighlightableButton) {
+                if (MOUSE_X >= b.getPosition().x && MOUSE_Y >= b.getPosition().y && MOUSE_X< b.getPosition().x + b.getSize().x && MOUSE_Y< b.getPosition().y + b.getSize().y) {
+                    if(!((HighlightableButton) b).isHighlighted()) {
+                        ((HighlightableButton) b).highlight();
+                    }
+                }else{
+                    if(((HighlightableButton) b).isHighlighted()) {
+                        ((HighlightableButton) b).unhighlight();
+                    }
+                }
+            }
+        }
+    }
+
+    public static void processEvents(){
+        MOUSE_X_CHANGE = MOUSE_X - previousMouseX;
+        MOUSE_Y_CHANGE = MOUSE_Y - previousMouseY;
+        previousMouseX = MOUSE_X;
+        previousMouseY = MOUSE_Y;
+        if(SCROLL_CHANGE != 0){
+            flowChartWindow.updateZoom((float)SCROLL_CHANGE/10);
+        }
+        if(LEFT_MOUSE_HELD && (MOUSE_X_CHANGE != 0 || MOUSE_Y_CHANGE != 0)){
+            flowChartWindow.updateTranslation(new Vector2f((float)MOUSE_X_CHANGE*flowChartWindow.getZoom()*2, (float)MOUSE_Y_CHANGE*flowChartWindow.getZoom()*2));
+        }
+    }
+
+    public static void setFlowChartWindow(FlowChartWindow newFlowChartWindow){
+        flowChartWindow = newFlowChartWindow;
+    }
+
+    public static void setHeader(Header newHeader){
+        header = newHeader;
+    }
+
+    public void setCodeWindowController(CodeWindowController codeWindowController){
+        this.codeWindowController = codeWindowController;
+    }
+
+    public CodeWindowController getCodeWindowController(){
+        return codeWindowController;
+    }
+}

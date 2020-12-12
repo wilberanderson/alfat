@@ -1,5 +1,6 @@
 package gui;
 
+import controllers.codeWindow.CodeWindowController;
 import gui.textBoxes.CodeWindow;
 import main.EngineTester;
 import main.GeneralSettings;
@@ -34,7 +35,7 @@ public class Header {
     private GUIFilledBox guiFilledBox;
     private Vector2f position;
     private FlowChartWindow flowChartWindow;
-    private CodeWindow codeWindow;
+    private CodeWindowController codeWindow;
     private Cursor cursor;
     private Vector2f aspectRatio = new Vector2f(1, 1);
     //Manages the temp file paths
@@ -89,11 +90,11 @@ public class Header {
                         codeWindow.clear();
                     }
                     //create code window
-                    codeWindow = new CodeWindow(new Vector2f(0f,0f), new Vector2f(1f, 2-GeneralSettings.FONT_SCALING_FACTOR*GeneralSettings.FONT_SIZE), GeneralSettings.TEXT_BOX_BACKGROUND_COLOR, GeneralSettings.TEXT_COLOR, new Vector3f(0,0,0), content, GeneralSettings.CONSOLAS, GeneralSettings.FONT_SIZE, GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE, GeneralSettings.TEXT_BOX_BORDER_WIDTH, size.y);
+                    codeWindow = new CodeWindowController(new Vector2f(0f,0f), new Vector2f(1f, 2-GeneralSettings.FONT_SCALING_FACTOR*GeneralSettings.FONT_SIZE), GeneralSettings.TEXT_BOX_BACKGROUND_COLOR, GeneralSettings.TEXT_COLOR, new Vector3f(0,0,0), content, GeneralSettings.CONSOLAS, GeneralSettings.FONT_SIZE, GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE, GeneralSettings.TEXT_BOX_BORDER_WIDTH, size.y);
                     if (flowChartWindow != null){
                         flowChartWindow.goSplitScreen();
                     }
-                    cursor = new Cursor(new Vector2f(codeWindow.getPosition()), codeWindow);
+                    cursor = new Cursor();
                 }
             }
         };
@@ -466,11 +467,11 @@ public class Header {
     public void setFlowChartWindow(FlowChartWindow flowChartWindow){
         this.flowChartWindow = flowChartWindow;
     }
-    public void setCodeWindow(CodeWindow codeWindow){
+    public void setCodeWindow(CodeWindowController codeWindow){
         this.codeWindow = codeWindow;
     }
 
-    public CodeWindow getCodeWindow(){
+    public CodeWindowController getCodeWindow(){
         return codeWindow;
     }
 
@@ -496,9 +497,9 @@ public class Header {
         }
         guiFilledBox.setPosition(new Vector2f(-1, 1-(1-guiFilledBox.getPosition().y)/this.aspectRatio.y*aspectRatio.y));
         this.aspectRatio = aspectRatio;
-        if(codeWindow != null) {
-            codeWindow.setAspectRatio(aspectRatio, size.y);
-        }
+//        if(codeWindow != null) {
+//            codeWindow.updateAspectRatio(aspectRatio, size.y);
+//        }
     }
 
     public FlowChartWindow getFlowChartWindow(){
