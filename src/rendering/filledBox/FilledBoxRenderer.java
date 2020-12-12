@@ -5,10 +5,12 @@ import java.util.List;
 import controllers.ApplicationController;
 import controllers.flowchartWindow.FlowchartWindow;
 import controllers.flowchartWindow.FlowchartWindowController;
+import controllers.gui.ButtonController;
 import dataStructures.RawModel;
 import gui.*;
 import gui.buttons.Button;
 import gui.buttons.TextButton;
+import gui.textBoxes.CodeWindow;
 import gui.textBoxes.FlowchartTextBox;
 import gui.textBoxes.TextBox;
 import loaders.Loader;
@@ -41,22 +43,22 @@ public class FilledBoxRenderer {
     }
 
 
-    public void render(List<FlowchartTextBox> textBoxes, FlowchartWindowController flowchartWindowController, Header header){
+    public void render(List<FlowchartTextBox> textBoxes, FlowchartWindowController flowchartWindowController, CodeWindow codeWindow){
         prepare();
 
         GL30.glBindVertexArray(square.getVaoID());
         GL20.glEnableVertexAttribArray(0);
         shader.doClipping.loadBoolean(true);
 
-        if(header.getCodeWindowController() != null) {
-            shader.windowPosition.loadVec2(header.getCodeWindowController().getCodeWindow().getPosition().x - 1, header.getCodeWindowController().getCodeWindow().getPosition().y - 1);
+        if(codeWindow != null) {
+            shader.windowPosition.loadVec2(codeWindow.getPosition().x - 1, codeWindow.getPosition().y - 1);
             shader.aspectRatio.loadMatrix(aspectRatio);
-            shader.windowSize.loadVec2(header.getCodeWindowController().getCodeWindow().getSize());
+            shader.windowSize.loadVec2(codeWindow.getSize());
             shader.zoomTranslateMatrix.loadMatrix(zoomTranslateMatrix);
-            renderFilledBox(header.getCodeWindowController().getCodeWindow().getTextNumberFilledBox());
-            shader.windowPosition.loadVec2(header.getCodeWindowController().getCodeWindow().getCodeWindowPosition().x - 1, header.getCodeWindowController().getCodeWindow().getCodeWindowPosition().y - 1);
-            shader.windowSize.loadVec2(header.getCodeWindowController().getCodeWindow().getCodeWindowSize());
-            renderFilledBox(header.getCodeWindowController().getCodeWindow().getGuiFilledBox());
+            renderFilledBox(codeWindow.getTextNumberFilledBox());
+            shader.windowPosition.loadVec2(codeWindow.getCodeWindowPosition().x - 1, codeWindow.getCodeWindowPosition().y - 1);
+            shader.windowSize.loadVec2(codeWindow.getCodeWindowSize());
+            renderFilledBox(codeWindow.getGuiFilledBox());
         }
         if(textBoxes != null) {
             shader.zoomTranslateMatrix.loadMatrix(flowchartWindowController.getZoomTranslateMatrix());
@@ -120,7 +122,7 @@ public class FilledBoxRenderer {
         GL11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 0, 4);
 
 
-        for(Button button : ApplicationController.buttons){
+        for(Button button : ButtonController.getButtons()){
             if(button instanceof TextButton){
                 shader.color.loadVec3(((TextButton)button).getGuiFilledBox().getColor());
                 transformationMatrix = new Matrix3f();

@@ -64,6 +64,7 @@ public class TextButton extends HighlightableButton{
     @Override
     public void onHighlight() {
         this.guiFilledBox.setColor(highlightColor);
+
     }
 
     @Override

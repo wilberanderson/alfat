@@ -93,21 +93,19 @@ public class CodeWindowController {
 
     public void scroll(float scrollChange){
         cursorController.scroll(scrollChange);
-        if(scrollable) {
-            scrollChange = -scrollChange;
-            scrollChange *= aspectRatio.y;
-            if (maxVerticalPosition > codeWindow.getPosition().x) {
-                float newPosition = contentsVerticalPosition + scrollChange;
-                if (newPosition < 0) {
-                    changeLineNumberVerticalPosition(-contentsVerticalPosition);
-                    changeContentsVerticalPosition(-contentsVerticalPosition);
-                } else if (newPosition > maxVerticalPosition) {
-                    changeLineNumberVerticalPosition(maxVerticalPosition - contentsVerticalPosition);
-                    changeContentsVerticalPosition(maxVerticalPosition - contentsVerticalPosition);
-                } else {
-                    changeLineNumberVerticalPosition(scrollChange);
-                    changeContentsVerticalPosition(scrollChange);
-                }
+        scrollChange = -scrollChange;
+        scrollChange *= aspectRatio.y;
+        if (maxVerticalPosition > codeWindow.getPosition().x) {
+            float newPosition = contentsVerticalPosition + scrollChange;
+            if (newPosition < 0) {
+                changeLineNumberVerticalPosition(-contentsVerticalPosition);
+                changeContentsVerticalPosition(-contentsVerticalPosition);
+            } else if (newPosition > maxVerticalPosition) {
+                changeLineNumberVerticalPosition(maxVerticalPosition - contentsVerticalPosition);
+                changeContentsVerticalPosition(maxVerticalPosition - contentsVerticalPosition);
+            } else {
+                changeLineNumberVerticalPosition(scrollChange);
+                changeContentsVerticalPosition(scrollChange);
             }
         }
     }

@@ -2,6 +2,8 @@ package controllers;
 
 import controllers.codeWindow.CodeWindowController;
 import controllers.flowchartWindow.FlowchartWindowController;
+import controllers.gui.ButtonController;
+import controllers.gui.GUIController;
 import gui.Header;
 import gui.buttons.Button;
 import gui.buttons.HeaderMenu;
@@ -28,7 +30,7 @@ public class ApplicationController {
     private static double previousMouseX = 0;
     private static double previousMouseY = 0;
     private static boolean LEFT_MOUSE_HELD = false;
-    public static List<Button> buttons;
+//    public static List<Button> buttons;
     private static HeaderMenu openMenu = null;
     private static Header header;
     private static Vector2f aspectRatio = new Vector2f(1, 1);
@@ -36,11 +38,12 @@ public class ApplicationController {
     //Permanent variables
     CodeWindowController codeWindowController;
     FlowchartWindowController flowChartWindowController;
+    GUIController guiController;
 
 
 
     public ApplicationController(){
-        ApplicationController.buttons = new ArrayList<>();
+//        ApplicationController.buttons = new ArrayList<>();
     }
 
     /**
@@ -134,38 +137,8 @@ public class ApplicationController {
                 codeWindowController.mouseLeftRelease();
             }
 
-            boolean buttonPressed = false;
-            List<HeaderMenu> toClose = new ArrayList<>();
+            ButtonController.click(new Vector2f((float)MOUSE_X, (float)MOUSE_Y));
 
-            for(Button b: buttons){
-                if(MOUSE_X >= b.getPosition().x && MOUSE_Y >= b.getPosition().y && MOUSE_X < b.getPosition().x+b.getSize().x && MOUSE_Y < b.getPosition().y+b.getSize().y){
-                    if (b instanceof HeaderMenu){
-                        if(openMenu != b && openMenu != null){
-                            toClose.add((HeaderMenu) openMenu);
-                        }
-                        openMenu = (HeaderMenu) b;
-                    } else {
-                        toClose.add(openMenu);
-                        openMenu = null;
-                    }
-                    b.onPress();
-                    buttonPressed = true;
-                    break;
-                }
-            }
-
-            if (!buttonPressed){
-                for (Button b : buttons) {
-                    if (b instanceof HeaderMenu) {
-                        if (((HeaderMenu) b).isOpen) {
-                            toClose.add((HeaderMenu)b);
-                        }
-                    }
-                }
-            }
-            for(HeaderMenu b : toClose){
-                b.close();
-            }
 
 
         }else if(button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS) {
@@ -194,22 +167,9 @@ public class ApplicationController {
             codeWindowController.moveMouse(new Vector2f((float)MOUSE_X, (float)MOUSE_Y));
         }
 
-        //Process button highlights
-        for(Button b: buttons){
-            if(b instanceof HighlightableButton) {
-                if (MOUSE_X >= b.getPosition().x && MOUSE_Y >= b.getPosition().y && MOUSE_X< b.getPosition().x + b.getSize().x && MOUSE_Y< b.getPosition().y + b.getSize().y) {
-                    if(!((HighlightableButton) b).isHighlighted()) {
-                        ((HighlightableButton) b).highlight();
-                    }
-                }else{
-                    if(((HighlightableButton) b).isHighlighted()) {
-                        ((HighlightableButton) b).unhighlight();
-                    }
-                }
-            }
-        }
+        ButtonController.hover(new Vector2f((float)MOUSE_X, (float)MOUSE_Y));
 
-        if(LEFT_MOUSE_HELD) {
+        if(LEFT_MOUSE_HELD && flowChartWindowController != null) {
             float xChange = (float)(MOUSE_X - previousMouseX);
             float yChange = (float)(MOUSE_Y - previousMouseY);
             flowChartWindowController.updateTranslation(new Vector2f((float) xChange, (float) yChange));

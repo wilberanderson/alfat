@@ -161,7 +161,7 @@ public class EngineTester {
         //Create a font to use for rendering files
 
 
-        header = new Header(new Vector2f(-1, 1-(GeneralSettings.FONT_SIZE*GeneralSettings.FONT_SCALING_FACTOR + GeneralSettings.TEXT_BUTTON_PADDING*2)), new Vector2f(2f, GeneralSettings.FONT_SIZE*GeneralSettings.FONT_SCALING_FACTOR + GeneralSettings.TEXT_BUTTON_PADDING*2));
+        header = new Header(new Vector2f(-1, 1-(GeneralSettings.FONT_SIZE*GeneralSettings.FONT_SCALING_FACTOR + GeneralSettings.TEXT_BUTTON_PADDING*2)), new Vector2f(2f, GeneralSettings.FONT_SIZE*GeneralSettings.FONT_SCALING_FACTOR + GeneralSettings.TEXT_BUTTON_PADDING*2), applicationController);
 
 
         //Create list to store all text boxes
@@ -171,7 +171,7 @@ public class EngineTester {
         //textBoxes.add(codeWindow);
 
         //header.setCodeWindow(codeWindow);
-        applicationController.setFlowChartWindowController(header.getFlowchartWindowController());
+//        applicationController.setFlowChartWindowController(header.getFlowchartWindowController());
         GeneralSettings.updateAspectRatio(GeneralSettings.DEFAULT_WIDTH, GeneralSettings.DEFAULT_HEIGHT);
         applicationController.setHeader(header);
 //        MasterRenderer.setFlowChartWindowController(header.getFlowchartWindowController());
@@ -200,18 +200,18 @@ public class EngineTester {
             GL11.glEnable(GL30.GL_CLIP_DISTANCE0);
 
             //If the user is clicking and their mouse is in a text box recreate the cursor at the new position
-            if(applicationController.LEFT_CLICK){
-                Vector2f newPosition = new Vector2f((float)applicationController.MOUSE_X, (float)applicationController.MOUSE_Y);
-
-                if(header.getCodeWindowController() != null) {
-                    if (newPosition.x > header.getCodeWindowController().getCodeWindow().getPosition().x - 1 && newPosition.x < (header.getCodeWindowController().getCodeWindow().getPosition().x + header.getCodeWindowController().getCodeWindow().getSize().x) - 1 && newPosition.y > header.getCodeWindowController().getCodeWindow().getPosition().y - 1 && newPosition.y < (header.getCodeWindowController().getCodeWindow().getPosition().y + header.getCodeWindowController().getCodeWindow().getSize().y) - 1) {
-                        header.setCursor(new Cursor());
-                    }
-                }
-
-                //Reset left click value to avoid checking for new position multiple times per click
-                applicationController.LEFT_CLICK = false;
-            }
+//            if(applicationController.LEFT_CLICK){
+//                Vector2f newPosition = new Vector2f((float)applicationController.MOUSE_X, (float)applicationController.MOUSE_Y);
+//
+//                if(header.getCodeWindowController() != null) {
+//                    if (newPosition.x > header.getCodeWindowController().getCodeWindow().getPosition().x - 1 && newPosition.x < (header.getCodeWindowController().getCodeWindow().getPosition().x + header.getCodeWindowController().getCodeWindow().getSize().x) - 1 && newPosition.y > header.getCodeWindowController().getCodeWindow().getPosition().y - 1 && newPosition.y < (header.getCodeWindowController().getCodeWindow().getPosition().y + header.getCodeWindowController().getCodeWindow().getSize().y) - 1) {
+//                        header.setCursor(new Cursor());
+//                    }
+//                }
+//
+//                //Reset left click value to avoid checking for new position multiple times per click
+//                applicationController.LEFT_CLICK = false;
+//            }
 
             //If there is a cursor process all of the events
 //            if(header.getCursor() != null) {
@@ -224,12 +224,12 @@ public class EngineTester {
 //                }
 //            }
 
-            if(header.getFlowchartWindowController() != applicationController.getFlowChartWindowController()){
-                applicationController.setFlowChartWindowController(header.getFlowchartWindowController());
-            }
-            if(header.getCodeWindowController() != applicationController.getCodeWindowController()){
-                applicationController.setCodeWindowController(header.getCodeWindowController());
-            }
+//            if(header.getFlowchartWindowController() != applicationController.getFlowChartWindowController()){
+//                applicationController.setFlowChartWindowController(header.getFlowchartWindowController());
+//            }
+//            if(header.getCodeWindowController() != applicationController.getCodeWindowController()){
+//                applicationController.setCodeWindowController(header.getCodeWindowController());
+//            }
 
             //Render
             if(applicationController.getCodeWindowController() != null) {
@@ -240,14 +240,14 @@ public class EngineTester {
 
             }
             //Temporarily make changes for scrolling
-            if(header.getCodeWindowController() != null) {
-                if(applicationController.getCodeWindowController() == null){
-                    applicationController.setCodeWindowController(header.getCodeWindowController());
-                }
-//                if (applicationController.SCROLL_CHANGE != 0) {
-//                    header.getCodeWindow().scroll((float) -applicationController.SCROLL_CHANGE / 10);
+//            if(header.getCodeWindowController() != null) {
+//                if(applicationController.getCodeWindowController() == null){
+//                    applicationController.setCodeWindowController(header.getCodeWindowController());
 //                }
-            }
+////                if (applicationController.SCROLL_CHANGE != 0) {
+////                    header.getCodeWindow().scroll((float) -applicationController.SCROLL_CHANGE / 10);
+////                }
+//            }
             applicationController.SCROLL_CHANGE = 0;
             //Swap the color buffers to update the screen
             GLFW.glfwSwapBuffers(window);
@@ -259,9 +259,9 @@ public class EngineTester {
      * Save content from code editor to temp file.
      * */
     private void saveIfCrash() {
-        if(header.getCodeWindowController() != null) {
+        if(applicationController.getCodeWindowController() != null) {
             TempFileManager tfm = new TempFileManager(GeneralSettings.TEMP_DIR);
-            tfm.saveCodeEditorTextToFile(header.getCodeWindowController().getTexts(),GeneralSettings.FILE_PATH, GeneralSettings.TEMP_DIR);
+            tfm.saveCodeEditorTextToFile(applicationController.getCodeWindowController().getTexts(),GeneralSettings.FILE_PATH, GeneralSettings.TEMP_DIR);
         }
     }
 

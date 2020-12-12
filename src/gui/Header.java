@@ -1,8 +1,10 @@
 package gui;
 
+import controllers.ApplicationController;
 import controllers.codeWindow.CodeWindowController;
 import controllers.flowchartWindow.FlowchartWindow;
 import controllers.flowchartWindow.FlowchartWindowController;
+import controllers.gui.ButtonController;
 import main.GeneralSettings;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
@@ -31,16 +33,16 @@ public class Header {
     private List<HeaderMenu> menuList;
     private GUIFilledBox guiFilledBox;
     private Vector2f position;
-    private FlowchartWindowController flowchartWindowController;
-    private CodeWindowController codeWindow;
-    private Cursor cursor;
+//    private FlowchartWindowController flowchartWindowController;
+//    private CodeWindowController codeWindow;
+//    private Cursor cursor;
     private Vector2f aspectRatio = new Vector2f(1, 1);
     //Manages the temp file paths
     private TempFileManager tfm;
     private LC3Parser parser = null;
 
 
-    public Header(Vector2f position, Vector2f size){
+    public Header(Vector2f position, Vector2f size, ApplicationController controller){
         menuList = new ArrayList<>();
         guiFilledBox = new GUIFilledBox(position, size, GeneralSettings.HEADER_COLOR);
         this.position = position;
@@ -67,10 +69,6 @@ public class Header {
 
                 // If the file exists, load it into the text editor.
                 if (!GeneralSettings.FILE_PATH.equals("null")){
-                    if (flowchartWindowController != null){
-                        //hide current flowchart
-                    }
-
                     String content = "";
                     try{
                         File file = new File(GeneralSettings.FILE_PATH);
@@ -83,15 +81,15 @@ public class Header {
                     }catch(Exception e){
                         e.printStackTrace();
                     }
-                    if(codeWindow != null) {
-                        codeWindow.clear();
+                    if(controller.getCodeWindowController() != null) {
+                        controller.getCodeWindowController().clear();
                     }
                     //create code window
-                    codeWindow = new CodeWindowController(new Vector2f(0f,0f), new Vector2f(1f, 2-GeneralSettings.FONT_SCALING_FACTOR*GeneralSettings.FONT_SIZE), GeneralSettings.TEXT_BOX_BACKGROUND_COLOR, GeneralSettings.TEXT_COLOR, new Vector3f(0,0,0), content, GeneralSettings.CONSOLAS, GeneralSettings.FONT_SIZE, GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE, GeneralSettings.TEXT_BOX_BORDER_WIDTH, size.y);
-                    if (flowchartWindowController != null){
-                        flowchartWindowController.goSplitScreen();
+                    controller.setCodeWindowController(new CodeWindowController(new Vector2f(0f,0f), new Vector2f(1f, 2-GeneralSettings.FONT_SCALING_FACTOR*GeneralSettings.FONT_SIZE), GeneralSettings.TEXT_BOX_BACKGROUND_COLOR, GeneralSettings.TEXT_COLOR, new Vector3f(0,0,0), content, GeneralSettings.CONSOLAS, GeneralSettings.FONT_SIZE, GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE, GeneralSettings.TEXT_BOX_BORDER_WIDTH, size.y));
+
+                    if (controller.getFlowChartWindowController() != null){
+                        controller.getFlowChartWindowController().goSplitScreen();
                     }
-                    cursor = new Cursor();
                 }
             }
         };
@@ -110,8 +108,8 @@ public class Header {
                 if (!of.getFilePath().equals("null")) {
                     SaveToFile stf = new SaveToFile(of.getFilePath());
                     //Prevent crash if codeWindow doe not have anything in it
-                    if (codeWindow != null) {
-                        stf.save(codeWindow.getTexts());
+                    if (controller.getCodeWindowController() != null) {
+                        stf.save(controller.getCodeWindowController().getTexts());
                     }
                 }
 
@@ -124,9 +122,9 @@ public class Header {
             public void onPress() {
                 //Saves contents of the text editor over the original source file
                 //TempFileOperations tfo = new TempFileOperations();
-                if (codeWindow != null && GeneralSettings.FILE_PATH != null & !GeneralSettings.FILE_PATH.equals("null")) {
+                if (controller.getCodeWindowController() != null && GeneralSettings.FILE_PATH != null & !GeneralSettings.FILE_PATH.equals("null")) {
                    SaveToFile stf = new SaveToFile(GeneralSettings.FILE_PATH);
-                   stf.save(codeWindow.getTexts());
+                   stf.save(controller.getCodeWindowController().getTexts());
                 }
 
             }
@@ -165,7 +163,7 @@ public class Header {
                 GL11.glViewport(0, 0, width, height);
 
 
-                MasterRenderer.renderScreenshot(flowchartWindowController);
+                MasterRenderer.renderScreenshot(controller.getFlowChartWindowController());
 //                GLFW.glfwSwapBuffers(EngineTester.getWindow());
 
 
@@ -220,7 +218,7 @@ public class Header {
 
                 //Save To Temp Location
                 if (!GeneralSettings.FILE_PATH.equals("null")) {
-                    if (codeWindow != null) {
+                    if (controller.getCodeWindowController() != null) {
                         tfm.copyFiletoTempFile(GeneralSettings.FILE_PATH, GeneralSettings.TEMP_DIR);
 
                     }
@@ -239,12 +237,12 @@ public class Header {
                 parser.ReadFile(tfm.getMostRecent());
 
                 parser.generateFlowObjects();
-                flowchartWindowController = parser.createFlowchart(flowchartWindowController);
-                System.out.println(flowchartWindowController);
+                controller.setFlowChartWindowController(parser.createFlowchart(controller.getFlowChartWindowController()));
+                System.out.println(controller.getFlowChartWindowController());
 
-                if(codeWindow != null && flowchartWindowController != null) {
-                    codeWindow.minimize();
-                    flowchartWindowController.maximize();
+                if(controller.getCodeWindowController() != null && controller.getFlowChartWindowController() != null) {
+                    controller.getCodeWindowController().minimize();
+                    controller.getFlowChartWindowController().maximize();
                 }
             }
         };
@@ -256,8 +254,8 @@ public class Header {
                 //TODO: Need way to keep track whether changes have been made in editor to know if we need to save or not...
 
                 //Save what is in codeWindow
-                if (codeWindow != null && GeneralSettings.FILE_PATH != null & !GeneralSettings.FILE_PATH.equals("null")) {
-                    tfm.saveCodeEditorTextToFile(codeWindow.getTexts(), GeneralSettings.FILE_PATH, GeneralSettings.TEMP_DIR);
+                if (controller.getCodeWindowController() != null && GeneralSettings.FILE_PATH != null & !GeneralSettings.FILE_PATH.equals("null")) {
+                    tfm.saveCodeEditorTextToFile(controller.getCodeWindowController().getTexts(), GeneralSettings.FILE_PATH, GeneralSettings.TEMP_DIR);
                 } else {
                     return;
                 }
@@ -270,7 +268,7 @@ public class Header {
                 parser.ReadFile(tfm.getMostRecent());
 
                 parser.generateFlowObjects();
-                parser.createFlowchart(flowchartWindowController);
+                parser.createFlowchart(controller.getFlowChartWindowController());
 
             }
         };
@@ -287,7 +285,7 @@ public class Header {
                 parser = new LC3Parser(GeneralSettings.FILE_PATH, true);
                 parser.ReadFile(GeneralSettings.FILE_PATH);
                 parser.generateFlowObjects();
-                parser.createFlowchart(flowchartWindowController);
+                parser.createFlowchart(controller.getFlowChartWindowController());
 
             }
         };
@@ -296,9 +294,9 @@ public class Header {
         button = new TextButton("Text Editor View") {
             @Override
             public void onPress() {
-                if(codeWindow != null && flowchartWindowController != null) {
-                    codeWindow.maximize();
-                    flowchartWindowController.minimize();
+                if(controller.getCodeWindowController() != null && controller.getFlowChartWindowController() != null) {
+                    controller.getCodeWindowController().maximize();
+                    controller.getFlowChartWindowController().minimize();
                 }
             }
         };
@@ -307,9 +305,9 @@ public class Header {
         button = new TextButton("Flowchart View") {
             @Override
             public void onPress() {
-                if(codeWindow != null && flowchartWindowController != null) {
-                    codeWindow.minimize();
-                    flowchartWindowController.maximize();
+                if(controller.getCodeWindowController() != null && controller.getFlowChartWindowController() != null) {
+                    controller.getCodeWindowController().minimize();
+                    controller.getFlowChartWindowController().maximize();
                 }
             }
         };
@@ -318,9 +316,9 @@ public class Header {
         button = new TextButton("Splitscreen View") {
             @Override
             public void onPress() {
-                if(codeWindow != null && flowchartWindowController != null) {
-                    codeWindow.goSplitScreen();
-                    flowchartWindowController.goSplitScreen();
+                if(controller.getCodeWindowController() != null && controller.getFlowChartWindowController() != null) {
+                    controller.getCodeWindowController().goSplitScreen();
+                    controller.getFlowChartWindowController().goSplitScreen();
                 }
             }
         };
@@ -329,8 +327,8 @@ public class Header {
         button = new TextButton("Reset zoom") {
             @Override
             public void onPress() {
-                if(flowchartWindowController != null) {
-                    flowchartWindowController.resetZoom();
+                if(controller.getFlowChartWindowController() != null) {
+                    controller.getFlowChartWindowController().resetZoom();
                     //TODO: Ensure this works after simplifying Header
                 }
             }
@@ -343,80 +341,88 @@ public class Header {
         button = new TextButton("Clear") {
             @Override
             public void onPress() {
-                if(flowchartWindowController != null) {
-                    flowchartWindowController.locateRegister(null);
+                if(controller.getFlowChartWindowController() != null) {
+                    controller.getFlowChartWindowController().locateRegister(null);
                 }
             }
         };
         registerMenuButtonList.add(button);
+
         button = new TextButton("R0") {
             @Override
             public void onPress() {
-                if(flowchartWindowController != null) {
-                    flowchartWindowController.locateRegister("R0");
+                if(controller.getFlowChartWindowController() != null) {
+                    controller.getFlowChartWindowController().locateRegister("R0");
                 }
             }
         };
         registerMenuButtonList.add(button);
+
         button = new TextButton("R1") {
             @Override
             public void onPress() {
-                if(flowchartWindowController != null) {
-                    flowchartWindowController.locateRegister("R1");
+                if(controller.getFlowChartWindowController() != null) {
+                    controller.getFlowChartWindowController().locateRegister("R1");
                 }
             }
         };
         registerMenuButtonList.add(button);
+
         button = new TextButton("R2") {
             @Override
             public void onPress() {
-                if(flowchartWindowController != null) {
-                    flowchartWindowController.locateRegister("R2");
+                if(controller.getFlowChartWindowController() != null) {
+                    controller.getFlowChartWindowController().locateRegister("R2");
                 }
             }
         };
         registerMenuButtonList.add(button);
+
         button = new TextButton("R3") {
             @Override
             public void onPress() {
-                if(flowchartWindowController != null) {
-                    flowchartWindowController.locateRegister("R3");
+                if(controller.getFlowChartWindowController() != null) {
+                    controller.getFlowChartWindowController().locateRegister("R3");
                 }
             }
         };
         registerMenuButtonList.add(button);
+
         button = new TextButton("R4") {
             @Override
             public void onPress() {
-                if(flowchartWindowController != null) {
-                    flowchartWindowController.locateRegister("R4");
+                if(controller.getFlowChartWindowController() != null) {
+                    controller.getFlowChartWindowController().locateRegister("R4");
                 }
             }
         };
         registerMenuButtonList.add(button);
+
         button = new TextButton("R5") {
             @Override
             public void onPress() {
-                if(flowchartWindowController != null) {
-                    flowchartWindowController.locateRegister("R5");
+                if(controller.getFlowChartWindowController() != null) {
+                    controller.getFlowChartWindowController().locateRegister("R5");
                 }
             }
         };
         registerMenuButtonList.add(button);
+
         button = new TextButton("R6") {
             @Override
             public void onPress() {
-                if(flowchartWindowController != null) {
-                    flowchartWindowController.locateRegister("R6");
+                if(controller.getFlowChartWindowController() != null) {
+                    controller.getFlowChartWindowController().locateRegister("R6");
                 }
             }
         };
         registerMenuButtonList.add(button);
+
         button = new TextButton("R7") {
             @Override
             public void onPress() {
-                if(flowchartWindowController != null) {
-                    flowchartWindowController.locateRegister("R7");
+                if(controller.getFlowChartWindowController() != null) {
+                    controller.getFlowChartWindowController().locateRegister("R7");
                 }
             }
         };
@@ -428,8 +434,8 @@ public class Header {
         button = new TextButton("Clear") {
             @Override
             public void onPress() {
-                if(flowchartWindowController != null) {
-                    flowchartWindowController.locateAlert(null);
+                if(controller.getFlowChartWindowController() != null) {
+                    controller.getFlowChartWindowController().locateAlert(null);
                 }
             }
         };
@@ -438,8 +444,8 @@ public class Header {
         button = new TextButton("Invalid Labels") {
             @Override
             public void onPress() {
-                if(flowchartWindowController != null) {
-                    flowchartWindowController.locateAlert("invalid_label");
+                if(controller.getFlowChartWindowController() != null) {
+                    controller.getFlowChartWindowController().locateAlert("invalid_label");
                 }
             }
         };
@@ -448,6 +454,9 @@ public class Header {
         HeaderMenu analyticsButton = new HeaderMenu(new Vector2f(-1f + fileButton.getSize().x + registerButton.getSize().x, 1-GeneralSettings.FONT_SIZE*GeneralSettings.FONT_SCALING_FACTOR - 2*GeneralSettings.TEXT_BUTTON_PADDING), "Analysis ", GeneralSettings.TEXT_BUTTON_BACKGROUND_COLOR, GeneralSettings.HIGHLIGHT_COLOR, GeneralSettings.TEXT_COLOR, GeneralSettings.CONSOLAS, GeneralSettings.FONT_SIZE, GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE, analyticsMenuButtonList);
         menuList.add(analyticsButton);
 
+        for(HeaderMenu headerMenu: menuList){
+            ButtonController.add(headerMenu);
+        }
     }
 
     public GUIFilledBox getGuiFilledBox() {
@@ -458,25 +467,25 @@ public class Header {
         return position;
     }
 
-    public List<HeaderMenu> getMenuList(){
-        return menuList;
-    }
+    //public List<HeaderMenu> getMenuList(){
+       // return menuList;
+    //}
 
-    public void setCodeWindow(CodeWindowController codeWindow){
-        this.codeWindow = codeWindow;
-    }
+//    public void setCodeWindow(CodeWindowController codeWindow){
+//        this.codeWindow = codeWindow;
+//    }
 
-    public CodeWindowController getCodeWindowController(){
-        return codeWindow;
-    }
+//    public CodeWindowController getCodeWindowController(){
+//        return codeWindow;
+//    }
 
-    public Cursor getCursor(){
-        return cursor;
-    }
+//    public Cursor getCursor(){
+//        return cursor;
+//    }
 
-    public void setCursor(Cursor cursor) {
-        this.cursor = cursor;
-    }
+//    public void setCursor(Cursor cursor) {
+//        this.cursor = cursor;
+//    }
 
     public void setAspectRatio(Vector2f aspectRatio){
         Vector2f size = guiFilledBox.getSize();
@@ -497,7 +506,7 @@ public class Header {
 //        }
     }
 
-    public FlowchartWindowController getFlowchartWindowController() {
-        return flowchartWindowController;
-    }
+//    public FlowchartWindowController getFlowchartWindowController() {
+//        return flowchartWindowController;
+//    }
 }

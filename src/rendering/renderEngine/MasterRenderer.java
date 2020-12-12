@@ -51,9 +51,9 @@ public class MasterRenderer {
 		guiRenderer.render(guis);
 		if(controller.getCodeWindowController() != null) {
 			if (controller.getFlowChartWindowController() == null) {
-				filledBoxRenderer.render(null, controller.getFlowChartWindowController(), header);
+				filledBoxRenderer.render(null, controller.getFlowChartWindowController(), controller.getCodeWindowController().getCodeWindow());
 			} else {
-				filledBoxRenderer.render(controller.getFlowChartWindowController().getFlowchartTextBoxList(), controller.getFlowChartWindowController(), header);
+				filledBoxRenderer.render(controller.getFlowChartWindowController().getFlowchartTextBoxList(), controller.getFlowChartWindowController(), controller.getCodeWindowController().getCodeWindow());
 			}
 		}
 		if(controller.getFlowChartWindowController() != null) {
