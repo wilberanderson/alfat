@@ -1,17 +1,15 @@
 package rendering.flowchartLine;
 
+import controllers.flowchartWindow.FlowchartWindowController;
 import dataStructures.RawModel;
-import gui.FlowChartWindow;
+import controllers.flowchartWindow.FlowchartWindow;
 import gui.FlowchartLine;
 import loaders.Loader;
 import main.GeneralSettings;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
-import org.lwjgl.util.vector.Matrix3f;
 import org.lwjgl.util.vector.Vector2f;
-import org.lwjgl.util.vector.Vector3f;
-import org.lwjgl.util.vector.Vector4f;
 
 import java.util.List;
 
@@ -30,14 +28,14 @@ public class FlowchartLineRenderer {
     }
 
 
-    public void render(List<FlowchartLine> flowchartLines, FlowChartWindow flowChartWindow, boolean doClipping, boolean isScreenshot){
+    public void render(List<FlowchartLine> flowchartLines, FlowchartWindowController flowchartWindowController, boolean doClipping, boolean isScreenshot){
         prepare();
         if(isScreenshot){
             shader.zoomTranslateMatrix.loadMatrix(GeneralSettings.SCREENSHOT_TRANSLATION);
         }else{
-            shader.zoomTranslateMatrix.loadMatrix(flowChartWindow.getZoomTranslateMatrix());
+            shader.zoomTranslateMatrix.loadMatrix(flowchartWindowController.getZoomTranslateMatrix());
         }
-        shader.aspectRatio.loadMatrix(flowChartWindow.getAspectRatio());
+        shader.aspectRatio.loadMatrix(flowchartWindowController.getAspectRatio());
         shader.windowPosition.loadVec2(-1, -1);
         shader.windowSize.loadVec2(2, 2);
         for(FlowchartLine line : flowchartLines) {
@@ -50,8 +48,8 @@ public class FlowchartLineRenderer {
                 position = line.getPositions().get(i);
                 shader.endPosition.loadVec2(position);
                 if(doClipping) {
-                    shader.windowPosition.loadVec2(flowChartWindow.getPosition());
-                    shader.windowSize.loadVec2(flowChartWindow.getSize());
+                    shader.windowPosition.loadVec2(flowchartWindowController.getPosition());
+                    shader.windowSize.loadVec2(flowchartWindowController.getSize());
                 }
                 GL11.glDrawArrays(GL11.GL_LINES, 0, 2);
             }

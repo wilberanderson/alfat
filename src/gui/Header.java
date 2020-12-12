@@ -1,13 +1,12 @@
 package gui;
 
 import controllers.codeWindow.CodeWindowController;
-import gui.textBoxes.CodeWindow;
-import main.EngineTester;
+import controllers.flowchartWindow.FlowchartWindow;
+import controllers.flowchartWindow.FlowchartWindowController;
 import main.GeneralSettings;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL30;
-import org.lwjgl.util.Display;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 import parser.LC3Parser;
@@ -21,11 +20,9 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import gui.buttons.HeaderMenu;
 import gui.buttons.TextButton;
-import org.lwjgl.glfw.GLFW;
 import rendering.renderEngine.MasterRenderer;
 
 import javax.imageio.ImageIO;
@@ -34,7 +31,7 @@ public class Header {
     private List<HeaderMenu> menuList;
     private GUIFilledBox guiFilledBox;
     private Vector2f position;
-    private FlowChartWindow flowChartWindow;
+    private FlowchartWindowController flowchartWindowController;
     private CodeWindowController codeWindow;
     private Cursor cursor;
     private Vector2f aspectRatio = new Vector2f(1, 1);
@@ -70,7 +67,7 @@ public class Header {
 
                 // If the file exists, load it into the text editor.
                 if (!GeneralSettings.FILE_PATH.equals("null")){
-                    if (flowChartWindow != null){
+                    if (flowchartWindowController != null){
                         //hide current flowchart
                     }
 
@@ -91,8 +88,8 @@ public class Header {
                     }
                     //create code window
                     codeWindow = new CodeWindowController(new Vector2f(0f,0f), new Vector2f(1f, 2-GeneralSettings.FONT_SCALING_FACTOR*GeneralSettings.FONT_SIZE), GeneralSettings.TEXT_BOX_BACKGROUND_COLOR, GeneralSettings.TEXT_COLOR, new Vector3f(0,0,0), content, GeneralSettings.CONSOLAS, GeneralSettings.FONT_SIZE, GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE, GeneralSettings.TEXT_BOX_BORDER_WIDTH, size.y);
-                    if (flowChartWindow != null){
-                        flowChartWindow.goSplitScreen();
+                    if (flowchartWindowController != null){
+                        flowchartWindowController.goSplitScreen();
                     }
                     cursor = new Cursor();
                 }
@@ -168,7 +165,7 @@ public class Header {
                 GL11.glViewport(0, 0, width, height);
 
 
-                MasterRenderer.renderScreenshot();
+                MasterRenderer.renderScreenshot(flowchartWindowController);
 //                GLFW.glfwSwapBuffers(EngineTester.getWindow());
 
 
@@ -242,11 +239,12 @@ public class Header {
                 parser.ReadFile(tfm.getMostRecent());
 
                 parser.generateFlowObjects();
-                parser.createFlowchart();
+                flowchartWindowController = parser.createFlowchart(flowchartWindowController);
+                System.out.println(flowchartWindowController);
 
-                if(codeWindow != null && flowChartWindow != null) {
+                if(codeWindow != null && flowchartWindowController != null) {
                     codeWindow.minimize();
-                    flowChartWindow.maximize();
+                    flowchartWindowController.maximize();
                 }
             }
         };
@@ -272,7 +270,7 @@ public class Header {
                 parser.ReadFile(tfm.getMostRecent());
 
                 parser.generateFlowObjects();
-                parser.createFlowchart();
+                parser.createFlowchart(flowchartWindowController);
 
             }
         };
@@ -289,7 +287,7 @@ public class Header {
                 parser = new LC3Parser(GeneralSettings.FILE_PATH, true);
                 parser.ReadFile(GeneralSettings.FILE_PATH);
                 parser.generateFlowObjects();
-                parser.createFlowchart();
+                parser.createFlowchart(flowchartWindowController);
 
             }
         };
@@ -298,9 +296,9 @@ public class Header {
         button = new TextButton("Text Editor View") {
             @Override
             public void onPress() {
-                if(codeWindow != null && flowChartWindow != null) {
+                if(codeWindow != null && flowchartWindowController != null) {
                     codeWindow.maximize();
-                    flowChartWindow.minimize();
+                    flowchartWindowController.minimize();
                 }
             }
         };
@@ -309,9 +307,9 @@ public class Header {
         button = new TextButton("Flowchart View") {
             @Override
             public void onPress() {
-                if(codeWindow != null && flowChartWindow != null) {
+                if(codeWindow != null && flowchartWindowController != null) {
                     codeWindow.minimize();
-                    flowChartWindow.maximize();
+                    flowchartWindowController.maximize();
                 }
             }
         };
@@ -320,9 +318,9 @@ public class Header {
         button = new TextButton("Splitscreen View") {
             @Override
             public void onPress() {
-                if(codeWindow != null && flowChartWindow != null) {
+                if(codeWindow != null && flowchartWindowController != null) {
                     codeWindow.goSplitScreen();
-                    flowChartWindow.goSplitScreen();
+                    flowchartWindowController.goSplitScreen();
                 }
             }
         };
@@ -331,9 +329,9 @@ public class Header {
         button = new TextButton("Reset zoom") {
             @Override
             public void onPress() {
-                if(flowChartWindow != null) {
-                    flowChartWindow.setPanning(new Vector2f(0, 0.9f));
-                    flowChartWindow.setZoom(1f);
+                if(flowchartWindowController != null) {
+                    flowchartWindowController.resetZoom();
+                    //TODO: Ensure this works after simplifying Header
                 }
             }
         };
@@ -345,8 +343,8 @@ public class Header {
         button = new TextButton("Clear") {
             @Override
             public void onPress() {
-                if(parser != null) {
-                    parser.locateRegisters(null);
+                if(flowchartWindowController != null) {
+                    flowchartWindowController.locateRegister(null);
                 }
             }
         };
@@ -354,8 +352,8 @@ public class Header {
         button = new TextButton("R0") {
             @Override
             public void onPress() {
-                if(parser != null) {
-                    parser.locateRegisters("R0");
+                if(flowchartWindowController != null) {
+                    flowchartWindowController.locateRegister("R0");
                 }
             }
         };
@@ -363,8 +361,8 @@ public class Header {
         button = new TextButton("R1") {
             @Override
             public void onPress() {
-                if(parser != null) {
-                    parser.locateRegisters("R1");
+                if(flowchartWindowController != null) {
+                    flowchartWindowController.locateRegister("R1");
                 }
             }
         };
@@ -372,8 +370,8 @@ public class Header {
         button = new TextButton("R2") {
             @Override
             public void onPress() {
-                if(parser != null) {
-                    parser.locateRegisters("R2");
+                if(flowchartWindowController != null) {
+                    flowchartWindowController.locateRegister("R2");
                 }
             }
         };
@@ -381,8 +379,8 @@ public class Header {
         button = new TextButton("R3") {
             @Override
             public void onPress() {
-                if(parser != null) {
-                    parser.locateRegisters("R3");
+                if(flowchartWindowController != null) {
+                    flowchartWindowController.locateRegister("R3");
                 }
             }
         };
@@ -390,8 +388,8 @@ public class Header {
         button = new TextButton("R4") {
             @Override
             public void onPress() {
-                if(parser != null) {
-                    parser.locateRegisters("R4");
+                if(flowchartWindowController != null) {
+                    flowchartWindowController.locateRegister("R4");
                 }
             }
         };
@@ -399,8 +397,8 @@ public class Header {
         button = new TextButton("R5") {
             @Override
             public void onPress() {
-                if(parser != null) {
-                    parser.locateRegisters("R5");
+                if(flowchartWindowController != null) {
+                    flowchartWindowController.locateRegister("R5");
                 }
             }
         };
@@ -408,8 +406,8 @@ public class Header {
         button = new TextButton("R6") {
             @Override
             public void onPress() {
-                if(parser != null) {
-                    parser.locateRegisters("R6");
+                if(flowchartWindowController != null) {
+                    flowchartWindowController.locateRegister("R6");
                 }
             }
         };
@@ -417,8 +415,8 @@ public class Header {
         button = new TextButton("R7") {
             @Override
             public void onPress() {
-                if(parser != null) {
-                    parser.locateRegisters("R7");
+                if(flowchartWindowController != null) {
+                    flowchartWindowController.locateRegister("R7");
                 }
             }
         };
@@ -430,8 +428,8 @@ public class Header {
         button = new TextButton("Clear") {
             @Override
             public void onPress() {
-                if(parser != null) {
-                    parser.locateAlert(null);
+                if(flowchartWindowController != null) {
+                    flowchartWindowController.locateAlert(null);
                 }
             }
         };
@@ -440,8 +438,8 @@ public class Header {
         button = new TextButton("Invalid Labels") {
             @Override
             public void onPress() {
-                if(parser != null) {
-                    parser.locateAlert("invalid_label");
+                if(flowchartWindowController != null) {
+                    flowchartWindowController.locateAlert("invalid_label");
                 }
             }
         };
@@ -464,14 +462,11 @@ public class Header {
         return menuList;
     }
 
-    public void setFlowChartWindow(FlowChartWindow flowChartWindow){
-        this.flowChartWindow = flowChartWindow;
-    }
     public void setCodeWindow(CodeWindowController codeWindow){
         this.codeWindow = codeWindow;
     }
 
-    public CodeWindowController getCodeWindow(){
+    public CodeWindowController getCodeWindowController(){
         return codeWindow;
     }
 
@@ -502,8 +497,7 @@ public class Header {
 //        }
     }
 
-    public FlowChartWindow getFlowChartWindow(){
-        return flowChartWindow;
+    public FlowchartWindowController getFlowchartWindowController() {
+        return flowchartWindowController;
     }
-
 }

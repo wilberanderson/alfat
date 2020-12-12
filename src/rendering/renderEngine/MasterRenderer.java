@@ -1,10 +1,12 @@
 package rendering.renderEngine;
 
+import controllers.ApplicationController;
 import controllers.codeWindow.CursorController;
+import controllers.flowchartWindow.FlowchartWindow;
+import controllers.flowchartWindow.FlowchartWindowController;
 import gui.*;
 import gui.textBoxes.CodeWindow;
-import gui.textBoxes.FlowChartTextBox;
-import gui.textBoxes.TextBox;
+import gui.textBoxes.FlowchartTextBox;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector3f;
 import rendering.cursor.CursorRenderer;
@@ -28,7 +30,6 @@ public class MasterRenderer {
 	private static CursorRenderer cursorRenderer;
 	private static FlowchartLineRenderer flowchartLineRenderer;
 	private static TerminatorRenderer terminatorRenderer;
-	private static FlowChartWindow flowChartWindow;
 
 	private MasterRenderer(){
 
@@ -43,26 +44,32 @@ public class MasterRenderer {
 		terminatorRenderer = new TerminatorRenderer();
 	}
 
-	public static void setFlowChartWindow(FlowChartWindow flowChartWindow){
-		MasterRenderer.flowChartWindow = flowChartWindow;
-	}
-
 	/**
 	 * Renders the scene to the screen.
 	 */
-	public static void renderScene(List<GuiTexture> guis, List<FlowChartTextBox> textBoxes, Vector3f color, CursorController cursor, float fontSize, Header header, List<FlowchartLine> flowchartLines, FlowChartWindow flowChartWindow, CodeWindow codeWindow) {
+	public static void renderScene(List<GuiTexture> guis, CursorController cursor, Header header, ApplicationController controller) {
 		guiRenderer.render(guis);
-		filledBoxRenderer.render(textBoxes, flowChartWindow, header);
-		if(flowchartLines != null) {
-			flowchartLineRenderer.render(flowchartLines, flowChartWindow, true, false);
-			terminatorRenderer.render(flowchartLines, flowChartWindow, true, false);
+		if(controller.getCodeWindowController() != null) {
+			if (controller.getFlowChartWindowController() == null) {
+				filledBoxRenderer.render(null, controller.getFlowChartWindowController(), header);
+			} else {
+				filledBoxRenderer.render(controller.getFlowChartWindowController().getFlowchartTextBoxList(), controller.getFlowChartWindowController(), header);
+			}
 		}
-		TextMaster.render(flowChartWindow, codeWindow, true);
+		if(controller.getFlowChartWindowController() != null) {
+			flowchartLineRenderer.render(controller.getFlowChartWindowController().getFlowchartLineList(), controller.getFlowChartWindowController(), true, false);
+			terminatorRenderer.render(controller.getFlowChartWindowController().getFlowchartLineList(), controller.getFlowChartWindowController(), true, false);
+		}
+		if(controller.getCodeWindowController() != null){
+			TextMaster.render(controller.getFlowChartWindowController(), controller.getCodeWindowController().getCodeWindow(), true);
+		}else{
+
+		}
 		if(cursor != null) {
 			cursorRenderer.render(cursor);
 		}
 		filledBoxRenderer.renderGuis(header);
-		TextMaster.renderGuis(flowChartWindow, codeWindow);
+		TextMaster.renderGuis();
 	}
 
 	/**
@@ -77,13 +84,13 @@ public class MasterRenderer {
 		terminatorRenderer.cleanUp();
 	}
 
-	public static void renderScreenshot(){
+	public static void renderScreenshot(FlowchartWindowController flowchartWindowController){
 		FilledBoxRenderer filledBoxRenderer = new FilledBoxRenderer();
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
-		filledBoxRenderer.renderScreenshot(FlowChartWindow.getFlowChartTextBoxList(), flowChartWindow);
-		flowchartLineRenderer.render(FlowChartWindow.getFlowchartLineList(), flowChartWindow, false, true);
-		terminatorRenderer.render(FlowChartWindow.getFlowchartLineList(), flowChartWindow, false, true);
-		TextMaster.render(flowChartWindow, null, false);
+		filledBoxRenderer.renderScreenshot(flowchartWindowController.getFlowchartTextBoxList(), flowchartWindowController);
+		flowchartLineRenderer.render(flowchartWindowController.getFlowchartLineList(), flowchartWindowController, false, true);
+		terminatorRenderer.render(flowchartWindowController.getFlowchartLineList(), flowchartWindowController, false, true);
+		TextMaster.render(flowchartWindowController, null, false);
 		filledBoxRenderer.cleanUp();
 	}
 }

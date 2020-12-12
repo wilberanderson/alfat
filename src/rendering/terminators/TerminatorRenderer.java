@@ -1,18 +1,17 @@
 package rendering.terminators;
 
+import controllers.flowchartWindow.FlowchartWindowController;
 import dataStructures.RawModel;
-import gui.FlowChartWindow;
+import controllers.flowchartWindow.FlowchartWindow;
 import gui.FlowchartLine;
 import gui.terminators.ArrowHead;
 import gui.terminators.Junction;
-import gui.terminators.Terminator;
 import loaders.Loader;
 import main.GeneralSettings;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.util.vector.Matrix3f;
-import org.lwjgl.util.vector.Vector2f;
 
 import java.util.List;
 
@@ -31,27 +30,28 @@ public class TerminatorRenderer {
     }
 
 
-    public void render(List<FlowchartLine> flowchartLines, FlowChartWindow flowChartWindow, boolean doClipping, boolean isScreenshot){
+    public void render(List<FlowchartLine> flowchartLines, FlowchartWindowController flowChartWindowController, boolean doClipping, boolean isScreenshot){
         prepare();
         if(isScreenshot){
             shader.zoomTranslateMatrix.loadMatrix(GeneralSettings.SCREENSHOT_TRANSLATION);
         }else {
-            shader.zoomTranslateMatrix.loadMatrix(flowChartWindow.getZoomTranslateMatrix());
+            shader.zoomTranslateMatrix.loadMatrix(flowChartWindowController.getZoomTranslateMatrix());
         }
-        shader.aspectRatio.loadMatrix(flowChartWindow.getAspectRatio());
+        shader.aspectRatio.loadMatrix(flowChartWindowController.getAspectRatio());
         if(doClipping) {
-            shader.windowPosition.loadVec2(flowChartWindow.getPosition());
-            shader.windowSize.loadVec2(flowChartWindow.getSize());
+            shader.windowPosition.loadVec2(flowChartWindowController.getPosition());
+            shader.windowSize.loadVec2(flowChartWindowController.getSize());
         }else{
             shader.windowPosition.loadVec2(-1, -1);
             shader.windowSize.loadVec2(2, 2);
         }
-        float pointSize = 10f*flowChartWindow.getZoomTranslateMatrix().m00;
+        float pointSize = 10f*flowChartWindowController.getZoomTranslateMatrix().m00;
         if(pointSize < 2){
             pointSize = 2;
         }
         GL11.glPointSize(pointSize);
-//        GL11.glEnable(GL11.GL_POINT_SMOOTH);
+        GL11.glEnable(GL11.GL_POINT_SMOOTH);
+
         Matrix3f transformationMatrix = new Matrix3f();
         for(FlowchartLine line : flowchartLines) {
             shader.color.loadVec3(line.getColor());

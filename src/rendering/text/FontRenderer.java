@@ -3,8 +3,9 @@ package rendering.text;
 import java.util.List;
 import java.util.Map;
 
+import controllers.flowchartWindow.FlowchartWindowController;
 import gui.textBoxes.CodeWindow;
-import gui.FlowChartWindow;
+import controllers.flowchartWindow.FlowchartWindow;
 import main.GeneralSettings;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
@@ -25,14 +26,14 @@ public class FontRenderer {
 	}
 
 
-	public void render(Map<FontType, List<GUIText>> texts, FlowChartWindow flowChartWindow, CodeWindow codeWindow, boolean doClipping){
+	public void render(Map<FontType, List<GUIText>> texts, FlowchartWindowController flowChartWindowController, CodeWindow codeWindow, boolean doClipping){
 		prepare();
 		shader.aspectRatio.loadMatrix(GeneralSettings.ASPECT_RATIO);
 		for(FontType font : texts.keySet()){
 			GL13.glActiveTexture(GL13.GL_TEXTURE0);
 			GL11.glBindTexture(GL11.GL_TEXTURE_2D, font.getTextureAtlas());
 			for(GUIText text : texts.get(font)){
-				renderText(text, flowChartWindow, codeWindow, doClipping);
+				renderText(text, flowChartWindowController, codeWindow, doClipping);
 			}
 		}
 		endRendering();
@@ -50,7 +51,7 @@ public class FontRenderer {
 		shader.start();
 	}
 	
-	private void renderText(GUIText text, FlowChartWindow flowChartWindow, CodeWindow codeWindow, boolean doClipping){
+	private void renderText(GUIText text, FlowchartWindowController flowchartWindowController, CodeWindow codeWindow, boolean doClipping){
 		GL30.glBindVertexArray(text.getMesh());
 		GL20.glEnableVertexAttribArray(0);
 		GL20.glEnableVertexAttribArray(1);
@@ -66,13 +67,13 @@ public class FontRenderer {
 		shader.doClipping.loadBoolean(true);
 		if(text.isInFlowchart()){
 			if(doClipping){
-			shader.windowPosition.loadVec2(flowChartWindow.getPosition());
-			shader.windowSize.loadVec2(flowChartWindow.getSize());
+			shader.windowPosition.loadVec2(flowchartWindowController.getPosition());
+			shader.windowSize.loadVec2(flowchartWindowController.getSize());
 			}else{
 				shader.windowPosition.loadVec2(-1, -1);
 				shader.windowSize.loadVec2(2, 2);
 			}
-			shader.zoomTranslateMatrix.loadMatrix(flowChartWindow.getZoomTranslateMatrix());
+			shader.zoomTranslateMatrix.loadMatrix(flowchartWindowController.getZoomTranslateMatrix());
 			if(codeWindow == null){
 				shader.doClipping.loadBoolean(false);
 				shader.zoomTranslateMatrix.loadMatrix(GeneralSettings.SCREENSHOT_TRANSLATION);

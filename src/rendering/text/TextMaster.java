@@ -5,9 +5,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import controllers.flowchartWindow.FlowchartWindowController;
 import gui.fontMeshCreator.FontType;
 import gui.textBoxes.CodeWindow;
-import gui.FlowChartWindow;
+import controllers.flowchartWindow.FlowchartWindow;
 import gui.GUIText;
 import gui.fontMeshCreator.TextMeshData;
 import loaders.Loader;
@@ -22,11 +23,11 @@ public class TextMaster {
 		renderer = new FontRenderer();
 	}
 	
-	public static void render(FlowChartWindow flowChartWindow, CodeWindow codeWindow, boolean doClipping){
+	public static void render(FlowchartWindowController flowChartWindow, CodeWindow codeWindow, boolean doClipping){
 		renderer.render(texts, flowChartWindow, codeWindow, doClipping);
 	}
-	public static void renderGuis(FlowChartWindow flowChartWindow, CodeWindow codeWindow){
-		renderer.render(guiTexts, flowChartWindow, codeWindow, true);
+	public static void renderGuis(){
+		renderer.render(guiTexts, null, null, false);
 	}
 	
 	public static TextMeshData loadText(GUIText text){

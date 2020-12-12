@@ -12,13 +12,13 @@ import java.awt.geom.GeneralPath;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FlowChartTextBox extends TextBox{
+public class FlowchartTextBox extends TextBox{
 
     private float lineHeight = GeneralSettings.FONT_SIZE*GeneralSettings.FONT_SCALING_FACTOR;
     private List<String> registers = new ArrayList<>();
     private String alert;
 
-    public FlowChartTextBox(Vector2f position, String content, int lineNumber, List<String> registers, String alert){
+    public FlowchartTextBox(Vector2f position, String content, int lineNumber, List<String> registers, String alert){
         super();
         super.setPosition(position);
         super.setBackgroundColor(GeneralSettings.TEXT_BOX_BACKGROUND_COLOR);

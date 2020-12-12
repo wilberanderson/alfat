@@ -1,7 +1,6 @@
 package main;
 import controllers.ApplicationController;
-import controllers.codeWindow.CodeWindowController;
-import controllers.codeWindow.CursorController;
+import controllers.flowchartWindow.FlowchartWindow;
 import gui.*;
 import gui.textBoxes.TextBox;
 import loaders.*;
@@ -29,7 +28,7 @@ public class EngineTester {
     private List<GuiTexture> guis;
     private Header header;
     private List<FlowchartLine> flowchartLines;
-    private FlowChartWindow flowChartWindow;
+    private FlowchartWindow flowChartWindow;
     private ApplicationController applicationController;
     /**
      * Used for all operations of the program
@@ -171,14 +170,11 @@ public class EngineTester {
         //codeWindow = new CodeWindow(new Vector2f(0f,0f), new Vector2f(1f, header.getPosition().y+1), new Vector3f(0.1f,0.1f,0.1f), new Vector3f(1,1,1), new Vector3f(0,0,0), "", GeneralSettings.TACOMA, GeneralSettings.FONT_SIZE, GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE, GeneralSettings.TEXT_BOX_BORDER_WIDTH);
         //textBoxes.add(codeWindow);
 
-        flowChartWindow = new FlowChartWindow();
-
-        header.setFlowChartWindow(flowChartWindow);
         //header.setCodeWindow(codeWindow);
-        applicationController.setFlowChartWindow(flowChartWindow);
+        applicationController.setFlowChartWindowController(header.getFlowchartWindowController());
         GeneralSettings.updateAspectRatio(GeneralSettings.DEFAULT_WIDTH, GeneralSettings.DEFAULT_HEIGHT);
         applicationController.setHeader(header);
-        MasterRenderer.setFlowChartWindow(flowChartWindow);
+//        MasterRenderer.setFlowChartWindowController(header.getFlowchartWindowController());
     }
 
     /**
@@ -199,7 +195,7 @@ public class EngineTester {
             // Poll for window events. The key callback above will only be
             // invoked during this call.
             GLFW.glfwPollEvents();
-            applicationController.processEvents();
+//            applicationController.processEvents();
 
             GL11.glEnable(GL30.GL_CLIP_DISTANCE0);
 
@@ -207,8 +203,8 @@ public class EngineTester {
             if(applicationController.LEFT_CLICK){
                 Vector2f newPosition = new Vector2f((float)applicationController.MOUSE_X, (float)applicationController.MOUSE_Y);
 
-                if(header.getCodeWindow() != null) {
-                    if (newPosition.x > header.getCodeWindow().getCodeWindow().getPosition().x - 1 && newPosition.x < (header.getCodeWindow().getCodeWindow().getPosition().x + header.getCodeWindow().getCodeWindow().getSize().x) - 1 && newPosition.y > header.getCodeWindow().getCodeWindow().getPosition().y - 1 && newPosition.y < (header.getCodeWindow().getCodeWindow().getPosition().y + header.getCodeWindow().getCodeWindow().getSize().y) - 1) {
+                if(header.getCodeWindowController() != null) {
+                    if (newPosition.x > header.getCodeWindowController().getCodeWindow().getPosition().x - 1 && newPosition.x < (header.getCodeWindowController().getCodeWindow().getPosition().x + header.getCodeWindowController().getCodeWindow().getSize().x) - 1 && newPosition.y > header.getCodeWindowController().getCodeWindow().getPosition().y - 1 && newPosition.y < (header.getCodeWindowController().getCodeWindow().getPosition().y + header.getCodeWindowController().getCodeWindow().getSize().y) - 1) {
                         header.setCursor(new Cursor());
                     }
                 }
@@ -228,18 +224,25 @@ public class EngineTester {
 //                }
 //            }
 
+            if(header.getFlowchartWindowController() != applicationController.getFlowChartWindowController()){
+                applicationController.setFlowChartWindowController(header.getFlowchartWindowController());
+            }
+            if(header.getCodeWindowController() != applicationController.getCodeWindowController()){
+                applicationController.setCodeWindowController(header.getCodeWindowController());
+            }
+
             //Render
             if(applicationController.getCodeWindowController() != null) {
-                MasterRenderer.renderScene(guis, FlowChartWindow.getFlowChartTextBoxList(), new Vector3f(1, 1, 1), applicationController.getCodeWindowController().getCursorController(), GeneralSettings.FONT_SIZE, header, flowChartWindow.getFlowchartLineList(), flowChartWindow, header.getCodeWindow().getCodeWindow());
+                MasterRenderer.renderScene(guis, applicationController.getCodeWindowController().getCursorController(), header, applicationController);
             }
             else{
-                MasterRenderer.renderScene(guis, FlowChartWindow.getFlowChartTextBoxList(), new Vector3f(1, 1, 1), null, GeneralSettings.FONT_SIZE, header, flowChartWindow.getFlowchartLineList(), flowChartWindow, null);
+                MasterRenderer.renderScene(guis, null, header, applicationController);
 
             }
             //Temporarily make changes for scrolling
-            if(header.getCodeWindow() != null) {
+            if(header.getCodeWindowController() != null) {
                 if(applicationController.getCodeWindowController() == null){
-                    applicationController.setCodeWindowController(header.getCodeWindow());
+                    applicationController.setCodeWindowController(header.getCodeWindowController());
                 }
 //                if (applicationController.SCROLL_CHANGE != 0) {
 //                    header.getCodeWindow().scroll((float) -applicationController.SCROLL_CHANGE / 10);
@@ -256,9 +259,9 @@ public class EngineTester {
      * Save content from code editor to temp file.
      * */
     private void saveIfCrash() {
-        if(header.getCodeWindow() != null) {
+        if(header.getCodeWindowController() != null) {
             TempFileManager tfm = new TempFileManager(GeneralSettings.TEMP_DIR);
-            tfm.saveCodeEditorTextToFile(header.getCodeWindow().getTexts(),GeneralSettings.FILE_PATH, GeneralSettings.TEMP_DIR);
+            tfm.saveCodeEditorTextToFile(header.getCodeWindowController().getTexts(),GeneralSettings.FILE_PATH, GeneralSettings.TEMP_DIR);
         }
     }
 

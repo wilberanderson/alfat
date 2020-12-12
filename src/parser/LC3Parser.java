@@ -1,10 +1,11 @@
 package parser;
-import gui.FlowChartWindow;
+import controllers.flowchartWindow.FlowchartWindow;
+import controllers.flowchartWindow.FlowchartWindowController;
 import gui.FlowchartLine;
 import gui.terminators.ArrowHead;
 import gui.terminators.Junction;
 import gui.terminators.Terminator;
-import gui.textBoxes.FlowChartTextBox;
+import gui.textBoxes.FlowchartTextBox;
 import main.GeneralSettings;
 import org.lwjgl.util.vector.Matrix3f;
 import org.lwjgl.util.vector.Vector2f;
@@ -314,14 +315,16 @@ public class LC3Parser implements CodeReader {
      * Creates flowchart boxes and draws lines.
      *
      */
-    public void createFlowchart(){
-        for(FlowChartTextBox textBox : FlowChartWindow.getFlowChartTextBoxList()){
-            textBox.clear();
+    public FlowchartWindowController createFlowchart(FlowchartWindowController flowchartWindowController){
+        if(flowchartWindowController == null){
+            flowchartWindowController = new FlowchartWindowController();
+        }else {
+            flowchartWindowController.clear();
         }
 
         int i = 0;
         Vector2f location = new Vector2f(GeneralSettings.FLOWCHART_PAD_LEFT,1);
-        List<FlowChartTextBox> textBoxes = new ArrayList<>();
+        List<FlowchartTextBox> textBoxes = new ArrayList<>();
         float max_right_width = -1000f;
         List<Vector2f> locations = new ArrayList<>();
         List<Vector2f> sizes = new ArrayList<>();
@@ -332,7 +335,7 @@ public class LC3Parser implements CodeReader {
                 System.out.println("Box " + i + " @ " + location);
                 System.out.println("Starting @ line #" + box.getStartLine());
             }
-            FlowChartTextBox textBox = new FlowChartTextBox(new Vector2f(location), box.getFullText(true), box.getStartLine()+1, box.getRegisters(), box.alert);
+            FlowchartTextBox textBox = new FlowchartTextBox(new Vector2f(location), box.getFullText(true), box.getStartLine()+1, box.getRegisters(), box.alert);
             textBoxes.add(textBox);
             textBox.setPosition(new Vector2f(textBox.getPosition().x, textBox.getPosition().y-textBox.getSize().y));
             if (verbose) System.out.println("Position: " + textBox.getPosition() + " Size: " + textBox.getSize());
@@ -345,7 +348,7 @@ public class LC3Parser implements CodeReader {
             sizes.add(textBox.getSize());
         }
         // Pass flowchart boxes out:
-        FlowChartWindow.setFlowChartTextBoxList(textBoxes);
+        flowchartWindowController.setFlowChartTextBoxList(textBoxes);
 
         // Draw lines:
         List<FlowchartLine> linesList = new ArrayList<>();
@@ -466,36 +469,7 @@ public class LC3Parser implements CodeReader {
                 }
             }
         }
-        FlowChartWindow.setFlowchartLineList(linesList);
-    }
-
-    public void locateRegisters(String register){
-        for (FlowChartTextBox box : FlowChartWindow.getFlowChartTextBoxList()){
-            if (verbose) System.out.println("Checking box " + box + " for register " + register);
-            if (verbose) System.out.println("Contains registers: " + box.getRegisters());
-            if (register != null && box.getRegisters().contains(register)){
-                if (verbose) System.out.println("Match found");
-                box.setBackgroundColor(GeneralSettings.TEXT_COLOR);
-                box.setTextColor(GeneralSettings.TEXT_BOX_BACKGROUND_COLOR);
-            } else {
-                box.setBackgroundColor(GeneralSettings.TEXT_BOX_BACKGROUND_COLOR);
-                box.setTextColor(GeneralSettings.TEXT_COLOR);
-            }
-        }
-    }
-
-    public void locateAlert(String alert){
-        for (FlowChartTextBox box : FlowChartWindow.getFlowChartTextBoxList()){
-            if (verbose) System.out.println("Checking box " + box + " for alert " + alert);
-            if (verbose) System.out.println("Contains registers: " + box.getRegisters());
-            if (alert != null && box.getAlert().equals(alert)){
-                if (verbose) System.out.println("Match found");
-                box.setBackgroundColor(GeneralSettings.TEXT_COLOR);
-                box.setTextColor(GeneralSettings.TEXT_BOX_BACKGROUND_COLOR);
-            } else {
-                box.setBackgroundColor(GeneralSettings.TEXT_BOX_BACKGROUND_COLOR);
-                box.setTextColor(GeneralSettings.TEXT_COLOR);
-            }
-        }
+        flowchartWindowController.setFlowchartLineList(linesList);
+        return flowchartWindowController;
     }
 }
