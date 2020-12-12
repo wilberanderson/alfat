@@ -23,11 +23,11 @@ public class TextMaster {
 		renderer = new FontRenderer();
 	}
 	
-	public static void render(FlowchartWindowController flowChartWindow, CodeWindow codeWindow, boolean doClipping){
-		renderer.render(texts, flowChartWindow, codeWindow, doClipping);
+	public static void render(FlowchartWindowController flowChartWindow, CodeWindow codeWindow, boolean doClipping, boolean isScreenshot){
+		renderer.render(texts, flowChartWindow, codeWindow, doClipping, isScreenshot);
 	}
 	public static void renderGuis(){
-		renderer.render(guiTexts, null, null, false);
+		renderer.render(guiTexts, null, null, false, false);
 	}
 	
 	public static TextMeshData loadText(GUIText text){

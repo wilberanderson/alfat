@@ -26,7 +26,7 @@ public class FlowchartWindow {
         zoomTranslateMatrix.setIdentity();
         zoomTranslateMatrix.m20 = translation.x;
         zoomTranslateMatrix.m21 = translation.y;
-        aspectRatio.setIdentity();
+        aspectRatio = GeneralSettings.ASPECT_RATIO;
     }
 
     List<FlowchartTextBox> getFlowchartTextBoxList() {

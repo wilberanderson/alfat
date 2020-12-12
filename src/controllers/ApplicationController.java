@@ -63,8 +63,12 @@ public class ApplicationController {
         //Update the aspect ratio
         GeneralSettings.updateAspectRatio(width, height);
         header.setAspectRatio(new Vector2f(GeneralSettings.ASPECT_RATIO.m00, GeneralSettings.ASPECT_RATIO.m11));
-        codeWindowController.updateAspectRatio(new Vector2f(GeneralSettings.ASPECT_RATIO.m00, GeneralSettings.ASPECT_RATIO.m11), header.getGuiFilledBox().getSize().y);
-        flowchartWindowController.updateAspectRatio(GeneralSettings.ASPECT_RATIO);
+        if(codeWindowController != null){
+            codeWindowController.updateAspectRatio(new Vector2f(GeneralSettings.ASPECT_RATIO.m00, GeneralSettings.ASPECT_RATIO.m11), header.getGuiFilledBox().getSize().y);
+        }
+        if(flowchartWindowController != null) {
+            flowchartWindowController.updateAspectRatio(GeneralSettings.ASPECT_RATIO);
+        }
         aspectRatio = new Vector2f(GeneralSettings.ASPECT_RATIO.m00, GeneralSettings.ASPECT_RATIO.m11);
     }
 

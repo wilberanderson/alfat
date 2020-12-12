@@ -11,6 +11,7 @@ import main.GeneralSettings;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
+import org.lwjgl.util.vector.Matrix2f;
 import org.lwjgl.util.vector.Matrix3f;
 
 import java.util.List;
@@ -37,7 +38,13 @@ public class TerminatorRenderer {
         }else {
             shader.zoomTranslateMatrix.loadMatrix(flowChartWindowController.getZoomTranslateMatrix());
         }
-        shader.aspectRatio.loadMatrix(flowChartWindowController.getAspectRatio());
+        if(!isScreenshot) {
+            shader.aspectRatio.loadMatrix(flowChartWindowController.getAspectRatio());
+        }else{
+            Matrix2f matrix = new Matrix2f();
+            matrix.setIdentity();
+            shader.aspectRatio.loadMatrix(matrix);
+        }
         if(doClipping) {
             shader.windowPosition.loadVec2(flowChartWindowController.getPosition());
             shader.windowSize.loadVec2(flowChartWindowController.getSize());

@@ -61,7 +61,7 @@ public class MasterRenderer {
 			terminatorRenderer.render(controller.getFlowchartWindowController().getFlowchartLineList(), controller.getFlowchartWindowController(), true, false);
 		}
 		if(controller.getCodeWindowController() != null){
-			TextMaster.render(controller.getFlowchartWindowController(), controller.getCodeWindowController().getCodeWindow(), true);
+			TextMaster.render(controller.getFlowchartWindowController(), controller.getCodeWindowController().getCodeWindow(), true, false);
 		}else{
 
 		}
@@ -93,7 +93,7 @@ public class MasterRenderer {
 		filledBoxRenderer.renderScreenshot(flowchartWindowController.getFlowchartTextBoxList(), flowchartWindowController);
 		flowchartLineRenderer.render(flowchartWindowController.getFlowchartLineList(), flowchartWindowController, false, true);
 		terminatorRenderer.render(flowchartWindowController.getFlowchartLineList(), flowchartWindowController, false, true);
-		TextMaster.render(flowchartWindowController, null, false);
+		TextMaster.render(flowchartWindowController, null, false, true);
 		filledBoxRenderer.cleanUp();
 	}
 }

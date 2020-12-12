@@ -9,6 +9,7 @@ import main.GeneralSettings;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
+import org.lwjgl.util.vector.Matrix2f;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.util.List;
@@ -35,7 +36,13 @@ public class FlowchartLineRenderer {
         }else{
             shader.zoomTranslateMatrix.loadMatrix(flowchartWindowController.getZoomTranslateMatrix());
         }
-        shader.aspectRatio.loadMatrix(flowchartWindowController.getAspectRatio());
+        if(!isScreenshot) {
+            shader.aspectRatio.loadMatrix(flowchartWindowController.getAspectRatio());
+        }else{
+            Matrix2f matrix = new Matrix2f();
+            matrix.setIdentity();
+            shader.aspectRatio.loadMatrix(matrix);
+        }
         shader.windowPosition.loadVec2(-1, -1);
         shader.windowSize.loadVec2(2, 2);
         for(FlowchartLine line : flowchartLines) {

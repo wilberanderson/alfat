@@ -48,7 +48,7 @@ public class FlowchartWindowController {
     }
     
     public void updateAspectRatio(Matrix2f aspectRatio){
-        
+        flowchartWindow.setAspectRatio(aspectRatio);
     }
     
     public void clear(){

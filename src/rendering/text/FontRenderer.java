@@ -13,6 +13,7 @@ import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 import gui.fontMeshCreator.FontType;
 import gui.GUIText;
+import org.lwjgl.util.vector.Matrix2f;
 import org.lwjgl.util.vector.Matrix3f;
 
 public class FontRenderer {
@@ -26,9 +27,15 @@ public class FontRenderer {
 	}
 
 
-	public void render(Map<FontType, List<GUIText>> texts, FlowchartWindowController flowChartWindowController, CodeWindow codeWindow, boolean doClipping){
+	public void render(Map<FontType, List<GUIText>> texts, FlowchartWindowController flowChartWindowController, CodeWindow codeWindow, boolean doClipping, boolean isScreenshot){
 		prepare();
-		shader.aspectRatio.loadMatrix(GeneralSettings.ASPECT_RATIO);
+		if(!isScreenshot){
+			shader.aspectRatio.loadMatrix(GeneralSettings.ASPECT_RATIO);
+		}else{
+			Matrix2f matrix = new Matrix2f();
+			matrix.setIdentity();
+			shader.aspectRatio.loadMatrix(matrix);
+		}
 		for(FontType font : texts.keySet()){
 			GL13.glActiveTexture(GL13.GL_TEXTURE0);
 			GL11.glBindTexture(GL11.GL_TEXTURE_2D, font.getTextureAtlas());
