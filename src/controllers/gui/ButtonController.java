@@ -35,6 +35,9 @@ public class ButtonController {
             Button b = buttons.get(i);
             if(position.x > b.getPosition().x && position.y > b.getPosition().y && position.x < b.getPosition().x + b.getSize().x && position.y < b.getPosition().y + b.getSize().y){
                 if (b instanceof HeaderMenu){
+                    if(openMenu != b && openMenu != null){
+                        toClose.add(openMenu);
+                    }
                     openMenu = (HeaderMenu) b;
                 } else {
                     toClose.add(openMenu);
@@ -45,8 +48,14 @@ public class ButtonController {
                 break;
             }
         }
-        if (!buttonPressed && openMenu != null){
-            toClose.add(openMenu);
+        if (!buttonPressed){
+            for(Button b : buttons){
+                if(b instanceof HeaderMenu){
+                    if(((HeaderMenu) b).isOpen){
+                        toClose.add(openMenu);
+                    }
+                }
+            }
         }
         for(HeaderMenu b : toClose){
             b.close();
