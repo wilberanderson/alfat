@@ -360,12 +360,15 @@ public class LC3Parser implements CodeReader {
                 System.out.println("Starting @ line #" + box.getStartLine());
             }
 
-            FlowchartTextBox textBox = new FlowchartTextBox(new Vector2f(location), box.getTextLines(), box.getStartLine()+1, box.getRegisters(), box.alert);
-            for(TextLine line : textBox.getTextLines()){
-                flowchartWindowController.getTextLineController().add(line);
-            }
-            textBoxes.add(textBox);
-            textBox.setPosition(new Vector2f(textBox.getPosition().x, textBox.getPosition().y-textBox.getSize().y));
+            flowchartWindowController.getFlowchartTextBoxController().add(new Vector2f(location), box.getTextLines(), box.getStartLine()+1, box.getRegisters(), box.alert);
+//            FlowchartTextBox textBox = new FlowchartTextBox(new Vector2f(location), box.getTextLines(), box.getStartLine()+1, box.getRegisters(), box.alert);
+//            for(TextLine line : textBox.getTextLines()){
+//                flowchartWindowController.getTextLineController().add(line);
+//            }
+//            textBoxes.add(textBox);
+//            textBox.setPosition(new Vector2f(textBox.getPosition().x, textBox.getPosition().y-textBox.getSize().y));
+
+            FlowchartTextBox textBox = flowchartWindowController.getFlowchartTextBoxController().getTextBoxes().get(flowchartWindowController.getFlowchartTextBoxController().getTextBoxes().size()-1);
             if (verbose) System.out.println("Position: " + textBox.getPosition() + " Size: " + textBox.getSize());
             location.y = (location.y - textBox.getSize().y - GeneralSettings.FLOWCHART_PAD_TOP);
             i++;
@@ -376,7 +379,7 @@ public class LC3Parser implements CodeReader {
             sizes.add(textBox.getSize());
         }
         // Pass flowchart boxes out:
-        flowchartWindowController.setFlowChartTextBoxList(textBoxes);
+//        flowchartWindowController.setFlowChartTextBoxList(textBoxes);
 
         // Draw lines:
         List<FlowchartLine> linesList = new ArrayList<>();

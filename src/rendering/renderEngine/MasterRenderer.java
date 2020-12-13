@@ -61,7 +61,7 @@ public class MasterRenderer {
 			if (controller.getFlowchartWindowController() == null) {
 				filledBoxRenderer.render(null, controller.getFlowchartWindowController(), controller.getCodeWindowController().getCodeWindow());
 			} else {
-				filledBoxRenderer.render(controller.getFlowchartWindowController().getFlowchartTextBoxList(), controller.getFlowchartWindowController(), controller.getCodeWindowController().getCodeWindow());
+				filledBoxRenderer.render(controller.getFlowchartWindowController().getFlowchartTextBoxController().getTextBoxes(), controller.getFlowchartWindowController(), controller.getCodeWindowController().getCodeWindow());
 			}
 		}
 		if(controller.getFlowchartWindowController() != null) {
@@ -72,7 +72,7 @@ public class MasterRenderer {
 			TextMaster.render(controller.getFlowchartWindowController(), controller.getCodeWindowController().getCodeWindow(), true, false);
 		}
 		if(controller.getFlowchartWindowController() != null) {
-			textLineRenderer.render(controller.getFlowchartWindowController().getTextLineController(), controller.getFlowchartWindowController(), controller.getCodeWindowController().getCodeWindow(), true, false);
+			textLineRenderer.render(controller.getFlowchartWindowController().getFlowchartTextBoxController().getTextLineController(), controller.getFlowchartWindowController(), controller.getCodeWindowController().getCodeWindow(), true, false);
 		}
 		if(controller.getCodeWindowController() != null && controller.getCodeWindowController().getCursorController() != null) {
 			cursorRenderer.render(controller.getCodeWindowController().getCursorController());
@@ -100,11 +100,11 @@ public class MasterRenderer {
 	public static void renderScreenshot(FlowchartWindowController flowchartWindowController){
 		FilledBoxRenderer filledBoxRenderer = new FilledBoxRenderer();
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
-		filledBoxRenderer.renderScreenshot(flowchartWindowController.getFlowchartTextBoxList(), flowchartWindowController);
+		filledBoxRenderer.renderScreenshot(flowchartWindowController.getFlowchartTextBoxController().getTextBoxes(), flowchartWindowController);
 		flowchartLineRenderer.render(flowchartWindowController.getFlowchartLineList(), flowchartWindowController, false, true);
 		terminatorRenderer.render(flowchartWindowController.getFlowchartLineList(), flowchartWindowController, false, true);
 		TextMaster.render(flowchartWindowController, null, false, true);
-		textLineRenderer.render(flowchartWindowController.getTextLineController(), flowchartWindowController, null, false, true);
+		textLineRenderer.render(flowchartWindowController.getFlowchartTextBoxController().getTextLineController(), flowchartWindowController, null, false, true);
 		filledBoxRenderer.cleanUp();
 	}
 }

@@ -13,7 +13,7 @@ public class FlowchartWindowController {
 
     FlowchartWindow flowchartWindow;
     boolean verbose = false;
-    private TextLineController textLineController = new TextLineController();
+    private FlowchartTextBoxController flowchartTextBoxController = new FlowchartTextBoxController();
     
     public FlowchartWindowController(){
         flowchartWindow = new FlowchartWindow();   
@@ -53,12 +53,12 @@ public class FlowchartWindowController {
     }
     
     public void clear(){
-        for(FlowchartTextBox textBox: flowchartWindow.getFlowchartTextBoxList()){
-            textBox.clear();
-        }
-        flowchartWindow.getFlowchartTextBoxList().clear();
+//        for(FlowchartTextBox textBox: flowchartWindow.getFlowchartTextBoxList()){
+//            textBox.clear();
+//        }
+//        flowchartWindow.getFlowchartTextBoxList().clear();
         flowchartWindow.getFlowchartLineList().clear();
-        textLineController.clear();
+        flowchartTextBoxController.clear();
     }
 
     public void maximize(){
@@ -78,46 +78,15 @@ public class FlowchartWindowController {
 
 
     public void locateRegister(String register) {
-        for (FlowchartTextBox box : flowchartWindow.getFlowchartTextBoxList()) {
-            if (verbose) System.out.println("Checking box " + box + " for register " + register);
-            if (verbose) System.out.println("Contains registers: " + box.getRegisters());
-            if (register != null && box.getRegisters().contains(register)) {
-                if (verbose) System.out.println("Match found");
-                box.setBackgroundColor(GeneralSettings.TEXT_COLOR);
-                box.setTextColor(GeneralSettings.TEXT_BOX_BACKGROUND_COLOR);
-            } else {
-                box.setBackgroundColor(GeneralSettings.TEXT_BOX_BACKGROUND_COLOR);
-                box.setTextColor(GeneralSettings.TEXT_COLOR);
-            }
-        }
+        flowchartTextBoxController.locateRegister(register);
     }
 
     public void locateAlert(String alert){
-        for (FlowchartTextBox box : flowchartWindow.getFlowchartTextBoxList()){
-            if (verbose) System.out.println("Checking box " + box + " for alert " + alert);
-            if (verbose) System.out.println("Contains registers: " + box.getRegisters());
-            if (alert != null && box.getAlert().equals(alert)){
-                if (verbose) System.out.println("Match found");
-                box.setBackgroundColor(GeneralSettings.TEXT_COLOR);
-                box.setTextColor(GeneralSettings.TEXT_BOX_BACKGROUND_COLOR);
-            } else {
-                box.setBackgroundColor(GeneralSettings.TEXT_BOX_BACKGROUND_COLOR);
-                box.setTextColor(GeneralSettings.TEXT_COLOR);
-            }
-        }
-    }
-
-
-    public void setFlowChartTextBoxList(List<FlowchartTextBox> textBoxes){
-        flowchartWindow.getFlowchartTextBoxList().addAll(textBoxes);
+        flowchartTextBoxController.locateAlert(alert);
     }
 
     public void setFlowchartLineList(List<FlowchartLine> lines){
         flowchartWindow.getFlowchartLineList().addAll(lines);
-    }
-
-    public List<FlowchartTextBox> getFlowchartTextBoxList(){
-        return flowchartWindow.getFlowchartTextBoxList();
     }
 
     public List<FlowchartLine> getFlowchartLineList(){
@@ -145,7 +114,7 @@ public class FlowchartWindowController {
         flowchartWindow.setZoom(1f);
     }
 
-    public TextLineController getTextLineController(){
-        return textLineController;
+    public FlowchartTextBoxController getFlowchartTextBoxController() {
+        return flowchartTextBoxController;
     }
 }

@@ -14,7 +14,6 @@ public class FlowchartWindow {
     private Vector2f position = new Vector2f(0, -1);
     private Vector2f size = new Vector2f(1, 2- GeneralSettings.TEXT_BUTTON_PADDING*2 - GeneralSettings.FONT_SIZE*GeneralSettings.FONT_SCALING_FACTOR);
 
-    private static List<FlowchartTextBox> flowchartTextBoxList = new ArrayList<>();
     private static List<FlowchartLine> flowchartLineList = new ArrayList<>();
     private Matrix3f zoomTranslateMatrix = new Matrix3f();
     private Vector2f translation = new Vector2f(0, 0.9f);
@@ -27,13 +26,6 @@ public class FlowchartWindow {
         zoomTranslateMatrix.m20 = translation.x;
         zoomTranslateMatrix.m21 = translation.y;
         aspectRatio = GeneralSettings.ASPECT_RATIO;
-    }
-
-    List<FlowchartTextBox> getFlowchartTextBoxList() {
-        return flowchartTextBoxList;
-    }
-    void setFlowChartTextBoxList(List<FlowchartTextBox> textBoxes){
-        flowchartTextBoxList.addAll(textBoxes);
     }
 
     List<FlowchartLine> getFlowchartLineList(){
