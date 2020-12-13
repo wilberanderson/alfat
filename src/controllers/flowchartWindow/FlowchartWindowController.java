@@ -13,6 +13,7 @@ public class FlowchartWindowController {
 
     FlowchartWindow flowchartWindow;
     boolean verbose = false;
+    private TextLineController textLineController = new TextLineController();
     
     public FlowchartWindowController(){
         flowchartWindow = new FlowchartWindow();   
@@ -57,6 +58,7 @@ public class FlowchartWindowController {
         }
         flowchartWindow.getFlowchartTextBoxList().clear();
         flowchartWindow.getFlowchartLineList().clear();
+        textLineController.clear();
     }
 
     public void maximize(){
@@ -141,5 +143,9 @@ public class FlowchartWindowController {
     public void resetZoom(){
         flowchartWindow.setTranslation(new Vector2f(0, 0.9f));
         flowchartWindow.setZoom(1f);
+    }
+
+    public TextLineController getTextLineController(){
+        return textLineController;
     }
 }

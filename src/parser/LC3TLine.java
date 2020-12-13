@@ -1,5 +1,11 @@
 package parser;
 
+import gui.TextLine;
+import gui.TextWord;
+import main.GeneralSettings;
+import org.junit.jupiter.api.io.TempDir;
+import org.lwjgl.util.vector.Vector2f;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -22,7 +28,7 @@ public class LC3TLine {
     private String target;
     private List<String> registers = new ArrayList<>();
     private boolean jump;
-
+    private TextLine textLine;
     //general constructor:
     private LC3TLine(){
         //left blank
@@ -133,5 +139,13 @@ public class LC3TLine {
 
     public void setTarget(String target) {
         this.target = target;
+    }
+
+    public TextLine getTextLine() {
+        return textLine;
+    }
+
+    public void setTextLine(TextLine textLine) {
+        this.textLine = textLine;
     }
 }

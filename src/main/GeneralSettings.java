@@ -2,7 +2,6 @@ package main;
 
 import gui.fontMeshCreator.FontType;
 import loaders.Loader;
-import org.lwjgl.system.CallbackI;
 import org.lwjgl.util.vector.Matrix2f;
 import org.lwjgl.util.vector.Matrix3f;
 import org.lwjgl.util.vector.Vector2f;
@@ -95,11 +94,11 @@ public class GeneralSettings {
 	public static final Vector3f TEXT_BOX_BACKGROUND_COLOR = base03;
 	public static final Vector3f TEXT_BOX_EMPHASIS_COLOR = base1;
 	public static final Vector3f TEXT_BOX_BORDER_COLOR = new Vector3f(0, 0, 0);
-	public static FontType CONSOLAS;
+	public static FontType FONT;
 	public static void initializeFonts() {
 		//TACOMA = new FontType(Loader.loadTexture(new MyFile("/res/fonts/arial/arial.png")), new MyFile("/res/fonts/arial/arial.fnt"));
 		//TACOMA = new FontType(Loader.loadTexture(new MyFile("/res/fonts/courierNew/courierNew.png")), new MyFile("/res/fonts/courierNew/courierNew.fnt"));
-		CONSOLAS = new FontType(Loader.loadTexture(new MyFile("/res/fonts/consolas/consolas.png")), new MyFile("/res/fonts/consolas/consolas.fnt"));
+		FONT = new FontType(Loader.loadTexture(new MyFile("/res/fonts/consolas/consolas.png")), new MyFile("/res/fonts/consolas/consolas.fnt"));
 
 	}
 
@@ -112,7 +111,7 @@ public class GeneralSettings {
 
 	public static String FILE_PATH;
 
-	public static final Vector3f LINE_NUMBER_BACKGROUND_COLOR = base02;
+	public static final Vector3f LINE_NUMBER_BACKGROUND_COLOR = base00;
 	public static final Vector3f LINE_NUMBER_COLOR = base1;
 	public static String SYNTAX_PATH = "CodeSyntax/LC3.json";
 	public static String TEMP_DIR = "temp";
@@ -142,4 +141,15 @@ public class GeneralSettings {
 	public static Matrix3f SCREENSHOT_TRANSLATION;
 	public static Vector2f SCREENSHOT_SIZE;
 	public static boolean SCREENSHOT_IN_PROGRESS = false;
+
+	//*******************************************Text line parameters************************
+	public static final Vector3f labelColor = new Vector3f(0.8f, 0.8f, 0.8f);
+	public static final Vector3f commandColor = blue;
+	public static final Vector3f registerColor = green;
+	public static final Vector3f immediateColor = yellow;
+	public static final Vector3f commentColor = base01;
+	public static final Vector3f errorColor = red;
+	public static final Vector3f defaultColor = new Vector3f(1,1,1);
+	public static final Vector3f branchColor = violet;
+	public static final int CHARACTERS_PER_SPACE = 4;
 }

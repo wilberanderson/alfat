@@ -126,13 +126,13 @@ public class EngineTester {
         // Set the clear color
         GL11.glClearColor(GeneralSettings.base02.x, GeneralSettings.base02.y, GeneralSettings.base02.z, 1);
 
-        //Initializes the render engine
-        MasterRenderer.init();
 
         //************************************Initialize guis************************************
         //Create the FontTypes in GeneralSettings, must happen before using any font
         GeneralSettings.initializeFonts();
 
+        //Initializes the render engine
+        MasterRenderer.init();
         //************************************Initialize input*************************************
         applicationController = new ApplicationController();
         GLFWEventController.init(window, applicationController);
@@ -166,8 +166,13 @@ public class EngineTester {
 
             // Poll for window events. The event callbacks will be called when an event is received
 //            GLFW.glfwPollEvents();
-            GLFW.glfwWaitEvents();
-
+            long startTime = System.currentTimeMillis();
+            GLFW.glfwWaitEventsTimeout(0.5);
+            if(System.currentTimeMillis()-startTime < 500){
+//                System.out.println("Event received");
+            }else{
+//                System.out.println("Timed out");
+            }
             //Render
             MasterRenderer.renderScene(guis, applicationController, window);
 

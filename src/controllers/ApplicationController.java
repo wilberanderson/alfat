@@ -24,7 +24,6 @@ public class ApplicationController {
     private static double previousMouseX = 0;
     private static double previousMouseY = 0;
     private static boolean LEFT_MOUSE_HELD = false;
-//    public static List<Button> buttons;
     private static HeaderMenu openMenu = null;
     private static Header header;
     private static Vector2f aspectRatio = new Vector2f(1, 1);

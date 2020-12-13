@@ -3,16 +3,21 @@ package rendering.renderEngine;
 import controllers.ApplicationController;
 import controllers.codeWindow.CursorController;
 import controllers.flowchartWindow.FlowchartWindowController;
+import controllers.flowchartWindow.TextLineController;
 import gui.*;
+import main.GeneralSettings;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.util.vector.Vector2f;
 import rendering.cursor.CursorRenderer;
 import rendering.flowchartLine.FlowchartLineRenderer;
 import rendering.guis.GuiRenderer;
 import rendering.filledBox.FilledBoxRenderer;
 import rendering.terminators.TerminatorRenderer;
 import rendering.text.TextMaster;
+import rendering.textLines.TextLineRenderer;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -27,9 +32,11 @@ public class MasterRenderer {
 	private static CursorRenderer cursorRenderer;
 	private static FlowchartLineRenderer flowchartLineRenderer;
 	private static TerminatorRenderer terminatorRenderer;
+	private static TextLineRenderer textLineRenderer;
+
+	private static TextLineController textLineController = new TextLineController();
 
 	private MasterRenderer(){
-
 	}
 
 	public static void init() {
@@ -39,6 +46,7 @@ public class MasterRenderer {
 		cursorRenderer = new CursorRenderer();
 		flowchartLineRenderer = new FlowchartLineRenderer();
 		terminatorRenderer = new TerminatorRenderer();
+		textLineRenderer = new TextLineRenderer();
 	}
 
 	/**
@@ -62,8 +70,9 @@ public class MasterRenderer {
 		}
 		if(controller.getCodeWindowController() != null){
 			TextMaster.render(controller.getFlowchartWindowController(), controller.getCodeWindowController().getCodeWindow(), true, false);
-		}else{
-
+		}
+		if(controller.getFlowchartWindowController() != null) {
+			textLineRenderer.render(controller.getFlowchartWindowController().getTextLineController(), controller.getFlowchartWindowController(), controller.getCodeWindowController().getCodeWindow(), true, false);
 		}
 		if(controller.getCodeWindowController() != null && controller.getCodeWindowController().getCursorController() != null) {
 			cursorRenderer.render(controller.getCodeWindowController().getCursorController());
@@ -85,6 +94,7 @@ public class MasterRenderer {
 		cursorRenderer.cleanUp();
 		flowchartLineRenderer.cleanUp();
 		terminatorRenderer.cleanUp();
+		textLineRenderer.cleanUp();
 	}
 
 	public static void renderScreenshot(FlowchartWindowController flowchartWindowController){
@@ -94,6 +104,7 @@ public class MasterRenderer {
 		flowchartLineRenderer.render(flowchartWindowController.getFlowchartLineList(), flowchartWindowController, false, true);
 		terminatorRenderer.render(flowchartWindowController.getFlowchartLineList(), flowchartWindowController, false, true);
 		TextMaster.render(flowchartWindowController, null, false, true);
+		textLineRenderer.render(flowchartWindowController.getTextLineController(), flowchartWindowController, null, false, true);
 		filledBoxRenderer.cleanUp();
 	}
 }

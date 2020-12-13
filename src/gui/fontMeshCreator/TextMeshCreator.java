@@ -20,6 +20,7 @@ public class TextMeshCreator {
 
 	protected TextMeshData createTextMesh(GUIText text) {
 		Line line = createStructure(text);
+		text.setSpaceSize(line.getSpaceSize());
 		return createQuadVertices(text, line);
 	}
 

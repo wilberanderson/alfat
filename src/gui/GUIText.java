@@ -44,6 +44,8 @@ public class GUIText {
 	private boolean isInFlowchart;
 	private boolean isCodeWindowText;
 
+	private double spaceSize;
+
 	/**
 	 * Creates a new text, loads the text's quads into a VAO, and adds the text
 	 * to the screen.
@@ -320,5 +322,13 @@ public class GUIText {
 
 	public boolean isCodeWindowText(){
 		return isCodeWindowText;
+	}
+
+	public double getSpaceSize() {
+		return spaceSize;
+	}
+
+	public void setSpaceSize(double spaceSize) {
+		this.spaceSize = spaceSize;
 	}
 }

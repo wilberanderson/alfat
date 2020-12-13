@@ -68,4 +68,8 @@ public class Line {
 		return words;
 	}
 
+	protected double getSpaceSize(){
+		return spaceSize;
+	}
+
 }

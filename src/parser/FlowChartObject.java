@@ -1,6 +1,12 @@
 package parser;
 
+import gui.TextLine;
+import gui.TextWord;
+import main.GeneralSettings;
+import org.lwjgl.util.vector.Vector2f;
+
 import java.util.ArrayList;
+import java.util.List;
 
 public class FlowChartObject {
     public String label = "";
@@ -14,6 +20,8 @@ public class FlowChartObject {
     public boolean jumps = false;
     public FlowChartObject connection = null;
 
+    private List<TextLine> textLines = new ArrayList<>();
+
     public String getFullText(boolean comments){
         String temp = "";
         for (LC3TLine line : lines){
@@ -25,6 +33,7 @@ public class FlowChartObject {
 
     public void addLine(LC3TLine line){
         lines.add(line);
+        textLines.add(line.getTextLine());
     }
 
     public void setLineCount(int lineCount) {
@@ -75,5 +84,9 @@ public class FlowChartObject {
 
     public int getBoxNumber() {
         return boxNumber;
+    }
+
+    public List<TextLine> getTextLines(){
+        return textLines;
     }
 }

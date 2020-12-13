@@ -1,7 +1,10 @@
 package parser;
+import controllers.ApplicationController;
 import controllers.flowchartWindow.FlowchartWindow;
 import controllers.flowchartWindow.FlowchartWindowController;
 import gui.FlowchartLine;
+import gui.TextLine;
+import gui.TextWord;
 import gui.terminators.ArrowHead;
 import gui.terminators.Junction;
 import gui.terminators.Terminator;
@@ -70,6 +73,7 @@ public class LC3Parser implements CodeReader {
                 String label = "";
                 String targetLabel = "";
                 List<String> registers = new ArrayList<>();
+                List<TextWord> formattedString = new ArrayList<>();
                 boolean jump = false;
 
                 //  arrLine = {"LABEL:", "JGZ", "R1", "R2", "FINISH"}
@@ -79,19 +83,23 @@ public class LC3Parser implements CodeReader {
                     //grab each command in the line, if they exist:
                     if (Arrays.asList(commands).contains(fragment.toUpperCase())) {
                         comm = Arrays.stream(commands).filter(fragment.toUpperCase()::equals).findAny();
+                        formattedString.add(new TextWord(comm.get(), GeneralSettings.commandColor, true, false, new Vector2f(0f, 0), "\t"));
                         first = false;
                     } else if (Arrays.asList(jumps).contains(fragment.toUpperCase()) || fragment.matches("^BR[nzp]{0,3}$")) {
                         comm = Optional.of(fragment);
+                        formattedString.add(new TextWord(comm.get(), GeneralSettings.commandColor, true, false, new Vector2f(0f, 0), "\t"));
                         jump = true;
                         first = false;
                     } else if (fragment.matches("^R[0-9](,)?")) {  //register
                         if (fragment.contains(",")){
                             if (!registers.contains(fragment.substring(0,fragment.length()-1))) {
                                 registers.add(fragment.substring(0, fragment.length() - 1));
+                                formattedString.add(new TextWord(fragment.substring(0, fragment.length() - 1), GeneralSettings.registerColor, true, false, new Vector2f(0f, 0), "\t"));
                             }
                         } else {
                             if (!registers.contains(fragment)) {
                                 registers.add(fragment);
+                                formattedString.add(new TextWord(fragment, GeneralSettings.registerColor, true, false, new Vector2f(0f, 0), "\t"));
                             }
                         }
                         first = false;
@@ -99,22 +107,33 @@ public class LC3Parser implements CodeReader {
                         //immediate value, literal or trap
                         //just skip this for now
                         first = false;
+                        formattedString.add(new TextWord(fragment, GeneralSettings.immediateColor, true, false, new Vector2f(0f, 0), "\t"));
                     } else if (jump && fragment.matches("^[a-zA-Z0-9\\-_]+")) {   //jump statement, this matches a label
                         //if the line is a jump statement,
                         //this matches the label or labels pointed to by the command
                         //if the language supports having the label BEFORE the command,
                         //remove the `jump &&` statement as it will cause problems.
                         targetLabel = fragment;
+                        formattedString.add(new TextWord(fragment, GeneralSettings.labelColor, true, false, new Vector2f(0f, 0), "\t"));
                         first = false;
                     } else if (first && fragment.matches("^[a-zA-Z0-9\\-_]+")) {
                         //this is the (optional) label for the line
                         label = fragment;
                         labelMap.put(label, i);
+                        formattedString.add(new TextWord(fragment, GeneralSettings.labelColor, true, false, new Vector2f(0f, 0), ""));
                         first = false;
-                    } /*else if (!jump && fragment.matches("^[a-zA-Z0-9\\-_]+")) {
+                    } else if (!jump && fragment.matches("^[a-zA-Z0-9\\-_]+")) {
                         //the command isn't a jump statement, so the label must be a variable i.e. string, etc.
-                    }*/
+                        formattedString.add(new TextWord(fragment, GeneralSettings.labelColor, true, false, new Vector2f(0f, 0), "\t"));
+                    }
                 }
+
+                if (index < line.length()-1){
+                    formattedString.add(new TextWord(line.substring(index,line.length()), GeneralSettings.commentColor, true, false, new Vector2f(0f, 0), "\t"));
+                }
+
+                //Put formatted text into an object
+                TextLine FormLine = new TextLine(formattedString);
 
                 //log testing data, if verbose parsing is on:
                 if (verbose) {
@@ -128,6 +147,8 @@ public class LC3Parser implements CodeReader {
 
                 //call constructor for TLine, then add the new object to the arraylist for the file
                 lines.add(new LC3TLine(line, comm, label, targetLabel, jump, registers, i));
+                // Assign formatted text object to the new LC3Tline class
+                lines.get(lines.size()-1).setTextLine(FormLine);
             }
         }
         catch (FileNotFoundException e) {
@@ -141,9 +162,11 @@ public class LC3Parser implements CodeReader {
     }
 
     /** Parse a single line and insert it into the list at index <i>i</i>.
+     *  <b>Deprecated</b>
      *
      * @param line The string of the line to insert
      * @param i The index of the line to insert
+     *
      */
     public void parseLine(String line, int i){
         if (verbose) System.out.println("parsing `" + line + "`");
@@ -315,7 +338,8 @@ public class LC3Parser implements CodeReader {
      * Creates flowchart boxes and draws lines.
      *
      */
-    public FlowchartWindowController createFlowchart(FlowchartWindowController flowchartWindowController){
+    public FlowchartWindowController createFlowchart(ApplicationController controller){
+        FlowchartWindowController flowchartWindowController = controller.getFlowchartWindowController();
         if(flowchartWindowController == null){
             flowchartWindowController = new FlowchartWindowController();
         }else {
@@ -335,7 +359,11 @@ public class LC3Parser implements CodeReader {
                 System.out.println("Box " + i + " @ " + location);
                 System.out.println("Starting @ line #" + box.getStartLine());
             }
-            FlowchartTextBox textBox = new FlowchartTextBox(new Vector2f(location), box.getFullText(true), box.getStartLine()+1, box.getRegisters(), box.alert);
+
+            FlowchartTextBox textBox = new FlowchartTextBox(new Vector2f(location), box.getTextLines(), box.getStartLine()+1, box.getRegisters(), box.alert);
+            for(TextLine line : textBox.getTextLines()){
+                flowchartWindowController.getTextLineController().add(line);
+            }
             textBoxes.add(textBox);
             textBox.setPosition(new Vector2f(textBox.getPosition().x, textBox.getPosition().y-textBox.getSize().y));
             if (verbose) System.out.println("Position: " + textBox.getPosition() + " Size: " + textBox.getSize());
@@ -469,6 +497,7 @@ public class LC3Parser implements CodeReader {
                 }
             }
         }
+
         flowchartWindowController.setFlowchartLineList(linesList);
         return flowchartWindowController;
     }

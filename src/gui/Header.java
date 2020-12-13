@@ -83,7 +83,7 @@ public class Header {
                         controller.getCodeWindowController().clear();
                     }
                     //create code window
-                    controller.setCodeWindowController(new CodeWindowController(new Vector2f(0f,0f), new Vector2f(1f, 2-GeneralSettings.FONT_SCALING_FACTOR*GeneralSettings.FONT_SIZE), GeneralSettings.TEXT_BOX_BACKGROUND_COLOR, GeneralSettings.TEXT_COLOR, new Vector3f(0,0,0), content, GeneralSettings.CONSOLAS, GeneralSettings.FONT_SIZE, GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE, GeneralSettings.TEXT_BOX_BORDER_WIDTH, size.y));
+                    controller.setCodeWindowController(new CodeWindowController(new Vector2f(0f,0f), new Vector2f(1f, 2-GeneralSettings.FONT_SCALING_FACTOR*GeneralSettings.FONT_SIZE), GeneralSettings.TEXT_BOX_BACKGROUND_COLOR, GeneralSettings.TEXT_COLOR, new Vector3f(0,0,0), content, GeneralSettings.FONT, GeneralSettings.FONT_SIZE, GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE, GeneralSettings.TEXT_BOX_BORDER_WIDTH, size.y));
 
                     if (controller.getFlowchartWindowController() != null){
                         controller.getFlowchartWindowController().goSplitScreen();
@@ -235,7 +235,7 @@ public class Header {
                 parser.ReadFile(tfm.getMostRecent());
 
                 parser.generateFlowObjects();
-                controller.setFlowchartWindowController(parser.createFlowchart(controller.getFlowchartWindowController()));
+                controller.setFlowchartWindowController(parser.createFlowchart(controller));
                 System.out.println(controller.getFlowchartWindowController());
 
                 controller.flowchartView();
@@ -263,7 +263,7 @@ public class Header {
                 parser.ReadFile(tfm.getMostRecent());
 
                 parser.generateFlowObjects();
-                parser.createFlowchart(controller.getFlowchartWindowController());
+                parser.createFlowchart(controller);
 
             }
         };
@@ -280,7 +280,7 @@ public class Header {
                 parser = new LC3Parser(GeneralSettings.FILE_PATH, true);
                 parser.ReadFile(GeneralSettings.FILE_PATH);
                 parser.generateFlowObjects();
-                parser.createFlowchart(controller.getFlowchartWindowController());
+                parser.createFlowchart(controller);
 
             }
         };
@@ -321,7 +321,7 @@ public class Header {
         };
         testMenuButtonList.add(button);
 
-        HeaderMenu fileButton = new HeaderMenu(new Vector2f(-1f, 1-GeneralSettings.FONT_SIZE*GeneralSettings.FONT_SCALING_FACTOR - 2*GeneralSettings.TEXT_BUTTON_PADDING), "File ", GeneralSettings.TEXT_BUTTON_BACKGROUND_COLOR, GeneralSettings.HIGHLIGHT_COLOR, GeneralSettings.TEXT_COLOR, GeneralSettings.CONSOLAS, GeneralSettings.FONT_SIZE, GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE, testMenuButtonList);
+        HeaderMenu fileButton = new HeaderMenu(new Vector2f(-1f, 1-GeneralSettings.FONT_SIZE*GeneralSettings.FONT_SCALING_FACTOR - 2*GeneralSettings.TEXT_BUTTON_PADDING), "File ", GeneralSettings.TEXT_BUTTON_BACKGROUND_COLOR, GeneralSettings.HIGHLIGHT_COLOR, GeneralSettings.TEXT_COLOR, GeneralSettings.FONT, GeneralSettings.FONT_SIZE, GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE, testMenuButtonList);
         menuList.add(fileButton);
 
         button = new TextButton("Clear") {
@@ -414,7 +414,7 @@ public class Header {
         };
         registerMenuButtonList.add(button);
 
-        HeaderMenu registerButton = new HeaderMenu(new Vector2f(-1f + fileButton.getSize().x, 1-GeneralSettings.FONT_SIZE*GeneralSettings.FONT_SCALING_FACTOR - 2*GeneralSettings.TEXT_BUTTON_PADDING), "Registers ", GeneralSettings.TEXT_BUTTON_BACKGROUND_COLOR, GeneralSettings.HIGHLIGHT_COLOR, GeneralSettings.TEXT_COLOR, GeneralSettings.CONSOLAS, GeneralSettings.FONT_SIZE, GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE, registerMenuButtonList);
+        HeaderMenu registerButton = new HeaderMenu(new Vector2f(-1f + fileButton.getSize().x, 1-GeneralSettings.FONT_SIZE*GeneralSettings.FONT_SCALING_FACTOR - 2*GeneralSettings.TEXT_BUTTON_PADDING), "Registers ", GeneralSettings.TEXT_BUTTON_BACKGROUND_COLOR, GeneralSettings.HIGHLIGHT_COLOR, GeneralSettings.TEXT_COLOR, GeneralSettings.FONT, GeneralSettings.FONT_SIZE, GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE, registerMenuButtonList);
         menuList.add(registerButton);
 
         button = new TextButton("Clear") {
@@ -437,7 +437,7 @@ public class Header {
         };
         analyticsMenuButtonList.add(button);
 
-        HeaderMenu analyticsButton = new HeaderMenu(new Vector2f(-1f + fileButton.getSize().x + registerButton.getSize().x, 1-GeneralSettings.FONT_SIZE*GeneralSettings.FONT_SCALING_FACTOR - 2*GeneralSettings.TEXT_BUTTON_PADDING), "Analysis ", GeneralSettings.TEXT_BUTTON_BACKGROUND_COLOR, GeneralSettings.HIGHLIGHT_COLOR, GeneralSettings.TEXT_COLOR, GeneralSettings.CONSOLAS, GeneralSettings.FONT_SIZE, GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE, analyticsMenuButtonList);
+        HeaderMenu analyticsButton = new HeaderMenu(new Vector2f(-1f + fileButton.getSize().x + registerButton.getSize().x, 1-GeneralSettings.FONT_SIZE*GeneralSettings.FONT_SCALING_FACTOR - 2*GeneralSettings.TEXT_BUTTON_PADDING), "Analysis ", GeneralSettings.TEXT_BUTTON_BACKGROUND_COLOR, GeneralSettings.HIGHLIGHT_COLOR, GeneralSettings.TEXT_COLOR, GeneralSettings.FONT, GeneralSettings.FONT_SIZE, GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE, analyticsMenuButtonList);
         menuList.add(analyticsButton);
 
         for(HeaderMenu headerMenu: menuList){
