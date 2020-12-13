@@ -3,6 +3,7 @@ package gui;
 import controllers.ApplicationController;
 import controllers.codeWindow.CodeWindowController;
 import controllers.gui.ButtonController;
+import main.EngineTester;
 import main.GeneralSettings;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
@@ -23,6 +24,7 @@ import java.util.List;
 
 import gui.buttons.HeaderMenu;
 import gui.buttons.TextButton;
+import org.lwjgl.glfw.GLFW;
 import rendering.renderEngine.MasterRenderer;
 
 import javax.imageio.ImageIO;
@@ -31,14 +33,11 @@ public class Header {
     private List<HeaderMenu> menuList;
     private GUIFilledBox guiFilledBox;
     private Vector2f position;
-//    private FlowchartWindowController flowchartWindowController;
-//    private CodeWindowController codeWindow;
-//    private Cursor cursor;
     private Vector2f aspectRatio = new Vector2f(1, 1);
     //Manages the temp file paths
     private TempFileManager tfm;
     private LC3Parser parser = null;
-
+    private String windowTitle = null;
 
     public Header(Vector2f position, Vector2f size, ApplicationController controller){
         menuList = new ArrayList<>();
@@ -67,6 +66,14 @@ public class Header {
 
                 // If the file exists, load it into the text editor.
                 if (!GeneralSettings.FILE_PATH.equals("null")){
+                    if (GeneralSettings.FILE_PATH.contains("/")){
+                        windowTitle = "ALFAT – " + GeneralSettings.FILE_PATH.substring(GeneralSettings.FILE_PATH.lastIndexOf('/')+1);
+                        GLFW.glfwSetWindowTitle(EngineTester.getWindow(), "ALFAT – " + GeneralSettings.FILE_PATH.substring(GeneralSettings.FILE_PATH.lastIndexOf('/')+1));
+                    } else {
+                        windowTitle = "ALFAT " + GeneralSettings.FILE_PATH;
+                        GLFW.glfwSetWindowTitle(EngineTester.getWindow(), "ALFAT " + GeneralSettings.FILE_PATH);
+                    }
+
                     String content = "";
                     try{
                         File file = new File(GeneralSettings.FILE_PATH);
@@ -98,7 +105,6 @@ public class Header {
             @Override
             public void onPress() {
                 OpenFileDialog of = new OpenFileDialog();
-                //of.displayConsole(true);
                 of.saveFileWindow();
                 System.out.println(of.getFilePath());
 
@@ -136,11 +142,10 @@ public class Header {
                 if(GeneralSettings.SCREENSHOT_SIZE == null){
                     return;
                 }
-//                resizeWindow();
+
                 GeneralSettings.SCREENSHOT_IN_PROGRESS = true;
                 int width = (int)GeneralSettings.SCREENSHOT_SIZE.x*GeneralSettings.DEFAULT_WIDTH/2;
                 int height= (int)GeneralSettings.SCREENSHOT_SIZE.y*GeneralSettings.DEFAULT_HEIGHT/2;
-//                GLFW.glfwSetWindowSize(EngineTester.getWindow(), width, height);
 
                 //Create a frame buffer to render the image to
                 int renderBuffer = GL30.glGenFramebuffers();
@@ -162,10 +167,7 @@ public class Header {
 
 
                 MasterRenderer.renderScreenshot(controller.getFlowchartWindowController());
-//                GLFW.glfwSwapBuffers(EngineTester.getWindow());
 
-
-//                GL11.glReadBuffer(GL11.GL_FRONT);
                 int bpp = 4; // Assuming a 32-bit display with a byte each for red, green, blue, and alpha.
                 ByteBuffer buffer = BufferUtils.createByteBuffer(width * height * bpp);
                 GL11.glReadPixels(0, 0, width, height, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, buffer );
@@ -174,7 +176,6 @@ public class Header {
                 openFileDialog.setFilterList("png,jpg");
                 openFileDialog.saveFileWindow();
                 File file = new File(openFileDialog.getFilePath());
-//                File file = ...; // The file to save to.
                 String format = "PNG"; // Example: "PNG" or "JPG"
                 BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 
@@ -194,14 +195,10 @@ public class Header {
                     ImageIO.write(image, format, file);
                 } catch (IOException e) { e.printStackTrace(); }
 
-//                reresizeWindow();
-//                MasterRenderer.renderScene(new ArrayList<>(), FlowChartWindow.getFlowChartTextBoxList(), new Vector3f(1, 1, 1), cursor, 1, this, FlowChartWindow.getFlowchartLineList(), flowChartWindow, codeWindow);
-
                 GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0);
                 GL11.glViewport(0, 0, GeneralSettings.DISPLAY_WIDTH, GeneralSettings.DISPLAY_HEIGHT);
                 GL11.glDeleteTextures(imageIndex);
                 GL30.glDeleteFramebuffers(renderBuffer);
-//                GLFW.glfwSetWindowSize(EngineTester.getWindow(), GeneralSettings.DISPLAY_WIDTH, GeneralSettings.DISPLAY_HEIGHT);
                 GeneralSettings.SCREENSHOT_IN_PROGRESS = false;
 
             }
@@ -223,9 +220,6 @@ public class Header {
                 } else {
                     return;
                 }
-
-                //LC3Parser parser = new LC3Parser(GeneralSettings.FILE_PATH, true);
-                //parser.ReadFile(GeneralSettings.FILE_PATH);
 
                 tfm.update(); // Must be called if you change the files in temp!
                 if(tfm.getMostRecent().equals("null")) {
@@ -329,86 +323,88 @@ public class Header {
             public void onPress() {
                 if(controller.getFlowchartWindowController() != null) {
                     controller.getFlowchartWindowController().locateRegister(null);
+                    GLFW.glfwSetWindowTitle(EngineTester.getWindow(), windowTitle);
                 }
             }
         };
         registerMenuButtonList.add(button);
-
         button = new TextButton("R0") {
             @Override
             public void onPress() {
                 if(controller.getFlowchartWindowController() != null) {
                     controller.getFlowchartWindowController().locateRegister("R0");
+                    GLFW.glfwSetWindowTitle(EngineTester.getWindow(), windowTitle + " [RO]");
                 }
             }
         };
         registerMenuButtonList.add(button);
-
         button = new TextButton("R1") {
             @Override
             public void onPress() {
                 if(controller.getFlowchartWindowController() != null) {
                     controller.getFlowchartWindowController().locateRegister("R1");
+                    GLFW.glfwSetWindowTitle(EngineTester.getWindow(), windowTitle + " [R1]");
+
                 }
             }
         };
         registerMenuButtonList.add(button);
-
         button = new TextButton("R2") {
             @Override
             public void onPress() {
                 if(controller.getFlowchartWindowController() != null) {
                     controller.getFlowchartWindowController().locateRegister("R2");
+                    GLFW.glfwSetWindowTitle(EngineTester.getWindow(), windowTitle + " [R2]");
                 }
             }
         };
         registerMenuButtonList.add(button);
-
         button = new TextButton("R3") {
             @Override
             public void onPress() {
                 if(controller.getFlowchartWindowController() != null) {
                     controller.getFlowchartWindowController().locateRegister("R3");
+                    GLFW.glfwSetWindowTitle(EngineTester.getWindow(), windowTitle + " [R3]");
                 }
             }
         };
         registerMenuButtonList.add(button);
-
         button = new TextButton("R4") {
             @Override
             public void onPress() {
                 if(controller.getFlowchartWindowController() != null) {
                     controller.getFlowchartWindowController().locateRegister("R4");
+                    GLFW.glfwSetWindowTitle(EngineTester.getWindow(), windowTitle + " [R4]");
                 }
             }
         };
         registerMenuButtonList.add(button);
-
         button = new TextButton("R5") {
             @Override
             public void onPress() {
                 if(controller.getFlowchartWindowController() != null) {
                     controller.getFlowchartWindowController().locateRegister("R5");
+                    GLFW.glfwSetWindowTitle(EngineTester.getWindow(), windowTitle + " [R5]");
                 }
             }
         };
         registerMenuButtonList.add(button);
-
         button = new TextButton("R6") {
             @Override
             public void onPress() {
                 if(controller.getFlowchartWindowController() != null) {
                     controller.getFlowchartWindowController().locateRegister("R6");
+                    GLFW.glfwSetWindowTitle(EngineTester.getWindow(), windowTitle + " [R6]");
                 }
             }
         };
         registerMenuButtonList.add(button);
-
         button = new TextButton("R7") {
             @Override
             public void onPress() {
                 if(controller.getFlowchartWindowController() != null) {
                     controller.getFlowchartWindowController().locateRegister("R7");
+                    GLFW.glfwSetWindowTitle(EngineTester.getWindow(), windowTitle + " [R7]");
                 }
             }
         };
@@ -422,6 +418,7 @@ public class Header {
             public void onPress() {
                 if(controller.getFlowchartWindowController() != null) {
                     controller.getFlowchartWindowController().locateAlert(null);
+                    GLFW.glfwSetWindowTitle(EngineTester.getWindow(), windowTitle);
                 }
             }
         };
@@ -432,6 +429,7 @@ public class Header {
             public void onPress() {
                 if(controller.getFlowchartWindowController() != null) {
                     controller.getFlowchartWindowController().locateAlert("invalid_label");
+                    GLFW.glfwSetWindowTitle(EngineTester.getWindow(), windowTitle + " [Invalid labels]");
                 }
             }
         };
@@ -453,26 +451,6 @@ public class Header {
         return position;
     }
 
-    //public List<HeaderMenu> getMenuList(){
-       // return menuList;
-    //}
-
-//    public void setCodeWindow(CodeWindowController codeWindow){
-//        this.codeWindow = codeWindow;
-//    }
-
-//    public CodeWindowController getCodeWindowController(){
-//        return codeWindow;
-//    }
-
-//    public Cursor getCursor(){
-//        return cursor;
-//    }
-
-//    public void setCursor(Cursor cursor) {
-//        this.cursor = cursor;
-//    }
-
     public void setAspectRatio(Vector2f aspectRatio){
         Vector2f size = guiFilledBox.getSize();
         size.y /= this.aspectRatio.y;
@@ -487,12 +465,5 @@ public class Header {
         }
         guiFilledBox.setPosition(new Vector2f(-1, 1-(1-guiFilledBox.getPosition().y)/this.aspectRatio.y*aspectRatio.y));
         this.aspectRatio = aspectRatio;
-//        if(codeWindow != null) {
-//            codeWindow.updateAspectRatio(aspectRatio, size.y);
-//        }
     }
-
-//    public FlowchartWindowController getFlowchartWindowController() {
-//        return flowchartWindowController;
-//    }
 }
