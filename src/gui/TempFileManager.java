@@ -36,8 +36,6 @@ public class TempFileManager {
         fileLimit = 1000;
         verbose = false;
         update();
-
-
     }
 
 
@@ -55,7 +53,7 @@ public class TempFileManager {
     /**
      * If the directory path doesn't exist create it.
      * */
-    private void initializeDirectory (String dirPath) {
+    public void initializeDirectory (String dirPath) {
         File directory = new File(dirPath);
         if(!directory.exists()){
             directory.mkdirs();
@@ -67,11 +65,10 @@ public class TempFileManager {
 
     /**
      * Returns the most recently modified file of the temp list
-     * @return String, a string literal filepath if it exist otherwise returns
-     * string literal "null"
+     * @return String, a string literal filepath if it exist otherwise returns null
      * */
     public String getMostRecent() {
-        String result = "null";
+        String result = null;
 
         if(!tempFiles.isEmpty()) {
             tempFiles.resort();
@@ -83,11 +80,10 @@ public class TempFileManager {
 
     /**
      * Returns the current index to the filePath
-     * @return String, a string literal filepath if it exist otherwise returns
-     * string literal "null"
+     * @return String, a string literal filepath if it exist otherwise returns null
      * */
     public String getCurrent() {
-        String result = "null";
+        String result = null;
         if(!tempFiles.isEmpty()) {
             result = getFilePath(current);
         }
@@ -97,11 +93,10 @@ public class TempFileManager {
     /**
      * Moves the current index of the tempFiles back one place
      * and returns the current index to the filePath
-     * @return String, a string literal filepath if it exist otherwise returns
-     * string literal "null"
+     * @return String, a string literal filepath if it exist otherwise returns null
      * */
     public String rollback() {
-        String result = "null";
+        String result = null;
         if(!tempFiles.isEmpty()) {
             currBack();
             result = getFilePath(current);
@@ -123,11 +118,10 @@ public class TempFileManager {
     /**
      * Moves the current index of the tempFiles back one place
      * and returns the current index to the filePath
-     * @return String, a string literal filepath if it exist otherwise returns
-     * string literal "null"
+     * @return String, a string literal filepath if it exist otherwise returns null
      * */
     public String moveForeword() {
-        String result = "null";
+        String result = null;
         if(!tempFiles.isEmpty()) {
             currForeword();
             result = getFilePath(current);
@@ -297,7 +291,7 @@ public class TempFileManager {
         File tempFile;
         //If the file loaded from the current file path then it saves it's and adds
         //a timestamp. Otherwise it just adds the timestamp and a tempSave
-        if(currentFilePath != null && !currentFilePath.equals("null")) {
+        if(currentFilePath != null) {
             tempFile = new File(currentFilePath);
             tempFile = new File(stf.getSaveFilepath(),timeStamp+tempFile.getName());
         } else {
