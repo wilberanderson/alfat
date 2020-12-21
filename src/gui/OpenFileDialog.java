@@ -13,14 +13,12 @@ import static org.lwjgl.util.nfd.NativeFileDialog.*;
  * @author Thomas
 */
 public class OpenFileDialog {
-    //The file path string if not set it always returns a "null" literal string.
+    //The file path string if not set it always returns a null.
     private String filePath;
     //The default filter list for the file dialog window
     private String filterList;
     //A file path to open the file dialog from
     private String openFromPath;
-    //Boolean to open from default file dialog
-    private Boolean isOpenFromDefault;
     //Boolean to display console prints
     private Boolean showPrint;
     /**
@@ -30,10 +28,9 @@ public class OpenFileDialog {
      * (3) console prints statements are not shown.
     */
     public OpenFileDialog() {
-        filePath = "null";
+        filePath = null;
         filterList = "asm,txt";
-        openFromPath  = "null";
-        isOpenFromDefault = true;
+        openFromPath  = null;
         showPrint = false;
     }
 
@@ -44,7 +41,6 @@ public class OpenFileDialog {
     */
     public void setDefaultFilePath(String fpath) {
         openFromPath = fpath;
-        isOpenFromDefault = false;
     }
 
     /**
@@ -58,7 +54,7 @@ public class OpenFileDialog {
 
     /**
      * Returns the file path of a selected file from the file dialog.
-     * @return <code> string literal </code>of file path or if no file path selected<code> string literal = "null" </code>
+     * @return <code> string literal </code>of file path or if no file path selected<code> null </code>
      */
     public String getFilePath() {
         return filePath;
@@ -80,11 +76,7 @@ public class OpenFileDialog {
     public void openFileWindow() {
         PointerBuffer outPath = memAllocPointer(1);
         try {
-            if (isOpenFromDefault == true) {
-                checkResult(NFD_OpenDialog(filterList, null, outPath), outPath);
-            } else {
-                checkResult(NFD_OpenDialog(filterList, openFromPath, outPath), outPath);
-            }
+            checkResult(NFD_OpenDialog(filterList, openFromPath, outPath), outPath);
         } finally {
             memFree(outPath);
         }
@@ -99,11 +91,22 @@ public class OpenFileDialog {
         PointerBuffer outPath = memAllocPointer(1);
 
         try {
-            if (isOpenFromDefault == true) {
-                checkResult(NFD_SaveDialog(filterList, null, outPath), outPath);
-            } else {
-                checkResult(NFD_SaveDialog(filterList, openFromPath, outPath), outPath);
-            }
+            checkResult(NFD_SaveDialog(filterList, openFromPath, outPath), outPath);
+        } finally {
+            memFree(outPath);
+        }
+    }
+
+
+    /**
+     * Opens the file dialog from either the default os path or a defined path to save a file.
+     * @see public setDefaultFilePath(String fpath)
+     * @see private void checkResult(int result, PointerBuffer path)
+     */
+    public void saveFolderWindow() {
+        PointerBuffer outPath = memAllocPointer(1);
+        try {
+            checkResult(NFD_PickFolder(openFromPath,outPath), outPath);
         } finally {
             memFree(outPath);
         }
