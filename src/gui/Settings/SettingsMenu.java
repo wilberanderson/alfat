@@ -319,7 +319,7 @@ public class SettingsMenu {
         //Change current directory
         //Sets up a panel that changes the user preferences for the default folder path
         JPanel tempFilePathPane = new JPanel(new FlowLayout());
-       /* tempFilePathPane.add(new JLabel("Current Temp File Directory: "));
+        tempFilePathPane.add(new JLabel("Current Temp File Directory: "));
         JTextField tempFilePath = new JTextField(userPreferences.getUserTempFileDirPath());
         //tempFilePath.setPreferredSize(new Dimension(300, 40));
         //tempFilePath.setMaximumSize(new Dimension(tempFilePath.getText().length()*tempFilePath.getFont().getSize(), 40));
@@ -327,19 +327,25 @@ public class SettingsMenu {
         tempFilePathPane.add(tempFilePath);
         JButton changePath = new JButton("Change Path");
         changePath.addActionListener(e -> {
-            OpenFileDialog ofd = new OpenFileDialog();
-            ofd.saveFolderWindow();
-            if(ofd.getFilePath() != null) {
-                userPreferences.setUserTempFileDirPath(ofd.getFilePath());
-                tempFilePath.setColumns(userPreferences.getUserTempFileDirPath().length());
-                tempFilePath.setText(userPreferences.getUserTempFileDirPath());
-            }
+           SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    OpenFileDialog ofd = new OpenFileDialog();
+                    ofd.saveFolderWindow();
+                    if(ofd.getFilePath() != null) {
+                        userPreferences.setUserTempFileDirPath(ofd.getFilePath());
+                        tempFilePath.setColumns(userPreferences.getUserTempFileDirPath().length());
+                        tempFilePath.setText(userPreferences.getUserTempFileDirPath());
+                        //updateMenucontent(fileSettingsContent());
+                    }
+                }
+            });
         });
         tempFilePathPane.add(changePath);
-*/
+
 
         // TODO: temporary solution: user types in path of file
-        tempFilePathPane.add(new JLabel("Enter temp file path"));
+        /*tempFilePathPane.add(new JLabel("Enter temp file path"));
         JTextField tmp = new JTextField(userPreferences.getUserTempFileDirPath());
         tmp.setPreferredSize(new Dimension(300, 30));
         tempFilePathPane.add(tmp);
@@ -370,7 +376,7 @@ public class SettingsMenu {
 
 
         main.add(BorderLayout.CENTER,tempFilePathPane);
-        main.add(BorderLayout.CENTER,tempFilePathPane);
+        main.add(BorderLayout.CENTER,tempFilePathPane);*/
 
         //-----------------------------------------
         //Change preferred file type for open and save as
