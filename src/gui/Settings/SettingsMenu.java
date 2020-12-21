@@ -10,6 +10,9 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 
 /*
@@ -316,7 +319,7 @@ public class SettingsMenu {
         //Change current directory
         //Sets up a panel that changes the user preferences for the default folder path
         JPanel tempFilePathPane = new JPanel(new FlowLayout());
-        tempFilePathPane.add(new JLabel("Current Temp File Directory: "));
+       /* tempFilePathPane.add(new JLabel("Current Temp File Directory: "));
         JTextField tempFilePath = new JTextField(userPreferences.getUserTempFileDirPath());
         //tempFilePath.setPreferredSize(new Dimension(300, 40));
         //tempFilePath.setMaximumSize(new Dimension(tempFilePath.getText().length()*tempFilePath.getFont().getSize(), 40));
@@ -333,7 +336,41 @@ public class SettingsMenu {
             }
         });
         tempFilePathPane.add(changePath);
+*/
 
+        // TODO: temporary solution: user types in path of file
+        tempFilePathPane.add(new JLabel("Enter temp file path"));
+        JTextField tmp = new JTextField(userPreferences.getUserTempFileDirPath());
+        tmp.setPreferredSize(new Dimension(300, 30));
+        tempFilePathPane.add(tmp);
+
+        //Change color if file type is wrong
+        tmp.addKeyListener(new KeyAdapter() {
+            public void keyPressed(KeyEvent e) {
+                if(!(Files.exists(Path.of(tmp.getText()))) || !(Files.isDirectory(Path.of(tmp.getText())))) {
+                    tmp.setForeground(Color.RED);
+                } else {
+                    tmp.setForeground(Color.BLACK);
+                }
+            }
+        });
+
+        JButton submitChange1 = new JButton("Submit Change");
+        submitChange1.addActionListener(e->{
+
+            if(!(Files.exists(Path.of(tmp.getText()))) || !(Files.isDirectory(Path.of(tmp.getText()))))  {
+                tmp.setForeground(Color.RED);
+            } else {
+                userPreferences.setUserTempFileDirPath(tmp.getText());
+                tmp.setForeground(Color.BLACK);
+            }
+        });
+
+        tempFilePathPane.add(submitChange1);
+
+
+        main.add(BorderLayout.CENTER,tempFilePathPane);
+        main.add(BorderLayout.CENTER,tempFilePathPane);
 
         //-----------------------------------------
         //Change preferred file type for open and save as
