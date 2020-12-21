@@ -10,6 +10,7 @@ import gui.terminators.Junction;
 import gui.terminators.Terminator;
 import gui.textBoxes.FlowchartTextBox;
 import main.GeneralSettings;
+import org.junit.platform.commons.util.StringUtils;
 import org.lwjgl.util.vector.Matrix3f;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
@@ -58,6 +59,7 @@ public class LC3Parser implements CodeReader {
             String line;
             while ((line = br.readLine()) != null) {
                 boolean first = true;
+                boolean comment = false;
                 //parse line:
                 i++;    //line numbers start at 1
                 if (verbose) System.out.println("\nparsing line #" + i + "`" + line + "`");
@@ -66,6 +68,7 @@ public class LC3Parser implements CodeReader {
                 //take entire line before semicolon
                 int index = line.indexOf(";");
                 if (index == -1) index = line.length();
+                else comment = true;
                 String[] arrLine = line.substring(0, index).split("[ ,\t]");
 
                 //temp variables:
@@ -126,9 +129,17 @@ public class LC3Parser implements CodeReader {
                         //the command isn't a jump statement, so the label must be a variable i.e. string, etc.
                         formattedString.add(new TextWord(fragment, GeneralSettings.labelColor, true, false, new Vector2f(0f, 0), "\t"));
                     }
+
+                    // if the current fragment has a comma after it, put that in the formatted string:
+                    int fragmentEndIndex = line.indexOf(fragment) + fragment.length();
+                    if (fragment.length() != 0 && fragmentEndIndex < line.length()){
+                        if (line.charAt(fragmentEndIndex) == ',')
+                            formattedString.add(new TextWord(",", GeneralSettings.defaultColor, true, false, new Vector2f(0f, 0), ""));
+                    }
                 }
 
-                if (index < line.length()-1){
+                // If the line has a comment, add it to the formatted string:
+                if (comment){
                     formattedString.add(new TextWord(line.substring(index,line.length()), GeneralSettings.commentColor, true, false, new Vector2f(0f, 0), "\t"));
                 }
 

@@ -51,6 +51,19 @@ public class SettingsMenu {
      * Builds and displays the settings GUI
      * */
     public SettingsMenu() {
+        try {
+            System.out.println("changing l&f:");
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            System.out.println("done.");
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (UnsupportedLookAndFeelException e) {
+            e.printStackTrace();
+        }
         //Init fake button content
         setFakeButtonscontent();
 
@@ -83,17 +96,6 @@ public class SettingsMenu {
         //Set
         root.setIconImage(Toolkit.getDefaultToolkit().getImage("src/res/icon/icon.png"));
         //Set OS default look and feel
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (UnsupportedLookAndFeelException e) {
-            e.printStackTrace();
-        }
         root.setVisible(true);
     }
 
@@ -321,12 +323,13 @@ public class SettingsMenu {
         tempFilePath.setEditable(false);
         tempFilePathPane.add(tempFilePath);
         JButton changePath = new JButton("Change Path");
-        changePath.addActionListener(e-> {
+        changePath.addActionListener(e -> {
             OpenFileDialog ofd = new OpenFileDialog();
             ofd.saveFolderWindow();
             if(ofd.getFilePath() != null) {
                 userPreferences.setUserTempFileDirPath(ofd.getFilePath());
-                updateMenucontent(fileSettingsContent());
+                tempFilePath.setColumns(userPreferences.getUserTempFileDirPath().length());
+                tempFilePath.setText(userPreferences.getUserTempFileDirPath());
             }
         });
         tempFilePathPane.add(changePath);
@@ -352,8 +355,6 @@ public class SettingsMenu {
                 }
             }
         });
-
-        //System.out.println(userPreferences.getPreferredFiletype());
 
         JButton submitChange = new JButton("Submit Change");
         submitChange.addActionListener(e->{

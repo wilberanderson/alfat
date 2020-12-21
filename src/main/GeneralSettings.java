@@ -152,4 +152,5 @@ public class GeneralSettings {
 	public static final Vector3f defaultColor = new Vector3f(1,1,1);
 	public static final Vector3f branchColor = violet;
 	public static final int CHARACTERS_PER_SPACE = 4;
+
 }
