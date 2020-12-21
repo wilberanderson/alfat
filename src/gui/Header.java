@@ -3,6 +3,7 @@ package gui;
 import controllers.ApplicationController;
 import controllers.codeWindow.CodeWindowController;
 import controllers.gui.ButtonController;
+import gui.Settings.SettingsMenu;
 import main.EngineTester;
 import main.GeneralSettings;
 import org.lwjgl.BufferUtils;
@@ -51,7 +52,6 @@ public class Header {
         //Please set this to null if not file has been opened on launch
         GeneralSettings.FILE_PATH = null;
 
-
         List<TextButton> testMenuButtonList = new ArrayList<>();
         List<TextButton> registerMenuButtonList = new ArrayList<>();
         List<TextButton> analyticsMenuButtonList = new ArrayList<>();
@@ -63,6 +63,7 @@ public class Header {
             public void onPress() {
                 OpenFileDialog of = new OpenFileDialog();
                 of.openFileWindow();
+                of.setFilterList(userPref.getPreferredFiletype());
                 GeneralSettings.FILE_PATH = of.getFilePath();
 
 
@@ -97,6 +98,24 @@ public class Header {
                     if (controller.getFlowchartWindowController() != null){
                         controller.getFlowchartWindowController().goSplitScreen();
                     }
+
+                    //User Settings logic for file open
+
+                    //Auto gen flowchart
+                    if(userPref.getAutoGenFlowchart()) {
+                        testMenuButtonList.get(4).onPress(); //gen flowchart
+                    }
+                    if(userPref.getSplitScreen()){
+                        testMenuButtonList.get(9).onPress(); //Split screen
+                    }
+                    if(userPref.getFullscreen() > 0) {
+                        testMenuButtonList.get(7).onPress(); //full editor
+                    }
+                    if(userPref.getFullscreen() < 0) {
+                        //full flowchart
+                        testMenuButtonList.get(4).onPress();
+                        testMenuButtonList.get(8).onPress();
+                    }
                 }
             }
         };
@@ -107,6 +126,7 @@ public class Header {
             @Override
             public void onPress() {
                 OpenFileDialog of = new OpenFileDialog();
+                of.setFilterList(userPref.getPreferredFiletype());
                 of.saveFileWindow();
                 System.out.println(of.getFilePath());
 
@@ -469,7 +489,14 @@ public class Header {
         };
         settingsMenuButtonList.add(button);
 
+        button = new TextButton("Settings Menu") {
+            @Override
+            public void onPress() {
+                SettingsMenu sMenu = new SettingsMenu();
 
+            }
+        };
+        settingsMenuButtonList.add(button);
 
         HeaderMenu settingsButton = new HeaderMenu(new Vector2f(-1f + fileButton.getSize().x + registerButton.getSize().x + analyticsButton.getSize().x, 1-GeneralSettings.FONT_SIZE*GeneralSettings.FONT_SCALING_FACTOR - 2*GeneralSettings.TEXT_BUTTON_PADDING), "Settings ", GeneralSettings.TEXT_BUTTON_BACKGROUND_COLOR, GeneralSettings.HIGHLIGHT_COLOR, GeneralSettings.TEXT_COLOR, GeneralSettings.FONT, GeneralSettings.FONT_SIZE, GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE, settingsMenuButtonList);
         menuList.add(settingsButton);
