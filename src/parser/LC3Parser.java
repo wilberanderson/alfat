@@ -149,7 +149,9 @@ public class LC3Parser implements CodeReader {
                 lines.add(new LC3TLine(line, comm, label, targetLabel, jump, registers, i));
                 // Assign formatted text object to the new LC3Tline class
                 lines.get(lines.size()-1).setTextLine(FormLine);
+
             }
+            br.close();
         }
         catch (FileNotFoundException e) {
             if (verbose) System.out.println("File not found");

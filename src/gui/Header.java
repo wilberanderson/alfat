@@ -91,6 +91,7 @@ public class Header {
                     }
                     if(controller.getCodeWindowController() != null) {
                         controller.getCodeWindowController().clear();
+
                     }
                     //create code window
                     controller.setCodeWindowController(new CodeWindowController(new Vector2f(0f,0f), new Vector2f(1f, 2-GeneralSettings.FONT_SCALING_FACTOR*GeneralSettings.FONT_SIZE), GeneralSettings.TEXT_BOX_BACKGROUND_COLOR, GeneralSettings.TEXT_COLOR, new Vector3f(0,0,0), content, GeneralSettings.FONT, GeneralSettings.FONT_SIZE, GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE, GeneralSettings.TEXT_BOX_BORDER_WIDTH, size.y));
