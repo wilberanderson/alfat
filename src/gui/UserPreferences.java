@@ -12,7 +12,7 @@ public class UserPreferences {
     private Preferences userPref;
 
     //User Preferences node path
-    private String userPreferencesPath = "com/alfat/userprep";
+    private String userPreferencesPath = "com/alfat/userpref";
 
     //------------------------------------------------------------------------------
     //User preferences key name & Default fallback values.
