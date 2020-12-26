@@ -1,5 +1,6 @@
 package main;
 
+import gui.UserPreferences;
 import gui.fontMeshCreator.FontType;
 import loaders.Loader;
 import org.lwjgl.util.vector.Matrix2f;
@@ -17,6 +18,9 @@ import utils.MyFile;
  *
  */
 public class GeneralSettings {
+
+
+
 	//**************Colors*******************
 	// Solarized dark
 	public static final Vector3f base03  = new Vector3f(0.0000000f, 0.1686275f, 0.2117647f); // #002b36
@@ -152,4 +156,8 @@ public class GeneralSettings {
 	public static final Vector3f defaultColor = new Vector3f(1,1,1);
 	public static final Vector3f branchColor = violet;
 	public static final int CHARACTERS_PER_SPACE = 4;
+
+	//*******************************************User Preferences ************************
+	public static UserPreferences USERPREF;
+	public static Boolean MasterRendererUserPrefToggle = false;
 }

@@ -1,7 +1,9 @@
 package gui;
 
 import main.GeneralSettings;
+import org.lwjgl.util.vector.Vector3f;
 
+import java.awt.*;
 import java.util.prefs.Preferences;
 /**
  * This class gets and sets java preferences for the ALFAT user preferences.
@@ -33,6 +35,75 @@ public class UserPreferences {
 
     private String keyOpenFullScreen = "openfullscreen";
     private int fbValueOpenfullScreen = 0; //0 = false, 0 > open to editor, 0 < open to flowchart
+
+    //Background color
+    private String keyBGColor_RED = "bgcolorred";
+    private float fbValueBGColor_RED = GeneralSettings.base02.x;
+
+
+    private String keyBGColor_GREEN = "bgcolorgreen";
+    private float fbValueBGColor_GREEN = GeneralSettings.base02.y;
+
+
+    private String keyBGColor_BLUE = "bgcolorblue";
+    private float fbValueBGColor_BLUE = GeneralSettings.base02.z;
+
+
+
+
+
+
+
+
+
+    //Flowchart background color
+    private String keyFlowchartBoxBGColor_RED = "fcbbgcolorred";
+    private float fbValueFlowchartBoxBGColor_RED = GeneralSettings.base03.x;
+
+
+    private String keyFlowchartBoxBGColor_GREEN = "fcbbgcolorgreen";
+    private float fbValueFlowchartBoxBGColor_GREEN = GeneralSettings.base03.y;
+
+
+    private String keyFlowchartBoxBGColor_BLUE = "fcbbgcolorblue";
+    private float fbValueFlowchartBoxBGColor_BLUE = GeneralSettings.base03.z;
+
+    //Flowchart line number background color
+    private String keyFlowchartBoxLineNumberBGColor_RED = "fcblnbgcolorred";
+    private float fbValueFlowchartBoxLineNumberBGColor_RED = GeneralSettings.LINE_NUMBER_BACKGROUND_COLOR.x;
+
+    private String keyFlowchartBoxLineNumberBGColor_GREEN = "fcblnbgcolorgreen";
+    private float fbValueFlowchartBoxLineNumberColor_GREEN = GeneralSettings.LINE_NUMBER_BACKGROUND_COLOR.y;
+
+    private String keyFlowchartBoxLineNumberBGColor_BLUE = "fcblnbgcolorblue";
+    private float fbValueFlowchartBoxLineNumberColor_BLUE = GeneralSettings.LINE_NUMBER_BACKGROUND_COLOR.z;
+
+
+    //Text editor background color
+    private String keyTexteditorBGcolor_RED = "tebgcred";
+    private float fbValueTexteditorBGcolor_RED = GeneralSettings.base03.x;
+
+
+    private String keyTexteditorBGcolor_GREEN = "tebgcgreen";
+    private float fbValueTexteditorBGcolor_GREEN = GeneralSettings.base03.y;
+
+
+    private String keyTexteditorBGcolor_BLUE = "tebgcblue";
+    private float fbValueTexteditorBGcolor_BLUE = GeneralSettings.base03.z;
+
+
+    //Text editor line number background color
+    private String keyTexteditorLinenumberBGcolor_RED = "telnbgcred";
+    private float fbValueTexteditorLinenumberBGcolor_RED = GeneralSettings.LINE_NUMBER_BACKGROUND_COLOR.x;
+
+
+    private String keyTexteditorLinenumberBGcolor_GREEN = "telnbgcgreen";
+    private float fbValueTexteditorLinenumberBGcolor_GREEN = GeneralSettings.LINE_NUMBER_BACKGROUND_COLOR.y;
+
+
+    private String keyTexteditorLinenumberBGcolor_BLUE = "telnbgcblue";
+    private float fbValueTexteditorLinenumberBGcolor_BLUE = GeneralSettings.LINE_NUMBER_BACKGROUND_COLOR.z;
+
 
     /**Returns true if os is windows*/
     public Boolean isOSWindows() {
@@ -169,6 +240,171 @@ public class UserPreferences {
     }
 
 
+    //Color Settings
+
+    //Background color
+    public void setBackgroundColor(Color bgColor) {
+        userPref.putFloat(keyBGColor_RED, bgColor.getRed()/255f);
+        userPref.putFloat(keyBGColor_GREEN, bgColor.getGreen()/255f);
+        userPref.putFloat(keyBGColor_BLUE, bgColor.getBlue()/255f);
+    }
+
+    public void setBackgroundColor3f(Vector3f bgColor) {
+        userPref.putFloat(keyBGColor_RED, bgColor.x);
+        userPref.putFloat(keyBGColor_GREEN, bgColor.y);
+        userPref.putFloat(keyBGColor_BLUE, bgColor.z);
+    }
+
+    public Vector3f getBackgroundColor3f() {
+        Vector3f bgColor = new Vector3f();
+        bgColor.setX(userPref.getFloat(keyBGColor_RED, fbValueBGColor_RED));
+        bgColor.setY(userPref.getFloat(keyBGColor_GREEN, fbValueBGColor_GREEN));
+        bgColor.setZ(userPref.getFloat(keyBGColor_BLUE, fbValueBGColor_BLUE));
+        return bgColor;
+    }
+
+    public Color getBackgroundColor() {
+        Color bgColor = new Color(
+                userPref.getFloat(keyBGColor_RED, fbValueBGColor_RED),
+                userPref.getFloat(keyBGColor_GREEN, fbValueBGColor_GREEN),
+                userPref.getFloat(keyBGColor_BLUE, fbValueBGColor_BLUE)
+                );
+        return bgColor;
+    }
+
+
+    //Flowchart box color background
+    public void setFlowchartBoxbackgroundColor(Color bgColor) {
+        userPref.putFloat(keyFlowchartBoxBGColor_RED, bgColor.getRed()/255f);
+        userPref.putFloat(keyFlowchartBoxBGColor_GREEN, bgColor.getGreen()/255f);
+        userPref.putFloat(keyFlowchartBoxBGColor_BLUE, bgColor.getBlue()/255f);
+    }
+
+    public void setFlowchartBoxbackgroundColor3f(Vector3f bgColor) {
+        userPref.putFloat(keyFlowchartBoxBGColor_RED, bgColor.x);
+        userPref.putFloat(keyFlowchartBoxBGColor_GREEN, bgColor.y);
+        userPref.putFloat(keyFlowchartBoxBGColor_BLUE, bgColor.z);
+    }
+
+    public Vector3f getFlowchartBoxbackgroundColor3f() {
+        Vector3f bgColor = new Vector3f();
+        bgColor.setX(userPref.getFloat(keyFlowchartBoxBGColor_RED, fbValueFlowchartBoxBGColor_RED));
+        bgColor.setY(userPref.getFloat(keyFlowchartBoxBGColor_GREEN, fbValueFlowchartBoxBGColor_GREEN));
+        bgColor.setZ(userPref.getFloat(keyFlowchartBoxBGColor_BLUE, fbValueFlowchartBoxBGColor_BLUE));
+        return bgColor;
+    }
+
+    public Color getFlowchartBoxackgroundColor() {
+        Color bgColor = new Color(
+                userPref.getFloat(keyFlowchartBoxBGColor_RED, fbValueFlowchartBoxBGColor_RED),
+                userPref.getFloat(keyFlowchartBoxBGColor_GREEN, fbValueFlowchartBoxBGColor_GREEN),
+                userPref.getFloat(keyFlowchartBoxBGColor_BLUE, fbValueFlowchartBoxBGColor_BLUE)
+        );
+        return bgColor;
+    }
+
+    //Flowchart box line number background color
+    public void setFlowchartBoxlinenumberBGColor(Color bgColor) {
+        userPref.putFloat(keyFlowchartBoxLineNumberBGColor_RED, bgColor.getRed()/255f);
+        userPref.putFloat(keyFlowchartBoxLineNumberBGColor_GREEN, bgColor.getGreen()/255f);
+        userPref.putFloat(keyFlowchartBoxLineNumberBGColor_BLUE, bgColor.getBlue()/255f);
+    }
+
+    public void setFlowchartBoxlinenumberBGColor3f(Vector3f bgColor) {
+        userPref.putFloat(keyFlowchartBoxLineNumberBGColor_RED, bgColor.x);
+        userPref.putFloat(keyFlowchartBoxLineNumberBGColor_GREEN, bgColor.y);
+        userPref.putFloat(keyFlowchartBoxLineNumberBGColor_BLUE, bgColor.z);
+    }
+
+    public Vector3f getFlowchartBoxlinenumberBGColor3f() {
+        Vector3f bgColor = new Vector3f();
+        bgColor.setX(userPref.getFloat(keyFlowchartBoxLineNumberBGColor_RED, fbValueFlowchartBoxLineNumberBGColor_RED));
+        bgColor.setY(userPref.getFloat(keyFlowchartBoxLineNumberBGColor_GREEN, fbValueFlowchartBoxLineNumberColor_GREEN));
+        bgColor.setZ(userPref.getFloat(keyFlowchartBoxLineNumberBGColor_BLUE, fbValueFlowchartBoxLineNumberColor_BLUE));
+        return bgColor;
+    }
+
+    public Color getFlowchartBoxlinenumberBGColor() {
+        Color bgColor = new Color(
+                userPref.getFloat(keyFlowchartBoxLineNumberBGColor_RED, fbValueFlowchartBoxLineNumberBGColor_RED),
+                userPref.getFloat(keyFlowchartBoxLineNumberBGColor_GREEN, fbValueFlowchartBoxLineNumberColor_GREEN),
+                userPref.getFloat(keyFlowchartBoxLineNumberBGColor_BLUE, fbValueFlowchartBoxLineNumberColor_BLUE)
+        );
+        return bgColor;
+    }
+
+
+    //Text editor background color
+    public void setTexteditorBGColor(Color bgColor) {
+        userPref.putFloat(keyTexteditorBGcolor_RED, bgColor.getRed()/255f);
+        userPref.putFloat(keyTexteditorBGcolor_GREEN, bgColor.getGreen()/255f);
+        userPref.putFloat(keyTexteditorBGcolor_BLUE, bgColor.getBlue()/255f);
+    }
+
+    public void setTexteditorBGColor3f(Vector3f bgColor) {
+        userPref.putFloat(keyTexteditorBGcolor_RED, bgColor.x);
+        userPref.putFloat(keyTexteditorBGcolor_GREEN, bgColor.y);
+        userPref.putFloat(keyTexteditorBGcolor_BLUE, bgColor.z);
+    }
+
+    public Vector3f getTexteditorBGColor3f() {
+        Vector3f bgColor = new Vector3f();
+        bgColor.setX(userPref.getFloat(keyTexteditorBGcolor_RED, fbValueTexteditorBGcolor_RED));
+        bgColor.setY(userPref.getFloat(keyTexteditorBGcolor_GREEN, fbValueTexteditorBGcolor_GREEN));
+        bgColor.setZ(userPref.getFloat(keyTexteditorBGcolor_BLUE, fbValueTexteditorBGcolor_BLUE));
+        return bgColor;
+    }
+
+    public Color getTexteditorBGColor() {
+        Color bgColor = new Color(
+                userPref.getFloat(keyTexteditorBGcolor_RED, fbValueTexteditorBGcolor_RED),
+                userPref.getFloat(keyTexteditorBGcolor_GREEN, fbValueTexteditorBGcolor_GREEN),
+                userPref.getFloat(keyTexteditorBGcolor_BLUE, fbValueTexteditorBGcolor_BLUE)
+        );
+        return bgColor;
+    }
+
+    //Text editor line number background color
+    public void setTexteditorLinenumberBGColor(Color bgColor) {
+        userPref.putFloat(keyTexteditorLinenumberBGcolor_RED, bgColor.getRed()/255f);
+        userPref.putFloat(keyTexteditorLinenumberBGcolor_GREEN, bgColor.getGreen()/255f);
+        userPref.putFloat(keyTexteditorLinenumberBGcolor_BLUE, bgColor.getBlue()/255f);
+    }
+
+    public void setTexteditorLinenumberBGColor3f(Vector3f bgColor) {
+        userPref.putFloat(keyTexteditorLinenumberBGcolor_RED, bgColor.x);
+        userPref.putFloat(keyTexteditorLinenumberBGcolor_GREEN, bgColor.y);
+        userPref.putFloat(keyTexteditorLinenumberBGcolor_BLUE, bgColor.z);
+    }
+
+    public Vector3f getTexteditorLinenumberBGColor3f() {
+        Vector3f bgColor = new Vector3f();
+        bgColor.setX(userPref.getFloat(keyTexteditorLinenumberBGcolor_RED, fbValueTexteditorLinenumberBGcolor_RED));
+        bgColor.setY(userPref.getFloat(keyTexteditorLinenumberBGcolor_GREEN, fbValueTexteditorLinenumberBGcolor_GREEN));
+        bgColor.setZ(userPref.getFloat(keyTexteditorLinenumberBGcolor_BLUE, fbValueTexteditorLinenumberBGcolor_BLUE));
+        return bgColor;
+    }
+
+    public Color getTexteditorLinenumberBGColor() {
+        Color bgColor = new Color(
+                userPref.getFloat(keyTexteditorLinenumberBGcolor_RED, fbValueTexteditorLinenumberBGcolor_RED),
+                userPref.getFloat(keyTexteditorLinenumberBGcolor_GREEN, fbValueTexteditorLinenumberBGcolor_GREEN),
+                userPref.getFloat(keyTexteditorLinenumberBGcolor_BLUE, fbValueTexteditorLinenumberBGcolor_BLUE)
+        );
+        return bgColor;
+    }
+
+
+    //Header Color
+
+    //Menu Item color
+
+
+
+
+
+
+
     /**Removes ALL attributes (hard reset). Next time any get is called is will return fall back values*/
     public void resetAll() {
         removeAutoGenFlowchart();
@@ -177,8 +413,6 @@ public class UserPreferences {
         removePreferredFiletype();
         RemoveUserTempFileDirPath();
     }
-
-
 
     /**
      * Removes a preferences attribute

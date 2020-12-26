@@ -6,6 +6,7 @@ import gui.TextLine;
 import gui.textBoxes.FlowchartTextBox;
 import main.GeneralSettings;
 import org.lwjgl.util.vector.Vector2f;
+import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
 
 import java.util.ArrayList;
@@ -21,8 +22,33 @@ public class FlowchartTextBoxController {
 
     }
 
+    /**
+     * Changes the background color of the flowchart boxes
+     * */
+    public void changeTextBoxBackgroundcolor3f(Vector3f newBackgroundColor) {
+        if(textBoxes != null || !textBoxes.isEmpty()) {
+            for(int i = 0; i < textBoxes.size(); i++) {
+                textBoxes.get(i).setBackgroundColor(newBackgroundColor);
+            }
+        }
+    }
+
+    /**
+     * Changes the background color of the flowcharts number line background color
+     * */
+    public void changeTextBoxNumberLineBGColor3f(Vector3f newBackgroundColor) {
+        if(textBoxes != null || !textBoxes.isEmpty()) {
+            for(int i = 0; i < textBoxes.size(); i++) {
+                textBoxes.get(i).setTextNumberFilledBoxBackgroundColor(newBackgroundColor);
+            }
+        }
+    }
+
+
+
     public void add(Vector2f position, List<TextLine> textLines, int lineNumber, List<String> registers, String alert){
         FlowchartTextBox textBox = new FlowchartTextBox(position, registers, alert);
+        //TODO: WHY IS THIS SET THIS COLOR!?!?!?!?
         textBox.setBackgroundColor(GeneralSettings.TEXT_BOX_BACKGROUND_COLOR);
         textBox.setBorderColor(GeneralSettings.TEXT_BOX_BORDER_COLOR);
         textBox.setTextColor(GeneralSettings.TEXT_COLOR);
@@ -62,9 +88,9 @@ public class FlowchartTextBoxController {
         }
 
 
-        textBox.setTextNumberFilledBox(new GUIFilledBox(position, new Vector2f(longestLineNumber*2 + 2*GeneralSettings.TEXT_BOX_BORDER_WIDTH, minHeight), GeneralSettings.LINE_NUMBER_BACKGROUND_COLOR));
+        textBox.setTextNumberFilledBox(new GUIFilledBox(position, new Vector2f(longestLineNumber*2 + 2*GeneralSettings.TEXT_BOX_BORDER_WIDTH, minHeight), GeneralSettings.USERPREF.getFlowchartBoxlinenumberBGColor3f()));
         textBox.setSize(new Vector2f((float)greatestLength*2 + 4*GeneralSettings.TEXT_BOX_BORDER_WIDTH + textBox.getTextNumberFilledBox().getSize().x,lineHeight*textLines.size() + GeneralSettings.TEXT_BOX_BORDER_WIDTH));
-        textBox.setGuiFilledBox(new GUIFilledBox(position, textBox.getSize(), GeneralSettings.TEXT_BOX_BACKGROUND_COLOR));
+        textBox.setGuiFilledBox(new GUIFilledBox(position, textBox.getSize(), GeneralSettings.USERPREF.getFlowchartBoxbackgroundColor3f()));
         for(GUIText text : textBox.getTexts()){
             text.setPosition(new Vector2f(textBox.getTextNumberFilledBox().getPosition().x+textBox.getTextNumberFilledBox().getSize().x-1, text.getPosition().y));
         }

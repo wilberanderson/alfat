@@ -23,6 +23,7 @@ public class EngineTester {
     // The window handle
     private static long window;
 
+
     //Temporary attributes
     private List<GuiTexture> guis;
     private ApplicationController applicationController;
@@ -41,6 +42,7 @@ public class EngineTester {
             e.printStackTrace();
             crash();
         }
+        exit();
 
     }
 
@@ -52,6 +54,9 @@ public class EngineTester {
      *
      */
     private void init() {
+
+        GeneralSettings.USERPREF = new UserPreferences();
+
         //********************************Create the window************************************
         // Setup an error callback. The default implementation
         // will print the error message in System.err.
@@ -123,9 +128,6 @@ public class EngineTester {
         // bindings available for use.
         GL.createCapabilities();
 
-        // Set the clear color
-        GL11.glClearColor(GeneralSettings.base02.x, GeneralSettings.base02.y, GeneralSettings.base02.z, 1);
-
 
         //************************************Initialize guis************************************
         //Create the FontTypes in GeneralSettings, must happen before using any font
@@ -136,6 +138,11 @@ public class EngineTester {
         //************************************Initialize input*************************************
         applicationController = new ApplicationController();
         GLFWEventController.init(window, applicationController);
+
+
+        // Set the clear color
+        //GL11.glClearColor(GeneralSettings.base02.x, GeneralSettings.base02.y, GeneralSettings.base02.z, 1);
+        GL11.glClearColor(GeneralSettings.USERPREF.getBackgroundColor3f().x, GeneralSettings.USERPREF.getBackgroundColor3f().y, GeneralSettings.USERPREF.getBackgroundColor3f().z, 1);
 
 
         //************************************Initialize the aspect ratio********************************

@@ -36,7 +36,6 @@ public class Header {
     private Vector2f position;
     private Vector2f aspectRatio = new Vector2f(1, 1);
     private TempFileManager tfm; //Manages the temp file paths
-    private UserPreferences userPref = new UserPreferences();
     private LC3Parser parser = null;
     private String windowTitle = null;
 
@@ -47,7 +46,7 @@ public class Header {
 
         //Set up temp file manager
         //tfm = new TempFileManager(GeneralSettings.TEMP_DIR);
-        tfm = new TempFileManager(userPref.getUserTempFileDirPath()); // Set to the last set user file path
+        tfm = new TempFileManager(GeneralSettings.USERPREF.getUserTempFileDirPath()); // Set to the last set user file path
         tfm.setFileLimit(5);
         //Please set this to null if not file has been opened on launch
         GeneralSettings.FILE_PATH = null;
@@ -61,9 +60,12 @@ public class Header {
         TextButton button = new TextButton("Open File") {
             @Override
             public void onPress() {
+
+                System.out.println(GeneralSettings.USERPREF.getUserTempFileDirPath());
+
                 OpenFileDialog of = new OpenFileDialog();
                 of.openFileWindow();
-                of.setFilterList(userPref.getPreferredFiletype());
+                of.setFilterList(GeneralSettings.USERPREF.getPreferredFiletype());
                 GeneralSettings.FILE_PATH = of.getFilePath();
 
 
@@ -94,7 +96,7 @@ public class Header {
 
                     }
                     //create code window
-                    controller.setCodeWindowController(new CodeWindowController(new Vector2f(0f,0f), new Vector2f(1f, 2-GeneralSettings.FONT_SCALING_FACTOR*GeneralSettings.FONT_SIZE), GeneralSettings.TEXT_BOX_BACKGROUND_COLOR, GeneralSettings.TEXT_COLOR, new Vector3f(0,0,0), content, GeneralSettings.FONT, GeneralSettings.FONT_SIZE, GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE, GeneralSettings.TEXT_BOX_BORDER_WIDTH, size.y));
+                    controller.setCodeWindowController(new CodeWindowController(new Vector2f(0f,0f), new Vector2f(1f, 2-GeneralSettings.FONT_SCALING_FACTOR*GeneralSettings.FONT_SIZE), GeneralSettings.USERPREF.getTexteditorBGColor3f(), GeneralSettings.TEXT_COLOR, new Vector3f(0,0,0), content, GeneralSettings.FONT, GeneralSettings.FONT_SIZE, GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE, GeneralSettings.TEXT_BOX_BORDER_WIDTH, size.y));
 
                     if (controller.getFlowchartWindowController() != null){
                         controller.getFlowchartWindowController().goSplitScreen();
@@ -103,16 +105,16 @@ public class Header {
                     //User Settings logic for file open
 
                     //Auto gen flowchart
-                    if(userPref.getAutoGenFlowchart()) {
+                    if(GeneralSettings.USERPREF.getAutoGenFlowchart()) {
                         testMenuButtonList.get(4).onPress(); //gen flowchart
                     }
-                    if(userPref.getSplitScreen()){
+                    if(GeneralSettings.USERPREF.getSplitScreen()){
                         testMenuButtonList.get(9).onPress(); //Split screen
                     }
-                    if(userPref.getFullscreen() > 0) {
+                    if(GeneralSettings.USERPREF.getFullscreen() > 0) {
                         testMenuButtonList.get(7).onPress(); //full editor
                     }
-                    if(userPref.getFullscreen() < 0) {
+                    if(GeneralSettings.USERPREF.getFullscreen() < 0) {
                         //full flowchart
                         testMenuButtonList.get(4).onPress();
                         testMenuButtonList.get(8).onPress();
@@ -127,7 +129,7 @@ public class Header {
             @Override
             public void onPress() {
                 OpenFileDialog of = new OpenFileDialog();
-                of.setFilterList(userPref.getPreferredFiletype());
+                of.setFilterList(GeneralSettings.USERPREF.getPreferredFiletype());
                 of.saveFileWindow();
                 System.out.println(of.getFilePath());
 
@@ -237,7 +239,7 @@ public class Header {
                 //Save To Temp Location
                 if (GeneralSettings.FILE_PATH != null) {
                     if (controller.getCodeWindowController() != null) {
-                        tfm.copyFiletoTempFile(GeneralSettings.FILE_PATH, userPref.getUserTempFileDirPath());
+                        tfm.copyFiletoTempFile(GeneralSettings.FILE_PATH, GeneralSettings.USERPREF.getUserTempFileDirPath());
 
                     }
                 } else {
@@ -267,7 +269,7 @@ public class Header {
 
                 //Save what is in codeWindow
                 if (controller.getCodeWindowController() != null && GeneralSettings.FILE_PATH != null) {
-                    tfm.saveCodeEditorTextToFile(controller.getCodeWindowController().getTexts(), GeneralSettings.FILE_PATH, userPref.getUserTempFileDirPath());
+                    tfm.saveCodeEditorTextToFile(controller.getCodeWindowController().getTexts(), GeneralSettings.FILE_PATH, GeneralSettings.USERPREF.getUserTempFileDirPath());
                 } else {
                     return;
                 }
@@ -470,8 +472,8 @@ public class Header {
 
                 of.saveFolderWindow();
                 if(of.getFilePath() != null) {
-                    userPref.setUserTempFileDirPath(of.getFilePath());
-                    tfm.initializeDirectory(userPref.getUserTempFileDirPath());
+                    GeneralSettings.USERPREF.setUserTempFileDirPath(of.getFilePath());
+                    tfm.initializeDirectory(GeneralSettings.USERPREF.getUserTempFileDirPath());
                     tfm.update();
                 }
             }
@@ -482,8 +484,8 @@ public class Header {
         button = new TextButton("Reset Temp Folder Path") {
             @Override
             public void onPress() {
-                userPref.setUserTempFileDirPath(GeneralSettings.TEMP_DIR);
-                tfm.initializeDirectory(userPref.getUserTempFileDirPath());
+                GeneralSettings.USERPREF.setUserTempFileDirPath(GeneralSettings.TEMP_DIR);
+                tfm.initializeDirectory(GeneralSettings.USERPREF.getUserTempFileDirPath());
                 tfm.update();
 
             }
@@ -494,6 +496,10 @@ public class Header {
             @Override
             public void onPress() {
                 SettingsMenu sMenu = new SettingsMenu();
+
+                //TODO: Put this where menu closes
+                //GLFW.glfwPostEmptyEvent();
+
 
             }
         };

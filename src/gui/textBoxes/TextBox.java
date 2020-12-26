@@ -64,8 +64,15 @@ public class TextBox {
     public void setBackgroundColor(Vector3f backgroundColor){
         this.backgroundColor = backgroundColor;
         if(this.guiFilledBox != null) {
+
             this.guiFilledBox.setColor(backgroundColor);
         }
+
+    }
+
+    //TEST
+    public void setTextNumberFilledBoxBackgroundColor(Vector3f newColor) {
+        this.textNumberFilledBox.setColor(newColor);
     }
 
 
