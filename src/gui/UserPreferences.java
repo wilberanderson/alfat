@@ -105,6 +105,21 @@ public class UserPreferences {
     private float fbValueTexteditorLinenumberBGcolor_BLUE = GeneralSettings.LINE_NUMBER_BACKGROUND_COLOR.z;
 
 
+
+    //Header color
+    private String keyHeaderColor_RED = "headercolorred";
+    private float fbValueHeadercolor_RED = GeneralSettings.HEADER_COLOR.x;
+
+
+    private String keyHeaderColor_GREEN = "headercolorgreen";
+    private float fbValueHeadercolor_GREEN = GeneralSettings.HEADER_COLOR.y;
+
+
+    private String keyHeaderColor_BLUE = "headercolorblue";
+    private float fbValueHeadercolor_BLUE = GeneralSettings.HEADER_COLOR.z;
+
+
+
     /**Returns true if os is windows*/
     public Boolean isOSWindows() {
         Boolean result = false;
@@ -396,6 +411,37 @@ public class UserPreferences {
 
 
     //Header Color
+
+    public void setHeaderColor(Color bgColor) {
+        userPref.putFloat(keyHeaderColor_RED, bgColor.getRed()/255f);
+        userPref.putFloat(keyHeaderColor_GREEN, bgColor.getGreen()/255f);
+        userPref.putFloat(keyHeaderColor_BLUE, bgColor.getBlue()/255f);
+    }
+
+    public void setHeaderColor3f(Vector3f bgColor) {
+        userPref.putFloat(keyHeaderColor_RED, bgColor.x);
+        userPref.putFloat(keyHeaderColor_GREEN, bgColor.y);
+        userPref.putFloat(keyHeaderColor_BLUE, bgColor.z);
+    }
+
+    public Vector3f getHeaderColor3f() {
+        Vector3f bgColor = new Vector3f();
+        bgColor.setX(userPref.getFloat(keyHeaderColor_RED, fbValueHeadercolor_RED));
+        bgColor.setY(userPref.getFloat(keyHeaderColor_GREEN, fbValueHeadercolor_GREEN));
+        bgColor.setZ(userPref.getFloat(keyHeaderColor_BLUE, fbValueHeadercolor_BLUE));
+        return bgColor;
+    }
+
+    public Color getHeaderColor() {
+        Color bgColor = new Color(
+                userPref.getFloat(keyHeaderColor_RED, fbValueHeadercolor_RED),
+                userPref.getFloat(keyHeaderColor_GREEN, fbValueHeadercolor_GREEN),
+                userPref.getFloat(keyHeaderColor_BLUE, fbValueHeadercolor_BLUE)
+        );
+        return bgColor;
+    }
+
+
 
     //Menu Item color
 

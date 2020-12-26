@@ -1,8 +1,10 @@
 package gui.Settings;
 
+import controllers.ApplicationController;
 import gui.OpenFileDialog;
 import gui.UserPreferences;
 import main.GeneralSettings;
+import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector3f;
 
 import javax.swing.*;
@@ -55,6 +57,7 @@ public class SettingsMenu extends Component {
      * Builds and displays the settings GUI
      * */
     public SettingsMenu() {
+        //Set OS default look and feel
         try {
             //UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
@@ -96,12 +99,40 @@ public class SettingsMenu extends Component {
         root.setSize(GUI_WIDTH,GUI_HEIGHT);
         root.setTitle("Settings");
         root.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        //Set
+
+
+//Way to force everything to be removed
+//        root.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+//        //New close method
+//        root.addWindowListener(new java.awt.event.WindowAdapter() {
+//            @Override
+//            public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+//                fakeButtonscontent.removeAll(fakeButtonscontent);
+//                fakeButtonscontent = null;
+//                fakebutton.removeAll();
+//                fakebutton = null;
+//                mockGUIbackgroundColor = null;
+//                mockGUIflowchartBoxBGcolor= null;
+//                mockGUIfloatchartNumberlineBGcolor= null;
+//                mockGUItexteditorColor= null;
+//                mockGUItexteditorLinenumberBGColor= null;
+//                mockGUIheaderColor= null;
+//                root.dispose();
+//                Runtime.getRuntime().gc();
+//            }
+//        });
+
+        //Set icon
         root.setIconImage(Toolkit.getDefaultToolkit().getImage("src/res/icon/icon.png"));
-        //Set OS default look and feel
+
 
         root.setVisible(true);
     }
+
+    public static void run()  {
+        SettingsMenu gui = new SettingsMenu();
+    }
+
 
     /**
      * Sets the content on the right to the first index of the JList (fakebuttons) and selects it
@@ -415,6 +446,7 @@ public class SettingsMenu extends Component {
     private Color mockGUIfloatchartNumberlineBGcolor;
     private Color mockGUItexteditorColor;
     private Color mockGUItexteditorLinenumberBGColor;
+    private Color mockGUIheaderColor;
 
     private JPanel colorAndfontContent() {
         //The main JPanel uses GridBagLayout to position content
@@ -460,12 +492,14 @@ public class SettingsMenu extends Component {
         mockGUIfloatchartNumberlineBGcolor = GeneralSettings.USERPREF.getFlowchartBoxlinenumberBGColor();
         mockGUItexteditorColor = GeneralSettings.USERPREF.getTexteditorBGColor();
         mockGUItexteditorLinenumberBGColor = GeneralSettings.USERPREF.getTexteditorLinenumberBGColor();
+        mockGUIheaderColor = GeneralSettings.USERPREF.getHeaderColor();
+
 
         //Background
         JButton backgroundBtn = contentLayer(mockGUIbackgroundColor,0,0, mockGUI_Width,mockGUI_Height);
 
         //Menu
-        JButton headerBtn = contentLayer(Color.DARK_GRAY, 0,0, mockGUI_Width,barPadding);
+        JButton headerBtn = contentLayer(mockGUIheaderColor, 0,0, mockGUI_Width,barPadding);
         JButton menuBtn = contentLayer(Color.cyan, 0,0, barPadding*4,barPadding);
 
         //Text editor
@@ -495,6 +529,15 @@ public class SettingsMenu extends Component {
                 backgroundBtn.setBackground(mockGUIbackgroundColor);
             }
         });
+
+        headerBtn.addActionListener(e-> {
+            Color newColor = JColorChooser.showDialog(this,"Select a color",GeneralSettings.USERPREF.getBackgroundColor());
+            if(newColor != null) {
+                mockGUIheaderColor = newColor;
+                headerBtn.setBackground(mockGUIheaderColor);
+            }
+        });
+
 
         textEditorBtn.addActionListener(e->{
             Color newColor = JColorChooser.showDialog(this,"Select a color",GeneralSettings.USERPREF.getBackgroundColor());
@@ -594,6 +637,14 @@ public class SettingsMenu extends Component {
             mockGUIbackgroundColor = new Color(GeneralSettings.base02.x, GeneralSettings.base02.y,GeneralSettings.base02.z);
             backgroundBtn.setBackground(mockGUIbackgroundColor);
 
+            //Header color
+            mockGUIheaderColor = new Color(
+                    GeneralSettings.HEADER_COLOR.x,
+                    GeneralSettings.HEADER_COLOR.y,
+                    GeneralSettings.HEADER_COLOR.z
+                    );
+            headerBtn.setBackground(mockGUIheaderColor);
+
             //Text editor
             mockGUItexteditorColor = new Color(GeneralSettings.base03.x, GeneralSettings.base03.y,GeneralSettings.base03.z);
             textEditorBtn.setBackground(mockGUItexteditorColor);
@@ -625,8 +676,13 @@ public class SettingsMenu extends Component {
 
 
         apply.addActionListener(e->{
+
+
             //Background
             GeneralSettings.USERPREF.setBackgroundColor(mockGUIbackgroundColor);
+
+            //header color
+            GeneralSettings.USERPREF.setHeaderColor(mockGUIheaderColor);
 
             //Text editor color
             GeneralSettings.USERPREF.setTexteditorBGColor(mockGUItexteditorColor);
@@ -640,6 +696,7 @@ public class SettingsMenu extends Component {
 
             //Flowchart box line number BG color
             GeneralSettings.USERPREF.setFlowchartBoxlinenumberBGColor(mockGUIfloatchartNumberlineBGcolor);
+
 
             //Toggle change in master renderer
             GeneralSettings.MasterRendererUserPrefToggle = true;

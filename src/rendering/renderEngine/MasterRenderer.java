@@ -57,7 +57,6 @@ public class MasterRenderer {
 		//Updates user preferences controlled by master renderer
 		if(GeneralSettings.MasterRendererUserPrefToggle) {
 			controller.updateUserPref();
-
 			GeneralSettings.MasterRendererUserPrefToggle = false;
 		}
 

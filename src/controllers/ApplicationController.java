@@ -52,6 +52,9 @@ public class ApplicationController {
             codeWindowController.changeCodewindowLinenumberBGColor3f(GeneralSettings.USERPREF.getTexteditorLinenumberBGColor3f());
         }
 
+        if(header != null) {
+            header.changeHeadercolor();
+        }
 
         //Background color
         GL11.glClearColor(GeneralSettings.USERPREF.getBackgroundColor3f().getX(), GeneralSettings.USERPREF.getBackgroundColor3f().getY(), GeneralSettings.USERPREF.getBackgroundColor3f().getZ(), 1);

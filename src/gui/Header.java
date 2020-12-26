@@ -41,7 +41,7 @@ public class Header {
 
     public Header(Vector2f position, Vector2f size, ApplicationController controller){
         menuList = new ArrayList<>();
-        guiFilledBox = new GUIFilledBox(position, size, GeneralSettings.HEADER_COLOR);
+        guiFilledBox = new GUIFilledBox(position, size, GeneralSettings.USERPREF.getHeaderColor3f());
         this.position = position;
 
         //Set up temp file manager
@@ -495,11 +495,8 @@ public class Header {
         button = new TextButton("Settings Menu") {
             @Override
             public void onPress() {
-                SettingsMenu sMenu = new SettingsMenu();
-
-                //TODO: Put this where menu closes
-                //GLFW.glfwPostEmptyEvent();
-
+                //SettingsMenu sMenu = new SettingsMenu();
+                SettingsMenu.run();
 
             }
         };
@@ -515,6 +512,10 @@ public class Header {
 
     public GUIFilledBox getGuiFilledBox() {
         return guiFilledBox;
+    }
+
+    public void changeHeadercolor() {
+        guiFilledBox.setColor(GeneralSettings.USERPREF.getHeaderColor3f());
     }
 
     public Vector2f getPosition(){
