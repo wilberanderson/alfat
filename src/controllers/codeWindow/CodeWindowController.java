@@ -69,6 +69,7 @@ public class CodeWindowController {
             cursorController.moveCursor(mousePosition, this);
             return true;
         }else{
+            cursorController.setVisible(false);
             return false;
         }
     }
@@ -126,6 +127,7 @@ public class CodeWindowController {
             inBounds = true;
             this.mousePosition = mousePosition;
         }else{
+            System.out.println("Out of bounds");
             inBounds = false;
         }
     }

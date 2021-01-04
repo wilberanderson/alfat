@@ -1,10 +1,14 @@
 package rendering.filledBox;
 
-import rendering.shaders.ShaderProgram;
 import main.GeneralSettings;
+import rendering.shaders.ShaderProgram;
 import rendering.shaders.uniforms.*;
 
-public class FilledBoxShader extends ShaderProgram{
+
+/**
+ * Handles the interaction with the {@link gui.GUIFilledBox} vertex and fragment shaders.
+ */
+public class FilledBoxShader extends ShaderProgram {
 
 
     protected UniformVec3 color = new UniformVec3("color");
@@ -16,18 +20,14 @@ public class FilledBoxShader extends ShaderProgram{
     protected UniformBoolean doClipping = new UniformBoolean("doClipping");
 
     /**
-     * Handles the interaction with the TextBox vertex and fragment shaders.
-     *  - Initializes the shader program
-     *  - Binds position to attrib 0
-     *  - Stores the locations for the color and transformation of the TextBox
+     * Creates the shader program which is used for rendering a {@link gui.GUIFilledBox}.
      */
     public FilledBoxShader() {
+        //A filled box's position is at attribute 0 and a filled box does not use any texture coordinates
         super(GeneralSettings.FILLED_BOX_VERTEX, GeneralSettings.FILLED_BOX_FRAGMENT, "position");
+        //Activate all uniforms so that loading data to them loads to the shader program
         super.storeAllUniformLocations(color, transformation, windowPosition, windowSize, zoomTranslateMatrix, aspectRatio, doClipping);
     }
-
-
-
 
 
 }

@@ -4,12 +4,11 @@ in vec2 fragment_Position;
 
 out vec4 out_color;
 uniform vec3 color;
-uniform vec2 windowPosition;
-uniform vec2 windowSize;
+uniform float isVisible;
 
 
 void main(void){
-	if(fragment_Position.x < windowPosition.x || fragment_Position.y < windowPosition.y || fragment_Position.x > windowPosition.x+windowSize.x || fragment_Position.y > windowPosition.y+windowSize.y){
+	if(isVisible == 0){
 		discard;
 	}
 

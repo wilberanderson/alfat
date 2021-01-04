@@ -12,111 +12,148 @@ import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.util.vector.Matrix2f;
 import org.lwjgl.util.vector.Matrix3f;
+import org.lwjgl.util.vector.Vector2f;
 
+/**
+ * Controls rendering lines of {@link gui.TextLine "formatted text"}, such as inside {@link gui.textBoxes.FlowchartTextBox flowchart text boxes} and the {@link CodeWindow}'s TextBox.
+ */
 public class TextLineRenderer {
 
 	private TextLineShader shader;
-	private Matrix3f zoomTranslateMatrix = new Matrix3f();
 
+	/**
+	 * Creates a new TextLineRenderer. Initializes a {@link TextLineShader} to control the shader with will be used to render on the GPU and intitializes a local ZoomTranslateMatrix which is updated every render call.
+	 */
 	public TextLineRenderer() {
 		shader = new TextLineShader();
-		zoomTranslateMatrix.setIdentity();
 	}
 
-
-	public void render(TextLineController textLineController, FlowchartWindowController flowChartWindowController, CodeWindow codeWindow, boolean doClipping, boolean isScreenshot){
+	/**
+	 * Renders the formatted text lines used for lines of code
+	 * @param textLineController
+	 * @param flowChartWindowController
+	 * @param codeWindow
+	 */
+	public void renderToScreen(TextLineController textLineController, FlowchartWindowController flowChartWindowController, CodeWindow codeWindow) {
 		prepare();
-		if(!isScreenshot){
-			shader.aspectRatio.loadMatrix(GeneralSettings.ASPECT_RATIO);
-		}else{
-			Matrix2f matrix = new Matrix2f();
-			matrix.setIdentity();
-			shader.aspectRatio.loadMatrix(matrix);
-		}
 
-		for(TextLine textLine : textLineController.getTextLines()) {
-			if(textLine.getWords().size() > 0) {
+		shader.aspectRatio.loadMatrix(GeneralSettings.ASPECT_RATIO);
+
+		for (TextLine textLine : textLineController.getCodeWindowTextLines()) {
+			if (textLine.getWords().size() > 0) {
 				GL13.glActiveTexture(GL13.GL_TEXTURE0);
 				GL11.glBindTexture(GL11.GL_TEXTURE_2D, textLine.getWords().get(0).getFont().getTextureAtlas());
 				for (GUIText text : textLine.getWords()) {
-					renderText(text, flowChartWindowController, codeWindow, doClipping);
+					renderText(text, new Vector2f(codeWindow.getCodeWindowPosition().x-1, codeWindow.getCodeWindowPosition().y-1), codeWindow.getCodeWindowSize(), GeneralSettings.IDENTITY3);
+				}
+			}
+		}
+
+		for (TextLine textLine : textLineController.getFlowchartTextLines()) {
+			if (textLine.getWords().size() > 0) {
+				GL13.glActiveTexture(GL13.GL_TEXTURE0);
+				GL11.glBindTexture(GL11.GL_TEXTURE_2D, textLine.getWords().get(0).getFont().getTextureAtlas());
+				for (GUIText text : textLine.getWords()) {
+					renderText(text, flowChartWindowController.getPosition(), flowChartWindowController.getSize(), flowChartWindowController.getZoomTranslateMatrix());
 				}
 			}
 		}
 		endRendering();
-
 	}
 
-	public void cleanUp(){
+	/**
+	 * Renders the formatted text lines used for lines of code
+	 * @param textLineController
+	 * @param flowChartWindowController
+	 */
+	public void renderToImage(TextLineController textLineController, FlowchartWindowController flowChartWindowController) {
+		prepare();
+
+		Matrix2f matrix = new Matrix2f();
+		matrix.setIdentity();
+		shader.aspectRatio.loadMatrix(matrix);
+
+
+		for (TextLine textLine : textLineController.getFlowchartTextLines()) {
+			if (textLine.getWords().size() > 0) {
+				GL13.glActiveTexture(GL13.GL_TEXTURE0);
+				GL11.glBindTexture(GL11.GL_TEXTURE_2D, textLine.getWords().get(0).getFont().getTextureAtlas());
+				for (GUIText text : textLine.getWords()) {
+					renderText(text, new Vector2f(-1, -1), new Vector2f(2, 2), GeneralSettings.IMAGE_TRANSLATION);
+				}
+			}
+		}
+
+		endRendering();
+	}
+
+	/**
+	 * Cleans up the memory of the {@link TextLineShader}. The TextLineShader has a GPU program used to render saved inside of GRAM. This will not be automatically cleaned up by the garbage collector so it must be deleted manually when this renderer will no longer be used.
+	 */
+	public void cleanUp() {
 		shader.cleanUp();
 	}
-	
-	private void prepare(){
+
+	/**
+	 * Sets the OpenGL state to be appropriate for rendering lines of formatted text.
+	 */
+	private void prepare() {
+		//Enable alpha blending
 		GL11.glEnable(GL11.GL_BLEND);
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+
+		//Disable the depth test
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
+
+		//Set the shader to be the shader in active use so it does not try to use the previous shader to render
 		shader.start();
 	}
-	
-	private void renderText(GUIText text, FlowchartWindowController flowchartWindowController, CodeWindow codeWindow, boolean doClipping){
+
+	/**
+	 * Renders a single {@link GUIText} onto the screen. Also accounts for what region of the screen clipping should be evaluated for.
+	 * @param text the GUIText to be rendered. For a formatted {@link TextLine "line of text"} it is specifically a {@link gui.TextWord}.
+	 */
+	private void renderText(GUIText text, Vector2f windowPosition, Vector2f windowSize, Matrix3f zoomTranslateMatrix) {
+		//Bind the vertex array which represents the quads behind each letter in the text
 		GL30.glBindVertexArray(text.getMesh());
+		//This vertex array has positions stored in attribute 0 and texture coordinates stored in attribute 1
 		GL20.glEnableVertexAttribArray(0);
 		GL20.glEnableVertexAttribArray(1);
+
+		//Load the width of the letter and the added width of an edge(between 0 and 1 where 0 is no width and 1 is full width. Width + edge should not be greater than 1 or it will result in a sharp edge)
 		shader.width.loadFloat(text.getWidth());
 		shader.edge.loadFloat(text.getEdge());
-		shader.borderWidth.loadFloat(text.getBorderWidth());
-		shader.borderEdge.loadFloat(text.getBorderEdge());
-		shader.offset.loadVec2(text.getOffset());
-		shader.outlineColor.loadVec3(text.getOutlineColor());
+
+		//Load the position of the text
 		shader.translation.loadVec2(text.getPosition());
-		shader.windowPosition.loadVec2(-1, -1);
-		shader.windowSize.loadVec2(2, 2);
-		shader.doClipping.loadBoolean(true);
-		if(text.isInFlowchart()){
-			if(doClipping){
-			shader.windowPosition.loadVec2(flowchartWindowController.getPosition());
-			shader.windowSize.loadVec2(flowchartWindowController.getSize());
-			}else{
-				shader.windowPosition.loadVec2(-1, -1);
-				shader.windowSize.loadVec2(2, 2);
-			}
-			shader.zoomTranslateMatrix.loadMatrix(flowchartWindowController.getZoomTranslateMatrix());
-			if(codeWindow == null){
-				shader.doClipping.loadBoolean(false);
-				shader.zoomTranslateMatrix.loadMatrix(GeneralSettings.SCREENSHOT_TRANSLATION);
-				shader.color.loadVec3(text.getColor());
-				GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, text.getVertexCount());
-			}
-		}else if(text.isGuiText()){
-			shader.windowPosition.loadVec2(-1, -1);
-			shader.windowSize.loadVec2(2, 2);
-			shader.zoomTranslateMatrix.loadMatrix(zoomTranslateMatrix);
-			if(codeWindow == null) {
-				shader.color.loadVec3(text.getColor());
-				GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, text.getVertexCount());
-			}
-		}else if(text.isCodeWindowText() && codeWindow != null){
-			shader.windowPosition.loadVec2(codeWindow.getCodeWindowPosition().x-1, codeWindow.getCodeWindowPosition().y-1);
-			shader.windowSize.loadVec2(codeWindow.getCodeWindowSize());
-			shader.zoomTranslateMatrix.loadMatrix(zoomTranslateMatrix);
-		}else{
-			if(codeWindow != null) {
-				shader.windowPosition.loadVec2(codeWindow.getPosition().x - 1, codeWindow.getPosition().y - 1);
-				shader.windowSize.loadVec2(codeWindow.getSize());
-				shader.zoomTranslateMatrix.loadMatrix(zoomTranslateMatrix);
-			}
-		}
-		if(codeWindow != null) {
-			shader.color.loadVec3(text.getColor());
-			GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, text.getVertexCount());
-		}
+
+		//Update the window size and location
+		shader.windowPosition.loadVec2(windowPosition);
+		shader.windowSize.loadVec2(windowSize);
+
+		//Load the matrix which positions the text with the correct level of zoom and position
+		shader.zoomTranslateMatrix.loadMatrix(zoomTranslateMatrix);
+
+		//Load the color used to render this text
+		shader.color.loadVec3(text.getColor());
+
+		//Render the text
+		GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, text.getVertexCount());
+
+		//Unbind the model used for the text
 		GL20.glDisableVertexAttribArray(0);
 		GL20.glDisableVertexAttribArray(1);
 		GL30.glBindVertexArray(0);
 	}
-	
-	private void endRendering(){
+
+	/**
+	 * Restores the OpenGL state for another renderer to be called.
+	 */
+	private void endRendering() {
+		//Stop the shader program
 		shader.stop();
+
+		//Disable the blend function and depth test
 		GL11.glDisable(GL11.GL_BLEND);
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
 	}

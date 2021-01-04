@@ -41,7 +41,7 @@ public class EngineTester {
             e.printStackTrace();
             crash();
         }
-
+        exit();
     }
 
     /**
@@ -64,7 +64,7 @@ public class EngineTester {
         // Configure GLFW
         GLFW.glfwDefaultWindowHints(); // optional, the current window hints are already the default
         GLFW.glfwWindowHint(GLFW.GLFW_VISIBLE, GLFW.GLFW_FALSE); // the window will stay hidden after creation
-        GLFW.glfwWindowHint(GLFW.GLFW_RESIZABLE, GLFW.GLFW_TRUE); // the window will not be resizable
+        GLFW.glfwWindowHint(GLFW.GLFW_RESIZABLE, GLFW.GLFW_TRUE); // the window will be resizable
 
         // Create the window
         window = GLFW.glfwCreateWindow(GeneralSettings.DEFAULT_WIDTH, GeneralSettings.DEFAULT_HEIGHT, "ALFAT", MemoryUtil.NULL, MemoryUtil.NULL);
@@ -174,7 +174,7 @@ public class EngineTester {
 //                System.out.println("Timed out");
             }
             //Render
-            MasterRenderer.renderScene(guis, applicationController, window);
+            MasterRenderer.renderScene(guis, applicationController);
 
         }
     }

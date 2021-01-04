@@ -17,6 +17,8 @@ public class CursorController {
     private Vector2f aspectRatio;
     private int lineIndex;
     private int characterIndex;
+    private boolean visible = false;
+    private boolean toggle = true;
 
     public CursorController(Cursor cursor, CodeWindowController codeWindow){
         this.cursor = cursor;
@@ -24,6 +26,7 @@ public class CursorController {
     }
 
     public void moveCursor(Vector2f mousePosition, CodeWindowController codeWindow){
+        visible = true;
         this.codeWindow = codeWindow;
         texts = codeWindow.getTexts();
         this.aspectRatio = new Vector2f(codeWindow.getAspectRatio());
@@ -259,5 +262,20 @@ public class CursorController {
 
     public Vector2f getAspectRatio(){
         return aspectRatio;
+    }
+
+    public void setVisible(boolean visible){
+        this.visible = visible;
+    }
+
+    public boolean isVisible(){
+        System.out.println(visible);
+        return visible && toggle;
+    }
+
+    public void toggleVisible(){
+        if(visible){
+            toggle = !toggle;
+        }
     }
 }

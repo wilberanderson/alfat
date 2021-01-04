@@ -4,52 +4,88 @@ import gui.TextLine;
 import gui.TextWord;
 import main.GeneralSettings;
 import org.lwjgl.util.vector.Vector2f;
-import org.lwjgl.util.vector.Vector4f;
-import rendering.text.TextMaster;
 
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ *
+ */
 public class TextLineController {
+    List<TextLine> flowchartTextLines = new ArrayList<>();
+    List<TextLine> codeWindowTextLines = new ArrayList<>();
 
-    public TextLineController(){
+    /**
+     *
+     */
+    public TextLineController() {
 
     }
 
-    List<TextLine> textLines = new ArrayList<>();
-
-    public TextLine add(TextLine line){
+    /**
+     * @param line
+     * @return
+     */
+    public TextLine addFlowchartTextLine(TextLine line) {
         float offset = 0;
         int numberOfCharacters = 0;
-        for(TextWord word : line.getWords()){
-            if(word.getSeparator().length() == 1 && word.getSeparator().charAt(0) == ' '){
+        for (TextWord word : line.getWords()) {
+            if (word.getSeparator().length() == 1 && word.getSeparator().charAt(0) == ' ') {
                 offset += word.getSpaceSize();
-            }else if(word.getSeparator().length() == 1 && word.getSeparator().charAt(0) == '\t'){
-                offset += word.getSpaceSize() * ((numberOfCharacters % GeneralSettings.CHARACTERS_PER_SPACE) == 0 ? GeneralSettings.CHARACTERS_PER_SPACE : numberOfCharacters % GeneralSettings.CHARACTERS_PER_SPACE);
+            } else if (word.getSeparator().length() == 1 && word.getSeparator().charAt(0) == '\t') {
+                offset += word.getSpaceSize() * ((numberOfCharacters % GeneralSettings.DEFAULT_TAB_WIDTH) == 0 ? GeneralSettings.DEFAULT_TAB_WIDTH : numberOfCharacters % GeneralSettings.DEFAULT_TAB_WIDTH);
             }
-            word.setPosition(new Vector2f(line.getPosition().x+offset, line.getPosition().y));
-            offset += word.getCharacterEdges()[word.getCharacterEdges().length-1]*2;
-            numberOfCharacters += word.getCharacterEdges().length-1;
+            word.setPosition(new Vector2f(line.getPosition().x + offset, line.getPosition().y));
+            offset += word.getCharacterEdges()[word.getCharacterEdges().length - 1] * 2;
+            numberOfCharacters += word.getCharacterEdges().length - 1;
         }
-//        line.setLength(offset);
-        textLines.add(line);
+        flowchartTextLines.add(line);
         return line;
     }
 
-    public List<TextLine> getTextLines(){
-        return textLines;
+    /**
+     * @param line
+     * @return
+     */
+    public TextLine addCodeWindowTextLine(TextLine line) {
+        float offset = 0;
+        int numberOfCharacters = 0;
+        for (TextWord word : line.getWords()) {
+            if (word.getSeparator().length() == 1 && word.getSeparator().charAt(0) == ' ') {
+                offset += word.getSpaceSize();
+            } else if (word.getSeparator().length() == 1 && word.getSeparator().charAt(0) == '\t') {
+                offset += word.getSpaceSize() * ((numberOfCharacters % GeneralSettings.DEFAULT_TAB_WIDTH) == 0 ? GeneralSettings.DEFAULT_TAB_WIDTH : numberOfCharacters % GeneralSettings.DEFAULT_TAB_WIDTH);
+            }
+            word.setPosition(new Vector2f(line.getPosition().x + offset, line.getPosition().y));
+            offset += word.getCharacterEdges()[word.getCharacterEdges().length - 1] * 2;
+            numberOfCharacters += word.getCharacterEdges().length - 1;
+        }
+        codeWindowTextLines.add(line);
+        return line;
     }
 
-    public void clear(){
-//        for(TextLine text : textLines){
-//            for(TextWord word : text.getWords()){
-//                TextMaster.removeText(word);
-//            }
-//        }
-        textLines.clear();
+
+    /**
+     * @return
+     */
+    public List<TextLine> getFlowchartTextLines() {
+        return flowchartTextLines;
     }
 
 
+    /**
+     * @return
+     */
+    public List<TextLine> getCodeWindowTextLines() {
+        return codeWindowTextLines;
+    }
+
+    /**
+     *
+     */
+    public void clear() {
+        flowchartTextLines.clear();
+    }
 
 
 }

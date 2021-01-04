@@ -2,10 +2,7 @@ package rendering.terminators;
 
 import main.GeneralSettings;
 import rendering.shaders.ShaderProgram;
-import rendering.shaders.uniforms.UniformMat2;
-import rendering.shaders.uniforms.UniformMat3;
-import rendering.shaders.uniforms.UniformVec2;
-import rendering.shaders.uniforms.UniformVec3;
+import rendering.shaders.uniforms.*;
 
 /**
  * Handles the interaction with the {@link gui.Cursor} vertex and fragment shaders.
@@ -19,6 +16,7 @@ public class TerminatorShader extends ShaderProgram{
     protected UniformMat3 zoomTranslateMatrix = new UniformMat3("zoomTranslateMatrix");
     protected UniformMat2 aspectRatio = new UniformMat2("aspectRatio");
     protected UniformMat3 transformationMatrix = new UniformMat3("transformationMatrix");
+    protected UniformBoolean doClipping = new UniformBoolean("doClipping");
 
     /**
      * Performs setup for a {@link TerminatorShader}
@@ -28,7 +26,7 @@ public class TerminatorShader extends ShaderProgram{
      */
     public TerminatorShader() {
         super(GeneralSettings.TERMINATOR_VERTEX, GeneralSettings.TERMINATOR_FRAGMENT, "position");
-        super.storeAllUniformLocations(color, windowPosition, windowSize, zoomTranslateMatrix, aspectRatio, transformationMatrix);
+        super.storeAllUniformLocations(color, windowPosition, windowSize, zoomTranslateMatrix, aspectRatio, transformationMatrix, doClipping);
     }
 
 
