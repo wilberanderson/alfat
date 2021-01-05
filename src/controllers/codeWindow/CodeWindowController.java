@@ -121,9 +121,7 @@ public class CodeWindowController {
     }
 
     public void moveMouse(Vector2f mousePosition){
-        //TODO: Update for resized code windows
-        //if(mousePosition.x > codeWindow.getPosition().x && mousePosition.y > codeWindow.getPosition().y && mousePosition.x < codeWindow.getPosition().x + codeWindow.getSize().x && mousePosition.y < codeWindow.getPosition().y + codeWindow.getSize().y){
-        if(mousePosition.x > codeWindow.getPosition().x-1 && mousePosition.y > codeWindow.getPosition().y -1 && mousePosition.x < codeWindow.getPosition().x + codeWindow.getSize().x -1 && mousePosition.y < codeWindow.getPosition().y + codeWindow.getSize().y - 1){
+        if(mousePosition.x > codeWindow.getPosition().x && mousePosition.y > codeWindow.getPosition().y && mousePosition.x < codeWindow.getPosition().x + codeWindow.getSize().x && mousePosition.y < codeWindow.getPosition().y + codeWindow.getSize().y){
             inBounds = true;
             this.mousePosition = mousePosition;
         }else{
