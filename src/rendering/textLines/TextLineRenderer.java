@@ -44,7 +44,7 @@ public class TextLineRenderer {
 				GL13.glActiveTexture(GL13.GL_TEXTURE0);
 				GL11.glBindTexture(GL11.GL_TEXTURE_2D, textLine.getWords().get(0).getFont().getTextureAtlas());
 				for (GUIText text : textLine.getWords()) {
-					renderText(text, new Vector2f(codeWindow.getCodeWindowPosition().x-1, codeWindow.getCodeWindowPosition().y-1), codeWindow.getCodeWindowSize(), GeneralSettings.IDENTITY3);
+					renderText(text, new Vector2f(codeWindow.getCodeWindowPosition().x, codeWindow.getCodeWindowPosition().y), codeWindow.getCodeWindowSize(), GeneralSettings.IDENTITY3);
 				}
 			}
 		}
@@ -72,7 +72,6 @@ public class TextLineRenderer {
 		Matrix2f matrix = new Matrix2f();
 		matrix.setIdentity();
 		shader.aspectRatio.loadMatrix(matrix);
-
 
 		for (TextLine textLine : textLineController.getFlowchartTextLines()) {
 			if (textLine.getWords().size() > 0) {

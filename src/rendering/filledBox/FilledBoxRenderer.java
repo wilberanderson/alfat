@@ -68,7 +68,7 @@ public class FilledBoxRenderer {
         //If the codeWindowController is not null then a code window is open and needs to be rendered
         if (codeWindowController != null) {
             //Load the window position and size from the code window which will be used for clipping the code window text boxes
-            shader.windowPosition.loadVec2(codeWindowController.getCodeWindow().getCodeWindowPosition().x - 1, codeWindowController.getCodeWindow().getCodeWindowPosition().y - 1);
+            shader.windowPosition.loadVec2(codeWindowController.getCodeWindow().getPosition().x, codeWindowController.getCodeWindow().getPosition().y);
             shader.windowSize.loadVec2(codeWindowController.getCodeWindow().getSize());
             //Ensure that the aspect ratio being used for the filled boxes are identities
             shader.aspectRatio.loadMatrix(GeneralSettings.IDENTITY2);
@@ -82,7 +82,7 @@ public class FilledBoxRenderer {
             //Test to see if the flowchart window was also opened
             if (flowchartWindowController != null) {
                 //Each text box in the flowchart window controller will use the same translation,
-                //clipping window position, clipping window size, and aspect ratio, load the apprpriate values
+                //clipping window position, clipping window size, and aspect ratio, load the appropriate values
                 shader.zoomTranslateMatrix.loadMatrix(flowchartWindowController.getZoomTranslateMatrix());
                 shader.windowPosition.loadVec2(flowchartWindowController.getPosition());
                 shader.windowSize.loadVec2(flowchartWindowController.getSize());
@@ -223,8 +223,8 @@ public class FilledBoxRenderer {
         Matrix3f transformationMatrix = new Matrix3f();
         transformationMatrix.m00 = filledBox.getSize().x / 2;
         transformationMatrix.m11 = filledBox.getSize().y / 2;
-        transformationMatrix.m20 = filledBox.getPosition().x + 1;
-        transformationMatrix.m21 = filledBox.getPosition().y + 1;
+        transformationMatrix.m20 = filledBox.getPosition().x;
+        transformationMatrix.m21 = filledBox.getPosition().y;
         shader.transformation.loadMatrix(transformationMatrix);
 
         //Render the filled box

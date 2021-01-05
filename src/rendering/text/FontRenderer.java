@@ -112,12 +112,12 @@ public class FontRenderer {
 				GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, text.getVertexCount());
 			}
 		} else if (text.isCodeWindowText() && codeWindow != null) {
-			shader.windowPosition.loadVec2(codeWindow.getCodeWindowPosition().x - 1, codeWindow.getCodeWindowPosition().y - 1);
+			shader.windowPosition.loadVec2(codeWindow.getCodeWindowPosition().x, codeWindow.getCodeWindowPosition().y);
 			shader.windowSize.loadVec2(codeWindow.getCodeWindowSize());
 			shader.zoomTranslateMatrix.loadMatrix(zoomTranslateMatrix);
 		} else {
 			if (codeWindow != null) {
-				shader.windowPosition.loadVec2(codeWindow.getPosition().x - 1, codeWindow.getPosition().y - 1);
+				shader.windowPosition.loadVec2(codeWindow.getPosition().x, codeWindow.getPosition().y);
 				shader.windowSize.loadVec2(codeWindow.getSize());
 				shader.zoomTranslateMatrix.loadMatrix(zoomTranslateMatrix);
 			}

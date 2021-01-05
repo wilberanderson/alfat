@@ -51,11 +51,11 @@ public class FlowchartTextBoxController {
                 greatestLength = line.getLength();
             }
 
-            line.getPosition().setX(GeneralSettings.TEXT_BOX_BORDER_WIDTH * 2 + position.x - 1);
-            line.getPosition().setY(position.y - minHeight - 1);
+            line.getPosition().setX(GeneralSettings.TEXT_BOX_BORDER_WIDTH * 2 + position.x);
+            line.getPosition().setY(position.y - minHeight);
             addedLines.add(line);
 
-            GUIText lineNumberText = new GUIText(Integer.toString(lineNumber), GeneralSettings.FONT_SIZE, GeneralSettings.FONT, new Vector2f(GeneralSettings.TEXT_BOX_BORDER_WIDTH + position.x - 1, line.getPosition().y - lineHeight * textLines.size() - GeneralSettings.TEXT_BOX_BORDER_WIDTH/*+GeneralSettings.TEXT_BOX_BORDER_WIDTH + lineHeight*textLines.size()*/), GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE, GeneralSettings.LINE_NUMBER_COLOR, null, false, true, false);
+            GUIText lineNumberText = new GUIText(Integer.toString(lineNumber), GeneralSettings.FONT_SIZE, GeneralSettings.FONT, new Vector2f(GeneralSettings.TEXT_BOX_BORDER_WIDTH + position.x, line.getPosition().y - lineHeight * textLines.size() - GeneralSettings.TEXT_BOX_BORDER_WIDTH/*+GeneralSettings.TEXT_BOX_BORDER_WIDTH + lineHeight*textLines.size()*/), GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE, GeneralSettings.LINE_NUMBER_COLOR, null, false, true, false);
             textBox.getLineNumbers().add(lineNumberText);
             if (lineNumberText.getLength() > longestLineNumber) {
                 longestLineNumber = (float) lineNumberText.getLength();
@@ -78,7 +78,7 @@ public class FlowchartTextBoxController {
         textBox.setSize(new Vector2f((float) greatestLength * 2 + 4 * GeneralSettings.TEXT_BOX_BORDER_WIDTH + textBox.getTextNumberFilledBox().getSize().x, lineHeight * textLines.size() + GeneralSettings.TEXT_BOX_BORDER_WIDTH));
         textBox.setGuiFilledBox(new GUIFilledBox(position, textBox.getSize(), GeneralSettings.TEXT_BOX_BACKGROUND_COLOR));
         for (GUIText text : textBox.getTexts()) {
-            text.setPosition(new Vector2f(textBox.getTextNumberFilledBox().getPosition().x + textBox.getTextNumberFilledBox().getSize().x - 1, text.getPosition().y));
+            text.setPosition(new Vector2f(textBox.getTextNumberFilledBox().getPosition().x + textBox.getTextNumberFilledBox().getSize().x, text.getPosition().y));
         }
         for (GUIText text : textBox.getTexts()) {
             if (text.getPositionBounds() == null) {
@@ -107,8 +107,8 @@ public class FlowchartTextBoxController {
         textBox.changeHorizontalPosition(textBox.getPosition().x - position.x);
         textBox.changeVerticalPosition(textBox.getPosition().y - position.y);
         textBox.setPosition(position);
-        textBox.getTextNumberFilledBox().setPosition(position);
-        textBox.getGuiFilledBox().setPosition(new Vector2f(position.x, position.y));
+        textBox.getTextNumberFilledBox().setPosition(new Vector2f(position));
+        textBox.getGuiFilledBox().setPosition(new Vector2f(position));
     }
 
     /**

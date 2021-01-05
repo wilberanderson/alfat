@@ -343,7 +343,7 @@ public class LC3Parser implements CodeReader {
         }
 
         int i = 0;
-        Vector2f location = new Vector2f(GeneralSettings.FLOWCHART_PAD_LEFT, 1);
+        Vector2f location = new Vector2f(GeneralSettings.FLOWCHART_PAD_LEFT - 1, 0);
         List<FlowchartTextBox> textBoxes = new ArrayList<>();
         float max_right_width = -1000f;
         List<Vector2f> locations = new ArrayList<>();
@@ -356,7 +356,7 @@ public class LC3Parser implements CodeReader {
                 System.out.println("Starting @ line #" + box.getStartLine());
             }
 
-            flowchartWindowController.getFlowchartTextBoxController().add(new Vector2f(location), box.getTextLines(), box.getStartLine() + 1, box.getRegisters(), box.alert);
+            flowchartWindowController.getFlowchartTextBoxController().add(new Vector2f(location.x, location.y), box.getTextLines(), box.getStartLine() + 1, box.getRegisters(), box.alert);
 //            FlowchartTextBox textBox = new FlowchartTextBox(new Vector2f(location), box.getTextLines(), box.getStartLine()+1, box.getRegisters(), box.alert);
 //            for(TextLine line : textBox.getTextLines()){
 //                flowchartWindowController.getTextLineController().add(line);
@@ -392,9 +392,9 @@ public class LC3Parser implements CodeReader {
                 }*/
                 List<Vector2f> coordinates = new ArrayList<>();
                 //first point: bottom of current box:
-                coordinates.add(new Vector2f((-1 + locations.get(index).x) + .05f, (-1 + locations.get(index).y)));
+                coordinates.add(new Vector2f((locations.get(index).x) + .05f, (locations.get(index).y)));
                 //second point: top of next box:
-                coordinates.add(new Vector2f((-1 + locations.get(index).x) + .05f, (-1 + locations.get(index + 1).y + sizes.get(index + 1).y)));
+                coordinates.add(new Vector2f((locations.get(index).x) + .05f, (locations.get(index + 1).y + sizes.get(index + 1).y)));
                 //if (verbose) System.out.println("from " + (locations.get(index).y) + " to " + (-1 + locations.get(index+1).y + sizes.get(index+1).y) + "\n");
                 Terminator terminator;
                 if (coordinates.get(coordinates.size() - 1).y < coordinates.get((coordinates.size() - 2)).y) {
@@ -418,8 +418,8 @@ public class LC3Parser implements CodeReader {
 
                     List<Vector2f> coordinates = new ArrayList<>();
 
-                    coordinates.add(new Vector2f((-1 + locations.get(index).x) + 2 * sizes.get(index).x / 3, (-1 + locations.get(index).y)));
-                    coordinates.add(new Vector2f((-1 + locations.get(index).x) + 2 * sizes.get(index).x / 3, (-1 + locations.get(index).y) - (GeneralSettings.FLOWCHART_PAD_TOP / 3)));
+                    coordinates.add(new Vector2f((locations.get(index).x) + 2 * sizes.get(index).x / 3, (locations.get(index).y)));
+                    coordinates.add(new Vector2f((locations.get(index).x) + 2 * sizes.get(index).x / 3, (locations.get(index).y) - (GeneralSettings.FLOWCHART_PAD_TOP / 3)));
 
                     float temp = max_right_width + GeneralSettings.FLOWCHART_PAD_LEFT;
 
@@ -442,14 +442,14 @@ public class LC3Parser implements CodeReader {
                     x_bound = Math.max(x_bound, (temp + jump_lines * GeneralSettings.LINE_OFFSET));
 
                     if (flowchart.get(index) == flowchart.get(index).connection) {
-                        coordinates.add(new Vector2f((-.95f + temp), (-1 + locations.get(index).y) - (GeneralSettings.FLOWCHART_PAD_TOP / 3)));
-                        coordinates.add(new Vector2f((-.95f + temp), (-1 + sizes.get(flowchart.get(index).connection.getBoxNumber() - 1).y + locations.get(flowchart.get(index).connection.getBoxNumber() - 1).y + (GeneralSettings.FLOWCHART_PAD_TOP / 3))));
+                        coordinates.add(new Vector2f((-.95f + temp), (locations.get(index).y) - (GeneralSettings.FLOWCHART_PAD_TOP / 3)));
+                        coordinates.add(new Vector2f((-.95f + temp), (sizes.get(flowchart.get(index).connection.getBoxNumber() - 1).y + locations.get(flowchart.get(index).connection.getBoxNumber() - 1).y + (GeneralSettings.FLOWCHART_PAD_TOP / 3))));
                     } else {
-                        coordinates.add(new Vector2f((.25f + temp + jump_lines * GeneralSettings.LINE_OFFSET), (-1 + locations.get(index).y) - (GeneralSettings.FLOWCHART_PAD_TOP / 3)));
-                        coordinates.add(new Vector2f((.25f + temp + jump_lines * GeneralSettings.LINE_OFFSET), (-1 + sizes.get(flowchart.get(index).connection.getBoxNumber() - 1).y + locations.get(flowchart.get(index).connection.getBoxNumber() - 1).y + (GeneralSettings.FLOWCHART_PAD_TOP / 3))));
+                        coordinates.add(new Vector2f((.25f + temp + jump_lines * GeneralSettings.LINE_OFFSET), (locations.get(index).y) - (GeneralSettings.FLOWCHART_PAD_TOP / 3)));
+                        coordinates.add(new Vector2f((.25f + temp + jump_lines * GeneralSettings.LINE_OFFSET), (sizes.get(flowchart.get(index).connection.getBoxNumber() - 1).y + locations.get(flowchart.get(index).connection.getBoxNumber() - 1).y + (GeneralSettings.FLOWCHART_PAD_TOP / 3))));
                     }
-                    coordinates.add(new Vector2f((-1 + locations.get(index).x) + 2 * sizes.get(flowchart.get(index).connection.getBoxNumber() - 1).x / 3, (-1 + sizes.get(flowchart.get(index).connection.getBoxNumber() - 1).y + locations.get(flowchart.get(index).connection.getBoxNumber() - 1).y + (GeneralSettings.FLOWCHART_PAD_TOP / 3))));
-                    coordinates.add(new Vector2f((-1 + locations.get(index).x) + 2 * sizes.get(flowchart.get(index).connection.getBoxNumber() - 1).x / 3, (-1 + sizes.get(flowchart.get(index).connection.getBoxNumber() - 1).y + locations.get(flowchart.get(index).connection.getBoxNumber() - 1).y)));
+                    coordinates.add(new Vector2f((locations.get(index).x) + 2 * sizes.get(flowchart.get(index).connection.getBoxNumber() - 1).x / 3, (sizes.get(flowchart.get(index).connection.getBoxNumber() - 1).y + locations.get(flowchart.get(index).connection.getBoxNumber() - 1).y + (GeneralSettings.FLOWCHART_PAD_TOP / 3))));
+                    coordinates.add(new Vector2f((locations.get(index).x) + 2 * sizes.get(flowchart.get(index).connection.getBoxNumber() - 1).x / 3, (sizes.get(flowchart.get(index).connection.getBoxNumber() - 1).y + locations.get(flowchart.get(index).connection.getBoxNumber() - 1).y)));
                     Terminator terminator;
                     if (coordinates.get(coordinates.size() - 1).y < coordinates.get((coordinates.size() - 2)).y) {
                         terminator = new ArrowHead(coordinates.get(coordinates.size() - 1), false);

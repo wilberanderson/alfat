@@ -269,7 +269,6 @@ public class CursorController {
     }
 
     public boolean isVisible(){
-        System.out.println(visible);
         return visible && toggle;
     }
 

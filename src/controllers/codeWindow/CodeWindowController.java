@@ -21,7 +21,7 @@ public class CodeWindowController {
     Vector2f mousePosition;
     Vector2f aspectRatio = new Vector2f(1, 1);
 
-    private float contentsVerticalPosition = 0;
+    private float contentsVerticalPosition = -1;
     private float maxVerticalPosition;
 
     private float lineHeight;
@@ -45,8 +45,8 @@ public class CodeWindowController {
         int lineNumber = 1;
         float longestLineNumber = 0;
         for (String line : lines){
-            this.codeWindow.getTexts().add(new GUIText(line, fontSize, font, new Vector2f(border + position.x-1,position.y-minHeight+size.y-1), thickness, borderWidth, textColor, codeWindow.getPositionBounds(), false, false, true));
-            GUIText lineNumberText = new GUIText(Integer.toString(lineNumber), fontSize, font, new Vector2f(border + position.x-1, position.y-minHeight+size.y-1), thickness, borderWidth, textColor, codeWindow.getPositionBounds(), false, false, false);
+            this.codeWindow.getTexts().add(new GUIText(line, fontSize, font, new Vector2f(border + position.x,position.y-minHeight+size.y), thickness, borderWidth, textColor, codeWindow.getPositionBounds(), false, false, true));
+            GUIText lineNumberText = new GUIText(Integer.toString(lineNumber), fontSize, font, new Vector2f(border + position.x, position.y-minHeight+size.y), thickness, borderWidth, textColor, codeWindow.getPositionBounds(), false, false, false);
             this.codeWindow.getLineNumbers().add(lineNumberText);
             if(lineNumberText.getLength() > longestLineNumber){
                 longestLineNumber = (float) lineNumberText.getLength();
@@ -55,7 +55,7 @@ public class CodeWindowController {
             lineNumber++;
         }
         changeContentsHorizontalPosition(longestLineNumber*2+border*2);
-        this.codeWindow.setTextNumberFilledBox(new GUIFilledBox(position, new Vector2f(longestLineNumber*2 + 2*border, size.y), GeneralSettings.LINE_NUMBER_BACKGROUND_COLOR));
+        this.codeWindow.setTextNumberFilledBox(new GUIFilledBox(new Vector2f(position.x, position.y), new Vector2f(longestLineNumber*2 + 2*border, size.y), GeneralSettings.LINE_NUMBER_BACKGROUND_COLOR));
         maxVerticalPosition = minHeight-size.y;
         this.codeWindow.setGuiFilledBox(new GUIFilledBox(new Vector2f(longestLineNumber*2+border*2, 0), new Vector2f(size.x - longestLineNumber*2 + border*2, size.y), backgroundColor));
 
@@ -127,7 +127,6 @@ public class CodeWindowController {
             inBounds = true;
             this.mousePosition = mousePosition;
         }else{
-            System.out.println("Out of bounds");
             inBounds = false;
         }
     }
@@ -138,7 +137,7 @@ public class CodeWindowController {
         float codeWindowWidth = codeWindow.getSize().x-lineNumberWidth;
         codeWindow.setSize(new Vector2f(codeWindow.getSize().x, height));
         codeWindow.getTextNumberFilledBox().setSize(new Vector2f(lineNumberWidth, height));
-        codeWindow.getGuiFilledBox().setPosition(new Vector2f(lineNumberWidth, 0));
+        codeWindow.getGuiFilledBox().setPosition(new Vector2f(lineNumberWidth-1, -1));
         codeWindow.getGuiFilledBox().setSize(new Vector2f(codeWindow.getSize().x-lineNumberWidth, height));
         //changeLineNumberVerticalPosition(-contentsVerticalPosition - ((codeWindow.getSize().y-1)-codeWindow.aspectRatio.y));
         contentsVerticalPosition = contentsVerticalPosition/this.aspectRatio.y*aspectRatio.y;
@@ -153,7 +152,7 @@ public class CodeWindowController {
         startingHeight = codeWindow.getSize().y - 1;
         startingHeight /= aspectRatio.y;
         for(GUIText text : codeWindow.getTexts()){
-            text.setPosition(new Vector2f((codeWindow.getCodeWindowPosition().x-1)/aspectRatio.x, startingHeight));//+contentsVerticalPosition));
+            text.setPosition(new Vector2f((codeWindow.getCodeWindowPosition().x)/aspectRatio.x, startingHeight));//+contentsVerticalPosition));
             startingHeight -= lineHeight;
         }
         this.aspectRatio = aspectRatio;
