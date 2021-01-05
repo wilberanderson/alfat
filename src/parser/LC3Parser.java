@@ -5,6 +5,7 @@ import controllers.flowchartWindow.FlowchartWindowController;
 import gui.FlowchartLine;
 import gui.TextLine;
 import gui.TextWord;
+import gui.UserPreferences;
 import gui.terminators.ArrowHead;
 import gui.terminators.Junction;
 import gui.terminators.Terminator;
@@ -26,6 +27,7 @@ public class LC3Parser implements CodeReader {
     public float x_bound = -10;
     public float y_bound = -10;
 
+
     HashMap<String, Integer> labelMap = new HashMap<>(); // map of labels -> line numbers
     List<LC3TLine> lines = new ArrayList<>();
 
@@ -34,7 +36,6 @@ public class LC3Parser implements CodeReader {
         this.verbose = verbose;
     }
 
-    //TODO: change from hardcoded to dynamically loaded from JSON
     JsonReader jr = new JsonReader(new File(GeneralSettings.SYNTAX_PATH));
 
     LC3Syntax syn = jr.mapJsonLC3Syntax();
@@ -160,7 +161,9 @@ public class LC3Parser implements CodeReader {
                 lines.add(new LC3TLine(line, comm, label, targetLabel, jump, registers, i));
                 // Assign formatted text object to the new LC3Tline class
                 lines.get(lines.size()-1).setTextLine(FormLine);
+
             }
+            br.close();
         }
         catch (FileNotFoundException e) {
             if (verbose) System.out.println("File not found");

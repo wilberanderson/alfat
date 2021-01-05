@@ -1,14 +1,12 @@
 package rendering.renderEngine;
 
 import controllers.ApplicationController;
-import controllers.codeWindow.CursorController;
 import controllers.flowchartWindow.FlowchartWindowController;
 import controllers.flowchartWindow.TextLineController;
 import gui.*;
 import main.GeneralSettings;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.util.vector.Vector2f;
 import rendering.cursor.CursorRenderer;
 import rendering.flowchartLine.FlowchartLineRenderer;
 import rendering.guis.GuiRenderer;
@@ -17,7 +15,6 @@ import rendering.terminators.TerminatorRenderer;
 import rendering.text.TextMaster;
 import rendering.textLines.TextLineRenderer;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -55,6 +52,13 @@ public class MasterRenderer {
 	public static void renderScene(List<GuiTexture> guis, ApplicationController controller, long window) {
 		//Clear the framebuffer
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
+
+
+		//Updates user preferences controlled by master renderer
+		if(GeneralSettings.MasterRendererUserPrefToggle) {
+			controller.updateUserPref();
+			GeneralSettings.MasterRendererUserPrefToggle = false;
+		}
 
 		guiRenderer.render(guis);
 		if(controller.getCodeWindowController() != null) {

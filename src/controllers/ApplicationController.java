@@ -5,6 +5,7 @@ import controllers.flowchartWindow.FlowchartWindowController;
 import controllers.gui.ButtonController;
 import controllers.gui.GUIController;
 import gui.Header;
+import gui.UserPreferences;
 import gui.buttons.HeaderMenu;
 import main.GeneralSettings;
 import org.lwjgl.opengl.GL11;
@@ -34,6 +35,30 @@ public class ApplicationController {
     GUIController guiController;
     int activeWindow = ControllerSettings.GUI_WINDOW;
 
+    /**
+     * Updates user preferences
+     * */
+    public void updateUserPref() {
+
+
+        //Flowchart background color and flowchart line color
+        if(flowchartWindowController != null && flowchartWindowController.getFlowchartTextBoxController() != null) {
+            flowchartWindowController.getFlowchartTextBoxController().changeTextBoxBackgroundcolor3f(GeneralSettings.USERPREF.getFlowchartBoxbackgroundColor3f());
+            flowchartWindowController.getFlowchartTextBoxController().changeTextBoxNumberLineBGColor3f(GeneralSettings.USERPREF.getFlowchartBoxlinenumberBGColor3f());
+        }
+
+        if(codeWindowController != null && codeWindowController.getCodeWindow() != null) {
+            codeWindowController.changeCodewindowBGcolor3f(GeneralSettings.USERPREF.getTexteditorBGColor3f());
+            codeWindowController.changeCodewindowLinenumberBGColor3f(GeneralSettings.USERPREF.getTexteditorLinenumberBGColor3f());
+        }
+
+        if(header != null) {
+            header.changeHeadercolor();
+        }
+
+        //Background color
+        GL11.glClearColor(GeneralSettings.USERPREF.getBackgroundColor3f().getX(), GeneralSettings.USERPREF.getBackgroundColor3f().getY(), GeneralSettings.USERPREF.getBackgroundColor3f().getZ(), 1);
+    }
 
 
     public ApplicationController(){
