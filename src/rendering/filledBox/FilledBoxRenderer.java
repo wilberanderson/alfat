@@ -17,6 +17,7 @@ import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.util.vector.Matrix2f;
 import org.lwjgl.util.vector.Matrix3f;
+import utils.Maths;
 
 /**
  * Controls rendering {@link GUIFilledBox filled boxes}, such as those which appear
@@ -29,12 +30,11 @@ public class FilledBoxRenderer {
 
     //The vertices used by a filled box. They go from the bottom left of the screen to the top right
     //in the filled box coordinate system
-    //TODO: Move to the OpenGL coordinate system
     private static final float[] VERTICES = {
             0, 0,
-            0, 2,
-            2, 0,
-            2, 2
+            0, 1,
+            1, 0,
+            1, 1
     };
     //The model used for rendering which uses the vertices
     private RawModel square;
@@ -163,13 +163,13 @@ public class FilledBoxRenderer {
         shader.doClipping.loadBoolean(false);
 
         //Render the headers filled box
-        renderFilledBoxGUI(header.getGuiFilledBox());
+        renderFilledBox(header.getGuiFilledBox());
 
         //For each TextButton there is a filled box behind it
         for (Button button : ButtonController.getButtons()) {
             if (button instanceof TextButton) {
                 //Render the buttons filled box
-                renderFilledBoxGUI(((TextButton) button).getGuiFilledBox());
+                renderFilledBox(((TextButton) button).getGuiFilledBox());
             }
         }
 
@@ -191,41 +191,7 @@ public class FilledBoxRenderer {
 
         //Create a transformation matrix in the text box coordinate system based on the
         //filled boxes size and position and load it to the shader
-        //TODO: Move this creation into the Maths class
-        //TODO: Change this to OpenGL coordinate system
-        Matrix3f transformationMatrix = new Matrix3f();
-        transformationMatrix.m00 = filledBox.getSize().x / 2;
-        transformationMatrix.m11 = filledBox.getSize().y / 2;
-        transformationMatrix.m20 = filledBox.getPosition().x;
-        transformationMatrix.m21 = filledBox.getPosition().y;
-        shader.transformation.loadMatrix(transformationMatrix);
-
-        //Render the filled box
-        GL11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 0, 4);
-    }
-
-    /**
-     * Renders a single filled box. Loads the color, a calculated transformation matrix to put the
-     * filled box in the right location with the right scale, and renders the box.
-     * @param filledBox the filled box to be rendered. Contains a three dimensional vector representing an
-     * RBG color, and two dimensional vectors representing the position and size in the OpenGL coordinate
-     * system.
-     * TODO: Delete this when text boxes are moved to the OpenGL coordinate system
-     */
-    private void renderFilledBoxGUI(GUIFilledBox filledBox) {
-        //Filled boxes may have different colors, load the color for each
-        shader.color.loadVec3(filledBox.getColor());
-
-        //Create a transformation matrix in the text box coordinate system based on the
-        //filled boxes size and position and load it to the shader
-        //TODO: Move this creation into the Maths class
-        //TODO: Change this to OpenGL coordinate system
-        Matrix3f transformationMatrix = new Matrix3f();
-        transformationMatrix.m00 = filledBox.getSize().x / 2;
-        transformationMatrix.m11 = filledBox.getSize().y / 2;
-        transformationMatrix.m20 = filledBox.getPosition().x;
-        transformationMatrix.m21 = filledBox.getPosition().y;
-        shader.transformation.loadMatrix(transformationMatrix);
+        shader.transformation.loadMatrix(Maths.createTransformationMatrix(filledBox.getSize(), filledBox.getPosition()));
 
         //Render the filled box
         GL11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 0, 4);
