@@ -29,6 +29,7 @@ import org.lwjgl.glfw.GLFW;
 import rendering.renderEngine.MasterRenderer;
 
 import javax.imageio.ImageIO;
+import javax.swing.*;
 
 public class Header {
     private List<HeaderMenu> menuList;
@@ -492,8 +493,21 @@ public class Header {
         button = new TextButton("Settings Menu") {
             @Override
             public void onPress() {
-                SettingsMenu sMenu = new SettingsMenu();
-
+                SwingUtilities.invokeLater(() -> {
+                    //set l&f once and never again
+                    try {
+                        UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+                    } catch (ClassNotFoundException e) {
+                        e.printStackTrace();
+                    } catch (InstantiationException e) {
+                        e.printStackTrace();
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                    } catch (UnsupportedLookAndFeelException e) {
+                        e.printStackTrace();
+                    }
+                    SettingsMenu sMenu = new SettingsMenu();
+                });
             }
         };
         settingsMenuButtonList.add(button);

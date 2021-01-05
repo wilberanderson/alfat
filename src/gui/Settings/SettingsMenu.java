@@ -46,7 +46,7 @@ public class SettingsMenu {
     private int GUI_JSP_PADDING = 150;
 
 
-    //Regx
+    //Regexp
     private String validFileType = "^(\\w+)$|(\\w+(,|;)\\w+)*$";
 
 
@@ -54,19 +54,6 @@ public class SettingsMenu {
      * Builds and displays the settings GUI
      * */
     public SettingsMenu() {
-        try {
-            System.out.println("changing l&f:");
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            System.out.println("done.");
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (UnsupportedLookAndFeelException e) {
-            e.printStackTrace();
-        }
         //Init fake button content
         setFakeButtonscontent();
 
