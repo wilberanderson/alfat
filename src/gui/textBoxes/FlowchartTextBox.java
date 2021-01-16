@@ -1,15 +1,7 @@
 package gui.textBoxes;
 
-import gui.GUIFilledBox;
-import gui.GUIText;
-import gui.TextLine;
-import gui.TextWord;
-import main.GeneralSettings;
 import org.lwjgl.util.vector.Vector2f;
-import org.lwjgl.util.vector.Vector4f;
-import rendering.text.TextMaster;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class FlowchartTextBox extends TextBox{

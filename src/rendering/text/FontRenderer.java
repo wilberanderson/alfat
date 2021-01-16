@@ -1,9 +1,12 @@
 package rendering.text;
 
 import controllers.flowchartWindow.FlowchartWindowController;
-import gui.GUIText;
+import gui.texts.CodeWindowText;
+import gui.texts.GUIText;
+import gui.texts.Text;
 import gui.fontMeshCreator.FontType;
 import gui.textBoxes.CodeWindow;
+import gui.texts.TextWord;
 import main.GeneralSettings;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
@@ -35,7 +38,7 @@ public class FontRenderer {
 	 * @param doClipping
 	 * @param isScreenshot
 	 */
-	public void render(Map<FontType, List<GUIText>> texts, FlowchartWindowController flowChartWindowController, CodeWindow codeWindow, boolean doClipping, boolean isScreenshot) {
+	public void render(Map<FontType, List<Text>> texts, FlowchartWindowController flowChartWindowController, CodeWindow codeWindow, boolean doClipping, boolean isScreenshot) {
 		prepare();
 		if (!isScreenshot) {
 			shader.aspectRatio.loadMatrix(GeneralSettings.ASPECT_RATIO);
@@ -47,7 +50,7 @@ public class FontRenderer {
 		for (FontType font : texts.keySet()) {
 			GL13.glActiveTexture(GL13.GL_TEXTURE0);
 			GL11.glBindTexture(GL11.GL_TEXTURE_2D, font.getTextureAtlas());
-			for (GUIText text : texts.get(font)) {
+			for (Text text : texts.get(font)) {
 				renderText(text, flowChartWindowController, codeWindow, doClipping);
 			}
 		}
@@ -78,17 +81,17 @@ public class FontRenderer {
 	 * @param codeWindow
 	 * @param doClipping
 	 */
-	private void renderText(GUIText text, FlowchartWindowController flowchartWindowController, CodeWindow codeWindow, boolean doClipping) {
+	private void renderText(Text text, FlowchartWindowController flowchartWindowController, CodeWindow codeWindow, boolean doClipping) {
 		GL30.glBindVertexArray(text.getMesh());
 		GL20.glEnableVertexAttribArray(0);
 		GL20.glEnableVertexAttribArray(1);
-		shader.width.loadFloat(text.getWidth());
-		shader.edge.loadFloat(text.getEdge());
+		shader.width.loadFloat(GeneralSettings.FONT_WIDTH);
+		shader.edge.loadFloat(GeneralSettings.FONT_EDGE);
 		shader.translation.loadVec2(text.getPosition());
 		shader.windowPosition.loadVec2(-1, -1);
 		shader.windowSize.loadVec2(2, 2);
 		shader.doClipping.loadBoolean(true);
-		if (text.isInFlowchart()) {
+		if (text instanceof TextWord) {
 			if (doClipping) {
 				shader.windowPosition.loadVec2(flowchartWindowController.getPosition());
 				shader.windowSize.loadVec2(flowchartWindowController.getSize());
@@ -100,18 +103,18 @@ public class FontRenderer {
 			if (codeWindow == null) {
 				shader.doClipping.loadBoolean(false);
 				shader.zoomTranslateMatrix.loadMatrix(GeneralSettings.IMAGE_TRANSLATION);
-				shader.color.loadVec3(text.getColor());
+				shader.color.loadVec3(((TextWord) text).getColor());
 				GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, text.getVertexCount());
 			}
-		} else if (text.isGuiText()) {
+		} else if (text instanceof GUIText) {
 			shader.windowPosition.loadVec2(-1, -1);
 			shader.windowSize.loadVec2(2, 2);
 			shader.zoomTranslateMatrix.loadMatrix(zoomTranslateMatrix);
 			if (codeWindow == null) {
-				shader.color.loadVec3(text.getColor());
+				shader.color.loadVec3(GUIText.getColor());
 				GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, text.getVertexCount());
 			}
-		} else if (text.isCodeWindowText() && codeWindow != null) {
+		} else if (text instanceof CodeWindowText && codeWindow != null) {
 			shader.windowPosition.loadVec2(codeWindow.getCodeWindowPosition().x, codeWindow.getCodeWindowPosition().y);
 			shader.windowSize.loadVec2(codeWindow.getCodeWindowSize());
 			shader.zoomTranslateMatrix.loadMatrix(zoomTranslateMatrix);
@@ -123,7 +126,7 @@ public class FontRenderer {
 			}
 		}
 		if (codeWindow != null) {
-			shader.color.loadVec3(text.getColor());
+			//shader.color.loadVec3(text.getColor());
 			GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, text.getVertexCount());
 		}
 		GL20.glDisableVertexAttribArray(0);

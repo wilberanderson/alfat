@@ -2,8 +2,8 @@ package controllers.codeWindow;
 
 import controllers.ApplicationController;
 import gui.Cursor;
-import gui.GUIText;
-import gui.textBoxes.CodeWindow;
+import gui.texts.CodeWindowText;
+import gui.texts.Text;
 import main.GeneralSettings;
 import org.lwjgl.util.vector.Vector2f;
 
@@ -12,8 +12,8 @@ import java.util.List;
 public class CursorController {
     Cursor cursor;
     CodeWindowController codeWindow;
-    List<GUIText> texts;
-    GUIText currentGUIText;
+    List<CodeWindowText> texts;
+    CodeWindowText currentGUIText;
     private Vector2f aspectRatio;
     private int lineIndex;
     private int characterIndex;
@@ -130,7 +130,7 @@ public class CursorController {
         if (characterIndex > 0){
             characterIndex--;
             String newContent = currentGUIText.getTextString().substring(0, characterIndex) + currentGUIText.getTextString().substring(characterIndex + 1);
-            currentGUIText = new GUIText(newContent, currentGUIText, true);
+            currentGUIText = new CodeWindowText(newContent, currentGUIText, true);
             codeWindow.getTexts().set(lineIndex, currentGUIText);
             updateXPosition();
         } else if (lineIndex > 0) {
@@ -144,7 +144,7 @@ public class CursorController {
     public void delete(){
         if (characterIndex < currentGUIText.getCharacterEdges().length - 1){
             String newContent = currentGUIText.getTextString().substring(0, characterIndex) + currentGUIText.getTextString().substring(characterIndex + 1);
-            currentGUIText = new GUIText(newContent, currentGUIText, true);
+            currentGUIText = new CodeWindowText(newContent, currentGUIText, true);
             codeWindow.getTexts().set(lineIndex, currentGUIText);
         } else if (lineIndex < texts.size() - 1) {
             currentGUIText = codeWindow.mergeTexts(currentGUIText, texts.get(lineIndex+1));
@@ -163,9 +163,9 @@ public class CursorController {
 
         for(char c : pastedChars){
             if(c == '\n'){
-                GUIText newText = new GUIText(stringBuilder.toString(), currentGUIText, true);
+                CodeWindowText newText = new CodeWindowText(stringBuilder.toString(), currentGUIText, true);
                 texts.set(lineIndex, newText);
-                currentGUIText = new GUIText(endText, newText, false);
+                currentGUIText = new CodeWindowText(endText, newText, false);
                 currentGUIText.setPosition(new Vector2f(currentGUIText.getPosition().x, currentGUIText.getPosition().y - currentGUIText.getFontSize()*0.06f));
                 lineIndex++;
                 codeWindow.addText(currentGUIText, lineIndex);
@@ -177,7 +177,7 @@ public class CursorController {
                 characterIndex++;
             }
         }
-        currentGUIText = new GUIText(stringBuilder.toString() + endText, currentGUIText, true);
+        currentGUIText = new CodeWindowText(stringBuilder.toString() + endText, currentGUIText, true);
         texts.set(lineIndex, currentGUIText);
         updateXPosition();
         ApplicationController.PASTE = false;
@@ -190,9 +190,9 @@ public class CursorController {
         StringBuilder stringBuilder = new StringBuilder(textString);
 
         if(c == '\n'){
-            GUIText newText = new GUIText(stringBuilder.toString(), currentGUIText, true);
+            CodeWindowText newText = new CodeWindowText(stringBuilder.toString(), currentGUIText, true);
             texts.set(lineIndex, newText);
-            currentGUIText = new GUIText(endText, newText, false);
+            currentGUIText = new CodeWindowText(endText, newText, false);
             currentGUIText.setPosition(new Vector2f(currentGUIText.getPosition().x, currentGUIText.getPosition().y - currentGUIText.getFontSize()* GeneralSettings.FONT_SCALING_FACTOR));
             lineIndex++;
             codeWindow.addText(currentGUIText, lineIndex);
@@ -204,7 +204,7 @@ public class CursorController {
             characterIndex++;
         }
 
-        currentGUIText = new GUIText(stringBuilder.toString() + endText, currentGUIText, true);
+        currentGUIText = new CodeWindowText(stringBuilder.toString() + endText, currentGUIText, true);
         texts.set(lineIndex, currentGUIText);
         updateXPosition();
     }

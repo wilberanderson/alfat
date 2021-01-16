@@ -1,11 +1,6 @@
 package gui.textBoxes;
 
-import gui.GUIFilledBox;
-import gui.GUIText;
-import gui.fontMeshCreator.FontType;
-import main.GeneralSettings;
 import org.lwjgl.util.vector.Vector2f;
-import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
 
 

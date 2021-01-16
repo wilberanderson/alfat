@@ -156,9 +156,10 @@ public class EngineTester {
 
     /**
      * Initializes the rendering loop and begins looping
-     *  - TODO: Move finalized initialization steps to init() method
      */
     private void loop() {
+
+        Runtime runtime = Runtime.getRuntime();
 
         // Run the rendering loop until the user has attempted to close
         // the window or has pressed the ESCAPE key.
@@ -171,8 +172,13 @@ public class EngineTester {
             if(System.currentTimeMillis()-startTime < 500){
 //                System.out.println("Event received");
             }else{
+                GLFW.glfwRequestWindowAttention(window);
 //                System.out.println("Timed out");
             }
+
+            runtime.gc();
+            //System.out.println("Used memory is: " + (runtime.totalMemory()-runtime.freeMemory()));
+
             //Render
             MasterRenderer.renderScene(guis, applicationController);
 

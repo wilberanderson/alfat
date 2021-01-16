@@ -1,8 +1,8 @@
 package controllers.flowchartWindow;
 
 import gui.GUIFilledBox;
-import gui.GUIText;
-import gui.TextLine;
+import gui.fontMeshCreator.Line;
+import gui.texts.*;
 import gui.textBoxes.FlowchartTextBox;
 import main.GeneralSettings;
 import org.lwjgl.util.vector.Vector2f;
@@ -45,7 +45,6 @@ public class FlowchartTextBoxController {
         float longestLineNumber = 0;
         float lineHeight = GeneralSettings.FONT_SIZE * GeneralSettings.FONT_SCALING_FACTOR;
 
-        List<TextLine> addedLines = new ArrayList<>();
         for (TextLine line : textLines) {
             if (line.getLength() > greatestLength) {
                 greatestLength = line.getLength();
@@ -53,37 +52,26 @@ public class FlowchartTextBoxController {
 
             line.getPosition().setX(GeneralSettings.TEXT_BOX_BORDER_WIDTH * 2 + position.x);
             line.getPosition().setY(position.y - minHeight);
-            addedLines.add(line);
 
-            GUIText lineNumberText = new GUIText(Integer.toString(lineNumber), GeneralSettings.FONT_SIZE, GeneralSettings.FONT, new Vector2f(GeneralSettings.TEXT_BOX_BORDER_WIDTH + position.x, line.getPosition().y - lineHeight * textLines.size() - GeneralSettings.TEXT_BOX_BORDER_WIDTH/*+GeneralSettings.TEXT_BOX_BORDER_WIDTH + lineHeight*textLines.size()*/), GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE, GeneralSettings.LINE_NUMBER_COLOR, null, false, true, false);
-            textBox.getLineNumbers().add(lineNumberText);
+            //TODO: Add line numbers to formatted lines
+            LineNumberWord lineNumberText = new LineNumberWord(Integer.toString(lineNumber),new Vector2f(GeneralSettings.TEXT_BOX_BORDER_WIDTH + position.x, line.getPosition().y - lineHeight * textLines.size() - GeneralSettings.TEXT_BOX_BORDER_WIDTH), "");
+            line.getWords().add(0, lineNumberText);
             if (lineNumberText.getLength() > longestLineNumber) {
                 longestLineNumber = (float) lineNumberText.getLength();
             }
+
+            textLineController.addFlowchartTextLine(line);
 
             minHeight += lineHeight;
             lineNumber++;
 
         }
-        if (textBox.getLineNumbers().size() > 0) {
-            float offset = longestLineNumber * 2;
-            for (TextLine line : addedLines) {
-                line.getPosition().setX(line.getPosition().x + offset);
-                textLineController.addFlowchartTextLine(line);
-            }
-        }
-
 
         textBox.setTextNumberFilledBox(new GUIFilledBox(position, new Vector2f(longestLineNumber * 2 + 2 * GeneralSettings.TEXT_BOX_BORDER_WIDTH, minHeight), GeneralSettings.LINE_NUMBER_BACKGROUND_COLOR));
-        textBox.setSize(new Vector2f((float) greatestLength * 2 + 4 * GeneralSettings.TEXT_BOX_BORDER_WIDTH + textBox.getTextNumberFilledBox().getSize().x, lineHeight * textLines.size() + GeneralSettings.TEXT_BOX_BORDER_WIDTH));
+        textBox.setSize(new Vector2f((float) greatestLength * 2 + 4 * GeneralSettings.TEXT_BOX_BORDER_WIDTH + textBox.getTextNumberFilledBox().getSize().x + GeneralSettings.FLOWCHART_TEXT_BOX_INTERNAL_PAD_RIGHT, lineHeight * textLines.size() + GeneralSettings.TEXT_BOX_BORDER_WIDTH));
         textBox.setGuiFilledBox(new GUIFilledBox(position, textBox.getSize(), GeneralSettings.TEXT_BOX_BACKGROUND_COLOR));
-        for (GUIText text : textBox.getTexts()) {
+        for (Text text : textBox.getTexts()) {
             text.setPosition(new Vector2f(textBox.getTextNumberFilledBox().getPosition().x + textBox.getTextNumberFilledBox().getSize().x, text.getPosition().y));
-        }
-        for (GUIText text : textBox.getTexts()) {
-            if (text.getPositionBounds() == null) {
-                text.setPositionBounds(new Vector4f(position.x, position.y, position.x + textBox.getSize().x, position.y + textBox.getSize().y));
-            }
         }
         setPosition(new Vector2f(textBox.getPosition().x, textBox.getPosition().y - textBox.getSize().y), textBox);
         textBoxes.add(textBox);

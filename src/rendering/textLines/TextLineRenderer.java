@@ -2,8 +2,7 @@ package rendering.textLines;
 
 import controllers.flowchartWindow.FlowchartWindowController;
 import controllers.flowchartWindow.TextLineController;
-import gui.GUIText;
-import gui.TextLine;
+import gui.texts.*;
 import gui.textBoxes.CodeWindow;
 import main.GeneralSettings;
 import org.lwjgl.opengl.GL11;
@@ -15,7 +14,7 @@ import org.lwjgl.util.vector.Matrix3f;
 import org.lwjgl.util.vector.Vector2f;
 
 /**
- * Controls rendering lines of {@link gui.TextLine "formatted text"}, such as inside {@link gui.textBoxes.FlowchartTextBox flowchart text boxes} and the {@link CodeWindow}'s TextBox.
+ * Controls rendering lines of {@link TextLine "formatted text"}, such as inside {@link gui.textBoxes.FlowchartTextBox flowchart text boxes} and the {@link CodeWindow}'s TextBox.
  */
 public class TextLineRenderer {
 
@@ -39,21 +38,21 @@ public class TextLineRenderer {
 
 		shader.aspectRatio.loadMatrix(GeneralSettings.ASPECT_RATIO);
 
+
 		for (TextLine textLine : textLineController.getCodeWindowTextLines()) {
 			if (textLine.getWords().size() > 0) {
 				GL13.glActiveTexture(GL13.GL_TEXTURE0);
 				GL11.glBindTexture(GL11.GL_TEXTURE_2D, textLine.getWords().get(0).getFont().getTextureAtlas());
-				for (GUIText text : textLine.getWords()) {
+				for (TextWord text : textLine.getWords()) {
 					renderText(text, new Vector2f(codeWindow.getCodeWindowPosition().x, codeWindow.getCodeWindowPosition().y), codeWindow.getCodeWindowSize(), GeneralSettings.IDENTITY3);
 				}
 			}
 		}
-
 		for (TextLine textLine : textLineController.getFlowchartTextLines()) {
 			if (textLine.getWords().size() > 0) {
 				GL13.glActiveTexture(GL13.GL_TEXTURE0);
 				GL11.glBindTexture(GL11.GL_TEXTURE_2D, textLine.getWords().get(0).getFont().getTextureAtlas());
-				for (GUIText text : textLine.getWords()) {
+				for (TextWord text : textLine.getWords()) {
 					renderText(text, flowChartWindowController.getPosition(), flowChartWindowController.getSize(), flowChartWindowController.getZoomTranslateMatrix());
 				}
 			}
@@ -73,11 +72,18 @@ public class TextLineRenderer {
 		matrix.setIdentity();
 		shader.aspectRatio.loadMatrix(matrix);
 
+
+		if(textLineController.getFlowchartTextLines() != null && textLineController.getFlowchartTextLines().size() > 0 && textLineController.getFlowchartTextLines().get(0) != null && textLineController.getFlowchartTextLines().get(0).getWords().size() > 0) {
+			GL13.glActiveTexture(GL13.GL_TEXTURE0);
+			GL11.glBindTexture(GL11.GL_TEXTURE_2D,textLineController.getFlowchartTextLines().get(0).getWords().get(0).getFont().getTextureAtlas());
+		}else{
+			endRendering();
+			return;
+		}
+
 		for (TextLine textLine : textLineController.getFlowchartTextLines()) {
 			if (textLine.getWords().size() > 0) {
-				GL13.glActiveTexture(GL13.GL_TEXTURE0);
-				GL11.glBindTexture(GL11.GL_TEXTURE_2D, textLine.getWords().get(0).getFont().getTextureAtlas());
-				for (GUIText text : textLine.getWords()) {
+				for (TextWord text : textLine.getWords()) {
 					renderText(text, new Vector2f(-1, -1), new Vector2f(2, 2), GeneralSettings.IMAGE_TRANSLATION);
 				}
 			}
@@ -110,9 +116,9 @@ public class TextLineRenderer {
 
 	/**
 	 * Renders a single {@link GUIText} onto the screen. Also accounts for what region of the screen clipping should be evaluated for.
-	 * @param text the GUIText to be rendered. For a formatted {@link TextLine "line of text"} it is specifically a {@link gui.TextWord}.
+	 * @param text the GUIText to be rendered. For a formatted {@link TextLine "line of text"} it is specifically a {@link TextWord}.
 	 */
-	private void renderText(GUIText text, Vector2f windowPosition, Vector2f windowSize, Matrix3f zoomTranslateMatrix) {
+	private void renderText(TextWord text, Vector2f windowPosition, Vector2f windowSize, Matrix3f zoomTranslateMatrix) {
 		//Bind the vertex array which represents the quads behind each letter in the text
 		GL30.glBindVertexArray(text.getMesh());
 		//This vertex array has positions stored in attribute 0 and texture coordinates stored in attribute 1
@@ -120,8 +126,8 @@ public class TextLineRenderer {
 		GL20.glEnableVertexAttribArray(1);
 
 		//Load the width of the letter and the added width of an edge(between 0 and 1 where 0 is no width and 1 is full width. Width + edge should not be greater than 1 or it will result in a sharp edge)
-		shader.width.loadFloat(text.getWidth());
-		shader.edge.loadFloat(text.getEdge());
+		shader.width.loadFloat(GeneralSettings.FONT_WIDTH);
+		shader.edge.loadFloat(GeneralSettings.FONT_EDGE);
 
 		//Load the position of the text
 		shader.translation.loadVec2(text.getPosition());

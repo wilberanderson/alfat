@@ -3,7 +3,8 @@ package controllers.codeWindow;
 import controllers.ControllerSettings;
 import gui.Cursor;
 import gui.GUIFilledBox;
-import gui.GUIText;
+import gui.texts.CodeWindowText;
+import gui.texts.Text;
 import gui.fontMeshCreator.FontType;
 import gui.textBoxes.CodeWindow;
 import main.GeneralSettings;
@@ -45,8 +46,8 @@ public class CodeWindowController {
         int lineNumber = 1;
         float longestLineNumber = 0;
         for (String line : lines){
-            this.codeWindow.getTexts().add(new GUIText(line, fontSize, font, new Vector2f(border + position.x,position.y-minHeight+size.y), thickness, borderWidth, textColor, codeWindow.getPositionBounds(), false, false, true));
-            GUIText lineNumberText = new GUIText(Integer.toString(lineNumber), fontSize, font, new Vector2f(border + position.x, position.y-minHeight+size.y), thickness, borderWidth, textColor, codeWindow.getPositionBounds(), false, false, false);
+            this.codeWindow.getTexts().add(new CodeWindowText(line, fontSize, new Vector2f(border + position.x,position.y-minHeight+size.y)));
+            CodeWindowText lineNumberText = new CodeWindowText(Integer.toString(lineNumber), fontSize, new Vector2f(border + position.x, position.y-minHeight+size.y));
             this.codeWindow.getLineNumbers().add(lineNumberText);
             if(lineNumberText.getLength() > longestLineNumber){
                 longestLineNumber = (float) lineNumberText.getLength();
@@ -143,13 +144,13 @@ public class CodeWindowController {
         //changeLineNumberVerticalPosition(contentsVerticalPosition+((codeWindow.getSize().y-1)-aspectRatio.y));
         float startingHeight = codeWindow.getSize().y - 1;
         startingHeight /= aspectRatio.y;
-        for(GUIText text : codeWindow.getLineNumbers()){
+        for(Text text : codeWindow.getLineNumbers()){
             text.setPosition(new Vector2f(-1/aspectRatio.x, startingHeight));//+contentsVerticalPosition));
             startingHeight -= lineHeight;
         }
         startingHeight = codeWindow.getSize().y - 1;
         startingHeight /= aspectRatio.y;
-        for(GUIText text : codeWindow.getTexts()){
+        for(Text text : codeWindow.getTexts()){
             text.setPosition(new Vector2f((codeWindow.getCodeWindowPosition().x)/aspectRatio.x, startingHeight));//+contentsVerticalPosition));
             startingHeight -= lineHeight;
         }
@@ -161,14 +162,14 @@ public class CodeWindowController {
 
 
 
-    public void removeText(GUIText text){
+    public void removeText(Text text){
         int index = codeWindow.getTexts().indexOf(text);
         codeWindow.getTexts().remove(index);
         text.remove(text);
         for(int i = index; i < codeWindow.getTexts().size(); i++){
             codeWindow.getTexts().get(i).changeVerticalPosition(lineHeight);
         }
-        GUIText oldNumber = codeWindow.getLineNumbers().get(codeWindow.getLineNumbers().size()-1);
+        CodeWindowText oldNumber = codeWindow.getLineNumbers().get(codeWindow.getLineNumbers().size()-1);
         oldNumber.remove(oldNumber);
         codeWindow.getLineNumbers().remove(oldNumber);
         maxVerticalPosition -= lineHeight;
@@ -182,14 +183,14 @@ public class CodeWindowController {
         }
     }
 
-    public void addText(GUIText text, int index){
+    public void addText(CodeWindowText text, int index){
         float heightChange = text.getFontSize() * 0.06f;
         codeWindow.getTexts().add(index, text);
         for(int i = index + 1; i < codeWindow.getTexts().size(); i++){
             codeWindow.getTexts().get(i).changeVerticalPosition(-heightChange);
         }
-        GUIText lastText = codeWindow.getLineNumbers().get(codeWindow.getLineNumbers().size()-1);
-        GUIText newText = new GUIText(Integer.toString(Integer.parseInt(lastText.getTextString())+1), lastText, false);
+        CodeWindowText lastText = codeWindow.getLineNumbers().get(codeWindow.getLineNumbers().size()-1);
+        CodeWindowText newText = new CodeWindowText(Integer.toString(Integer.parseInt(lastText.getTextString())+1), lastText, false);
         newText.setPosition(new Vector2f(lastText.getPosition().x, lastText.getPosition().y - lineHeight));
         codeWindow.getLineNumbers().add(newText);
         maxVerticalPosition += lineHeight;
@@ -203,30 +204,30 @@ public class CodeWindowController {
         }
     }
 
-    public GUIText mergeTexts(GUIText left, GUIText right){
+    public CodeWindowText mergeTexts(CodeWindowText left, CodeWindowText right){
         int index = codeWindow.getTexts().indexOf(left);
         String rightText = right.getTextString();
-        GUIText newText = new GUIText(left.getTextString() + rightText, left, true);
+        CodeWindowText newText = new CodeWindowText(left.getTextString() + rightText, left, true);
         codeWindow.getTexts().set(index, newText);
         removeText(right);
         return newText;
     }
 
     public void changeContentsVerticalPosition(float change){
-        for(GUIText text : codeWindow.getTexts()){
+        for(Text text : codeWindow.getTexts()){
             text.changeVerticalPosition(change);
         }
         contentsVerticalPosition += change;
     }
 
     public void changeLineNumberVerticalPosition(float change){
-        for(GUIText text : codeWindow.getLineNumbers()){
+        for(Text text : codeWindow.getLineNumbers()){
             text.changeVerticalPosition(change);
         }
     }
 
     public void changeContentsHorizontalPosition(float change){
-        for(GUIText text : codeWindow.getTexts()){
+        for(Text text : codeWindow.getTexts()){
             text.changeHorizontalPosition(change);
         }
     }
@@ -263,7 +264,7 @@ public class CodeWindowController {
         this.scrollable = scrollable;
     }
 
-    public List<GUIText> getTexts(){
+    public List<CodeWindowText> getTexts(){
         return codeWindow.getTexts();
     }
 

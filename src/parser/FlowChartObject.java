@@ -1,9 +1,6 @@
 package parser;
 
-import gui.TextLine;
-import gui.TextWord;
-import main.GeneralSettings;
-import org.lwjgl.util.vector.Vector2f;
+import gui.texts.TextLine;
 
 import java.util.ArrayList;
 import java.util.List;

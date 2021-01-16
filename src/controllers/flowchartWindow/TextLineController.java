@@ -1,7 +1,8 @@
 package controllers.flowchartWindow;
 
-import gui.TextLine;
-import gui.TextWord;
+import gui.texts.LineNumberWord;
+import gui.texts.TextLine;
+import gui.texts.TextWord;
 import main.GeneralSettings;
 import org.lwjgl.util.vector.Vector2f;
 
@@ -37,7 +38,11 @@ public class TextLineController {
             }
             word.setPosition(new Vector2f(line.getPosition().x + offset, line.getPosition().y));
             offset += word.getCharacterEdges()[word.getCharacterEdges().length - 1] * 2;
-            numberOfCharacters += word.getCharacterEdges().length - 1;
+            if(!(word instanceof LineNumberWord)) {
+                numberOfCharacters += word.getCharacterEdges().length - 1;
+            }else{
+                System.out.println("text number word added");
+            }
         }
         flowchartTextLines.add(line);
         return line;

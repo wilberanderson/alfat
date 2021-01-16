@@ -1,7 +1,8 @@
 package gui.textBoxes;
 
 import gui.GUIFilledBox;
-import gui.GUIText;
+import gui.texts.CodeWindowText;
+import gui.texts.Text;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 
@@ -16,8 +17,8 @@ public class TextBox {
     private Vector3f backgroundColor;
     private Vector3f borderColor;
     private Vector3f textColor;
-    private List<GUIText> texts = new ArrayList<>();
-    private List<GUIText> lineNumbers = new ArrayList<>();
+    private List<CodeWindowText> texts = new ArrayList<>();
+    private List<CodeWindowText> lineNumbers = new ArrayList<>();
     private GUIFilledBox guiFilledBox;
     private GUIFilledBox textNumberFilledBox;
 
@@ -25,19 +26,19 @@ public class TextBox {
     }
 
     public void changeVerticalPosition(float change){
-        for(GUIText text : texts){
+        for(Text text : texts){
             text.changeVerticalPosition(change);
         }
-        for(GUIText text : lineNumbers){
+        for(Text text : lineNumbers){
             text.changeVerticalPosition(change);
         }
     }
 
     public void changeHorizontalPosition(float change){
-        for(GUIText text : texts){
+        for(Text text : texts){
             text.changeHorizontalPosition(change);
         }
-        for(GUIText text : lineNumbers){
+        for(Text text : lineNumbers){
             text.changeVerticalPosition(change);
         }
     }
@@ -80,11 +81,11 @@ public class TextBox {
     }
 
 
-    public List<GUIText> getTexts(){
+    public List<CodeWindowText> getTexts(){
         return texts;
     }
 
-    public List<GUIText> getLineNumbers(){
+    public List<CodeWindowText> getLineNumbers(){
         return lineNumbers;
     }
 
@@ -92,8 +93,8 @@ public class TextBox {
 
     public void setTextColor(Vector3f textColor){
         this.textColor = textColor;
-        for(GUIText text : getTexts()){
-            text.setColor(textColor.x, textColor.y, textColor.z);
+        for(CodeWindowText text : getTexts()){
+            text.setColor(textColor);
         }
     }
 
@@ -113,10 +114,10 @@ public class TextBox {
 
 
     public void clear(){
-        for(GUIText text: texts){
+        for(Text text: texts){
             text.remove(text);
         }
-        for(GUIText text: lineNumbers){
+        for(Text text: lineNumbers){
             text.remove(text);
         }
     }
