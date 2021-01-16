@@ -40,8 +40,6 @@ public class TextLineController {
             offset += word.getCharacterEdges()[word.getCharacterEdges().length - 1] * 2;
             if(!(word instanceof LineNumberWord)) {
                 numberOfCharacters += word.getCharacterEdges().length - 1;
-            }else{
-                System.out.println("text number word added");
             }
         }
         flowchartTextLines.add(line);

@@ -1,5 +1,6 @@
 package main;
 
+import gui.UserPreferences;
 import gui.fontMeshCreator.FontType;
 import loaders.Loader;
 import org.lwjgl.util.vector.Matrix2f;
@@ -137,6 +138,10 @@ public class GeneralSettings {
 	public static int DISPLAY_WIDTH = DEFAULT_WIDTH;                            //The current width of the display in pixels
 	public static int DISPLAY_HEIGHT = DEFAULT_HEIGHT;                          //The current height of the display in pixels
 	public static Matrix2f ASPECT_RATIO = new Matrix2f();                       //A two by two matrix which can be used to scale program elements based on the size of the screen relative to the default width and height
+
+	//*******************************************User Preferences ************************
+	public static UserPreferences USERPREF;
+	public static Boolean MasterRendererUserPrefToggle = false;
 
 	//************************Global identity matrices************************
 	public static final Matrix2f IDENTITY2 = new Matrix2f();

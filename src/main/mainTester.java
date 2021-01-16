@@ -8,7 +8,7 @@ public class mainTester {
     public static void main(String[] args) throws InterruptedException, ParseException {
         //SettingsGUI foo = new SettingsGUI();
 
-        SettingsMenu foo = new SettingsMenu();
+        //SettingsMenu foo = new SettingsMenu();
 
     }
 

@@ -31,6 +31,16 @@ public class CodeWindowController {
 
     private boolean inBounds = false;
 
+
+    public void changeCodewindowBGcolor3f(Vector3f newColor) {
+        codeWindow.setBackgroundColor(newColor);
+    }
+
+    public void changeCodewindowLinenumberBGColor3f(Vector3f newColor) {
+        codeWindow.setTextNumberFilledBoxBackgroundColor(newColor);
+    }
+
+
     public CodeWindowController(Vector2f position, Vector2f size, Vector3f backgroundColor, Vector3f textColor, Vector3f borderColor, String content, FontType font, float fontSize, float thickness, float borderWidth, float border, float headerHeight){
         this.codeWindow = new CodeWindow();
         this.codeWindow.setPosition(position);

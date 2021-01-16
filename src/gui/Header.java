@@ -3,6 +3,7 @@ package gui;
 import controllers.ApplicationController;
 import controllers.codeWindow.CodeWindowController;
 import controllers.gui.ButtonController;
+import gui.Settings.SettingsMenu;
 import gui.buttons.HeaderMenu;
 import gui.buttons.TextButton;
 import main.EngineTester;
@@ -26,39 +27,38 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- *
- */
+import gui.buttons.HeaderMenu;
+import gui.buttons.TextButton;
+import org.lwjgl.glfw.GLFW;
+import rendering.renderEngine.MasterRenderer;
+
+import javax.imageio.ImageIO;
+
 public class Header {
     private List<HeaderMenu> menuList;
     private GUIFilledBox guiFilledBox;
     private Vector2f position;
     private Vector2f aspectRatio = new Vector2f(1, 1);
-    //Manages the temp file paths
-    private TempFileManager tfm;
+    private TempFileManager tfm; //Manages the temp file paths
     private LC3Parser parser = null;
     private String windowTitle = null;
 
-    /**
-     * @param position
-     * @param size
-     * @param controller
-     */
-    public Header(Vector2f position, Vector2f size, ApplicationController controller) {
+    public Header(Vector2f position, Vector2f size, ApplicationController controller){
         menuList = new ArrayList<>();
-        guiFilledBox = new GUIFilledBox(position, size, GeneralSettings.HEADER_COLOR);
+        guiFilledBox = new GUIFilledBox(position, size, GeneralSettings.USERPREF.getHeaderColor3f());
         this.position = position;
 
         //Set up temp file manager
-        tfm = new TempFileManager(GeneralSettings.TEMP_DIR);
+        //tfm = new TempFileManager(GeneralSettings.TEMP_DIR);
+        tfm = new TempFileManager(GeneralSettings.USERPREF.getUserTempFileDirPath()); // Set to the last set user file path
         tfm.setFileLimit(5);
         //Please set this to null if not file has been opened on launch
-        GeneralSettings.FILE_PATH = "null";
-
+        GeneralSettings.FILE_PATH = null;
 
         List<TextButton> testMenuButtonList = new ArrayList<>();
         List<TextButton> registerMenuButtonList = new ArrayList<>();
         List<TextButton> analyticsMenuButtonList = new ArrayList<>();
+        List<TextButton> settingsMenuButtonList = new ArrayList<>();
 
         //open file
         TextButton button = new TextButton("Open File") {
@@ -66,14 +66,15 @@ public class Header {
             public void onPress() {
                 OpenFileDialog of = new OpenFileDialog();
                 of.openFileWindow();
+                of.setFilterList(GeneralSettings.USERPREF.getPreferredFiletype());
                 GeneralSettings.FILE_PATH = of.getFilePath();
 
 
                 // If the file exists, load it into the text editor.
-                if (!GeneralSettings.FILE_PATH.equals("null")) {
-                    if (GeneralSettings.FILE_PATH.contains("/")) {
-                        windowTitle = "ALFAT – " + GeneralSettings.FILE_PATH.substring(GeneralSettings.FILE_PATH.lastIndexOf('/') + 1);
-                        GLFW.glfwSetWindowTitle(EngineTester.getWindow(), "ALFAT – " + GeneralSettings.FILE_PATH.substring(GeneralSettings.FILE_PATH.lastIndexOf('/') + 1));
+                if (GeneralSettings.FILE_PATH != null){
+                    if (GeneralSettings.FILE_PATH.contains("/")){
+                        windowTitle = "ALFAT – " + GeneralSettings.FILE_PATH.substring(GeneralSettings.FILE_PATH.lastIndexOf('/')+1);
+                        GLFW.glfwSetWindowTitle(EngineTester.getWindow(), "ALFAT – " + GeneralSettings.FILE_PATH.substring(GeneralSettings.FILE_PATH.lastIndexOf('/')+1));
                     } else {
                         windowTitle = "ALFAT " + GeneralSettings.FILE_PATH;
                         GLFW.glfwSetWindowTitle(EngineTester.getWindow(), "ALFAT " + GeneralSettings.FILE_PATH);
@@ -100,6 +101,24 @@ public class Header {
                     if (controller.getFlowchartWindowController() != null) {
                         controller.getFlowchartWindowController().goSplitScreen();
                     }
+
+                    //User Settings logic for file open
+
+                    //Auto gen flowchart
+                    if(GeneralSettings.USERPREF.getAutoGenFlowchart()) {
+                        testMenuButtonList.get(4).onPress(); //gen flowchart
+                    }
+                    if(GeneralSettings.USERPREF.getSplitScreen()){
+                        testMenuButtonList.get(9).onPress(); //Split screen
+                    }
+                    if(GeneralSettings.USERPREF.getFullscreen() > 0) {
+                        testMenuButtonList.get(7).onPress(); //full editor
+                    }
+                    if(GeneralSettings.USERPREF.getFullscreen() < 0) {
+                        //full flowchart
+                        testMenuButtonList.get(4).onPress();
+                        testMenuButtonList.get(8).onPress();
+                    }
                 }
             }
         };
@@ -110,11 +129,12 @@ public class Header {
             @Override
             public void onPress() {
                 OpenFileDialog of = new OpenFileDialog();
+                of.setFilterList(GeneralSettings.USERPREF.getPreferredFiletype());
                 of.saveFileWindow();
                 System.out.println(of.getFilePath());
 
                 //If the use saved a file
-                if (!of.getFilePath().equals("null")) {
+                if (of.getFilePath() != null) {
                     SaveToFile stf = new SaveToFile(of.getFilePath());
                     //Prevent crash if codeWindow doe not have anything in it
                     if (controller.getCodeWindowController() != null) {
@@ -131,9 +151,9 @@ public class Header {
             public void onPress() {
                 //Saves contents of the text editor over the original source file
                 //TempFileOperations tfo = new TempFileOperations();
-                if (controller.getCodeWindowController() != null && GeneralSettings.FILE_PATH != null & !GeneralSettings.FILE_PATH.equals("null")) {
-                    SaveToFile stf = new SaveToFile(GeneralSettings.FILE_PATH);
-                    stf.save(controller.getCodeWindowController().getTexts());
+                if (controller.getCodeWindowController() != null && GeneralSettings.FILE_PATH != null){
+                   SaveToFile stf = new SaveToFile(GeneralSettings.FILE_PATH);
+                   stf.save(controller.getCodeWindowController().getTexts());
                 }
 
             }
@@ -216,7 +236,7 @@ public class Header {
                 //Save To Temp Location
                 if (!GeneralSettings.FILE_PATH.equals("null")) {
                     if (controller.getCodeWindowController() != null) {
-                        tfm.copyFiletoTempFile(GeneralSettings.FILE_PATH, GeneralSettings.TEMP_DIR);
+                        tfm.copyFiletoTempFile(GeneralSettings.FILE_PATH, GeneralSettings.USERPREF.getUserTempFileDirPath());
 
                     }
                 } else {
@@ -224,8 +244,8 @@ public class Header {
                 }
 
                 tfm.update(); // Must be called if you change the files in temp!
-                if (tfm.getMostRecent().equals("null")) {
-                    return;
+                if(tfm.getMostRecent() == null) {
+                   return;
                 }
                 parser = new LC3Parser(tfm.getMostRecent(), false);
                 parser.ReadFile(tfm.getMostRecent());
@@ -244,17 +264,17 @@ public class Header {
                 //TODO: Need way to keep track whether changes have been made in editor to know if we need to save or not...
 
                 //Save what is in codeWindow
-                if (controller.getCodeWindowController() != null && GeneralSettings.FILE_PATH != null & !GeneralSettings.FILE_PATH.equals("null")) {
-                    tfm.saveCodeEditorTextToFile(controller.getCodeWindowController().getTexts(), GeneralSettings.FILE_PATH, GeneralSettings.TEMP_DIR);
+                if (controller.getCodeWindowController() != null && GeneralSettings.FILE_PATH != null) {
+                    tfm.saveCodeEditorTextToFile(controller.getCodeWindowController().getTexts(), GeneralSettings.FILE_PATH, GeneralSettings.USERPREF.getUserTempFileDirPath());
                 } else {
                     return;
                 }
 
                 tfm.update(); // Must be called if you change the files in temp!
-                if (tfm.getMostRecent().equals("null")) {
+                if(tfm.getMostRecent() == null) {
                     return;
                 }
-                parser = new LC3Parser(tfm.getMostRecent(), false);
+                parser  = new LC3Parser(tfm.getMostRecent(), false);
                 parser.ReadFile(tfm.getMostRecent());
 
                 parser.generateFlowObjects();
@@ -268,7 +288,7 @@ public class Header {
             @Override
             public void onPress() {
 
-                if (GeneralSettings.FILE_PATH.equals("null")) {
+                if(GeneralSettings.FILE_PATH == null) {
                     return;
                 }
 
@@ -439,29 +459,66 @@ public class Header {
         HeaderMenu analyticsButton = new HeaderMenu(new Vector2f(-1f + fileButton.getSize().x + registerButton.getSize().x, 1 - GeneralSettings.FONT_SIZE * GeneralSettings.FONT_SCALING_FACTOR - 2 * GeneralSettings.TEXT_BUTTON_PADDING), "Analysis ", GeneralSettings.TEXT_BUTTON_BACKGROUND_COLOR, GeneralSettings.HIGHLIGHT_COLOR, GeneralSettings.TEXT_COLOR, GeneralSettings.FONT, GeneralSettings.FONT_SIZE, GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE, analyticsMenuButtonList);
         menuList.add(analyticsButton);
 
-        for (HeaderMenu headerMenu : menuList) {
+        // User Settings Start
+        button = new TextButton("Set Temp Folder Path") {
+            @Override
+            public void onPress() {
+
+                OpenFileDialog of = new OpenFileDialog();
+
+                of.saveFolderWindow();
+                if(of.getFilePath() != null) {
+                    GeneralSettings.USERPREF.setUserTempFileDirPath(of.getFilePath());
+                    tfm.initializeDirectory(GeneralSettings.USERPREF.getUserTempFileDirPath());
+                    tfm.update();
+                }
+            }
+        };
+        settingsMenuButtonList.add(button);
+
+
+        button = new TextButton("Reset Temp Folder Path") {
+            @Override
+            public void onPress() {
+                GeneralSettings.USERPREF.setUserTempFileDirPath(GeneralSettings.TEMP_DIR);
+                tfm.initializeDirectory(GeneralSettings.USERPREF.getUserTempFileDirPath());
+                tfm.update();
+
+            }
+        };
+        settingsMenuButtonList.add(button);
+
+        button = new TextButton("Settings Menu") {
+            @Override
+            public void onPress() {
+                //SettingsMenu sMenu = new SettingsMenu();
+                SettingsMenu.run();
+
+            }
+        };
+        settingsMenuButtonList.add(button);
+
+        HeaderMenu settingsButton = new HeaderMenu(new Vector2f(-1f + fileButton.getSize().x + registerButton.getSize().x + analyticsButton.getSize().x, 1-GeneralSettings.FONT_SIZE*GeneralSettings.FONT_SCALING_FACTOR - 2*GeneralSettings.TEXT_BUTTON_PADDING), "Settings ", GeneralSettings.TEXT_BUTTON_BACKGROUND_COLOR, GeneralSettings.HIGHLIGHT_COLOR, GeneralSettings.TEXT_COLOR, GeneralSettings.FONT, GeneralSettings.FONT_SIZE, GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE, settingsMenuButtonList);
+        menuList.add(settingsButton);
+
+        for(HeaderMenu headerMenu: menuList){
             ButtonController.add(headerMenu);
         }
     }
 
-    /**
-     * @return
-     */
     public GUIFilledBox getGuiFilledBox() {
         return guiFilledBox;
     }
 
-    /**
-     * @return
-     */
-    public Vector2f getPosition() {
+    public void changeHeadercolor() {
+        guiFilledBox.setColor(GeneralSettings.USERPREF.getHeaderColor3f());
+    }
+
+    public Vector2f getPosition(){
         return position;
     }
 
-    /**
-     * @param aspectRatio
-     */
-    public void setAspectRatio(Vector2f aspectRatio) {
+    public void setAspectRatio(Vector2f aspectRatio){
         Vector2f size = guiFilledBox.getSize();
         size.y /= this.aspectRatio.y;
         size.y *= aspectRatio.y;

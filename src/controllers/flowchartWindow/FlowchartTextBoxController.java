@@ -6,36 +6,49 @@ import gui.texts.*;
 import gui.textBoxes.FlowchartTextBox;
 import main.GeneralSettings;
 import org.lwjgl.util.vector.Vector2f;
+import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
 
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- *
- */
 public class FlowchartTextBoxController {
 
-    boolean verbose = false;
     private List<FlowchartTextBox> textBoxes = new ArrayList<>();
     private TextLineController textLineController = new TextLineController();
+    boolean verbose = false;
 
-    /**
-     *
-     */
-    public FlowchartTextBoxController() {
+    public FlowchartTextBoxController(){
 
     }
 
     /**
-     * @param position
-     * @param textLines
-     * @param lineNumber
-     * @param registers
-     * @param alert
-     */
-    public void add(Vector2f position, List<TextLine> textLines, int lineNumber, List<String> registers, String alert) {
+     * Changes the background color of the flowchart boxes
+     * */
+    public void changeTextBoxBackgroundcolor3f(Vector3f newBackgroundColor) {
+        if(textBoxes != null || !textBoxes.isEmpty()) {
+            for(int i = 0; i < textBoxes.size(); i++) {
+                textBoxes.get(i).setBackgroundColor(newBackgroundColor);
+            }
+        }
+    }
+
+    /**
+     * Changes the background color of the flowcharts number line background color
+     * */
+    public void changeTextBoxNumberLineBGColor3f(Vector3f newBackgroundColor) {
+        if(textBoxes != null || !textBoxes.isEmpty()) {
+            for(int i = 0; i < textBoxes.size(); i++) {
+                textBoxes.get(i).setTextNumberFilledBoxBackgroundColor(newBackgroundColor);
+            }
+        }
+    }
+
+
+
+    public void add(Vector2f position, List<TextLine> textLines, int lineNumber, List<String> registers, String alert){
         FlowchartTextBox textBox = new FlowchartTextBox(position, registers, alert);
+        //TODO: WHY IS THIS SET THIS COLOR!?!?!?!?
         textBox.setBackgroundColor(GeneralSettings.TEXT_BOX_BACKGROUND_COLOR);
         textBox.setBorderColor(GeneralSettings.TEXT_BOX_BORDER_COLOR);
         textBox.setTextColor(GeneralSettings.TEXT_COLOR);
@@ -55,7 +68,6 @@ public class FlowchartTextBoxController {
 
             LineNumberWord lineNumberText = new LineNumberWord(Integer.toString(lineNumber),new Vector2f(GeneralSettings.TEXT_BOX_BORDER_WIDTH + position.x, line.getPosition().y - lineHeight * textLines.size() - GeneralSettings.TEXT_BOX_BORDER_WIDTH), "");
             line.getWords()[0] = lineNumberText;
-            System.out.println(line.getWords());
             if (lineNumberText.getLength() > longestLineNumber) {
                 longestLineNumber = (float) lineNumberText.getLength();
             }
@@ -77,21 +89,14 @@ public class FlowchartTextBoxController {
         textBoxes.add(textBox);
     }
 
-    /**
-     *
-     */
-    public void clear() {
-        for (FlowchartTextBox textBox : textBoxes) {
+    public void clear(){
+        for(FlowchartTextBox textBox : textBoxes){
             textBox.clear();
         }
         textLineController.clear();
     }
 
-    /**
-     * @param position
-     * @param textBox
-     */
-    public void setPosition(Vector2f position, FlowchartTextBox textBox) {
+    public void setPosition(Vector2f position, FlowchartTextBox textBox){
         textBox.changeHorizontalPosition(textBox.getPosition().x - position.x);
         textBox.changeVerticalPosition(textBox.getPosition().y - position.y);
         textBox.setPosition(position);
@@ -99,9 +104,6 @@ public class FlowchartTextBoxController {
         textBox.getGuiFilledBox().setPosition(new Vector2f(position));
     }
 
-    /**
-     * @param register
-     */
     public void locateRegister(String register) {
         for (FlowchartTextBox box : textBoxes) {
             if (verbose) System.out.println("Checking box " + box + " for register " + register);
@@ -117,11 +119,8 @@ public class FlowchartTextBoxController {
         }
     }
 
-    /**
-     * @param alert
-     */
-    public void locateAlert(String alert) {
-        for (FlowchartTextBox box : textBoxes) {
+    public void locateAlert(String alert){
+        for (FlowchartTextBox box : textBoxes){
             if (verbose) System.out.println("Checking box " + box + " for alert " + alert);
             if (verbose) System.out.println("Contains registers: " + box.getRegisters());
             if (alert != null && box.getAlert().equals(alert)) {
@@ -135,16 +134,10 @@ public class FlowchartTextBoxController {
         }
     }
 
-    /**
-     * @return
-     */
-    public TextLineController getTextLineController() {
+    public TextLineController getTextLineController(){
         return textLineController;
     }
 
-    /**
-     * @return
-     */
     public List<FlowchartTextBox> getTextBoxes() {
         return textBoxes;
     }

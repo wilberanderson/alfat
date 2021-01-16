@@ -3,11 +3,11 @@ package parser;
 import controllers.ApplicationController;
 import controllers.flowchartWindow.FlowchartWindowController;
 import gui.FlowchartLine;
-import gui.texts.*;
 import gui.terminators.ArrowHead;
 import gui.terminators.Junction;
 import gui.terminators.Terminator;
 import gui.textBoxes.FlowchartTextBox;
+import gui.texts.*;
 import main.GeneralSettings;
 import org.lwjgl.util.vector.Matrix3f;
 import org.lwjgl.util.vector.Vector2f;
@@ -23,21 +23,22 @@ public class LC3Parser implements CodeReader {
     String infile;  // file path
     boolean verbose; // final release should have this changed to false
     ArrayList<FlowChartObject> flowchart = new ArrayList<>();
+
     HashMap<String, Integer> labelMap = new HashMap<>(); // map of labels -> line numbers
     List<LC3TLine> lines = new ArrayList<>();
-    //TODO: change from hardcoded to dynamically loaded from JSON
-    JsonReader jr = new JsonReader(new File(GeneralSettings.SYNTAX_PATH));
-    LC3Syntax syn = jr.mapJsonLC3Syntax();
-    String[] commands = syn.getCommands();
-    String[] jumps = syn.getJumps();
 
     public LC3Parser(String infile, boolean verbose) {
         this.infile = infile;
         this.verbose = verbose;
     }
 
-    /**
-     * Read an input file. Parse the input file line by line, and store them in the arrayList of LC3TLine objects.
+    //TODO: change from hardcoded to dynamically loaded from JSON
+    JsonReader jr = new JsonReader(new File(GeneralSettings.SYNTAX_PATH));
+    LC3Syntax syn = jr.mapJsonLC3Syntax();
+    String[] commands = syn.getCommands();
+    String[] jumps = syn.getJumps();
+
+    /**Read an input file. Parse the input file line by line, and store them in the arrayList of LC3TLine objects.
      *
      * @param infile The absolute or relative location of the file, as a string.
      */

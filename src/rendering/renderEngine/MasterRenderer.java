@@ -5,6 +5,7 @@ import controllers.flowchartWindow.FlowchartWindowController;
 import controllers.flowchartWindow.TextLineController;
 import gui.GuiTexture;
 import main.EngineTester;
+import main.GeneralSettings;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
 import rendering.cursor.CursorRenderer;
@@ -71,9 +72,25 @@ public class MasterRenderer {
 		flowchartLineRenderer.renderToScreen(controller.getFlowchartWindowController());
 		terminatorRenderer.renderToScreen(controller.getFlowchartWindowController());
 
-		//If the code window controller is not null then regular text needs to be rendered, render it
-		//TODO: Turn TextMaster into a GUI Text Controller
-		if (controller.getCodeWindowController() != null) {
+
+		//Updates user preferences controlled by master renderer
+		if(GeneralSettings.MasterRendererUserPrefToggle) {
+			controller.updateUserPref();
+			GeneralSettings.MasterRendererUserPrefToggle = false;
+		}
+
+		if(controller.getCodeWindowController() != null) {
+			if (controller.getFlowchartWindowController() == null) {
+				filledBoxRenderer.renderToScreen(controller.getFlowchartWindowController(), controller.getCodeWindowController());
+			} else {
+				filledBoxRenderer.renderToScreen(controller.getFlowchartWindowController(), controller.getCodeWindowController());
+			}
+		}
+		if(controller.getFlowchartWindowController() != null) {
+			flowchartLineRenderer.renderToScreen(controller.getFlowchartWindowController());
+			terminatorRenderer.renderToScreen(controller.getFlowchartWindowController());
+		}
+		if(controller.getCodeWindowController() != null){
 			TextMaster.render(controller.getFlowchartWindowController(), controller.getCodeWindowController().getCodeWindow(), true, false);
 		}
 
@@ -100,7 +117,7 @@ public class MasterRenderer {
 	/**
 	 * Clean up the renderers when the game is closed. OpenGL does not have a garbage collector so various things need to be cleaned up as the game closes. Each renderer has a shader program saved in the GPU that needs to be deleted when the application is closed.
 	 */
-	public static void cleanUp() {
+	public static void cleanUp(){
 		//guiRenderer.cleanUp();
 		TextMaster.cleanUp();
 		filledBoxRenderer.cleanUp();

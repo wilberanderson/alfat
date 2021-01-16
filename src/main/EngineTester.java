@@ -42,6 +42,7 @@ public class EngineTester {
             crash();
         }
         exit();
+
     }
 
     /**
@@ -52,6 +53,9 @@ public class EngineTester {
      *
      */
     private void init() {
+
+        GeneralSettings.USERPREF = new UserPreferences();
+
         //********************************Create the window************************************
         // Setup an error callback. The default implementation
         // will print the error message in System.err.
@@ -123,9 +127,6 @@ public class EngineTester {
         // bindings available for use.
         GL.createCapabilities();
 
-        // Set the clear color
-        GL11.glClearColor(GeneralSettings.base02.x, GeneralSettings.base02.y, GeneralSettings.base02.z, 1);
-
 
         //************************************Initialize guis************************************
         //Create the FontTypes in GeneralSettings, must happen before using any font
@@ -136,6 +137,11 @@ public class EngineTester {
         //************************************Initialize input*************************************
         applicationController = new ApplicationController();
         GLFWEventController.init(window, applicationController);
+
+
+        // Set the clear color
+        //GL11.glClearColor(GeneralSettings.base02.x, GeneralSettings.base02.y, GeneralSettings.base02.z, 1);
+        GL11.glClearColor(GeneralSettings.USERPREF.getBackgroundColor3f().x, GeneralSettings.USERPREF.getBackgroundColor3f().y, GeneralSettings.USERPREF.getBackgroundColor3f().z, 1);
 
 
         //************************************Initialize the aspect ratio********************************
@@ -159,8 +165,6 @@ public class EngineTester {
      */
     private void loop() {
 
-        Runtime runtime = Runtime.getRuntime();
-
         // Run the rendering loop until the user has attempted to close
         // the window or has pressed the ESCAPE key.
         while ( !GLFW.glfwWindowShouldClose(window) ) {
@@ -172,13 +176,8 @@ public class EngineTester {
             if(System.currentTimeMillis()-startTime < 500){
 //                System.out.println("Event received");
             }else{
-                GLFW.glfwRequestWindowAttention(window);
 //                System.out.println("Timed out");
             }
-
-            runtime.gc();
-            System.out.println("Used memory is: " + (runtime.totalMemory()-runtime.freeMemory()));
-
             //Render
             MasterRenderer.renderScene(guis, applicationController);
 
