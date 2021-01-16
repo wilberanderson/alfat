@@ -11,7 +11,8 @@ import java.util.List;
 public class TextLine {
 
     private static float fontSize = GeneralSettings.FONT_SIZE;
-    List<TextWord> words;
+    //List<TextWord> words;
+    TextWord words[];
     Vector2f position = new Vector2f();
     float length = 0;
     private static float spaceSize;
@@ -20,13 +21,17 @@ public class TextLine {
      * @param words
      */
     public TextLine(List<TextWord> words) {
-        this.words = words;
+        words.add(0, null);
+        this.words = new TextWord[words.size()];
+        for(int i = 0; i < words.size(); i++){
+            this.words[i] = words.get(i);
+        }
     }
 
     /**
      * @return
      */
-    public List<TextWord> getWords() {
+    public TextWord[] getWords() {
         return words;
     }
 
@@ -45,6 +50,9 @@ public class TextLine {
             length = 0;
             int numberOfCharacters = 0;
             for (TextWord word : words) {
+                if(word == null){
+                    continue;
+                }
                 if (word.getSeparator().length() == 1 && word.getSeparator().charAt(0) == ' ') {
                     length += spaceSize;
                 } else if (word.getSeparator().length() == 1 && word.getSeparator().charAt(0) == '\t') {

@@ -177,7 +177,7 @@ public class EngineTester {
             }
 
             runtime.gc();
-            //System.out.println("Used memory is: " + (runtime.totalMemory()-runtime.freeMemory()));
+            System.out.println("Used memory is: " + (runtime.totalMemory()-runtime.freeMemory()));
 
             //Render
             MasterRenderer.renderScene(guis, applicationController);

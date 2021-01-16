@@ -40,18 +40,18 @@ public class TextLineRenderer {
 
 
 		for (TextLine textLine : textLineController.getCodeWindowTextLines()) {
-			if (textLine.getWords().size() > 0) {
+			if (textLine.getWords().length > 0) {
 				GL13.glActiveTexture(GL13.GL_TEXTURE0);
-				GL11.glBindTexture(GL11.GL_TEXTURE_2D, textLine.getWords().get(0).getFont().getTextureAtlas());
+				GL11.glBindTexture(GL11.GL_TEXTURE_2D, textLine.getWords()[0].getFont().getTextureAtlas());
 				for (TextWord text : textLine.getWords()) {
 					renderText(text, new Vector2f(codeWindow.getCodeWindowPosition().x, codeWindow.getCodeWindowPosition().y), codeWindow.getCodeWindowSize(), GeneralSettings.IDENTITY3);
 				}
 			}
 		}
 		for (TextLine textLine : textLineController.getFlowchartTextLines()) {
-			if (textLine.getWords().size() > 0) {
+			if (textLine.getWords().length > 0) {
 				GL13.glActiveTexture(GL13.GL_TEXTURE0);
-				GL11.glBindTexture(GL11.GL_TEXTURE_2D, textLine.getWords().get(0).getFont().getTextureAtlas());
+				GL11.glBindTexture(GL11.GL_TEXTURE_2D, textLine.getWords()[0].getFont().getTextureAtlas());
 				for (TextWord text : textLine.getWords()) {
 					renderText(text, flowChartWindowController.getPosition(), flowChartWindowController.getSize(), flowChartWindowController.getZoomTranslateMatrix());
 				}
@@ -73,16 +73,16 @@ public class TextLineRenderer {
 		shader.aspectRatio.loadMatrix(matrix);
 
 
-		if(textLineController.getFlowchartTextLines() != null && textLineController.getFlowchartTextLines().size() > 0 && textLineController.getFlowchartTextLines().get(0) != null && textLineController.getFlowchartTextLines().get(0).getWords().size() > 0) {
+		if(textLineController.getFlowchartTextLines() != null && textLineController.getFlowchartTextLines().size() > 0 && textLineController.getFlowchartTextLines().get(0) != null && textLineController.getFlowchartTextLines().get(0).getWords().length > 0) {
 			GL13.glActiveTexture(GL13.GL_TEXTURE0);
-			GL11.glBindTexture(GL11.GL_TEXTURE_2D,textLineController.getFlowchartTextLines().get(0).getWords().get(0).getFont().getTextureAtlas());
+			GL11.glBindTexture(GL11.GL_TEXTURE_2D,textLineController.getFlowchartTextLines().get(0).getWords()[0].getFont().getTextureAtlas());
 		}else{
 			endRendering();
 			return;
 		}
 
 		for (TextLine textLine : textLineController.getFlowchartTextLines()) {
-			if (textLine.getWords().size() > 0) {
+			if (textLine.getWords().length > 0) {
 				for (TextWord text : textLine.getWords()) {
 					renderText(text, new Vector2f(-1, -1), new Vector2f(2, 2), GeneralSettings.IMAGE_TRANSLATION);
 				}

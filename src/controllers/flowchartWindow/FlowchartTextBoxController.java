@@ -53,9 +53,9 @@ public class FlowchartTextBoxController {
             line.getPosition().setX(GeneralSettings.TEXT_BOX_BORDER_WIDTH * 2 + position.x);
             line.getPosition().setY(position.y - minHeight);
 
-            //TODO: Add line numbers to formatted lines
             LineNumberWord lineNumberText = new LineNumberWord(Integer.toString(lineNumber),new Vector2f(GeneralSettings.TEXT_BOX_BORDER_WIDTH + position.x, line.getPosition().y - lineHeight * textLines.size() - GeneralSettings.TEXT_BOX_BORDER_WIDTH), "");
-            line.getWords().add(0, lineNumberText);
+            line.getWords()[0] = lineNumberText;
+            System.out.println(line.getWords());
             if (lineNumberText.getLength() > longestLineNumber) {
                 longestLineNumber = (float) lineNumberText.getLength();
             }
