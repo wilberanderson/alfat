@@ -67,10 +67,15 @@ public class FlowchartWindow {
         return zoom;
     }
     void setZoom(float zoom){
+        zoomTranslateMatrix.m00 /= this.zoom;
+        zoomTranslateMatrix.m11 /= this.zoom;
+        zoomTranslateMatrix.m00 *= zoom;
+        zoomTranslateMatrix.m11 *= zoom;
         this.zoom = zoom;
     }
 
     void setTranslation(Vector2f translation){
-        this.translation = translation;
+        zoomTranslateMatrix.m20 = translation.x;
+        zoomTranslateMatrix.m21 = translation.y;
     }
 }
