@@ -32,6 +32,11 @@ public class LC3Parser implements CodeReader {
         this.verbose = verbose;
     }
 
+    public LC3Parser(){
+        //default constructor, only use for helper functions.
+        this.verbose = false;
+    }
+
     //TODO: change from hardcoded to dynamically loaded from JSON
     JsonReader jr = new JsonReader(new File(GeneralSettings.SYNTAX_PATH));
     LC3Syntax syn = jr.mapJsonLC3Syntax();
@@ -53,6 +58,7 @@ public class LC3Parser implements CodeReader {
             int i = 0;
             String line;
             while ((line = br.readLine()) != null) {
+                // HERE
                 boolean first = true;
                 //parse line:
                 i++;    //line numbers start at 1
@@ -145,6 +151,7 @@ public class LC3Parser implements CodeReader {
                 lines.add(new LC3TLine(line, comm, label, targetLabel, jump, registers, i));
                 // Assign formatted text object to the new LC3Tline class
                 lines.get(lines.size() - 1).setTextLine(FormLine);
+
             }
             br.close();
         } catch (FileNotFoundException e) {
@@ -156,85 +163,97 @@ public class LC3Parser implements CodeReader {
         }
     }
 
-    /**
-     * Parse a single line and insert it into the list at index <i>i</i>.
-     * <b>Deprecated</b>
+    /** getFormattedLine(String line)
      *
-     * @param line The string of the line to insert
-     * @param i    The index of the line to insert
+     * @param line The line to be parsed
+     * @return
      */
-    public void parseLine(String line, int i) {
-        if (verbose) System.out.println("parsing `" + line + "`");
+    public TextLine getFormattedLine(String line){
+        boolean first = true;
+        //parse line:
+        line = line.replace("\t", "    ");
 
         //take entire line before semicolon
         int index = line.indexOf(";");
         if (index == -1) index = line.length();
-        String[] arrLine = line.substring(0, index).split(" ");
+        String[] arrLine = line.substring(0, index).split("[ ,\t]");
 
         //temp variables:
         Optional<String> comm = Optional.empty();
         String label = "";
         String targetLabel = "";
         List<String> registers = new ArrayList<>();
+        List<TextWord> formattedString = new ArrayList<>();
         boolean jump = false;
-        boolean first = true;
 
         //  arrLine = {"LABEL:", "JGZ", "R1", "R2", "FINISH"}
         for (String fragment : arrLine) {
+            if (verbose) System.out.print("[" + fragment + "]");
+
             //grab each command in the line, if they exist:
-            if (Arrays.stream(commands).anyMatch(fragment.toUpperCase()::contains)) {
-                comm = Arrays.stream(commands).filter(fragment.toUpperCase()::contains).findAny();
+            if (Arrays.asList(commands).contains(fragment.toUpperCase())) {
+                comm = Arrays.stream(commands).filter(fragment.toUpperCase()::equals).findAny();
+                formattedString.add(new CommandWord(comm.get(), new Vector2f(0f, 0), "\t"));
                 first = false;
-            } else if (Arrays.stream(jumps).anyMatch(fragment.toUpperCase()::contains) || fragment.matches("^BR[nzp]{0,3}$")) {
-                comm = Arrays.stream(jumps).filter(fragment.toUpperCase()::contains).findAny();
+            } else if (Arrays.asList(jumps).contains(fragment.toUpperCase()) || fragment.matches("^BR[nzp]{0,3}$")) {
+                comm = Optional.of(fragment);
+                formattedString.add(new CommandWord(comm.get(), new Vector2f(0f, 0), "\t"));
                 jump = true;
                 first = false;
-            } else if (fragment.matches("^R[0-7]")) {  //register
-                registers.add(fragment);
+            } else if (fragment.matches("^R[0-9](,)?")) {  //register
+                if (fragment.contains(",")) {
+                    if (!registers.contains(fragment.substring(0, fragment.length() - 1))) {
+                        registers.add(fragment.substring(0, fragment.length() - 1));
+                        formattedString.add(new RegisterWord(fragment.substring(0, fragment.length()-1), new Vector2f(0f, 0), "\t"));
+                    }
+                } else {
+                    if (!registers.contains(fragment)) {
+                        registers.add(fragment);
+                        formattedString.add(new RegisterWord(fragment, new Vector2f(0f, 0), "\t"));
+                    }
+                }
                 first = false;
             } else if (fragment.matches("^[x#]-?[0-9]+")) {
                 //immediate value, literal or trap
                 //just skip this for now
                 first = false;
-            } else if (first && fragment.matches("^[a-zA-Z0-9\\-_]+")) {
-                //this is the (optional) label for the line
-                label = fragment;
-                labelMap.put(label, i);
-                first = false;
+                formattedString.add(new ImmediateWord(fragment, new Vector2f(0f, 0), "\t"));
             } else if (jump && fragment.matches("^[a-zA-Z0-9\\-_]+")) {   //jump statement, this matches a label
                 //if the line is a jump statement,
                 //this matches the label or labels pointed to by the command
                 //if the language supports having the label BEFORE the command,
                 //remove the `jump &&` statement as it will cause problems.
                 targetLabel = fragment;
+                formattedString.add(new LabelWord(fragment, new Vector2f(0f, 0), ""));
+                first = false;
+            } else if (first && fragment.matches("^[a-zA-Z0-9\\-_]+")) {
+                //this is the (optional) label for the line
+                label = fragment;
+                formattedString.add(new LabelWord(fragment, new Vector2f(0f, 0), ""));
                 first = false;
             } else if (!jump && fragment.matches("^[a-zA-Z0-9\\-_]+")) {
                 //the command isn't a jump statement, so the label must be a variable i.e. string, etc.
+                formattedString.add(new LabelWord(fragment, new Vector2f(0f, 0), "\t"));
             }
         }
+
+        if (index < line.length() - 1) {
+            formattedString.add(new CommentWord(line.substring(index), new Vector2f(0f, 0), "\t"));
+        }
+
+        //Put formatted text into an object
+        TextLine FormLine = new TextLine(formattedString);
 
         //log testing data, if verbose parsing is on:
         if (verbose) {
-            System.out.println("Parsed line " + i);
-            comm.ifPresent(s -> System.out.println(" " + s));
-            if (!label.isEmpty()) System.out.println(" line label: " + label);
-            if (jump) System.out.println(" jump targets: " + targetLabel);
+            comm.ifPresent(s -> System.out.println(" command: \"" + s + "\""));
+            if (!label.isEmpty()) System.out.println(" line label: \"" + label + "\"");
+            if (jump) System.out.println(" Line is a jump line (break, jump, etc.)");
+            if (jump) System.out.println(" jump targets: \"" + targetLabel + "\"");
             System.out.println(" registers used: " + registers);
         }
 
-        // call constructor for TLine, then add the new object to the arraylist for the file
-        // if the new value goes in the middle of the list, put it there:
-        if (i < lines.size()) {
-            lines.add(i - 1, new LC3TLine(line, comm, label, targetLabel, jump, registers, i));
-
-            //renumber all proceeding objects:
-            for (int j = i; j < lines.size(); j++) {
-                lines.get(j).incrementLineNumber(1);
-            }
-        } else {
-            // just append the new item to the end
-            lines.add(new LC3TLine(line, comm, label, targetLabel, jump, registers, i));
-        }
+        return FormLine;
     }
 
     /**
