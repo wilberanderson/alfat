@@ -1,6 +1,6 @@
 package gui.fontMeshCreator;
 
-import gui.GUIText;
+import gui.texts.Text;
 import utils.MyFile;
 
 /**
@@ -46,8 +46,12 @@ public class FontType {
 	 *            - the unloaded text.
 	 * @return Information about the vertices of all the quads.
 	 */
-	public TextMeshData loadText(GUIText text) {
-		return loader.createTextMesh(text);
+	public TextMeshData loadText(Text text, String textString) {
+		return loader.createTextMesh(text, textString);
 	}
 
+
+	public float getSpaceSize(){
+		return loader.getSpaceSize();
+	}
 }

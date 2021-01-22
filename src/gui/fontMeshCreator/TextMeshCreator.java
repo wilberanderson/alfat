@@ -1,6 +1,6 @@
 package gui.fontMeshCreator;
 
-import gui.GUIText;
+import gui.texts.Text;
 import utils.MyFile;
 
 import java.util.ArrayList;
@@ -18,14 +18,13 @@ public class TextMeshCreator {
 		metaData = new MetaFile(metaFile);
 	}
 
-	protected TextMeshData createTextMesh(GUIText text) {
-		Line line = createStructure(text);
-		text.setSpaceSize(line.getSpaceSize());
+	protected TextMeshData createTextMesh(Text text, String textString) {
+		Line line = createStructure(text, textString);
 		return createQuadVertices(text, line);
 	}
 
-	private Line createStructure(GUIText text) {
-		char[] chars = text.getTextString().toCharArray();
+	private Line createStructure(Text text, String textString) {
+		char[] chars = textString.toCharArray();
 		Line line = new Line(metaData.getSpaceWidth(), text.getFontSize());
 		Word currentWord = new Word(text.getFontSize());
 		for (char c : chars) {
@@ -45,7 +44,7 @@ public class TextMeshCreator {
 	}
 
 
-	private TextMeshData createQuadVertices(GUIText text, Line line) {
+	private TextMeshData createQuadVertices(Text text, Line line) {
 		double curserX = 0f;
 		double curserY = 0f;
 		List<Float> vertices = new ArrayList<>();
@@ -118,6 +117,10 @@ public class TextMeshCreator {
 			array[i] = listOfFloats.get(i);
 		}
 		return array;
+	}
+
+	public float getSpaceSize(){
+		return (float) metaData.getSpaceWidth();
 	}
 
 }

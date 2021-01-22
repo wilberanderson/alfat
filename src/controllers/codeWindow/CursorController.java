@@ -2,8 +2,8 @@ package controllers.codeWindow;
 
 import controllers.ApplicationController;
 import gui.Cursor;
-import gui.GUIText;
-import gui.textBoxes.CodeWindow;
+import gui.texts.CodeWindowText;
+import gui.texts.Text;
 import main.GeneralSettings;
 import org.lwjgl.util.vector.Vector2f;
 
@@ -12,11 +12,13 @@ import java.util.List;
 public class CursorController {
     Cursor cursor;
     CodeWindowController codeWindow;
-    List<GUIText> texts;
-    GUIText currentGUIText;
+    List<CodeWindowText> texts;
+    CodeWindowText currentGUIText;
     private Vector2f aspectRatio;
     private int lineIndex;
     private int characterIndex;
+    private boolean visible = false;
+    private boolean toggle = true;
 
     public CursorController(Cursor cursor, CodeWindowController codeWindow){
         this.cursor = cursor;
@@ -24,6 +26,7 @@ public class CursorController {
     }
 
     public void moveCursor(Vector2f mousePosition, CodeWindowController codeWindow){
+        visible = true;
         this.codeWindow = codeWindow;
         texts = codeWindow.getTexts();
         this.aspectRatio = new Vector2f(codeWindow.getAspectRatio());
@@ -127,7 +130,7 @@ public class CursorController {
         if (characterIndex > 0){
             characterIndex--;
             String newContent = currentGUIText.getTextString().substring(0, characterIndex) + currentGUIText.getTextString().substring(characterIndex + 1);
-            currentGUIText = new GUIText(newContent, currentGUIText, true);
+            currentGUIText = new CodeWindowText(newContent, currentGUIText, true);
             codeWindow.getTexts().set(lineIndex, currentGUIText);
             updateXPosition();
         } else if (lineIndex > 0) {
@@ -141,7 +144,7 @@ public class CursorController {
     public void delete(){
         if (characterIndex < currentGUIText.getCharacterEdges().length - 1){
             String newContent = currentGUIText.getTextString().substring(0, characterIndex) + currentGUIText.getTextString().substring(characterIndex + 1);
-            currentGUIText = new GUIText(newContent, currentGUIText, true);
+            currentGUIText = new CodeWindowText(newContent, currentGUIText, true);
             codeWindow.getTexts().set(lineIndex, currentGUIText);
         } else if (lineIndex < texts.size() - 1) {
             currentGUIText = codeWindow.mergeTexts(currentGUIText, texts.get(lineIndex+1));
@@ -160,9 +163,9 @@ public class CursorController {
 
         for(char c : pastedChars){
             if(c == '\n'){
-                GUIText newText = new GUIText(stringBuilder.toString(), currentGUIText, true);
+                CodeWindowText newText = new CodeWindowText(stringBuilder.toString(), currentGUIText, true);
                 texts.set(lineIndex, newText);
-                currentGUIText = new GUIText(endText, newText, false);
+                currentGUIText = new CodeWindowText(endText, newText, false);
                 currentGUIText.setPosition(new Vector2f(currentGUIText.getPosition().x, currentGUIText.getPosition().y - currentGUIText.getFontSize()*0.06f));
                 lineIndex++;
                 codeWindow.addText(currentGUIText, lineIndex);
@@ -174,7 +177,7 @@ public class CursorController {
                 characterIndex++;
             }
         }
-        currentGUIText = new GUIText(stringBuilder.toString() + endText, currentGUIText, true);
+        currentGUIText = new CodeWindowText(stringBuilder.toString() + endText, currentGUIText, true);
         texts.set(lineIndex, currentGUIText);
         updateXPosition();
         ApplicationController.PASTE = false;
@@ -187,9 +190,9 @@ public class CursorController {
         StringBuilder stringBuilder = new StringBuilder(textString);
 
         if(c == '\n'){
-            GUIText newText = new GUIText(stringBuilder.toString(), currentGUIText, true);
+            CodeWindowText newText = new CodeWindowText(stringBuilder.toString(), currentGUIText, true);
             texts.set(lineIndex, newText);
-            currentGUIText = new GUIText(endText, newText, false);
+            currentGUIText = new CodeWindowText(endText, newText, false);
             currentGUIText.setPosition(new Vector2f(currentGUIText.getPosition().x, currentGUIText.getPosition().y - currentGUIText.getFontSize()* GeneralSettings.FONT_SCALING_FACTOR));
             lineIndex++;
             codeWindow.addText(currentGUIText, lineIndex);
@@ -201,7 +204,7 @@ public class CursorController {
             characterIndex++;
         }
 
-        currentGUIText = new GUIText(stringBuilder.toString() + endText, currentGUIText, true);
+        currentGUIText = new CodeWindowText(stringBuilder.toString() + endText, currentGUIText, true);
         texts.set(lineIndex, currentGUIText);
         updateXPosition();
     }
@@ -212,27 +215,25 @@ public class CursorController {
 
     private void updateXPosition(){
         cursor.getPosition().x = currentGUIText.getCharacterEdges()[characterIndex]*2 + currentGUIText.getPosition().x;
-        if ((codeWindow.getCodeWindow().getCodeWindowPosition().x-1)/aspectRatio.x > cursor.getPosition().x){
-            codeWindow.changeContentsHorizontalPosition((codeWindow.getCodeWindow().getCodeWindowPosition().x-1)/aspectRatio.x - (currentGUIText.getPosition().x + currentGUIText.getCharacterEdges()[characterIndex]*2));
-            cursor.getPosition().x = (codeWindow.getCodeWindow().getCodeWindowPosition().x-1)/aspectRatio.x;
-        }else if(cursor.getPosition().x/aspectRatio.x > (codeWindow.getCodeWindow().getCodeWindowPosition().x + codeWindow.getCodeWindow().getCodeWindowSize().x - 1)){
-            codeWindow.changeContentsHorizontalPosition(-(currentGUIText.getPosition().x +currentGUIText.getCharacterEdges()[characterIndex]*2 - (codeWindow.getCodeWindow().getCodeWindowPosition().x + codeWindow.getCodeWindow().getCodeWindowSize().x-1)/aspectRatio.x));
-            cursor.getPosition().x = (codeWindow.getCodeWindow().getCodeWindowPosition().x + codeWindow.getCodeWindow().getCodeWindowSize().x - 1)/aspectRatio.x;
+        if ((codeWindow.getCodeWindow().getCodeWindowPosition().x)/aspectRatio.x > cursor.getPosition().x){
+            codeWindow.changeContentsHorizontalPosition((codeWindow.getCodeWindow().getCodeWindowPosition().x)/aspectRatio.x - (currentGUIText.getPosition().x + currentGUIText.getCharacterEdges()[characterIndex]*2));
+            cursor.getPosition().x = (codeWindow.getCodeWindow().getCodeWindowPosition().x)/aspectRatio.x;
+        }else if(cursor.getPosition().x/aspectRatio.x > (codeWindow.getCodeWindow().getCodeWindowPosition().x + codeWindow.getCodeWindow().getCodeWindowSize().x)){
+            codeWindow.changeContentsHorizontalPosition(-(currentGUIText.getPosition().x +currentGUIText.getCharacterEdges()[characterIndex]*2 - (codeWindow.getCodeWindow().getCodeWindowPosition().x + codeWindow.getCodeWindow().getCodeWindowSize().x)/aspectRatio.x));
+            cursor.getPosition().x = (codeWindow.getCodeWindow().getCodeWindowPosition().x + codeWindow.getCodeWindow().getCodeWindowSize().x)/aspectRatio.x;
         }
     }
 
     private void updateYPosition(){
         cursor.getPosition().y = currentGUIText.getPosition().y;
-        if(cursor.getPosition().y* aspectRatio.y > (codeWindow.getCodeWindow().getCodeWindowPosition().y + codeWindow.getCodeWindow().getCodeWindowSize().y) - 1){
-            float change = (codeWindow.getCodeWindow().getCodeWindowPosition().y - 1 + codeWindow.getCodeWindow().getCodeWindowSize().y)/aspectRatio.y-currentGUIText.getPosition().y;
+        if(cursor.getPosition().y* aspectRatio.y > (codeWindow.getCodeWindow().getCodeWindowPosition().y + codeWindow.getCodeWindow().getCodeWindowSize().y)){
+            float change = (codeWindow.getCodeWindow().getCodeWindowPosition().y + codeWindow.getCodeWindow().getCodeWindowSize().y)/aspectRatio.y-currentGUIText.getPosition().y;
             codeWindow.changeContentsVerticalPosition(change);
-            codeWindow.changeLineNumberVerticalPosition(change);
-            cursor.getPosition().y = (codeWindow.getCodeWindow().getCodeWindowPosition().y + codeWindow.getCodeWindow().getCodeWindowSize().y - 1)/aspectRatio.y;
-        }else if(cursor.getPosition().y*aspectRatio.y < codeWindow.getCodeWindow().getCodeWindowPosition().y-1+0.06*currentGUIText.getFontSize()){
-            float change = (codeWindow.getCodeWindow().getCodeWindowPosition().y-1)/aspectRatio.y-(currentGUIText.getPosition().y-0.06f*currentGUIText.getFontSize());
+            cursor.getPosition().y = (codeWindow.getCodeWindow().getCodeWindowPosition().y + codeWindow.getCodeWindow().getCodeWindowSize().y)/aspectRatio.y;
+        }else if(cursor.getPosition().y*aspectRatio.y < codeWindow.getCodeWindow().getCodeWindowPosition().y+0.06*currentGUIText.getFontSize()){
+            float change = (codeWindow.getCodeWindow().getCodeWindowPosition().y)/aspectRatio.y-(currentGUIText.getPosition().y-0.06f*currentGUIText.getFontSize());
             codeWindow.changeContentsVerticalPosition(change);
-            codeWindow.changeLineNumberVerticalPosition(change);
-            cursor.getPosition().y = (codeWindow.getCodeWindow().getCodeWindowPosition().y-1 + 0.06f*currentGUIText.getFontSize());
+            cursor.getPosition().y = (codeWindow.getCodeWindow().getCodeWindowPosition().y + 0.06f*currentGUIText.getFontSize());
         }
         cursor.getPosition().y /= aspectRatio.y;
     }
@@ -259,5 +260,19 @@ public class CursorController {
 
     public Vector2f getAspectRatio(){
         return aspectRatio;
+    }
+
+    public void setVisible(boolean visible){
+        this.visible = visible;
+    }
+
+    public boolean isVisible(){
+        return visible && toggle;
+    }
+
+    public void toggleVisible(){
+        if(visible){
+            toggle = !toggle;
+        }
     }
 }

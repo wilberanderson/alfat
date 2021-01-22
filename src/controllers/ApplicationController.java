@@ -33,6 +33,12 @@ public class ApplicationController {
     CodeWindowController codeWindowController;
     FlowchartWindowController flowchartWindowController;
     GUIController guiController;
+
+    public TextLineController getTextLineController() {
+        return textLineController;
+    }
+
+    TextLineController textLineController = new TextLineController();
     int activeWindow = ControllerSettings.GUI_WINDOW;
 
     /**

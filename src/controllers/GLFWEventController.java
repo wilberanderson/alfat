@@ -61,7 +61,9 @@ public class GLFWEventController {
         glfwSetFramebufferSizeCallback(window, framebufferSizeCallback = new GLFWFramebufferSizeCallback() {
             @Override
             public void invoke(long window, int width, int height) {
-                GLFWEventController.controller.setFrameBufferSize(width, height);
+                if(width > 0 && height > 0) {
+                    GLFWEventController.controller.setFrameBufferSize(width, height);
+                }
             }
         });
     }

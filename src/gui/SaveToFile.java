@@ -1,8 +1,10 @@
 package gui;
 
 
+import gui.texts.CodeWindowText;
+import gui.texts.Text;
+
 import java.io.*;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -33,13 +35,13 @@ public class SaveToFile {
      * Saves GUI text to file a file. File path is set in constructor.
      * @param textLines List<GUIText>
      * */
-    public void save(List<GUIText> textLines)  {
+    public void save(List<CodeWindowText> textLines)  {
         try {
             File file = new File(saveFilepath);
             FileWriter fw = new FileWriter(file.getAbsoluteFile());
             BufferedWriter bw = new BufferedWriter(fw);
             for(int i = 0; i < textLines.size(); i++) {
-                bw.write(textLines.get(i).textString + "\n");
+                bw.write(textLines.get(i).getTextString() + "\n");
             }
             bw.close();
         } catch (IOException e) {
@@ -52,14 +54,14 @@ public class SaveToFile {
      * @param textLines List<GUIText>
      * @param filePath string literal to file path to be saved
      * */
-    public void save(List<GUIText> textLines, String filePath)  {
+    public void save(List<CodeWindowText> textLines, String filePath)  {
         try {
             File file = new File(filePath);
             FileWriter fw = new FileWriter(file.getAbsoluteFile());
             BufferedWriter bw = new BufferedWriter(fw);
             for(int i = 0; i < textLines.size(); i++) {
 
-                bw.write(textLines.get(i).textString + "\n");
+                bw.write(textLines.get(i).getTextString() + "\n");
             }
             bw.close();
         } catch (IOException e) {
@@ -73,12 +75,12 @@ public class SaveToFile {
      * @param textLines List<GUIText>
      * @param file file path to be saved to
      * */
-    public void save(List<GUIText> textLines, File file)  {
+    public void save(List<CodeWindowText> textLines, File file)  {
         try {
             FileWriter fw = new FileWriter(file.getAbsoluteFile());
             BufferedWriter bw = new BufferedWriter(fw);
             for(int i = 0; i < textLines.size(); i++) {
-                bw.write(textLines.get(i).textString + "\n");
+                bw.write(textLines.get(i).getTextString() + "\n");
             }
             bw.close();
         } catch (IOException e) {

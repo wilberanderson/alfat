@@ -1,18 +1,16 @@
 package utils;
 
-import org.lwjgl.util.vector.Matrix4f;
+import org.lwjgl.util.vector.Matrix3f;
 import org.lwjgl.util.vector.Vector2f;
-import org.lwjgl.util.vector.Vector3f;
 
 
 public class Maths {
-
-	public static Matrix4f createTransformationMatrix(Vector2f translation, Vector2f scale) {
-		Matrix4f matrix = new Matrix4f();
-		matrix.setIdentity();
-		Matrix4f.translate(translation, matrix, matrix);
-		Matrix4f.scale(new Vector3f(scale.x, scale.y, 1f), matrix, matrix);
-		return matrix;
+	public static Matrix3f createTransformationMatrix(Vector2f scale, Vector2f translation){
+		Matrix3f transformationMatrix = new Matrix3f();
+		transformationMatrix.m00 = scale.x;
+		transformationMatrix.m11 = scale.y;
+		transformationMatrix.m20 = translation.x;
+		transformationMatrix.m21 = translation.y;
+		return transformationMatrix;
 	}
-
 }

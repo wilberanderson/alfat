@@ -2,8 +2,10 @@ package UnitTests;
 
 
 import static org.junit.jupiter.api.Assertions.*;
-import gui.GUIText;
+
 import gui.SaveToFile;
+import gui.texts.CodeWindowText;
+import gui.texts.Text;
 import main.GeneralSettings;
 import org.junit.jupiter.api.Test;
 
@@ -23,7 +25,7 @@ public class SaveToFileTest {
 
     @Test
     public void testSave() {
-        List<GUIText> textLines = new ArrayList<GUIText>();
+        List<CodeWindowText> textLines = new ArrayList<>();
         SaveToFile test = new SaveToFile(GeneralSettings.TEMP_DIR);
 
         assertDoesNotThrow(() -> test.save(textLines));
@@ -32,7 +34,7 @@ public class SaveToFileTest {
     @Test
     public void testTestSave() {
         File file = new File(GeneralSettings.TEMP_DIR);
-        List<GUIText> textLines = new ArrayList<GUIText>();
+        List<CodeWindowText> textLines = new ArrayList<>();
 
         SaveToFile test = new SaveToFile(GeneralSettings.TEMP_DIR);
 
@@ -42,7 +44,7 @@ public class SaveToFileTest {
 
     @Test
     public void testTestSave1() {
-        List<GUIText> textLines = new ArrayList<GUIText>();
+        List<CodeWindowText> textLines = new ArrayList<>();
         SaveToFile test = new SaveToFile(GeneralSettings.TEMP_DIR);
 
         assertDoesNotThrow(() -> test.save(textLines, GeneralSettings.TEMP_DIR));

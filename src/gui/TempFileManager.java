@@ -1,6 +1,8 @@
 package gui;
 
-import main.GeneralSettings;
+import gui.texts.CodeWindowText;
+import gui.texts.GUIText;
+import gui.texts.Text;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -8,7 +10,6 @@ import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.FileTime;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -281,11 +282,11 @@ public class TempFileManager {
     /**
      * Saves the current the list of code editor contents to a temp file in a temp folder.
      * @see gui.SaveToFile
-     * @see gui.GUIText
+     * @see GUIText
      * @param textLines A java LIST<GUIText>
      * @param currentFilePath java string literal
      * */
-    public void saveCodeEditorTextToFile(List<GUIText> textLines, String currentFilePath, String destinationPath) {
+    public void saveCodeEditorTextToFile(List<CodeWindowText> textLines, String currentFilePath, String destinationPath) {
         SaveToFile stf = new SaveToFile(destinationPath);
         String timeStamp = getTimeStamp(timePattern);
         File tempFile;

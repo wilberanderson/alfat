@@ -1,32 +1,28 @@
 package parser;
+
 import controllers.ApplicationController;
-import controllers.flowchartWindow.FlowchartWindow;
 import controllers.flowchartWindow.FlowchartWindowController;
 import gui.FlowchartLine;
-import gui.TextLine;
-import gui.TextWord;
-import gui.UserPreferences;
 import gui.terminators.ArrowHead;
 import gui.terminators.Junction;
 import gui.terminators.Terminator;
 import gui.textBoxes.FlowchartTextBox;
+import gui.texts.*;
 import main.GeneralSettings;
-import org.junit.platform.commons.util.StringUtils;
 import org.lwjgl.util.vector.Matrix3f;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 
-import java.util.*;
 import java.io.*;
+import java.util.*;
 
 public class LC3Parser implements CodeReader {
+    public float x_bound = -10;
+    public float y_bound = -10;
     // attributes
     String infile;  // file path
     boolean verbose; // final release should have this changed to false
     ArrayList<FlowChartObject> flowchart = new ArrayList<>();
-    public float x_bound = -10;
-    public float y_bound = -10;
-
 
     HashMap<String, Integer> labelMap = new HashMap<>(); // map of labels -> line numbers
     List<LC3TLine> lines = new ArrayList<>();
@@ -36,12 +32,10 @@ public class LC3Parser implements CodeReader {
         this.verbose = verbose;
     }
 
+    //TODO: change from hardcoded to dynamically loaded from JSON
     JsonReader jr = new JsonReader(new File(GeneralSettings.SYNTAX_PATH));
-
     LC3Syntax syn = jr.mapJsonLC3Syntax();
-
     String[] commands = syn.getCommands();
-
     String[] jumps = syn.getJumps();
 
     /**Read an input file. Parse the input file line by line, and store them in the arrayList of LC3TLine objects.
@@ -60,16 +54,14 @@ public class LC3Parser implements CodeReader {
             String line;
             while ((line = br.readLine()) != null) {
                 boolean first = true;
-                boolean comment = false;
                 //parse line:
                 i++;    //line numbers start at 1
                 if (verbose) System.out.println("\nparsing line #" + i + "`" + line + "`");
-                line = line.replace("\t","    ");
+                line = line.replace("\t", "    ");
 
                 //take entire line before semicolon
                 int index = line.indexOf(";");
                 if (index == -1) index = line.length();
-                else comment = true;
                 String[] arrLine = line.substring(0, index).split("[ ,\t]");
 
                 //temp variables:
@@ -82,28 +74,28 @@ public class LC3Parser implements CodeReader {
 
                 //  arrLine = {"LABEL:", "JGZ", "R1", "R2", "FINISH"}
                 for (String fragment : arrLine) {
-                    if (verbose) System.out.print("["+fragment+"]");
+                    if (verbose) System.out.print("[" + fragment + "]");
 
                     //grab each command in the line, if they exist:
                     if (Arrays.asList(commands).contains(fragment.toUpperCase())) {
                         comm = Arrays.stream(commands).filter(fragment.toUpperCase()::equals).findAny();
-                        formattedString.add(new TextWord(comm.get(), GeneralSettings.commandColor, true, false, new Vector2f(0f, 0), "\t"));
+                        formattedString.add(new CommandWord(comm.get(), new Vector2f(0f, 0), "\t"));
                         first = false;
                     } else if (Arrays.asList(jumps).contains(fragment.toUpperCase()) || fragment.matches("^BR[nzp]{0,3}$")) {
                         comm = Optional.of(fragment);
-                        formattedString.add(new TextWord(comm.get(), GeneralSettings.commandColor, true, false, new Vector2f(0f, 0), "\t"));
+                        formattedString.add(new CommandWord(comm.get(), new Vector2f(0f, 0), "\t"));
                         jump = true;
                         first = false;
                     } else if (fragment.matches("^R[0-9](,)?")) {  //register
-                        if (fragment.contains(",")){
-                            if (!registers.contains(fragment.substring(0,fragment.length()-1))) {
+                        if (fragment.contains(",")) {
+                            if (!registers.contains(fragment.substring(0, fragment.length() - 1))) {
                                 registers.add(fragment.substring(0, fragment.length() - 1));
-                                formattedString.add(new TextWord(fragment.substring(0, fragment.length() - 1), GeneralSettings.registerColor, true, false, new Vector2f(0f, 0), "\t"));
+                                formattedString.add(new RegisterWord(fragment.substring(0, fragment.length()-1), new Vector2f(0f, 0), "\t"));
                             }
                         } else {
                             if (!registers.contains(fragment)) {
                                 registers.add(fragment);
-                                formattedString.add(new TextWord(fragment, GeneralSettings.registerColor, true, false, new Vector2f(0f, 0), "\t"));
+                                formattedString.add(new RegisterWord(fragment, new Vector2f(0f, 0), "\t"));
                             }
                         }
                         first = false;
@@ -111,37 +103,29 @@ public class LC3Parser implements CodeReader {
                         //immediate value, literal or trap
                         //just skip this for now
                         first = false;
-                        formattedString.add(new TextWord(fragment, GeneralSettings.immediateColor, true, false, new Vector2f(0f, 0), "\t"));
+                        formattedString.add(new ImmediateWord(fragment, new Vector2f(0f, 0), "\t"));
                     } else if (jump && fragment.matches("^[a-zA-Z0-9\\-_]+")) {   //jump statement, this matches a label
                         //if the line is a jump statement,
                         //this matches the label or labels pointed to by the command
                         //if the language supports having the label BEFORE the command,
                         //remove the `jump &&` statement as it will cause problems.
                         targetLabel = fragment;
-                        formattedString.add(new TextWord(fragment, GeneralSettings.labelColor, true, false, new Vector2f(0f, 0), "\t"));
+                        formattedString.add(new LabelWord(fragment, new Vector2f(0f, 0), ""));
                         first = false;
                     } else if (first && fragment.matches("^[a-zA-Z0-9\\-_]+")) {
                         //this is the (optional) label for the line
                         label = fragment;
                         labelMap.put(label, i);
-                        formattedString.add(new TextWord(fragment, GeneralSettings.labelColor, true, false, new Vector2f(0f, 0), ""));
+                        formattedString.add(new LabelWord(fragment, new Vector2f(0f, 0), ""));
                         first = false;
                     } else if (!jump && fragment.matches("^[a-zA-Z0-9\\-_]+")) {
                         //the command isn't a jump statement, so the label must be a variable i.e. string, etc.
-                        formattedString.add(new TextWord(fragment, GeneralSettings.labelColor, true, false, new Vector2f(0f, 0), "\t"));
-                    }
-
-                    // if the current fragment has a comma after it, put that in the formatted string:
-                    int fragmentEndIndex = line.indexOf(fragment) + fragment.length();
-                    if (fragment.length() != 0 && fragmentEndIndex < line.length()){
-                        if (line.charAt(fragmentEndIndex) == ',')
-                            formattedString.add(new TextWord(",", GeneralSettings.defaultColor, true, false, new Vector2f(0f, 0), ""));
+                        formattedString.add(new LabelWord(fragment, new Vector2f(0f, 0), "\t"));
                     }
                 }
 
-                // If the line has a comment, add it to the formatted string:
-                if (comment){
-                    formattedString.add(new TextWord(line.substring(index,line.length()), GeneralSettings.commentColor, true, false, new Vector2f(0f, 0), "\t"));
+                if (index < line.length() - 1) {
+                    formattedString.add(new CommentWord(line.substring(index), new Vector2f(0f, 0), "\t"));
                 }
 
                 //Put formatted text into an object
@@ -160,29 +144,26 @@ public class LC3Parser implements CodeReader {
                 //call constructor for TLine, then add the new object to the arraylist for the file
                 lines.add(new LC3TLine(line, comm, label, targetLabel, jump, registers, i));
                 // Assign formatted text object to the new LC3Tline class
-                lines.get(lines.size()-1).setTextLine(FormLine);
-
+                lines.get(lines.size() - 1).setTextLine(FormLine);
             }
             br.close();
-        }
-        catch (FileNotFoundException e) {
+        } catch (FileNotFoundException e) {
             if (verbose) System.out.println("File not found");
             e.printStackTrace();
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             if (verbose) System.out.println("IO error occured");
             e.printStackTrace();
         }
     }
 
-    /** Parse a single line and insert it into the list at index <i>i</i>.
-     *  <b>Deprecated</b>
+    /**
+     * Parse a single line and insert it into the list at index <i>i</i>.
+     * <b>Deprecated</b>
      *
      * @param line The string of the line to insert
-     * @param i The index of the line to insert
-     *
+     * @param i    The index of the line to insert
      */
-    public void parseLine(String line, int i){
+    public void parseLine(String line, int i) {
         if (verbose) System.out.println("parsing `" + line + "`");
 
         //take entire line before semicolon
@@ -243,11 +224,11 @@ public class LC3Parser implements CodeReader {
 
         // call constructor for TLine, then add the new object to the arraylist for the file
         // if the new value goes in the middle of the list, put it there:
-        if (i < lines.size()){
-            lines.add(i-1, new LC3TLine(line, comm, label, targetLabel, jump, registers, i));
+        if (i < lines.size()) {
+            lines.add(i - 1, new LC3TLine(line, comm, label, targetLabel, jump, registers, i));
 
             //renumber all proceeding objects:
-            for (int j = i;j<lines.size();j++){
+            for (int j = i; j < lines.size(); j++) {
                 lines.get(j).incrementLineNumber(1);
             }
         } else {
@@ -256,17 +237,17 @@ public class LC3Parser implements CodeReader {
         }
     }
 
-    /** Create flowchart objects. <b>Only</b> call after the file has been parsed.
-     *
+    /**
+     * Create flowchart objects. <b>Only</b> call after the file has been parsed.
      */
     @Override
     public void generateFlowObjects() {
         //generate naive boxes for flowchart.
         if (verbose) System.out.println("\n\nBeginning flowchart parsing:");
         flowchart.add(new FlowChartObject());
-        flowchart.get(flowchart.size() - 1).setBoxNumber(flowchart.size()-1);
+        flowchart.get(flowchart.size() - 1).setBoxNumber(flowchart.size() - 1);
 
-        for (LC3TLine line : lines){
+        for (LC3TLine line : lines) {
             if (verbose) {
                 System.out.println();
                 System.out.println("line text \"" + line.getLineText(true) + "\"");
@@ -283,13 +264,13 @@ public class LC3Parser implements CodeReader {
             }
 
             // Add the line to the current box.
-            if (flowchart.get(flowchart.size()-1).getStartLine() == line.getLineNumber()-1){
+            if (flowchart.get(flowchart.size() - 1).getStartLine() == line.getLineNumber() - 1) {
                 //first line in box, don't add if blank
-                if (!line.getLineText(true).isBlank()){
+                if (!line.getLineText(true).isBlank()) {
                     flowchart.get(flowchart.size() - 1).addLine(line);
                     flowchart.get(flowchart.size() - 1).lineCount++;
                 } else {
-                    flowchart.get(flowchart.size()-1).setStartLine(flowchart.get(flowchart.size()-1).getStartLine()+1);
+                    flowchart.get(flowchart.size() - 1).setStartLine(flowchart.get(flowchart.size() - 1).getStartLine() + 1);
                 }
             } else {
                 flowchart.get(flowchart.size() - 1).addLine(line);
@@ -314,20 +295,20 @@ public class LC3Parser implements CodeReader {
 
         //create linkages
         int i = 1;
-        for (FlowChartObject box : flowchart){
+        for (FlowChartObject box : flowchart) {
             box.setBoxNumber(i);
             // If the box jumps, find where it targets and link them.
-            if (box.isJumps()){
+            if (box.isJumps()) {
                 if (verbose) System.out.println("Creating linkage for box " + box.label + " targeting " + box.target);
-                for (FlowChartObject candidate : flowchart){
+                for (FlowChartObject candidate : flowchart) {
                     if (verbose) System.out.println(" -> Checking against box " + box.label);
-                    if (candidate.label.equals(box.target)){
+                    if (candidate.label.equals(box.target)) {
                         if (verbose) System.out.println("✓ Match found");
                         box.connection = candidate;
                         break;
                     }
                 }
-                if (box.connection == null){
+                if (box.connection == null) {
                     box.jumps = false;
                     box.alert += "invalid_label";
                 }
@@ -335,46 +316,47 @@ public class LC3Parser implements CodeReader {
             i++;
         }
 
-        if (verbose){
+        if (verbose) {
             int n = 0;
-            for (FlowChartObject box : flowchart){
+            for (FlowChartObject box : flowchart) {
                 n++;
-                System.out.println("┌─ "+ box.getBoxNumber() + "\t──────────────────────────────────────────────────────────────────────────┐");
+                System.out.println("─ " + box.getBoxNumber() + "\t──────────────────────────────────────────────────────────────────────────");
                 System.out.println(box.getFullText(true));
-                if (box.isJumps()) System.out.println("┌╼ Target label: " +box.connection.label + " @ box " + box.connection.getBoxNumber());
+                if (box.isJumps())
+                    System.out.println(" Target label: " + box.connection.label + " @ box " + box.connection.getBoxNumber());
                 else if (!box.alert.isEmpty()) System.out.println("┌╼ " + box.alert);
-                System.out.println("└────────────────────────────────────────────────────────────────────────────────┘");
+                System.out.println("────────────────────────────────────────────────────────────────────────────────");
             }
         }
     }
 
-    /** Create flowchart.
+    /**
+     * Create flowchart.
      * Creates flowchart boxes and draws lines.
-     *
      */
-    public FlowchartWindowController createFlowchart(ApplicationController controller){
+    public FlowchartWindowController createFlowchart(ApplicationController controller) {
         FlowchartWindowController flowchartWindowController = controller.getFlowchartWindowController();
-        if(flowchartWindowController == null){
-            flowchartWindowController = new FlowchartWindowController();
-        }else {
+        if (flowchartWindowController == null) {
+            flowchartWindowController = new FlowchartWindowController(controller.getTextLineController());
+        } else {
             flowchartWindowController.clear();
         }
 
         int i = 0;
-        Vector2f location = new Vector2f(GeneralSettings.FLOWCHART_PAD_LEFT,1);
+        Vector2f location = new Vector2f(GeneralSettings.FLOWCHART_PAD_LEFT - 1, 0);
         List<FlowchartTextBox> textBoxes = new ArrayList<>();
         float max_right_width = -1000f;
         List<Vector2f> locations = new ArrayList<>();
         List<Vector2f> sizes = new ArrayList<>();
 
         //draw the boxes vertically offset
-        for (FlowChartObject box : flowchart){
-            if (verbose){
+        for (FlowChartObject box : flowchart) {
+            if (verbose) {
                 System.out.println("Box " + i + " @ " + location);
                 System.out.println("Starting @ line #" + box.getStartLine());
             }
 
-            flowchartWindowController.getFlowchartTextBoxController().add(new Vector2f(location), box.getTextLines(), box.getStartLine()+1, box.getRegisters(), box.alert);
+            flowchartWindowController.getFlowchartTextBoxController().add(new Vector2f(location.x, location.y), box.getTextLines(), box.getStartLine() + 1, box.getRegisters(), box.alert);
 //            FlowchartTextBox textBox = new FlowchartTextBox(new Vector2f(location), box.getTextLines(), box.getStartLine()+1, box.getRegisters(), box.alert);
 //            for(TextLine line : textBox.getTextLines()){
 //                flowchartWindowController.getTextLineController().add(line);
@@ -382,13 +364,13 @@ public class LC3Parser implements CodeReader {
 //            textBoxes.add(textBox);
 //            textBox.setPosition(new Vector2f(textBox.getPosition().x, textBox.getPosition().y-textBox.getSize().y));
 
-            FlowchartTextBox textBox = flowchartWindowController.getFlowchartTextBoxController().getTextBoxes().get(flowchartWindowController.getFlowchartTextBoxController().getTextBoxes().size()-1);
+            FlowchartTextBox textBox = flowchartWindowController.getFlowchartTextBoxController().getTextBoxes().get(flowchartWindowController.getFlowchartTextBoxController().getTextBoxes().size() - 1);
             if (verbose) System.out.println("Position: " + textBox.getPosition() + " Size: " + textBox.getSize());
             location.y = (location.y - textBox.getSize().y - GeneralSettings.FLOWCHART_PAD_TOP);
             i++;
 
             // Line helpers:
-            max_right_width = Math.max(max_right_width,textBox.getSize().x);
+            max_right_width = Math.max(max_right_width, textBox.getSize().x);
             locations.add(textBox.getPosition());
             sizes.add(textBox.getSize());
         }
@@ -401,24 +383,24 @@ public class LC3Parser implements CodeReader {
 
         Vector3f rainbow[] = {GeneralSettings.magenta, GeneralSettings.red, GeneralSettings.orange, GeneralSettings.yellow, GeneralSettings.green, GeneralSettings.cyan, GeneralSettings.blue, GeneralSettings.violet};
 
-        for (int index = 0; index <= flowchart.size(); index++){
+        for (int index = 0; index <= flowchart.size(); index++) {
             // Draw line to next box (not in the last box)
-            if (index < flowchart.size()-1){
+            if (index < flowchart.size() - 1) {
                 /*if (verbose) {
                     System.out.println("Adding vertical line from box " + index + " to box " + (index + 1));
                     System.out.println(locations.get(index) + " -> " + locations.get(index+1));
                 }*/
                 List<Vector2f> coordinates = new ArrayList<>();
                 //first point: bottom of current box:
-                coordinates.add(new Vector2f((- 1 + locations.get(index).x) + .05f, (-1 + locations.get(index).y)));
+                coordinates.add(new Vector2f((locations.get(index).x) + .05f, (locations.get(index).y)));
                 //second point: top of next box:
-                coordinates.add(new Vector2f((- 1 + locations.get(index).x) + .05f, (-1 + locations.get(index+1).y + sizes.get(index+1).y)));
+                coordinates.add(new Vector2f((locations.get(index).x) + .05f, (locations.get(index + 1).y + sizes.get(index + 1).y)));
                 //if (verbose) System.out.println("from " + (locations.get(index).y) + " to " + (-1 + locations.get(index+1).y + sizes.get(index+1).y) + "\n");
                 Terminator terminator;
-                if(coordinates.get(coordinates.size()-1).y < coordinates.get((coordinates.size()-2)).y){
-                    terminator = new ArrowHead(coordinates.get(coordinates.size()-1), false);
-                }else{
-                    terminator = new ArrowHead(coordinates.get(coordinates.size()-1), true);
+                if (coordinates.get(coordinates.size() - 1).y < coordinates.get((coordinates.size() - 2)).y) {
+                    terminator = new ArrowHead(coordinates.get(coordinates.size() - 1), false);
+                } else {
+                    terminator = new ArrowHead(coordinates.get(coordinates.size() - 1), true);
                 }
                 FlowchartLine line = new FlowchartLine(coordinates, terminator);
                 linesList.add(line);
@@ -431,48 +413,48 @@ public class LC3Parser implements CodeReader {
                 if (flowchart.get(index).isJumps()) {
                     if (verbose) {
                         System.out.println("Adding jumping line from box " + index + " to box " + (flowchart.get(index).connection.getBoxNumber()));
-                        System.out.println(Math.min(index,flowchart.get(index).connection.getBoxNumber()) + " -> " + Math.max(index,flowchart.get(index).connection.getBoxNumber()));
+                        System.out.println(Math.min(index, flowchart.get(index).connection.getBoxNumber()) + " -> " + Math.max(index, flowchart.get(index).connection.getBoxNumber()));
                     }
 
                     List<Vector2f> coordinates = new ArrayList<>();
 
-                    coordinates.add(new Vector2f((-1 + locations.get(index).x) + 2 * sizes.get(index).x / 3, (-1 + locations.get(index).y)));
-                    coordinates.add(new Vector2f((-1 + locations.get(index).x) + 2 * sizes.get(index).x / 3, (-1 + locations.get(index).y) - (GeneralSettings.FLOWCHART_PAD_TOP / 3)));
+                    coordinates.add(new Vector2f((locations.get(index).x) + 2 * sizes.get(index).x / 3, (locations.get(index).y)));
+                    coordinates.add(new Vector2f((locations.get(index).x) + 2 * sizes.get(index).x / 3, (locations.get(index).y) - (GeneralSettings.FLOWCHART_PAD_TOP / 3)));
 
                     float temp = max_right_width + GeneralSettings.FLOWCHART_PAD_LEFT;
 
-                    if (flowchart.get(index) == flowchart.get(index).connection){
+                    if (flowchart.get(index) == flowchart.get(index).connection) {
                         temp = sizes.get(index).x + GeneralSettings.FLOWCHART_PAD_LEFT;
-                    } else if (index < flowchart.get(index).connection.getBoxNumber()){
+                    } else if (index < flowchart.get(index).connection.getBoxNumber()) {
                         temp = -1f;
-                        for (Vector2f item : sizes.subList(index + 1,flowchart.get(index).connection.getBoxNumber()-1)){
-                            if (item.x + GeneralSettings.FLOWCHART_PAD_LEFT - 1f> temp)
+                        for (Vector2f item : sizes.subList(index + 1, flowchart.get(index).connection.getBoxNumber() - 1)) {
+                            if (item.x + GeneralSettings.FLOWCHART_PAD_LEFT - 1f > temp)
                                 temp = item.x + GeneralSettings.FLOWCHART_PAD_LEFT - 1f;
                         }
                     } else {
                         temp = -1f;
-                        for (Vector2f item : sizes.subList(flowchart.get(index).connection.getBoxNumber()-1,index)){
+                        for (Vector2f item : sizes.subList(flowchart.get(index).connection.getBoxNumber() - 1, index)) {
                             if (item.x + GeneralSettings.FLOWCHART_PAD_LEFT - 1f > temp)
                                 temp = item.x + GeneralSettings.FLOWCHART_PAD_LEFT - 1f;
                         }
                     }
 
-                    x_bound = Math.max(x_bound,(temp + jump_lines * GeneralSettings.LINE_OFFSET));
+                    x_bound = Math.max(x_bound, (temp + jump_lines * GeneralSettings.LINE_OFFSET));
 
-                    if (flowchart.get(index) == flowchart.get(index).connection){
-                        coordinates.add(new Vector2f((-.95f + temp), (-1 + locations.get(index).y) - (GeneralSettings.FLOWCHART_PAD_TOP / 3)));
-                        coordinates.add(new Vector2f((-.95f + temp), (-1 + sizes.get(flowchart.get(index).connection.getBoxNumber() - 1).y + locations.get(flowchart.get(index).connection.getBoxNumber() - 1).y + (GeneralSettings.FLOWCHART_PAD_TOP / 3))));
+                    if (flowchart.get(index) == flowchart.get(index).connection) {
+                        coordinates.add(new Vector2f((-.95f + temp), (locations.get(index).y) - (GeneralSettings.FLOWCHART_PAD_TOP / 3)));
+                        coordinates.add(new Vector2f((-.95f + temp), (sizes.get(flowchart.get(index).connection.getBoxNumber() - 1).y + locations.get(flowchart.get(index).connection.getBoxNumber() - 1).y + (GeneralSettings.FLOWCHART_PAD_TOP / 3))));
                     } else {
-                        coordinates.add(new Vector2f((.25f + temp + jump_lines * GeneralSettings.LINE_OFFSET), (-1 + locations.get(index).y) - (GeneralSettings.FLOWCHART_PAD_TOP / 3)));
-                        coordinates.add(new Vector2f((.25f + temp + jump_lines * GeneralSettings.LINE_OFFSET), (-1 + sizes.get(flowchart.get(index).connection.getBoxNumber() - 1).y + locations.get(flowchart.get(index).connection.getBoxNumber() - 1).y + (GeneralSettings.FLOWCHART_PAD_TOP / 3))));
+                        coordinates.add(new Vector2f((.25f + temp + jump_lines * GeneralSettings.LINE_OFFSET), (locations.get(index).y) - (GeneralSettings.FLOWCHART_PAD_TOP / 3)));
+                        coordinates.add(new Vector2f((.25f + temp + jump_lines * GeneralSettings.LINE_OFFSET), (sizes.get(flowchart.get(index).connection.getBoxNumber() - 1).y + locations.get(flowchart.get(index).connection.getBoxNumber() - 1).y + (GeneralSettings.FLOWCHART_PAD_TOP / 3))));
                     }
-                    coordinates.add(new Vector2f((-1 + locations.get(index).x) + 2 * sizes.get(flowchart.get(index).connection.getBoxNumber() - 1).x / 3, (-1 + sizes.get(flowchart.get(index).connection.getBoxNumber() - 1).y + locations.get(flowchart.get(index).connection.getBoxNumber() - 1).y + (GeneralSettings.FLOWCHART_PAD_TOP / 3))));
-                    coordinates.add(new Vector2f((-1 + locations.get(index).x) + 2 * sizes.get(flowchart.get(index).connection.getBoxNumber() - 1).x / 3, (-1 + sizes.get(flowchart.get(index).connection.getBoxNumber() - 1).y + locations.get(flowchart.get(index).connection.getBoxNumber() - 1).y)));
+                    coordinates.add(new Vector2f((locations.get(index).x) + 2 * sizes.get(flowchart.get(index).connection.getBoxNumber() - 1).x / 3, (sizes.get(flowchart.get(index).connection.getBoxNumber() - 1).y + locations.get(flowchart.get(index).connection.getBoxNumber() - 1).y + (GeneralSettings.FLOWCHART_PAD_TOP / 3))));
+                    coordinates.add(new Vector2f((locations.get(index).x) + 2 * sizes.get(flowchart.get(index).connection.getBoxNumber() - 1).x / 3, (sizes.get(flowchart.get(index).connection.getBoxNumber() - 1).y + locations.get(flowchart.get(index).connection.getBoxNumber() - 1).y)));
                     Terminator terminator;
-                    if(coordinates.get(coordinates.size()-1).y < coordinates.get((coordinates.size()-2)).y){
-                        terminator = new ArrowHead(coordinates.get(coordinates.size()-1), false);
+                    if (coordinates.get(coordinates.size() - 1).y < coordinates.get((coordinates.size() - 2)).y) {
+                        terminator = new ArrowHead(coordinates.get(coordinates.size() - 1), false);
                     } else {
-                        terminator = new ArrowHead(coordinates.get(coordinates.size()-1), true);
+                        terminator = new ArrowHead(coordinates.get(coordinates.size() - 1), true);
                     }
                     FlowchartLine line = new FlowchartLine(coordinates, terminator);
                     line.setColor(rainbow[jump_lines % rainbow.length]);
@@ -486,22 +468,23 @@ public class LC3Parser implements CodeReader {
         if (verbose) System.out.println("Lines added: " + linesList.size());
 
         // get y_bound coordinate:
-        y_bound = locations.get(locations.size()-1).y;
-        if (verbose) System.out.println("(" + (Math.abs(x_bound) + 1f) + ", " + (Math.abs(y_bound) + 1f + GeneralSettings.FLOWCHART_PAD_TOP) + ")");
-        GeneralSettings.SCREENSHOT_SIZE = new Vector2f(Math.abs(x_bound) + 1f, Math.abs(y_bound) + 1f + GeneralSettings.FLOWCHART_PAD_TOP);
+        y_bound = locations.get(locations.size() - 1).y;
+        if (verbose)
+            System.out.println("(" + (Math.abs(x_bound) + 1f) + ", " + (Math.abs(y_bound) + 1f + GeneralSettings.FLOWCHART_PAD_TOP) + ")");
+        GeneralSettings.IMAGE_SIZE = new Vector2f(Math.abs(x_bound) + 1f, Math.abs(y_bound) + 1f + GeneralSettings.FLOWCHART_PAD_TOP);
         Matrix3f translation = new Matrix3f();
         translation.setIdentity();
-        translation.m00 = 2/GeneralSettings.SCREENSHOT_SIZE.x;
-        translation.m11 = 2/GeneralSettings.SCREENSHOT_SIZE.y;
+        translation.m00 = 2 / GeneralSettings.IMAGE_SIZE.x;
+        translation.m11 = 2 / GeneralSettings.IMAGE_SIZE.y;
         translation.m20 = -.2f;
-        translation.m21 = -(y_bound*translation.m11)-.875f;
-        GeneralSettings.SCREENSHOT_TRANSLATION = translation;
+        translation.m21 = -(y_bound * translation.m11) - .875f;
+        GeneralSettings.IMAGE_TRANSLATION = translation;
         //Find line overlaps:
-        for (FlowchartLine line1 : linesList){
-            for (FlowchartLine line2 : linesList){
-                if ((line1.getPositions().size() > 2 && line2.getPositions().size() > 2) && linesList.indexOf(line1) < linesList.indexOf(line2)){
-                    if (line1.getPositions().get(line1.getPositions().size()-3).y == line2.getPositions().get(line2.getPositions().size()-3).y){
-                        if (line1.getPositions().get(line1.getPositions().size()-3).x > line2.getPositions().get(line2.getPositions().size()-3).x ) {
+        for (FlowchartLine line1 : linesList) {
+            for (FlowchartLine line2 : linesList) {
+                if ((line1.getPositions().size() > 2 && line2.getPositions().size() > 2) && linesList.indexOf(line1) < linesList.indexOf(line2)) {
+                    if (line1.getPositions().get(line1.getPositions().size() - 3).y == line2.getPositions().get(line2.getPositions().size() - 3).y) {
+                        if (line1.getPositions().get(line1.getPositions().size() - 3).x > line2.getPositions().get(line2.getPositions().size() - 3).x) {
                             line2.getPositions().remove(line2.getPositions().size() - 1);
                             line2.getPositions().remove(line2.getPositions().size() - 1);
                             line2.setTerminator(new Junction(line2.getPositions().get(line2.getPositions().size() - 1)));

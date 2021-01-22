@@ -17,6 +17,7 @@ public class FlowchartLineShader extends ShaderProgram{
     protected UniformVec2 windowSize = new UniformVec2("windowSize");
     protected UniformMat3 zoomTranslateMatrix = new UniformMat3("zoomTranslateMatrix");
     protected UniformMat2 aspectRatio = new UniformMat2("aspectRatio");
+    protected UniformBoolean doClipping = new UniformBoolean("doClipping");
 
     /**
      * Performs setup for a {@link FlowchartLineShader}
@@ -26,7 +27,7 @@ public class FlowchartLineShader extends ShaderProgram{
      */
     public FlowchartLineShader() {
         super(GeneralSettings.FLOWCHART_VERTEX, GeneralSettings.FLOWCHART_FRAGMENT, "position");
-        super.storeAllUniformLocations(color, startPosition, endPosition, windowPosition, windowSize, zoomTranslateMatrix, aspectRatio);
+        super.storeAllUniformLocations(color, startPosition, endPosition, windowPosition, windowSize, zoomTranslateMatrix, aspectRatio, doClipping);
     }
 
 

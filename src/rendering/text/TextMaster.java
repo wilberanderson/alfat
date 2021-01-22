@@ -8,15 +8,16 @@ import java.util.Map;
 import controllers.flowchartWindow.FlowchartWindowController;
 import gui.fontMeshCreator.FontType;
 import gui.textBoxes.CodeWindow;
-import controllers.flowchartWindow.FlowchartWindow;
-import gui.GUIText;
+import gui.texts.CodeWindowText;
+import gui.texts.GUIText;
+import gui.texts.Text;
 import gui.fontMeshCreator.TextMeshData;
 import loaders.Loader;
 
 public class TextMaster {
 
-	private static Map<FontType, List<GUIText>> texts = new HashMap<FontType, List<GUIText>>();
-	private static Map<FontType, List<GUIText>> guiTexts = new HashMap<FontType, List<GUIText>>();
+	private static Map<FontType, List<Text>> texts = new HashMap<FontType, List<Text>>();
+	private static Map<FontType, List<Text>> guiTexts = new HashMap<FontType, List<Text>>();
 	private static FontRenderer renderer;
 	
 	public static void init(){
@@ -30,12 +31,12 @@ public class TextMaster {
 		renderer.render(guiTexts, null, null, false, false);
 	}
 	
-	public static TextMeshData loadText(GUIText text){
+	public static TextMeshData loadText(Text text, String textString){
 		FontType font = text.getFont();
-		TextMeshData data = font.loadText(text);
+		TextMeshData data = font.loadText(text, textString);
 		int vao = Loader.loadToVAO(data.getVertexPositions(), data.getTextureCoords());
 		text.setMeshInfo(vao, data.getVertexCount());
-		List<GUIText> textBatch = texts.get(font);
+		List<Text> textBatch = texts.get(font);
 		if(textBatch == null){
 			textBatch = new ArrayList<>();
 			texts.put(font, textBatch);
@@ -45,8 +46,8 @@ public class TextMaster {
 	}
 	
 	@SuppressWarnings("unlikely-arg-type")
-	public static void removeText(GUIText text){
-		List<GUIText> textBatch = texts.get(text.getFont());
+	public static void removeText(Text text){
+		List<Text> textBatch = texts.get(text.getFont());
 		textBatch.remove(text);
 		if(textBatch.isEmpty()){
 			texts.remove(texts.get(text.getFont()));
@@ -55,10 +56,24 @@ public class TextMaster {
 
 	public static TextMeshData loadGuiText(GUIText text){
 		FontType font = text.getFont();
-		TextMeshData data = font.loadText(text);
+		TextMeshData data = font.loadText(text, text.getTextString());
 		int vao = Loader.loadToVAO(data.getVertexPositions(), data.getTextureCoords());
 		text.setMeshInfo(vao, data.getVertexCount());
-		List<GUIText> textBatch = guiTexts.get(font);
+		List<Text> textBatch = guiTexts.get(font);
+		if(textBatch == null){
+			textBatch = new ArrayList<>();
+			guiTexts.put(font, textBatch);
+		}
+		textBatch.add(text);
+		return data;
+	}
+
+	public static TextMeshData loadGuiText(GUIText text, String textString){
+		FontType font = text.getFont();
+		TextMeshData data = font.loadText(text, textString);
+		int vao = Loader.loadToVAO(data.getVertexPositions(), data.getTextureCoords());
+		text.setMeshInfo(vao, data.getVertexCount());
+		List<Text> textBatch = guiTexts.get(font);
 		if(textBatch == null){
 			textBatch = new ArrayList<>();
 			guiTexts.put(font, textBatch);
@@ -69,7 +84,7 @@ public class TextMaster {
 
 	@SuppressWarnings("unlikely-arg-type")
 	public static void removeGuiText(GUIText text){
-		List<GUIText> textBatch = guiTexts.get(text.getFont());
+		List<Text> textBatch = guiTexts.get(text.getFont());
 		textBatch.remove(text);
 		if (textBatch.isEmpty()) {
 			guiTexts.remove(guiTexts.get(text.getFont()));
