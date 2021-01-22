@@ -1,4 +1,4 @@
-package controllers.flowchartWindow;
+package controllers;
 
 import gui.texts.LineNumberWord;
 import gui.texts.TextLine;
@@ -61,7 +61,9 @@ public class TextLineController {
             }
             word.setPosition(new Vector2f(line.getPosition().x + offset, line.getPosition().y));
             offset += word.getCharacterEdges()[word.getCharacterEdges().length - 1] * 2;
-            numberOfCharacters += word.getCharacterEdges().length - 1;
+            if(!(word instanceof LineNumberWord)) {
+                numberOfCharacters += word.getCharacterEdges().length - 1;
+            }
         }
         codeWindowTextLines.add(line);
         return line;

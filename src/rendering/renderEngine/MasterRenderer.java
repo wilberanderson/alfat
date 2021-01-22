@@ -2,7 +2,7 @@ package rendering.renderEngine;
 
 import controllers.ApplicationController;
 import controllers.flowchartWindow.FlowchartWindowController;
-import controllers.flowchartWindow.TextLineController;
+import controllers.TextLineController;
 import gui.GuiTexture;
 import main.EngineTester;
 import main.GeneralSettings;
@@ -94,10 +94,8 @@ public class MasterRenderer {
 			TextMaster.render(controller.getFlowchartWindowController(), controller.getCodeWindowController().getCodeWindow(), true, false);
 		}
 
-		//If the flowchart window controller is not null then formatted text needs to be rendered, render it
-		if (controller.getFlowchartWindowController() != null) {
-			textLineRenderer.renderToScreen(controller.getFlowchartWindowController().getFlowchartTextBoxController().getTextLineController(), controller.getFlowchartWindowController(), controller.getCodeWindowController().getCodeWindow());
-		}
+		//Render formatted text
+		textLineRenderer.renderToScreen(controller.getTextLineController(), controller.getFlowchartWindowController(), controller.getCodeWindowController());
 
 		//If the cursor controller is not null then the cursor is present. Render the cursor
 		if (controller.getCodeWindowController() != null && controller.getCodeWindowController().getCursorController() != null) {

@@ -337,7 +337,7 @@ public class LC3Parser implements CodeReader {
     public FlowchartWindowController createFlowchart(ApplicationController controller) {
         FlowchartWindowController flowchartWindowController = controller.getFlowchartWindowController();
         if (flowchartWindowController == null) {
-            flowchartWindowController = new FlowchartWindowController();
+            flowchartWindowController = new FlowchartWindowController(controller.getTextLineController());
         } else {
             flowchartWindowController.clear();
         }

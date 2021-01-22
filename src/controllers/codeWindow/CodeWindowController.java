@@ -1,22 +1,23 @@
 package controllers.codeWindow;
 
 import controllers.ControllerSettings;
+import controllers.TextLineController;
 import gui.Cursor;
 import gui.GUIFilledBox;
-import gui.texts.CodeWindowText;
-import gui.texts.Text;
+import gui.texts.*;
 import gui.fontMeshCreator.FontType;
 import gui.textBoxes.CodeWindow;
 import main.GeneralSettings;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
+import parser.LC3Parser;
 
 import java.util.List;
 
 public class CodeWindowController {
     CursorController cursorController;
-    CodeWindowTextLineController lineController;
+    TextLineController textLineController;
 
     CodeWindow codeWindow;
     Vector2f mousePosition;
@@ -41,7 +42,8 @@ public class CodeWindowController {
     }
 
 
-    public CodeWindowController(Vector2f position, Vector2f size, Vector3f backgroundColor, Vector3f textColor, Vector3f borderColor, String content, FontType font, float fontSize, float thickness, float borderWidth, float border, float headerHeight){
+    public CodeWindowController(Vector2f position, Vector2f size, Vector3f backgroundColor, Vector3f textColor, Vector3f borderColor, String content, FontType font, float fontSize, float thickness, float borderWidth, float border, float headerHeight, TextLineController textLineController){
+        this.textLineController = textLineController;
         this.codeWindow = new CodeWindow();
         this.codeWindow.setPosition(position);
         this.codeWindow.setSize(size);
@@ -55,16 +57,31 @@ public class CodeWindowController {
         codeWindow.setPositionBounds(new Vector4f(position.x, position.y, position.x + size.x, position.y + size.y));
         int lineNumber = 1;
         float longestLineNumber = 0;
+
+        LC3Parser parser = new LC3Parser();
+
         for (String line : lines){
-            this.codeWindow.getTexts().add(new CodeWindowText(line, fontSize, new Vector2f(border + position.x,position.y-minHeight+size.y)));
-            CodeWindowText lineNumberText = new CodeWindowText(Integer.toString(lineNumber), fontSize, new Vector2f(border + position.x, position.y-minHeight+size.y));
-            this.codeWindow.getLineNumbers().add(lineNumberText);
-            if(lineNumberText.getLength() > longestLineNumber){
-                longestLineNumber = (float) lineNumberText.getLength();
+            TextLine textLine = parser.getFormattedLine(line);
+
+            //this.codeWindow.getTexts().add(new CodeWindowText(line, fontSize, new Vector2f(border + position.x,position.y-minHeight+size.y)));
+            LineNumberWord lineNumberWord = new LineNumberWord(Integer.toString(lineNumber), new Vector2f(border + position.x, position.y-minHeight+size.y), "");
+            //this.codeWindow.getLineNumbers().add(lineNumberText);
+
+            textLine.getWords()[0] = lineNumberWord;
+            textLine.setPosition(new Vector2f(border + position.x,position.y-minHeight+size.y));
+
+            textLineController.addCodeWindowTextLine(textLine);
+            if(lineNumberWord.getLength() > longestLineNumber){
+                longestLineNumber = (float) lineNumberWord.getLength();
             }
             minHeight += lineHeight;
             lineNumber++;
         }
+
+        for(TextLine line : textLineController.getCodeWindowTextLines()){
+            line.getWords()[0].getPosition().x -= longestLineNumber*2+padding*2;
+        }
+
         changeContentsHorizontalPosition(longestLineNumber*2+border*2);
         this.codeWindow.setTextNumberFilledBox(new GUIFilledBox(new Vector2f(position.x, position.y), new Vector2f(longestLineNumber*2 + 2*border, size.y), GeneralSettings.LINE_NUMBER_BACKGROUND_COLOR));
         maxVerticalPosition = minHeight-size.y;
@@ -112,15 +129,12 @@ public class CodeWindowController {
         if (maxVerticalPosition > codeWindow.getPosition().x) {
             float newPosition = contentsVerticalPosition + scrollChange;
             if (newPosition < 0) {
-                changeLineNumberVerticalPosition(-contentsVerticalPosition);
                 changeContentsVerticalPosition(-contentsVerticalPosition);
                 cursorController.scroll(-contentsVerticalPosition);
             } else if (newPosition > maxVerticalPosition) {
-                changeLineNumberVerticalPosition(maxVerticalPosition - contentsVerticalPosition);
                 changeContentsVerticalPosition(maxVerticalPosition - contentsVerticalPosition);
                 cursorController.scroll(maxVerticalPosition - contentsVerticalPosition);
             } else {
-                changeLineNumberVerticalPosition(scrollChange);
                 changeContentsVerticalPosition(scrollChange);
                 cursorController.scroll(scrollChange);
             }
@@ -224,20 +238,14 @@ public class CodeWindowController {
     }
 
     public void changeContentsVerticalPosition(float change){
-        for(Text text : codeWindow.getTexts()){
+        for(TextLine text : textLineController.getCodeWindowTextLines()){
             text.changeVerticalPosition(change);
         }
         contentsVerticalPosition += change;
     }
 
-    public void changeLineNumberVerticalPosition(float change){
-        for(Text text : codeWindow.getLineNumbers()){
-            text.changeVerticalPosition(change);
-        }
-    }
-
     public void changeContentsHorizontalPosition(float change){
-        for(Text text : codeWindow.getTexts()){
+        for(TextLine text : textLineController.getCodeWindowTextLines()){
             text.changeHorizontalPosition(change);
         }
     }

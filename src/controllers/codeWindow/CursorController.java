@@ -229,12 +229,10 @@ public class CursorController {
         if(cursor.getPosition().y* aspectRatio.y > (codeWindow.getCodeWindow().getCodeWindowPosition().y + codeWindow.getCodeWindow().getCodeWindowSize().y)){
             float change = (codeWindow.getCodeWindow().getCodeWindowPosition().y + codeWindow.getCodeWindow().getCodeWindowSize().y)/aspectRatio.y-currentGUIText.getPosition().y;
             codeWindow.changeContentsVerticalPosition(change);
-            codeWindow.changeLineNumberVerticalPosition(change);
             cursor.getPosition().y = (codeWindow.getCodeWindow().getCodeWindowPosition().y + codeWindow.getCodeWindow().getCodeWindowSize().y)/aspectRatio.y;
         }else if(cursor.getPosition().y*aspectRatio.y < codeWindow.getCodeWindow().getCodeWindowPosition().y+0.06*currentGUIText.getFontSize()){
             float change = (codeWindow.getCodeWindow().getCodeWindowPosition().y)/aspectRatio.y-(currentGUIText.getPosition().y-0.06f*currentGUIText.getFontSize());
             codeWindow.changeContentsVerticalPosition(change);
-            codeWindow.changeLineNumberVerticalPosition(change);
             cursor.getPosition().y = (codeWindow.getCodeWindow().getCodeWindowPosition().y + 0.06f*currentGUIText.getFontSize());
         }
         cursor.getPosition().y /= aspectRatio.y;

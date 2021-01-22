@@ -71,4 +71,25 @@ public class TextLine {
     public void setLength(float length) {
         this.length = length;
     }
+
+    public void setPosition(Vector2f position){
+        for(TextWord word : words){
+            word.setPosition(new Vector2f(word.getPosition().x + position.x - this.position.x, word.getPosition().y + position.y - this.position.y));
+        }
+        this.position = position;
+    }
+
+    public void changeVerticalPosition(float change){
+        for(TextWord word : words){
+            word.setPosition(new Vector2f(word.getPosition().x, word.getPosition().y+change));
+        }
+        position.y += change;
+    }
+
+    public void changeHorizontalPosition(float change){
+        for(TextWord word : words){
+            word.setPosition(new Vector2f(word.getPosition().x+change, word.getPosition().y));
+        }
+        position.x += change;
+    }
 }

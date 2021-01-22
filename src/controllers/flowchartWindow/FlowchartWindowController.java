@@ -1,5 +1,6 @@
 package controllers.flowchartWindow;
 
+import controllers.TextLineController;
 import gui.FlowchartLine;
 import gui.textBoxes.FlowchartTextBox;
 import main.GeneralSettings;
@@ -13,10 +14,11 @@ public class FlowchartWindowController {
 
     FlowchartWindow flowchartWindow;
     boolean verbose = false;
-    private FlowchartTextBoxController flowchartTextBoxController = new FlowchartTextBoxController();
+    private FlowchartTextBoxController flowchartTextBoxController;
     
-    public FlowchartWindowController(){
-        flowchartWindow = new FlowchartWindow();   
+    public FlowchartWindowController(TextLineController textLineController){
+        flowchartWindow = new FlowchartWindow();
+        flowchartTextBoxController = new FlowchartTextBoxController(textLineController);
     }
     
     public void updateZoom(float scrollChange){

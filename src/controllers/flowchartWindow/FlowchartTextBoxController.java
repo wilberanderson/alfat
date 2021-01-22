@@ -1,13 +1,12 @@
 package controllers.flowchartWindow;
 
+import controllers.TextLineController;
 import gui.GUIFilledBox;
-import gui.fontMeshCreator.Line;
 import gui.texts.*;
 import gui.textBoxes.FlowchartTextBox;
 import main.GeneralSettings;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
-import org.lwjgl.util.vector.Vector4f;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,11 +14,11 @@ import java.util.List;
 public class FlowchartTextBoxController {
 
     private List<FlowchartTextBox> textBoxes = new ArrayList<>();
-    private TextLineController textLineController = new TextLineController();
+    private TextLineController textLineController;
     boolean verbose = false;
 
-    public FlowchartTextBoxController(){
-
+    public FlowchartTextBoxController(TextLineController textLineController){
+        this.textLineController = textLineController;
     }
 
     /**
