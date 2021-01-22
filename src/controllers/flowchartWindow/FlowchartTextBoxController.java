@@ -91,7 +91,9 @@ public class FlowchartTextBoxController {
     public void clear(){
         for(FlowchartTextBox textBox : textBoxes){
             textBox.clear();
+
         }
+        textBoxes.clear();
         textLineController.clear();
     }
 

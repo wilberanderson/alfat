@@ -39,12 +39,18 @@ public class TextLineRenderer {
 
 		shader.aspectRatio.loadMatrix(GeneralSettings.ASPECT_RATIO);
 
+
+
 		for (TextLine textLine : textLineController.getCodeWindowTextLines()) {
 			if (textLine.getWords().length > 0) {
 				GL13.glActiveTexture(GL13.GL_TEXTURE0);
 				GL11.glBindTexture(GL11.GL_TEXTURE_2D, textLine.getWords()[0].getFont().getTextureAtlas());
 				for (TextWord text : textLine.getWords()) {
-					renderText(text, codeWindowController.getCodeWindow().getCodeWindowPosition(), codeWindowController.getCodeWindow().getCodeWindowSize(), GeneralSettings.IDENTITY3);
+					if(text instanceof LineNumberWord){
+						renderText(text, codeWindowController.getCodeWindow().getPosition(), codeWindowController.getCodeWindow().getSize(), GeneralSettings.IDENTITY3);
+					}else{
+						renderText(text, codeWindowController.getCodeWindow().getCodeWindowPosition(), codeWindowController.getCodeWindow().getCodeWindowSize(), GeneralSettings.IDENTITY3);
+					}
 				}
 			}
 		}
