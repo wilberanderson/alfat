@@ -48,14 +48,6 @@ public class UserPreferences {
     private String keyBGColor_BLUE = "bgcolorblue";
     private float fbValueBGColor_BLUE = GeneralSettings.base02.z;
 
-
-
-
-
-
-
-
-
     //Flowchart background color
     private String keyFlowchartBoxBGColor_RED = "fcbbgcolorred";
     private float fbValueFlowchartBoxBGColor_RED = GeneralSettings.base03.x;
@@ -81,15 +73,15 @@ public class UserPreferences {
 
     //Text editor background color
     private String keyTexteditorBGcolor_RED = "tebgcred";
-    private float fbValueTexteditorBGcolor_RED = GeneralSettings.base03.x;
+    private float fbValueTexteditorBGcolor_RED = GeneralSettings.TEXT_BOX_BACKGROUND_COLOR.x;
 
 
     private String keyTexteditorBGcolor_GREEN = "tebgcgreen";
-    private float fbValueTexteditorBGcolor_GREEN = GeneralSettings.base03.y;
+    private float fbValueTexteditorBGcolor_GREEN = GeneralSettings.TEXT_BOX_BACKGROUND_COLOR.y;
 
 
     private String keyTexteditorBGcolor_BLUE = "tebgcblue";
-    private float fbValueTexteditorBGcolor_BLUE = GeneralSettings.base03.z;
+    private float fbValueTexteditorBGcolor_BLUE = GeneralSettings.TEXT_BOX_BACKGROUND_COLOR.z;
 
 
     //Text editor line number background color
@@ -117,6 +109,36 @@ public class UserPreferences {
 
     private String keyHeaderColor_BLUE = "headercolorblue";
     private float fbValueHeadercolor_BLUE = GeneralSettings.HEADER_COLOR.z;
+
+
+
+    //Menu Button background colors
+    private String keyMenuBtnBGcolor_RED = "menubtnbgcolorred";
+    private float fbValueMenuBtnBGcolor_RED = GeneralSettings.TEXT_BUTTON_BACKGROUND_COLOR.x;
+
+
+    private String keyMenuBtnBGcolor_GREEN = "menubtnbgcolorgreen";
+    private float fbValueMenuBtnBGcolor_GREEN = GeneralSettings.TEXT_BUTTON_BACKGROUND_COLOR.y;
+
+
+    private String keyMenuBtnBGcolor_BLUE = "";
+    private float fbValueMenuBtnBGcolor_BLUE = GeneralSettings.TEXT_BUTTON_BACKGROUND_COLOR.z;
+
+    //Menu button highlight colors
+    private String KeyMenuBtnHLColor_RED = "menubtnhlcolorred";
+    private float  fbValueMenuBtnHLColor_RED = GeneralSettings.HIGHLIGHT_COLOR.x;
+
+    private String KeyMenuBtnHLColor_GREEN = "menubtnhlcolorgreen";
+    private float  fbValueMenuBtnHLColor_GREEN = GeneralSettings.HIGHLIGHT_COLOR.y;
+
+    private String KeyMenuBtnHLColor_BLUE = "menubtnhlcolorblue";
+    private float  fbValueMenuBtnHLColor_BLUE = GeneralSettings.HIGHLIGHT_COLOR.z;
+
+
+
+
+
+
 
 
 
@@ -443,12 +465,63 @@ public class UserPreferences {
 
 
 
-    //Menu Item color
+    //Menu Item background color
+    public void setMenuBtnBGColor(Color bgColor) {
+        userPref.putFloat(keyMenuBtnBGcolor_RED, bgColor.getRed()/255f);
+        userPref.putFloat(keyMenuBtnBGcolor_GREEN, bgColor.getGreen()/255f);
+        userPref.putFloat(keyMenuBtnBGcolor_BLUE, bgColor.getBlue()/255f);
+    }
 
+    public void setMenuBtnBGColor3f(Vector3f bgColor) {
+        userPref.putFloat(keyMenuBtnBGcolor_RED, bgColor.x);
+        userPref.putFloat(keyMenuBtnBGcolor_GREEN, bgColor.y);
+        userPref.putFloat(keyMenuBtnBGcolor_BLUE, bgColor.z);
+    }
+    public Vector3f getMenuBtnBGColor3f() {
+        Vector3f bgColor = new Vector3f();
+        bgColor.setX(userPref.getFloat(keyMenuBtnBGcolor_RED, fbValueMenuBtnBGcolor_RED));
+        bgColor.setY(userPref.getFloat(keyMenuBtnBGcolor_GREEN, fbValueMenuBtnBGcolor_GREEN));
+        bgColor.setZ(userPref.getFloat(keyMenuBtnBGcolor_BLUE, fbValueMenuBtnBGcolor_BLUE));
+        return bgColor;
+    }
 
+    public Color getMenuBtnBGColor() {
+        Color bgColor = new Color(
+                userPref.getFloat(keyMenuBtnBGcolor_RED, fbValueMenuBtnBGcolor_RED),
+                userPref.getFloat(keyMenuBtnBGcolor_GREEN, fbValueMenuBtnBGcolor_GREEN),
+                userPref.getFloat(keyMenuBtnBGcolor_BLUE, fbValueMenuBtnBGcolor_BLUE)
+        );
+        return bgColor;
+    }
 
+    //Menu Item background color highlight
+    public void setMenuBtnHLColor(Color bgColor) {
+        userPref.putFloat(KeyMenuBtnHLColor_RED, bgColor.getRed()/255f);
+        userPref.putFloat(KeyMenuBtnHLColor_GREEN, bgColor.getGreen()/255f);
+        userPref.putFloat(KeyMenuBtnHLColor_BLUE, bgColor.getBlue()/255f);
+    }
 
+    public void setMenuBtnHLColor3f(Vector3f bgColor) {
+        userPref.putFloat(KeyMenuBtnHLColor_RED, bgColor.x);
+        userPref.putFloat(KeyMenuBtnHLColor_GREEN, bgColor.y);
+        userPref.putFloat(KeyMenuBtnHLColor_BLUE, bgColor.z);
+    }
+    public Vector3f getMenuBtnHLColor3f() {
+        Vector3f bgColor = new Vector3f();
+        bgColor.setX(userPref.getFloat(KeyMenuBtnHLColor_RED, fbValueMenuBtnHLColor_RED));
+        bgColor.setY(userPref.getFloat(KeyMenuBtnHLColor_GREEN, fbValueMenuBtnHLColor_GREEN));
+        bgColor.setZ(userPref.getFloat(KeyMenuBtnHLColor_BLUE, fbValueMenuBtnHLColor_BLUE));
+        return bgColor;
+    }
 
+    public Color getMenuBtnHLColor() {
+        Color bgColor = new Color(
+                userPref.getFloat(KeyMenuBtnHLColor_RED, fbValueMenuBtnHLColor_RED),
+                userPref.getFloat(KeyMenuBtnHLColor_GREEN, fbValueMenuBtnHLColor_GREEN),
+                userPref.getFloat(KeyMenuBtnHLColor_BLUE, fbValueMenuBtnHLColor_BLUE)
+        );
+        return bgColor;
+    }
 
 
     /**Removes ALL attributes (hard reset). Next time any get is called is will return fall back values*/

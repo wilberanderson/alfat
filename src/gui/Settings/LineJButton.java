@@ -5,6 +5,11 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
+
+
+/**
+ * Simple Button that looks like a line
+ * */
 class LineJButton extends JButton  {
 
 
@@ -55,7 +60,9 @@ class LineJButton extends JButton  {
 
 
     public void paintComponent(Graphics g) {
-        setOpaque(true);
+        //setOpaque(ture); show button bound
+        setOpaque(false);
+
         setContentAreaFilled(false);
         setBorderPainted(false);
         super.paintComponent(g);

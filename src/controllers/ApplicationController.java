@@ -60,6 +60,7 @@ public class ApplicationController {
 
         if(header != null) {
             header.changeHeadercolor();
+            header.changeButtonColors();
         }
 
         //Background color

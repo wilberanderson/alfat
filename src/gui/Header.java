@@ -96,7 +96,7 @@ public class Header {
                         controller.getCodeWindowController().clear();
                     }
                     //create code window
-                    controller.setCodeWindowController(new CodeWindowController(new Vector2f(-1f, -1f), new Vector2f(1f, 2 - GeneralSettings.FONT_SCALING_FACTOR * GeneralSettings.FONT_SIZE), GeneralSettings.TEXT_BOX_BACKGROUND_COLOR, GeneralSettings.TEXT_COLOR, new Vector3f(0, 0, 0), content, GeneralSettings.FONT, GeneralSettings.FONT_SIZE, GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE, GeneralSettings.TEXT_BOX_BORDER_WIDTH, size.y, controller.getTextLineController()));
+                    controller.setCodeWindowController(new CodeWindowController(new Vector2f(-1f, -1f), new Vector2f(1f, 2 - GeneralSettings.FONT_SCALING_FACTOR * GeneralSettings.FONT_SIZE), GeneralSettings.USERPREF.getTexteditorBGColor3f(), GeneralSettings.TEXT_COLOR, new Vector3f(0, 0, 0), content, GeneralSettings.FONT, GeneralSettings.FONT_SIZE, GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE, GeneralSettings.TEXT_BOX_BORDER_WIDTH, size.y, controller.getTextLineController()));
 
                     if (controller.getFlowchartWindowController() != null) {
                         controller.getFlowchartWindowController().goSplitScreen();
@@ -336,7 +336,7 @@ public class Header {
         };
         testMenuButtonList.add(button);
 
-        HeaderMenu fileButton = new HeaderMenu(new Vector2f(-1f, 1 - GeneralSettings.FONT_SIZE * GeneralSettings.FONT_SCALING_FACTOR - 2 * GeneralSettings.TEXT_BUTTON_PADDING), "File ", GeneralSettings.TEXT_BUTTON_BACKGROUND_COLOR, GeneralSettings.HIGHLIGHT_COLOR, GeneralSettings.TEXT_COLOR, GeneralSettings.FONT, GeneralSettings.FONT_SIZE, GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE, testMenuButtonList);
+        HeaderMenu fileButton = new HeaderMenu(new Vector2f(-1f, 1 - GeneralSettings.FONT_SIZE * GeneralSettings.FONT_SCALING_FACTOR - 2 * GeneralSettings.TEXT_BUTTON_PADDING), "File ", GeneralSettings.USERPREF.getMenuBtnBGColor3f(), GeneralSettings.HIGHLIGHT_COLOR, GeneralSettings.TEXT_COLOR, GeneralSettings.FONT, GeneralSettings.FONT_SIZE, GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE, testMenuButtonList);
         menuList.add(fileButton);
 
         button = new TextButton("Clear") {
@@ -431,7 +431,7 @@ public class Header {
         };
         registerMenuButtonList.add(button);
 
-        HeaderMenu registerButton = new HeaderMenu(new Vector2f(-1f + fileButton.getSize().x, 1 - GeneralSettings.FONT_SIZE * GeneralSettings.FONT_SCALING_FACTOR - 2 * GeneralSettings.TEXT_BUTTON_PADDING), "Registers ", GeneralSettings.TEXT_BUTTON_BACKGROUND_COLOR, GeneralSettings.HIGHLIGHT_COLOR, GeneralSettings.TEXT_COLOR, GeneralSettings.FONT, GeneralSettings.FONT_SIZE, GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE, registerMenuButtonList);
+        HeaderMenu registerButton = new HeaderMenu(new Vector2f(-1f + fileButton.getSize().x, 1 - GeneralSettings.FONT_SIZE * GeneralSettings.FONT_SCALING_FACTOR - 2 * GeneralSettings.TEXT_BUTTON_PADDING), "Registers ", GeneralSettings.USERPREF.getMenuBtnBGColor3f(), GeneralSettings.HIGHLIGHT_COLOR, GeneralSettings.TEXT_COLOR, GeneralSettings.FONT, GeneralSettings.FONT_SIZE, GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE, registerMenuButtonList);
         menuList.add(registerButton);
 
         button = new TextButton("Clear") {
@@ -456,7 +456,7 @@ public class Header {
         };
         analyticsMenuButtonList.add(button);
 
-        HeaderMenu analyticsButton = new HeaderMenu(new Vector2f(-1f + fileButton.getSize().x + registerButton.getSize().x, 1 - GeneralSettings.FONT_SIZE * GeneralSettings.FONT_SCALING_FACTOR - 2 * GeneralSettings.TEXT_BUTTON_PADDING), "Analysis ", GeneralSettings.TEXT_BUTTON_BACKGROUND_COLOR, GeneralSettings.HIGHLIGHT_COLOR, GeneralSettings.TEXT_COLOR, GeneralSettings.FONT, GeneralSettings.FONT_SIZE, GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE, analyticsMenuButtonList);
+        HeaderMenu analyticsButton = new HeaderMenu(new Vector2f(-1f + fileButton.getSize().x + registerButton.getSize().x, 1 - GeneralSettings.FONT_SIZE * GeneralSettings.FONT_SCALING_FACTOR - 2 * GeneralSettings.TEXT_BUTTON_PADDING), "Analysis ", GeneralSettings.USERPREF.getMenuBtnBGColor3f(), GeneralSettings.HIGHLIGHT_COLOR, GeneralSettings.TEXT_COLOR, GeneralSettings.FONT, GeneralSettings.FONT_SIZE, GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE, analyticsMenuButtonList);
         menuList.add(analyticsButton);
 
         // User Settings Start
@@ -498,7 +498,7 @@ public class Header {
         };
         settingsMenuButtonList.add(button);
 
-        HeaderMenu settingsButton = new HeaderMenu(new Vector2f(-1f + fileButton.getSize().x + registerButton.getSize().x + analyticsButton.getSize().x, 1-GeneralSettings.FONT_SIZE*GeneralSettings.FONT_SCALING_FACTOR - 2*GeneralSettings.TEXT_BUTTON_PADDING), "Settings ", GeneralSettings.TEXT_BUTTON_BACKGROUND_COLOR, GeneralSettings.HIGHLIGHT_COLOR, GeneralSettings.TEXT_COLOR, GeneralSettings.FONT, GeneralSettings.FONT_SIZE, GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE, settingsMenuButtonList);
+        HeaderMenu settingsButton = new HeaderMenu(new Vector2f(-1f + fileButton.getSize().x + registerButton.getSize().x + analyticsButton.getSize().x, 1-GeneralSettings.FONT_SIZE*GeneralSettings.FONT_SCALING_FACTOR - 2*GeneralSettings.TEXT_BUTTON_PADDING), "Settings ", GeneralSettings.USERPREF.getMenuBtnBGColor3f(), GeneralSettings.HIGHLIGHT_COLOR, GeneralSettings.TEXT_COLOR, GeneralSettings.FONT, GeneralSettings.FONT_SIZE, GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE, settingsMenuButtonList);
         menuList.add(settingsButton);
 
         for(HeaderMenu headerMenu: menuList){
@@ -510,9 +510,23 @@ public class Header {
         return guiFilledBox;
     }
 
+    /**
+     * Changes the background color based on the current color of the User Preferences
+     * */
     public void changeHeadercolor() {
         guiFilledBox.setColor(GeneralSettings.USERPREF.getHeaderColor3f());
     }
+
+    /**
+     * Changes the buttons background color and highlight color based on the current colors of the User Preferences
+     * */
+    public void changeButtonColors() {
+        for(int i = 0; i < menuList.size(); i++) {
+            menuList.get(i).changeButtonColors(GeneralSettings.USERPREF.getMenuBtnBGColor3f(), GeneralSettings.USERPREF.getMenuBtnHLColor3f());
+        }
+    }
+
+
 
     public Vector2f getPosition(){
         return position;

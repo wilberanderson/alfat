@@ -487,7 +487,12 @@ public class LC3Parser implements CodeReader {
         if (verbose) System.out.println("Lines added: " + linesList.size());
 
         // get y_bound coordinate:
-        y_bound = locations.get(locations.size() - 1).y;
+        if(locations.size() > 0) {
+            y_bound = locations.get(locations.size() - 1).y;
+        }  else {
+            y_bound = 0;
+        }
+
         if (verbose)
             System.out.println("(" + (Math.abs(x_bound) + 1f) + ", " + (Math.abs(y_bound) + 1f + GeneralSettings.FLOWCHART_PAD_TOP) + ")");
         GeneralSettings.IMAGE_SIZE = new Vector2f(Math.abs(x_bound) + 1f, Math.abs(y_bound) + 1f + GeneralSettings.FLOWCHART_PAD_TOP);

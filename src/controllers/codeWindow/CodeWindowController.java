@@ -17,6 +17,11 @@ import java.util.List;
 
 public class CodeWindowController {
     CursorController cursorController;
+
+    public TextLineController getTextLineController() {
+        return textLineController;
+    }
+
     TextLineController textLineController;
 
     CodeWindow codeWindow;
@@ -83,7 +88,7 @@ public class CodeWindowController {
         }
 
         changeContentsHorizontalPosition(longestLineNumber*2+border*2);
-        this.codeWindow.setTextNumberFilledBox(new GUIFilledBox(new Vector2f(position.x, position.y), new Vector2f(longestLineNumber*2 + 2*border, size.y), GeneralSettings.LINE_NUMBER_BACKGROUND_COLOR));
+        this.codeWindow.setTextNumberFilledBox(new GUIFilledBox(new Vector2f(position.x, position.y), new Vector2f(longestLineNumber*2 + 2*border, size.y), GeneralSettings.USERPREF.getTexteditorLinenumberBGColor3f()));
         maxVerticalPosition = minHeight-size.y;
         this.codeWindow.setGuiFilledBox(new GUIFilledBox(new Vector2f(longestLineNumber*2+border*2, 0), new Vector2f(size.x - longestLineNumber*2 + border*2, size.y), backgroundColor));
 

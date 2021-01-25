@@ -84,4 +84,24 @@ public class HeaderMenu extends TextButton {
         }
         this.getText().getPosition().x = (position.x/aspectRatio.x);
     }
+
+
+
+    /**
+     * Changes the background color and highlight color of the HeaderMenu button and dropdown buttons.
+     * */
+    public void changeButtonColors(Vector3f backgroundColor3f, Vector3f highlightColor3f) {
+        setBackgroundColor(backgroundColor3f);
+        setHighlightColor(highlightColor3f);
+
+        dropDownButtons.forEach(it -> {
+            it.setBackgroundColor(backgroundColor3f);
+            it.setHighlightColor(highlightColor3f);
+        });
+    }
+
+
+
+
+
 }

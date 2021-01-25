@@ -3,7 +3,10 @@ package gui.Settings;
 import javax.swing.*;
 import java.awt.*;
 
-
+/**
+ * Simple button that looks like a arrow head
+ *
+ * */
 public class ArrowJButton extends JButton {
     private Color color;
     private int  lineW;
@@ -16,19 +19,19 @@ public class ArrowJButton extends JButton {
     public static int LEFT = 3;
     public static int RIGHT = 4;
 
-
-    //TODO:Add color left and right
     private void setArrowOrientation(int ori) {
         if(ori == UP) {
             polyX = new int[]{5,0,10};
             polyY = new int[]{0,5,5};
         } else if (ori == DOWN) {
-            polyX = new int[]{5,0,10};
-            polyY = new int[]{5,0,0};
+            polyX = new int[]{0,5,10};
+            polyY = new int[]{0,5,0};
         }else if (ori == LEFT) {
-
+            polyX = new int[]{0,5,5};
+            polyY = new int[]{5,10,0};
         }else if (ori == RIGHT) {
-
+            polyX = new int[]{0,0,5};
+            polyY = new int[]{0,10,5};
         } else {
             ///
         }
@@ -48,7 +51,8 @@ public class ArrowJButton extends JButton {
     }
 
     public void paintComponent(Graphics g) {
-        setOpaque(true);
+        //setOpaque(true); show button bounds
+        setOpaque(false);
         setContentAreaFilled(false);
         setBorderPainted(false);
         super.paintComponent(g);
