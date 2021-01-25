@@ -38,7 +38,7 @@ public class LC3Parser implements CodeReader {
     }
 
     //TODO: change from hardcoded to dynamically loaded from JSON
-    JsonReader jr = new JsonReader(new File(GeneralSettings.SYNTAX_PATH));
+    JsonReader jr = new JsonReader(new File(GeneralSettings.USERPREF.getSyntaxPath()));
     LC3Syntax syn = jr.mapJsonLC3Syntax();
     String[] commands = syn.getCommands();
     String[] jumps = syn.getJumps();

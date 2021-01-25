@@ -48,6 +48,8 @@ public class SettingsMenu extends Component {
 
     //Regx
     private String validFileType = "^(\\w+)$|(\\w+(,|;)\\w+)*$";
+    private String validIntType = "^\\d+$";
+
 
 
     /**
@@ -353,6 +355,27 @@ public class SettingsMenu extends Component {
          JPanel superContainer = new JPanel(new GridLayout(0,1,10,10));
          //superContainer.setBorder(BorderFactory.createDashedBorder(Color.MAGENTA));
         //-----------------------------------------
+
+        //Change Syntax path
+        JPanel syntaxFilePathPane = new JPanel(new FlowLayout());
+        JLabel curSyntxPathJLable = new JLabel("Current Syntax File");
+        curSyntxPathJLable.setFont(labelFont);
+        syntaxFilePathPane.add(curSyntxPathJLable);
+        JTextField syntaxFilePath = new JTextField(GeneralSettings.USERPREF.getSyntaxPath());
+        syntaxFilePath.setEditable(false);
+        syntaxFilePathPane.add(syntaxFilePath);
+        JButton changeSyntxPath = new JButton("Change File");
+        changeSyntxPath.addActionListener(e-> {
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.openFileWindow();
+            if(ofd.getFilePath() != null) {
+                GeneralSettings.USERPREF.setSyntaxPath(ofd.getFilePath());
+                syntaxFilePath.setText(GeneralSettings.USERPREF.getSyntaxPath());
+                syntaxFilePathPane.updateUI();
+            }
+        });
+        syntaxFilePathPane.add(changeSyntxPath);
+
         //Change current directory
         //Sets up a panel that changes the user preferences for the default folder path
         JPanel tempFilePathPane = new JPanel(new FlowLayout());
@@ -379,6 +402,13 @@ public class SettingsMenu extends Component {
             });
         });
         tempFilePathPane.add(changePath);
+
+
+        //------------------------------------------
+        //Temp File Limit
+
+
+
 
 
         //-----------------------------------------
@@ -419,6 +449,8 @@ public class SettingsMenu extends Component {
 
         preferredFileTypePane.add(submitChange);
 
+
+        superContainer.add(syntaxFilePathPane);
         superContainer.add(tempFilePathPane);
         superContainer.add(preferredFileTypePane);
 
@@ -494,6 +526,7 @@ public class SettingsMenu extends Component {
         mockGUIcolorPointers[mockGUIheaderColor] = GeneralSettings.USERPREF.getHeaderColor();
         mockGUIcolorPointers[mockGUImenuBtncolor] = GeneralSettings.USERPREF.getMenuBtnBGColor();
         mockGUIcolorPointers[mockGUImenuBtncolorHL] = GeneralSettings.USERPREF.getMenuBtnHLColor();
+        mockGUIcolorPointers[mockGUIFlowchartHLColor] = GeneralSettings.USERPREF.getFlowchartBoxHighlightColor();
 
 
         //Background
@@ -632,6 +665,16 @@ public class SettingsMenu extends Component {
                 flowchartBox2Text.setBackground(mockGUIcolorPointers[mockGUIflowchartBoxBGcolor]);
             }
 
+            //Reset GBC
+            gbc.ipadx = 0;
+            gbc.ipady = 0;
+            gbc.gridx = 2;
+            gbc.gridy = 2;
+            //Add remove and add new content
+            main.remove(2);
+            main.add(selectionIndicatorFlowchartColorAndHL(flowchartBox2Text,flowchartBox1Text,mockGUIflowchartBoxBGcolor, mockGUIFlowchartHLColor), gbc,2);
+            main.revalidate();
+
         });
 
         flowchartBox2Text.addActionListener(e->{
@@ -641,6 +684,18 @@ public class SettingsMenu extends Component {
                 flowchartBox1Text.setBackground(mockGUIcolorPointers[mockGUIflowchartBoxBGcolor]);
                 flowchartBox2Text.setBackground(mockGUIcolorPointers[mockGUIflowchartBoxBGcolor]);
             }
+
+
+            //Reset GBC
+            gbc.ipadx = 0;
+            gbc.ipady = 0;
+            gbc.gridx = 2;
+            gbc.gridy = 2;
+            //Add remove and add new content
+            main.remove(2);
+            main.add(selectionIndicatorFlowchartColorAndHL(flowchartBox2Text,flowchartBox1Text,mockGUIflowchartBoxBGcolor, mockGUIFlowchartHLColor), gbc,2);
+            main.revalidate();
+
 
         });
 
@@ -775,6 +830,14 @@ public class SettingsMenu extends Component {
             flowchartBox1Text.setBackground(mockGUIcolorPointers[mockGUIflowchartBoxBGcolor]);
             flowchartBox2Text.setBackground(mockGUIcolorPointers[mockGUIflowchartBoxBGcolor]);
 
+            //Flowchart color background highlight
+            mockGUIcolorPointers[mockGUIFlowchartHLColor] = new Color(
+                    GeneralSettings.TEXT_COLOR.x,
+                    GeneralSettings.TEXT_COLOR.y,
+                    GeneralSettings.TEXT_COLOR.z);
+
+
+
             //Flowchart line number color background
             mockGUIcolorPointers[mockGUIfloatchartNumberlineBGcolor] = new Color(GeneralSettings.LINE_NUMBER_BACKGROUND_COLOR.x, GeneralSettings.LINE_NUMBER_BACKGROUND_COLOR.y,GeneralSettings.LINE_NUMBER_BACKGROUND_COLOR.z);
             flowchartBox1Bar.setBackground(mockGUIcolorPointers[mockGUIfloatchartNumberlineBGcolor]);
@@ -861,6 +924,13 @@ public class SettingsMenu extends Component {
             flowchartBox1Text.setBackground(mockGUIcolorPointers[mockGUIflowchartBoxBGcolor]);
             flowchartBox2Text.setBackground(mockGUIcolorPointers[mockGUIflowchartBoxBGcolor]);
 
+            //Flowchart highlight color background
+            mockGUIcolorPointers[mockGUIFlowchartHLColor] = new Color(
+                    GeneralSettings.base2_light.x,
+                    GeneralSettings.base2_light.y,
+                    GeneralSettings.base2_light.z);
+
+
             //Flowchart line number color background
             mockGUIcolorPointers[mockGUIfloatchartNumberlineBGcolor] = new Color(
                     GeneralSettings.base00_light.x,
@@ -904,16 +974,16 @@ public class SettingsMenu extends Component {
             GeneralSettings.USERPREF.setHeaderColor(mockGUIcolorPointers[mockGUIheaderColor]);
 
             //Text editor color
-
             GeneralSettings.USERPREF.setTexteditorBGColor(mockGUIcolorPointers[mockGUItexteditorColor]);
-
 
             //Text editor line number BG color
             GeneralSettings.USERPREF.setTexteditorLinenumberBGColor(mockGUIcolorPointers[mockGUItexteditorLinenumberBGColor]);
 
-
             //Flowchart box BG colors
             GeneralSettings.USERPREF.setFlowchartBoxbackgroundColor(mockGUIcolorPointers[mockGUIflowchartBoxBGcolor]);
+
+            //Flowchart highlight color
+            GeneralSettings.USERPREF.setFlowchartBoxHighlightColor(mockGUIcolorPointers[mockGUIFlowchartHLColor]);
 
             //Flowchart box line number BG color
             GeneralSettings.USERPREF.setFlowchartBoxlinenumberBGColor(mockGUIcolorPointers[mockGUIfloatchartNumberlineBGcolor]);
@@ -1060,7 +1130,7 @@ public class SettingsMenu extends Component {
         return layeredPane;
     }
 
-    private JLayeredPane selectionIndicatorFlowchartColorAndHL(JButton sourceBtn, JButton sourceBtn2, int colorInt) {
+    private JLayeredPane selectionIndicatorFlowchartColorAndHL(JButton sourceBtn, JButton sourceBtn2, int colorInt, int colorInt2) {
         JLayeredPane layeredPane = new JLayeredPane();
         layeredPane.setBounds(0,0,300,50);
         layeredPane.setPreferredSize(new Dimension(300,50));
@@ -1077,13 +1147,13 @@ public class SettingsMenu extends Component {
             }
         });
 
-        JButton highlightColorBtn = contentLayer(mockGUIcolorPointers[mockGUImenuBtncolorHL], 150,0, 150,50);
+        JButton highlightColorBtn = contentLayer(mockGUIcolorPointers[colorInt2], 150,0, 150,50);
 
         highlightColorBtn.addActionListener(e-> {
             Color newColor = JColorChooser.showDialog(this,"Select a color",GeneralSettings.USERPREF.getBackgroundColor());
             if(newColor != null) {
-                mockGUIcolorPointers[mockGUImenuBtncolorHL] = newColor;
-                highlightColorBtn.setBackground(mockGUIcolorPointers[mockGUImenuBtncolorHL]);
+                mockGUIcolorPointers[colorInt2] = newColor;
+                highlightColorBtn.setBackground(mockGUIcolorPointers[colorInt2]);
             }
         });
 

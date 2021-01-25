@@ -21,6 +21,9 @@ public class UserPreferences {
     //NOTE: Java Class preferences require a fallback value
     //TODO: Figure out better way to handle default fallback value if a attribute is not set
 
+    private String keySyntaxPath = "syntaxpath";
+    private String fbValuesyntaxPath = GeneralSettings.SYNTAX_PATH;
+
     private String keyTempfilepath = "tempfilepath";
     private String fbValueTempfilepath;
 
@@ -50,15 +53,26 @@ public class UserPreferences {
 
     //Flowchart background color
     private String keyFlowchartBoxBGColor_RED = "fcbbgcolorred";
-    private float fbValueFlowchartBoxBGColor_RED = GeneralSettings.base03.x;
+    private float fbValueFlowchartBoxBGColor_RED = GeneralSettings.TEXT_BOX_BACKGROUND_COLOR.x;
 
 
     private String keyFlowchartBoxBGColor_GREEN = "fcbbgcolorgreen";
-    private float fbValueFlowchartBoxBGColor_GREEN = GeneralSettings.base03.y;
+    private float fbValueFlowchartBoxBGColor_GREEN = GeneralSettings.TEXT_BOX_BACKGROUND_COLOR.y;
 
 
     private String keyFlowchartBoxBGColor_BLUE = "fcbbgcolorblue";
-    private float fbValueFlowchartBoxBGColor_BLUE = GeneralSettings.base03.z;
+    private float fbValueFlowchartBoxBGColor_BLUE = GeneralSettings.TEXT_BOX_BACKGROUND_COLOR.z;
+
+    //Flowchart highlight color
+    private String keyFlowchartBoxHLColor_RED = "fcbhlcolorred";
+    private float fbValueFlowchartBoxHLColor_RED = GeneralSettings.TEXT_COLOR.x;
+
+    private String keyFlowchartBoxHLColor_GREEN = "fcbhlcolorgreen";
+    private float fbValueFlowchartBoxHLColor_GREEN = GeneralSettings.TEXT_COLOR.y;
+
+    private String keyFlowchartBoxHLColor_BLUE = "fcbhlcolorblue";
+    private float fbValueFlowchartBoxHLColor_BLUE = GeneralSettings.TEXT_COLOR.z;
+
 
     //Flowchart line number background color
     private String keyFlowchartBoxLineNumberBGColor_RED = "fcblnbgcolorred";
@@ -97,7 +111,6 @@ public class UserPreferences {
     private float fbValueTexteditorLinenumberBGcolor_BLUE = GeneralSettings.LINE_NUMBER_BACKGROUND_COLOR.z;
 
 
-
     //Header color
     private String keyHeaderColor_RED = "headercolorred";
     private float fbValueHeadercolor_RED = GeneralSettings.HEADER_COLOR.x;
@@ -109,7 +122,6 @@ public class UserPreferences {
 
     private String keyHeaderColor_BLUE = "headercolorblue";
     private float fbValueHeadercolor_BLUE = GeneralSettings.HEADER_COLOR.z;
-
 
 
     //Menu Button background colors
@@ -133,7 +145,6 @@ public class UserPreferences {
 
     private String KeyMenuBtnHLColor_BLUE = "menubtnhlcolorblue";
     private float  fbValueMenuBtnHLColor_BLUE = GeneralSettings.HIGHLIGHT_COLOR.z;
-
 
 
 
@@ -186,6 +197,15 @@ public class UserPreferences {
     public UserPreferences(String userPreferencesPath) {
         this.userPreferencesPath = userPreferencesPath;
         userPref = Preferences.userRoot().node(userPreferencesPath);
+    }
+
+
+    public void setSyntaxPath(String dir) {
+        userPref.put(keySyntaxPath, dir);
+    }
+
+    public String getSyntaxPath() {
+        return userPref.get(keySyntaxPath, GeneralSettings.SYNTAX_PATH);
     }
 
     /**
@@ -339,6 +359,39 @@ public class UserPreferences {
         );
         return bgColor;
     }
+
+    //Flowchart highlight background color
+    public void setFlowchartBoxHighlightColor(Color bgColor) {
+        userPref.putFloat(keyFlowchartBoxHLColor_RED, bgColor.getRed()/255f);
+        userPref.putFloat(keyFlowchartBoxHLColor_GREEN, bgColor.getGreen()/255f);
+        userPref.putFloat(keyFlowchartBoxHLColor_BLUE, bgColor.getBlue()/255f);
+    }
+
+    public void setFlowchartBoxHighlightColor3f(Vector3f bgColor) {
+        userPref.putFloat(keyFlowchartBoxHLColor_RED, bgColor.x);
+        userPref.putFloat(keyFlowchartBoxHLColor_GREEN, bgColor.y);
+        userPref.putFloat(keyFlowchartBoxHLColor_BLUE, bgColor.z);
+    }
+
+    public Vector3f getFlowchartBoxHighlightColor3f() {
+        Vector3f bgColor = new Vector3f();
+        bgColor.setX(userPref.getFloat(keyFlowchartBoxHLColor_RED, fbValueFlowchartBoxHLColor_RED));
+        bgColor.setY(userPref.getFloat(keyFlowchartBoxHLColor_GREEN, fbValueFlowchartBoxHLColor_GREEN));
+        bgColor.setZ(userPref.getFloat(keyFlowchartBoxHLColor_BLUE, fbValueFlowchartBoxHLColor_BLUE));
+        return bgColor;
+    }
+
+    public Color getFlowchartBoxHighlightColor() {
+        Color bgColor = new Color(
+                userPref.getFloat(keyFlowchartBoxHLColor_RED, fbValueFlowchartBoxHLColor_RED),
+                userPref.getFloat(keyFlowchartBoxHLColor_GREEN, fbValueFlowchartBoxHLColor_GREEN),
+                userPref.getFloat(keyFlowchartBoxHLColor_BLUE, fbValueFlowchartBoxHLColor_BLUE)
+        );
+        return bgColor;
+    }
+
+
+
 
     //Flowchart box line number background color
     public void setFlowchartBoxlinenumberBGColor(Color bgColor) {
