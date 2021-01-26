@@ -11,7 +11,7 @@ import main.GeneralSettings;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
-import parser.LC3Parser;
+import parser.Parser;
 
 import java.util.List;
 
@@ -63,7 +63,7 @@ public class CodeWindowController {
         int lineNumber = 1;
         float longestLineNumber = 0;
 
-        LC3Parser parser = new LC3Parser();
+        Parser parser = new Parser();
 
         for (String line : lines){
             TextLine textLine = parser.getFormattedLine(line);

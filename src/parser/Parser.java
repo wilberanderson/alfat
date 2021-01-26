@@ -16,7 +16,7 @@ import org.lwjgl.util.vector.Vector3f;
 import java.io.*;
 import java.util.*;
 
-public class LC3Parser implements CodeReader {
+public class Parser implements CodeReader {
     public float x_bound = -10;
     public float y_bound = -10;
     // attributes
@@ -25,14 +25,14 @@ public class LC3Parser implements CodeReader {
     ArrayList<FlowChartObject> flowchart = new ArrayList<>();
 
     HashMap<String, Integer> labelMap = new HashMap<>(); // map of labels -> line numbers
-    List<LC3TLine> lines = new ArrayList<>();
+    List<CodeLine> lines = new ArrayList<>();
 
-    public LC3Parser(String infile, boolean verbose) {
+    public Parser(String infile, boolean verbose) {
         this.infile = infile;
         this.verbose = verbose;
     }
 
-    public LC3Parser(){
+    public Parser(){
         //default constructor, only use for helper functions.
         this.verbose = false;
     }
@@ -43,7 +43,7 @@ public class LC3Parser implements CodeReader {
     String[] commands = syn.getCommands();
     String[] jumps = syn.getJumps();
 
-    /**Read an input file. Parse the input file line by line, and store them in the arrayList of LC3TLine objects.
+    /**Read an input file. Parse the input file line by line, and store them in the arrayList of CodeLine objects.
      *
      * @param infile The absolute or relative location of the file, as a string.
      */
@@ -148,7 +148,7 @@ public class LC3Parser implements CodeReader {
                 }
 
                 //call constructor for TLine, then add the new object to the arraylist for the file
-                lines.add(new LC3TLine(line, comm, label, targetLabel, jump, registers, i));
+                lines.add(new CodeLine(line, comm, label, targetLabel, jump, registers, i));
                 // Assign formatted text object to the new LC3Tline class
                 lines.get(lines.size() - 1).setTextLine(FormLine);
 
@@ -266,7 +266,7 @@ public class LC3Parser implements CodeReader {
         flowchart.add(new FlowChartObject());
         flowchart.get(flowchart.size() - 1).setBoxNumber(flowchart.size() - 1);
 
-        for (LC3TLine line : lines) {
+        for (CodeLine line : lines) {
             if (verbose) {
                 System.out.println();
                 System.out.println("line text \"" + line.getLineText(true) + "\"");

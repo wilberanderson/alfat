@@ -403,7 +403,7 @@ public class SettingsMenu extends Component {
             OpenFileDialog ofd = new OpenFileDialog();
             ofd.saveFolderWindow();
             if(ofd.getFilePath() != null) {
-                userPreferences.setUserTempFileDirPath(ofd.getFilePath());
+                GeneralSettings.USERPREF.setUserTempFileDirPath(ofd.getFilePath());
                 updateMenucontent(fileSettingsContent());
             }
         });

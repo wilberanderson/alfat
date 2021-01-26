@@ -168,6 +168,7 @@ public class EngineTester {
         // Run the rendering loop until the user has attempted to close
         // the window or has pressed the ESCAPE key.
         while ( !GLFW.glfwWindowShouldClose(window) ) {
+            //GLFW.glfwRequestWindowAttention(window);
 
             // Poll for window events. The event callbacks will be called when an event is received
 //            GLFW.glfwPollEvents();

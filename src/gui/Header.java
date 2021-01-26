@@ -14,7 +14,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
-import parser.LC3Parser;
+import parser.Parser;
 import rendering.renderEngine.MasterRenderer;
 
 import javax.imageio.ImageIO;
@@ -27,20 +27,13 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
-import gui.buttons.HeaderMenu;
-import gui.buttons.TextButton;
-import org.lwjgl.glfw.GLFW;
-import rendering.renderEngine.MasterRenderer;
-
-import javax.imageio.ImageIO;
-
 public class Header {
     private List<HeaderMenu> menuList;
     private GUIFilledBox guiFilledBox;
     private Vector2f position;
     private Vector2f aspectRatio = new Vector2f(1, 1);
     private TempFileManager tfm; //Manages the temp file paths
-    private LC3Parser parser = null;
+    private Parser parser = null;
     private String windowTitle = null;
 
     public Header(Vector2f position, Vector2f size, ApplicationController controller){
@@ -247,7 +240,7 @@ public class Header {
                 if(tfm.getMostRecent() == null) {
                    return;
                 }
-                parser = new LC3Parser(tfm.getMostRecent(), false);
+                parser = new Parser(tfm.getMostRecent(), false);
                 parser.ReadFile(tfm.getMostRecent());
 
                 parser.generateFlowObjects();
@@ -274,7 +267,7 @@ public class Header {
                 if(tfm.getMostRecent() == null) {
                     return;
                 }
-                parser  = new LC3Parser(tfm.getMostRecent(), false);
+                parser  = new Parser(tfm.getMostRecent(), false);
                 parser.ReadFile(tfm.getMostRecent());
 
                 parser.generateFlowObjects();
@@ -292,7 +285,7 @@ public class Header {
                     return;
                 }
 
-                parser = new LC3Parser(GeneralSettings.FILE_PATH, true);
+                parser = new Parser(GeneralSettings.FILE_PATH, true);
                 parser.ReadFile(GeneralSettings.FILE_PATH);
                 parser.generateFlowObjects();
                 parser.createFlowchart(controller);

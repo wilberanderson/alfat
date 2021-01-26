@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-/** A LC3TLine stands for LC-3 Text Line.
+/** A CodeLine stands for LC-3 Text Line.
  *
  * It contains the line number, full text of a single line and other attributes of the parsed line.
  *
@@ -16,7 +16,7 @@ import java.util.Optional;
 *
 * */
 
-public class LC3TLine {
+public class CodeLine {
     private String lineText;
     private int lineNumber;
     private String command;
@@ -26,7 +26,7 @@ public class LC3TLine {
     private boolean jump;
     private TextLine textLine;
     //general constructor:
-    private LC3TLine(){
+    private CodeLine(){
         //left blank
     }
 
@@ -40,7 +40,7 @@ public class LC3TLine {
      * @param registers Registers used by this line
      * @param line Line index
      */
-    public LC3TLine(String fullText, Optional<String> comm, String label, String targetLabel, boolean jump, List<String> registers, int line) {
+    public CodeLine(String fullText, Optional<String> comm, String label, String targetLabel, boolean jump, List<String> registers, int line) {
         comm.ifPresent(s -> this.command = s);
         if (!label.isEmpty())       this.label = label;
         if (!targetLabel.isEmpty()) this.target = targetLabel;
