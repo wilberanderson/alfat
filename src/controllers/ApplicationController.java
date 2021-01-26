@@ -60,6 +60,7 @@ public class ApplicationController {
 
         if(header != null) {
             header.changeHeadercolor();
+            header.changeButtonColors();
         }
 
         //Background color
@@ -207,7 +208,7 @@ public class ApplicationController {
         if(LEFT_MOUSE_HELD && flowchartWindowController != null) {
             float xChange = (float)(MOUSE_X - previousMouseX);
             float yChange = (float)(MOUSE_Y - previousMouseY);
-            flowchartWindowController.updateTranslation(new Vector2f((float) xChange, (float) yChange));
+            flowchartWindowController.updateTranslation(new Vector2f((float) xChange*flowchartWindowController.getZoom(), (float) yChange*flowchartWindowController.getZoom()));
         }
     }
 

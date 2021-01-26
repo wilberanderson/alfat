@@ -116,6 +116,10 @@ public class FlowchartWindowController {
         flowchartWindow.setZoom(1f);
     }
 
+    public float getZoom(){
+        return flowchartWindow.getZoom();
+    }
+
     public FlowchartTextBoxController getFlowchartTextBoxController() {
         return flowchartTextBoxController;
     }

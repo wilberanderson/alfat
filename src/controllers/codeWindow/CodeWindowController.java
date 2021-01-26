@@ -17,13 +17,18 @@ import java.util.List;
 
 public class CodeWindowController {
     CursorController cursorController;
+
+    public TextLineController getTextLineController() {
+        return textLineController;
+    }
+
     TextLineController textLineController;
 
     CodeWindow codeWindow;
     Vector2f mousePosition;
     Vector2f aspectRatio = new Vector2f(1, 1);
 
-    private float contentsVerticalPosition = -1;
+    private float contentsVerticalPosition = 0;
     private float maxVerticalPosition;
 
     private float lineHeight;
@@ -83,7 +88,7 @@ public class CodeWindowController {
         }
 
         changeContentsHorizontalPosition(longestLineNumber*2+border*2);
-        this.codeWindow.setTextNumberFilledBox(new GUIFilledBox(new Vector2f(position.x, position.y), new Vector2f(longestLineNumber*2 + 2*border, size.y), GeneralSettings.LINE_NUMBER_BACKGROUND_COLOR));
+        this.codeWindow.setTextNumberFilledBox(new GUIFilledBox(new Vector2f(position.x, position.y), new Vector2f(longestLineNumber*2 + 2*border, size.y), GeneralSettings.USERPREF.getTexteditorLinenumberBGColor3f()));
         maxVerticalPosition = minHeight-size.y;
         this.codeWindow.setGuiFilledBox(new GUIFilledBox(new Vector2f(longestLineNumber*2+border*2, 0), new Vector2f(size.x - longestLineNumber*2 + border*2, size.y), backgroundColor));
 
@@ -124,19 +129,21 @@ public class CodeWindowController {
     }
 
     public void scroll(float scrollChange){
-        scrollChange = -scrollChange;
-        scrollChange *= aspectRatio.y;
-        if (maxVerticalPosition > codeWindow.getPosition().x) {
-            float newPosition = contentsVerticalPosition + scrollChange;
-            if (newPosition < 0) {
-                changeContentsVerticalPosition(-contentsVerticalPosition);
-                cursorController.scroll(-contentsVerticalPosition);
-            } else if (newPosition > maxVerticalPosition) {
-                changeContentsVerticalPosition(maxVerticalPosition - contentsVerticalPosition);
-                cursorController.scroll(maxVerticalPosition - contentsVerticalPosition);
-            } else {
-                changeContentsVerticalPosition(scrollChange);
-                cursorController.scroll(scrollChange);
+        if(maxVerticalPosition > codeWindow.getSize().y) {
+            scrollChange = -scrollChange;
+            scrollChange *= aspectRatio.y;
+            if (maxVerticalPosition > codeWindow.getPosition().x) {
+                float newPosition = contentsVerticalPosition + scrollChange;
+                if (newPosition < 0) {
+                    changeContentsVerticalPosition(-contentsVerticalPosition);
+                    cursorController.scroll(-contentsVerticalPosition);
+                } else if (newPosition > maxVerticalPosition) {
+                    changeContentsVerticalPosition(maxVerticalPosition - contentsVerticalPosition);
+                    cursorController.scroll(maxVerticalPosition - contentsVerticalPosition);
+                } else {
+                    changeContentsVerticalPosition(scrollChange);
+                    cursorController.scroll(scrollChange);
+                }
             }
         }
     }
@@ -168,14 +175,14 @@ public class CodeWindowController {
         //changeLineNumberVerticalPosition(contentsVerticalPosition+((codeWindow.getSize().y-1)-aspectRatio.y));
         float startingHeight = codeWindow.getSize().y - 1;
         startingHeight /= aspectRatio.y;
-        for(Text text : codeWindow.getLineNumbers()){
-            text.setPosition(new Vector2f(-1/aspectRatio.x, startingHeight));//+contentsVerticalPosition));
-            startingHeight -= lineHeight;
-        }
+//        for(TextLine text : codeWindow.getLineNumbers()){
+//            text.setPosition(new Vector2f(-1/aspectRatio.x, startingHeight));//+contentsVerticalPosition));
+//            startingHeight -= lineHeight;
+//        }
         startingHeight = codeWindow.getSize().y - 1;
         startingHeight /= aspectRatio.y;
-        for(Text text : codeWindow.getTexts()){
-            text.setPosition(new Vector2f((codeWindow.getCodeWindowPosition().x)/aspectRatio.x, startingHeight));//+contentsVerticalPosition));
+        for(TextLine line:textLineController.getCodeWindowTextLines()){
+            line.setPosition(new Vector2f((codeWindow.getCodeWindowPosition().x)/aspectRatio.x, startingHeight));//+contentsVerticalPosition));
             startingHeight -= lineHeight;
         }
         this.aspectRatio = aspectRatio;
@@ -271,7 +278,7 @@ public class CodeWindowController {
     }
 
     public void clear(){
-        codeWindow.clear();
+        textLineController.getCodeWindowTextLines().clear();
     }
 
     public CursorController getCursorController(){

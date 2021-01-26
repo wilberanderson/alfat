@@ -16,6 +16,18 @@ public class TextButton extends HighlightableButton{
     private Vector3f highlightColor;
     private Vector2f aspectRatio = new Vector2f(1,1);
 
+
+    public void setBackgroundColor(Vector3f backgroundColor3f) {
+        this.backgroundColor = backgroundColor3f;
+        this.guiFilledBox.setColor(backgroundColor);
+    }
+
+    public void setHighlightColor(Vector3f highlightColor3f) {
+        this.highlightColor = highlightColor3f;
+
+    }
+
+
     public TextButton(Vector2f position, String text, Vector3f backgroundColor, Vector3f highlightColor, Vector3f textColor, FontType font, float fontSize, float width, float edge){
         super();
         this.text = new GUIText(text, fontSize, new Vector2f(position.x + GeneralSettings.TEXT_BUTTON_PADDING, position.y+fontSize*0.06f + GeneralSettings.TEXT_BUTTON_PADDING));
@@ -70,6 +82,7 @@ public class TextButton extends HighlightableButton{
 
     @Override
     public void onUnhighlight() {
+
         this.guiFilledBox.setColor(backgroundColor);
     }
 

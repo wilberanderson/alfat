@@ -47,7 +47,7 @@ public class FlowchartTextBoxController {
 
     public void add(Vector2f position, List<TextLine> textLines, int lineNumber, List<String> registers, String alert){
         FlowchartTextBox textBox = new FlowchartTextBox(position, registers, alert);
-        //TODO: WHY IS THIS SET THIS COLOR!?!?!?!?
+        //background color unhighlighted
         textBox.setBackgroundColor(GeneralSettings.TEXT_BOX_BACKGROUND_COLOR);
         textBox.setBorderColor(GeneralSettings.TEXT_BOX_BORDER_COLOR);
         textBox.setTextColor(GeneralSettings.TEXT_COLOR);
@@ -78,9 +78,10 @@ public class FlowchartTextBoxController {
 
         }
 
-        textBox.setTextNumberFilledBox(new GUIFilledBox(position, new Vector2f(longestLineNumber * 2 + 2 * GeneralSettings.TEXT_BOX_BORDER_WIDTH, minHeight), GeneralSettings.LINE_NUMBER_BACKGROUND_COLOR));
+        textBox.setTextNumberFilledBox(new GUIFilledBox(position, new Vector2f(longestLineNumber * 2 + 2 * GeneralSettings.TEXT_BOX_BORDER_WIDTH, minHeight), GeneralSettings.USERPREF.getFlowchartBoxlinenumberBGColor3f()));
         textBox.setSize(new Vector2f((float) greatestLength * 2 + 4 * GeneralSettings.TEXT_BOX_BORDER_WIDTH + textBox.getTextNumberFilledBox().getSize().x + GeneralSettings.FLOWCHART_TEXT_BOX_INTERNAL_PAD_RIGHT, lineHeight * textLines.size() + GeneralSettings.TEXT_BOX_BORDER_WIDTH));
-        textBox.setGuiFilledBox(new GUIFilledBox(position, textBox.getSize(), GeneralSettings.TEXT_BOX_BACKGROUND_COLOR));
+        //Background color of text box
+        textBox.setGuiFilledBox(new GUIFilledBox(position, textBox.getSize(), GeneralSettings.USERPREF.getFlowchartBoxbackgroundColor3f()));
         for (Text text : textBox.getTexts()) {
             text.setPosition(new Vector2f(textBox.getTextNumberFilledBox().getPosition().x + textBox.getTextNumberFilledBox().getSize().x, text.getPosition().y));
         }
@@ -91,7 +92,9 @@ public class FlowchartTextBoxController {
     public void clear(){
         for(FlowchartTextBox textBox : textBoxes){
             textBox.clear();
+
         }
+        textBoxes.clear();
         textLineController.clear();
     }
 
@@ -111,6 +114,7 @@ public class FlowchartTextBoxController {
                 if (verbose) System.out.println("Match found");
                 box.setBackgroundColor(GeneralSettings.TEXT_COLOR);
                 box.setTextColor(GeneralSettings.TEXT_BOX_BACKGROUND_COLOR);
+
             } else {
                 box.setBackgroundColor(GeneralSettings.TEXT_BOX_BACKGROUND_COLOR);
                 box.setTextColor(GeneralSettings.TEXT_COLOR);
