@@ -1,0 +1,595 @@
+{
+    "operation": [{
+            "name": "ADD",
+            "parameters": 0
+        },
+        {
+            "name": "SUB",
+            "parameters": 0
+        },
+        {
+            "name": "SBB",
+            "parameters": 0
+        },
+        {
+            "name": "INC",
+            "parameters": 0
+        },
+        {
+            "name": "DEC",
+            "parameters": 0
+        },
+        {
+            "name": "MUL",
+            "parameters": 0
+        },
+        {
+            "name": "DIV",
+            "parameters": 0
+        },
+        {
+            "name": "IDIV",
+            "parameters": 0
+        },
+        {
+            "name": "CBW",
+            "parameters": 0
+        },
+        {
+            "name": "CWD",
+            "parameters": 0
+        },
+        {
+            "name": "CDQ",
+            "parameters": 0
+        },
+        {
+            "name": "PUSH",
+            "parameters": 0
+        },
+        {
+            "name": "POP",
+            "parameters": 0
+        },
+        {
+            "name": "PUSHA",
+            "parameters": 0
+        },
+        {
+            "name": "POPA",
+            "parameters": 0
+        },
+        {
+            "name": "PUSHAD",
+            "parameters": 0
+        },
+        {
+            "name": "POPAD",
+            "parameters": 0
+        },
+        {
+            "name": "PUSHF",
+            "parameters": 0
+        },
+        {
+            "name": "POPF",
+            "parameters": 0
+        },
+        {
+            "name": "PUSHFD",
+            "parameters": 0
+        },
+        {
+            "name": "POPFD",
+            "parameters": 0
+        },
+        {
+            "name": "PUSHAD",
+            "parameters": 0
+        },
+        {
+            "name": "PUSHA",
+            "parameters": 0
+        },
+        {
+            "name": "POPAD",
+            "parameters": 0
+        },
+        {
+            "name": "POPA",
+            "parameters": 0
+        },
+        {
+            "name": "CMPSB",
+            "parameters": 0
+        },
+        {
+            "name": "CMPPSW",
+            "parameters": 0
+        },
+        {
+            "name": "CMPSD",
+            "parameters": 0
+        },
+        {
+            "name": "SCASB",
+            "parameters": 0
+        },
+        {
+            "name": "SCASW",
+            "parameters": 0
+        },
+        {
+            "name": "SCASD",
+            "parameters": 0
+        },
+        {
+            "name": "REP",
+            "parameters": 0
+        },
+        {
+            "name": "REPZ",
+            "parameters": 0
+        },
+        {
+            "name": "REPNZ",
+            "parameters": 0
+        },
+        {
+            "name": "REPNE",
+            "parameters": 0
+        },
+        {
+            "name": "ROL",
+            "parameters": 0
+        },
+        {
+            "name": "RCL",
+            "parameters": 0
+        },
+        {
+            "name": "ROR",
+            "parameters": 0
+        },
+        {
+            "name": "RCR",
+            "parameters": 0
+        },
+        {
+            "name": "SHR",
+            "parameters": 0
+        },
+        {
+            "name": "SHRD",
+            "parameters": 0
+        },
+        {
+            "name": "SHL",
+            "parameters": 0
+        },
+        {
+            "name": "SHLD",
+            "parameters": 0
+        },
+        {
+            "name": "SAR",
+            "parameters": 0
+        },
+        {
+            "name": "SAL",
+            "parameters": 0
+        },
+        {
+            "name": "AND",
+            "parameters": 0
+        },
+        {
+            "name": "OR",
+            "parameters": 0
+        },
+        {
+            "name": "XOR",
+            "parameters": 0
+        },
+        {
+            "name": "TEST",
+            "parameters": 0
+        },
+        {
+            "name": "NOT",
+            "parameters": 0
+        }
+    ],
+    "dataMovement": [{
+            "name": "MOV",
+            "parameters": 0
+        },
+        {
+            "name": "XCHG",
+            "parameters": 0
+        },
+        {
+            "name": "MOVSX",
+            "parameters": 0
+        },
+        {
+            "name": "MOVZX",
+            "parameters": 0
+        },
+        {
+            "name": "MOVSB",
+            "parameters": 0
+        },
+        {
+            "name": "MOVSW",
+            "parameters": 0
+        },
+        {
+            "name": "MOVSD",
+            "parameters": 0
+        },
+        {
+            "name": "STOSB",
+            "parameters": 0
+        },
+        {
+            "name": "STOSW",
+            "parameters": 0
+        },
+        {
+            "name": "STOSD",
+            "parameters": 0
+        },
+        {
+            "name": "LODSB",
+            "parameters": 0
+        },
+        {
+            "name": "LODSW",
+            "parameters": 0
+        },
+        {
+            "name": "LODSD",
+            "parameters": 0
+        }
+    ],
+    "control": [{
+            "name": "JZ",
+            "parameters": 0
+        },
+        {
+            "name": "JNZ",
+            "parameters": 0
+        },
+        {
+            "name": "JC",
+            "parameters": 0
+        },
+        {
+            "name": "JNC",
+            "parameters": 0
+        },
+        {
+            "name": "JO",
+            "parameters": 0
+        },
+        {
+            "name": "JNC",
+            "parameters": 0
+        },
+        {
+            "name": "JS",
+            "parameters": 0
+        },
+        {
+            "name": "JNS",
+            "parameters": 0
+        },
+        {
+            "name": "JP",
+            "parameters": 0
+        },
+        {
+            "name": "JNP",
+            "parameters": 0
+        },
+        {
+            "name": "JE",
+            "parameters": 0
+        },
+        {
+            "name": "JNE",
+            "parameters": 0
+        },
+        {
+            "name": "JCXZ",
+            "parameters": 0
+        },
+        {
+            "name": "JECXZ",
+            "parameters": 0
+        },
+        {
+            "name": "JA",
+            "parameters": 0
+        },
+        {
+            "name": "JNBE",
+            "parameters": 0
+        },
+        {
+            "name": "JAE",
+            "parameters": 0
+        },
+        {
+            "name": "JNB",
+            "parameters": 0
+        },
+        {
+            "name": "JB",
+            "parameters": 0
+        },
+        {
+            "name": "JNAE",
+            "parameters": 0
+        },
+        {
+            "name": "JBE",
+            "parameters": 0
+        },
+        {
+            "name": "JNA",
+            "parameters": 0
+        },
+        {
+            "name": "JG",
+            "parameters": 0
+        },
+        {
+            "name": "JNLE",
+            "parameters": 0
+        },
+        {
+            "name": "JGE",
+            "parameters": 0
+        },
+        {
+            "name": "JNL",
+            "parameters": 0
+        },
+        {
+            "name": "JL",
+            "parameters": 0
+        },
+        {
+            "name": "JNGE",
+            "parameters": 0
+        },
+        {
+            "name": "JLE",
+            "parameters": 0
+        },
+        {
+            "name": "JNG",
+            "parameters": 0
+        },
+        {
+            "name": "CALL",
+            "parameters": 0
+        },
+        {
+            "name": "RET",
+            "parameters": 0
+        },
+        {
+            "name": "JMP",
+            "parameters": 0
+        },
+        {
+            "name": "LOOP",
+            "parameters": 0
+        }
+    ],
+    "reserved": [{
+            "name": ".DATA",
+            "parameters": 0
+        },
+        {
+            "name": "BYTE",
+            "parameters": 0
+        },
+        {
+            "name": "WORD",
+            "parameters": 0
+        },
+        {
+            "name": "DWORD",
+            "parameters": 0
+        },
+        {
+            "name": "SDWORD",
+            "parameters": 0
+        },
+        {
+            "name": "QWORD",
+            "parameters": 0
+        },
+        {
+            "name": "TYPE",
+            "parameters": 0
+        },
+        {
+            "name": "LENGTHOF",
+            "parameters": 0
+        },
+        {
+            "name": "PTR",
+            "parameters": 0
+        },
+        {
+            "name": "SIZEOF",
+            "parameters": 0
+        },
+        {
+            "name": "DUP",
+            "parameters": 0
+        },
+        {
+            "name": "EQU",
+            "parameters": 0
+        },
+        {
+            "name": ".CODE",
+            "parameters": 0
+        },
+        {
+            "name": ".STACK",
+            "parameters": 0
+        },
+        {
+            "name": "ENDS",
+            "parameters": 0
+        },
+        {
+            "name": "PROC",
+            "parameters": 0
+        },
+        {
+            "name": "ENDP",
+            "parameters": 0
+        },
+        {
+            "name": "END",
+            "parameters": 0
+        },
+        {
+            "name": "OFFSET",
+            "parameters": 0
+        },
+        {
+            "name": "PROTO",
+            "parameters": 0
+        },
+        {
+            "name": "INVOKE",
+            "parameters": 0
+        },
+        {
+            "name": "ADDR",
+            "parameters": 0
+        },
+        {
+            "name": "CLD",
+            "parameters": 0
+        },
+        {
+            "name": "STD",
+            "parameters": 0
+        },
+        {
+            "name": "INCLUDE",
+            "parameters": 0
+        }
+    ],
+    "registers": [{
+            "name": "EAX",
+            "parameters": 0
+        },
+        {
+            "name": "EBX",
+            "parameters": 0
+        },
+        {
+            "name": "ECX",
+            "parameters": 0
+        },
+        {
+            "name": "EDX",
+            "parameters": 0
+        },
+        {
+            "name": "ESI",
+            "parameters": 0
+        },
+        {
+            "name": "EDI",
+            "parameters": 0
+        },
+        {
+            "name": "ESP",
+            "parameters": 0
+        },
+        {
+            "name": "EBP",
+            "parameters": 0
+        },
+        {
+            "name": "AX",
+            "parameters": 0
+        },
+        {
+            "name": "BX",
+            "parameters": 0
+        },
+        {
+            "name": "BX",
+            "parameters": 0
+        },
+        {
+            "name": "CX",
+            "parameters": 0
+        },
+        {
+            "name": "DX",
+            "parameters": 0
+        },
+        {
+            "name": "AH",
+            "parameters": 0
+        },
+        {
+            "name": "BH",
+            "parameters": 0
+        },
+        {
+            "name": "CH",
+            "parameters": 0
+        },
+        {
+            "name": "DH",
+            "parameters": 0
+        },
+        {
+            "name": "AL",
+            "parameters": 0
+        },
+        {
+            "name": "BL",
+            "parameters": 0
+        },
+        {
+            "name": "CL",
+            "parameters": 0
+        },
+        {
+            "name": "DL",
+            "parameters": 0
+        },
+        {
+            "name": "SI",
+            "parameters": 0
+        },
+        {
+            "name": "DI",
+            "parameters": 0
+        },
+        {
+            "name": "BP",
+            "parameters": 0
+        },
+        {
+            "name": "SP",
+            "parameters": 0
+        }
+    ]
+}
