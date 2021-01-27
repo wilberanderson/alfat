@@ -14,6 +14,8 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
+import parser.JsonReader;
+import parser.LC3Syntax;
 import parser.Parser;
 import rendering.renderEngine.MasterRenderer;
 
@@ -52,6 +54,10 @@ public class Header {
         List<TextButton> registerMenuButtonList = new ArrayList<>();
         List<TextButton> analyticsMenuButtonList = new ArrayList<>();
         List<TextButton> settingsMenuButtonList = new ArrayList<>();
+
+        JsonReader jr = new JsonReader(new File(GeneralSettings.SYNTAX_PATH));
+        LC3Syntax syn = jr.mapJsonLC3Syntax();
+        String[] registers = syn.getRegisterNames();
 
         //open file
         TextButton button = new TextButton("Open File") {
@@ -342,87 +348,19 @@ public class Header {
             }
         };
         registerMenuButtonList.add(button);
-        button = new TextButton("R0") {
-            @Override
-            public void onPress() {
-                if (controller.getFlowchartWindowController() != null) {
-                    controller.getFlowchartWindowController().locateRegister("R0");
-                    GLFW.glfwSetWindowTitle(EngineTester.getWindow(), windowTitle + " [RO]");
-                }
-            }
-        };
-        registerMenuButtonList.add(button);
-        button = new TextButton("R1") {
-            @Override
-            public void onPress() {
-                if (controller.getFlowchartWindowController() != null) {
-                    controller.getFlowchartWindowController().locateRegister("R1");
-                    GLFW.glfwSetWindowTitle(EngineTester.getWindow(), windowTitle + " [R1]");
 
+        for(String s: registers){
+            button = new TextButton(s) {
+                @Override
+                public void onPress() {
+                    if(controller.getFlowchartWindowController() != null) {
+                        controller.getFlowchartWindowController().locateRegister(s);
+                        GLFW.glfwSetWindowTitle(EngineTester.getWindow(), windowTitle + " ["+s+"]");
+                    }
                 }
-            }
-        };
-        registerMenuButtonList.add(button);
-        button = new TextButton("R2") {
-            @Override
-            public void onPress() {
-                if (controller.getFlowchartWindowController() != null) {
-                    controller.getFlowchartWindowController().locateRegister("R2");
-                    GLFW.glfwSetWindowTitle(EngineTester.getWindow(), windowTitle + " [R2]");
-                }
-            }
-        };
-        registerMenuButtonList.add(button);
-        button = new TextButton("R3") {
-            @Override
-            public void onPress() {
-                if (controller.getFlowchartWindowController() != null) {
-                    controller.getFlowchartWindowController().locateRegister("R3");
-                    GLFW.glfwSetWindowTitle(EngineTester.getWindow(), windowTitle + " [R3]");
-                }
-            }
-        };
-        registerMenuButtonList.add(button);
-        button = new TextButton("R4") {
-            @Override
-            public void onPress() {
-                if (controller.getFlowchartWindowController() != null) {
-                    controller.getFlowchartWindowController().locateRegister("R4");
-                    GLFW.glfwSetWindowTitle(EngineTester.getWindow(), windowTitle + " [R4]");
-                }
-            }
-        };
-        registerMenuButtonList.add(button);
-        button = new TextButton("R5") {
-            @Override
-            public void onPress() {
-                if (controller.getFlowchartWindowController() != null) {
-                    controller.getFlowchartWindowController().locateRegister("R5");
-                    GLFW.glfwSetWindowTitle(EngineTester.getWindow(), windowTitle + " [R5]");
-                }
-            }
-        };
-        registerMenuButtonList.add(button);
-        button = new TextButton("R6") {
-            @Override
-            public void onPress() {
-                if (controller.getFlowchartWindowController() != null) {
-                    controller.getFlowchartWindowController().locateRegister("R6");
-                    GLFW.glfwSetWindowTitle(EngineTester.getWindow(), windowTitle + " [R6]");
-                }
-            }
-        };
-        registerMenuButtonList.add(button);
-        button = new TextButton("R7") {
-            @Override
-            public void onPress() {
-                if (controller.getFlowchartWindowController() != null) {
-                    controller.getFlowchartWindowController().locateRegister("R7");
-                    GLFW.glfwSetWindowTitle(EngineTester.getWindow(), windowTitle + " [R7]");
-                }
-            }
-        };
-        registerMenuButtonList.add(button);
+            };
+            registerMenuButtonList.add(button);
+        }
 
         HeaderMenu registerButton = new HeaderMenu(new Vector2f(-1f + fileButton.getSize().x, 1 - GeneralSettings.FONT_SIZE * GeneralSettings.FONT_SCALING_FACTOR - 2 * GeneralSettings.TEXT_BUTTON_PADDING), "Registers ", GeneralSettings.USERPREF.getMenuBtnBGColor3f(), GeneralSettings.HIGHLIGHT_COLOR, GeneralSettings.TEXT_COLOR, GeneralSettings.FONT, GeneralSettings.FONT_SIZE, GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE, registerMenuButtonList);
         menuList.add(registerButton);

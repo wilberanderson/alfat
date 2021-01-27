@@ -84,6 +84,15 @@ public class LC3Syntax {
         return jumps;
     }
 
+    public String[] getRegisterNames(){
+        String[] regs = new String[registers.size()];
+
+        for(int i = 0; i < registers.size(); i++) {
+            regs[i] = registers.get(i).name;
+        }
+
+        return regs;
+    }
 
     private int countCommands() {
         int cmdCount = 0;
@@ -105,4 +114,6 @@ public class LC3Syntax {
                 ", registers=" + registers +
                 '}';
     }
+
+
 }

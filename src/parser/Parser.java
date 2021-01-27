@@ -42,6 +42,7 @@ public class Parser implements CodeReader {
     LC3Syntax syn = jr.mapJsonLC3Syntax();
     String[] commands = syn.getCommands();
     String[] jumps = syn.getJumps();
+    String[] registerNames = syn.getRegisterNames();
 
     /**Read an input file. Parse the input file line by line, and store them in the arrayList of CodeLine objects.
      *
@@ -92,7 +93,7 @@ public class Parser implements CodeReader {
                         formattedString.add(new CommandWord(comm.get(), new Vector2f(0f, 0), "\t"));
                         jump = true;
                         first = false;
-                    } else if (fragment.matches("^R[0-9](,)?")) {  //register
+                    } else if (registerMatch(fragment)) {  //register
                         if (fragment.contains(",")) {
                             if (!registers.contains(fragment.substring(0, fragment.length() - 1))) {
                                 registers.add(fragment.substring(0, fragment.length() - 1));
@@ -200,7 +201,7 @@ public class Parser implements CodeReader {
                 formattedString.add(new CommandWord(comm.get(), new Vector2f(0f, 0), "\t"));
                 jump = true;
                 first = false;
-            } else if (fragment.matches("^R[0-9](,)?")) {  //register
+            } else if (Arrays.stream(registerNames).anyMatch(fragment.toUpperCase()::contains)) {  //register
                 if (fragment.contains(",")) {
                     if (!registers.contains(fragment.substring(0, fragment.length() - 1))) {
                         registers.add(fragment.substring(0, fragment.length() - 1));
@@ -524,5 +525,12 @@ public class Parser implements CodeReader {
 
         flowchartWindowController.setFlowchartLineList(linesList);
         return flowchartWindowController;
+    }
+
+    public boolean registerMatch(String s){
+        for (String r: registerNames) {
+            if(s.matches("^"+r+"(,)?")){ return true; }
+        }
+        return false;
     }
 }
