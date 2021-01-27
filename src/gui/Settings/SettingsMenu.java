@@ -12,15 +12,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
-/*
-* TODO:
-*  Add start up sizes to display
-*  Add menu and header bar color options
-*  Add highlight color option
-*  Add light theme
-*  Add temp file store limit
-*  Add font options...
-* */
 /**
  * This is a swing gui class that manages user settings for ALFAT
  * */
