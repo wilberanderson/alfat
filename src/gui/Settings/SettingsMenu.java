@@ -51,7 +51,7 @@ public class SettingsMenu extends Component {
 
     //Regx
     private String validFileType = "^(\\w+)$|(\\w+(,|;)\\w+)*$";
-    private String validIntType = "^\\d+$";
+    private String validIntType = "^[1-9]\\d*$";
 
 
 
@@ -412,10 +412,35 @@ public class SettingsMenu extends Component {
 
         //------------------------------------------
         //Temp File Limit
+        JPanel tempFileLimitPane = new JPanel(new FlowLayout());
+        JLabel curTempFileLimitJlabel = new JLabel("Number of Temp files stored: ");
+        curTempFileLimitJlabel.setFont(labelFont);
+        tempFileLimitPane.add(curTempFileLimitJlabel);
+        JTextField limitTextField = new JTextField(Integer.toString(GeneralSettings.USERPREF.getTempFileLimit()));
+        limitTextField.setPreferredSize(new Dimension(100, 20));
+        tempFileLimitPane.add(limitTextField);
+        limitTextField.addKeyListener(new KeyAdapter() {
+            public void keyPressed(KeyEvent e) {
+                if(!limitTextField.getText().matches(validIntType)) {
+                    limitTextField.setForeground(Color.RED);
+                } else {
+                    limitTextField.setForeground(Color.BLACK);
+                }
+            }
+        });
 
+        JButton submitLimitChange = new JButton("Submit Change");
+        submitLimitChange.addActionListener(e->{
 
-
-
+            if(!limitTextField.getText().matches(validIntType)) {
+                limitTextField.setForeground(Color.RED);
+            } else {
+                GeneralSettings.USERPREF.setTempFileLimit(Integer.parseInt(limitTextField.getText()));
+                GeneralSettings.MasterRendererUserPrefToggle = true;
+                limitTextField.setForeground(Color.BLACK);
+            }
+        });
+        tempFileLimitPane.add(submitLimitChange);
 
         //-----------------------------------------
         //Change preferred file type for open and save as
@@ -425,17 +450,17 @@ public class SettingsMenu extends Component {
         JLabel enterPrefFileTypeLabel = new JLabel("Enter preferred file type");
         enterPrefFileTypeLabel.setFont(labelFont);
         preferredFileTypePane.add(enterPrefFileTypeLabel);
-        JTextField pft = new JTextField(GeneralSettings.USERPREF.getPreferredFiletype());
-        pft.setPreferredSize(new Dimension(300, 20));
-        preferredFileTypePane.add(pft);
+        JTextField pftTextField = new JTextField(GeneralSettings.USERPREF.getPreferredFiletype());
+        pftTextField.setPreferredSize(new Dimension(300, 20));
+        preferredFileTypePane.add(pftTextField);
 
         //Change color if file type is wrong
-        pft.addKeyListener(new KeyAdapter() {
+        pftTextField.addKeyListener(new KeyAdapter() {
             public void keyPressed(KeyEvent e) {
-                if(!pft.getText().matches(validFileType)) {
-                    pft.setForeground(Color.RED);
+                if(!pftTextField.getText().matches(validFileType)) {
+                    pftTextField.setForeground(Color.RED);
                 } else {
-                    pft.setForeground(Color.BLACK);
+                    pftTextField.setForeground(Color.BLACK);
                 }
             }
         });
@@ -445,11 +470,11 @@ public class SettingsMenu extends Component {
         JButton submitChange = new JButton("Submit Change");
         submitChange.addActionListener(e->{
 
-            if(!pft.getText().matches(validFileType)) {
-                pft.setForeground(Color.RED);
+            if(!pftTextField.getText().matches(validFileType)) {
+                pftTextField.setForeground(Color.RED);
             } else {
-                GeneralSettings.USERPREF.setPreferredFileType(pft.getText());
-                pft.setForeground(Color.BLACK);
+                GeneralSettings.USERPREF.setPreferredFileType(pftTextField.getText());
+                pftTextField.setForeground(Color.BLACK);
             }
         });
 
@@ -458,6 +483,7 @@ public class SettingsMenu extends Component {
 
         superContainer.add(syntaxFilePathPane);
         superContainer.add(tempFilePathPane);
+        superContainer.add(tempFileLimitPane);
         superContainer.add(preferredFileTypePane);
 
         main.add(superContainer);

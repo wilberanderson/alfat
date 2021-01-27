@@ -61,6 +61,7 @@ public class ApplicationController {
         if(header != null) {
             header.changeHeadercolor();
             header.changeButtonColors();
+            header.changeTempFileManagerLimit(GeneralSettings.USERPREF.getTempFileLimit());
         }
 
         //Background color

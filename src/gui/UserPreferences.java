@@ -19,13 +19,16 @@ public class UserPreferences {
     //------------------------------------------------------------------------------
     //User preferences key name & Default fallback values.
     //NOTE: Java Class preferences require a fallback value
-    //TODO: Figure out better way to handle default fallback value if a attribute is not set
+
 
     private String keySyntaxPath = "syntaxpath";
     private String fbValuesyntaxPath = GeneralSettings.SYNTAX_PATH;
 
     private String keyTempfilepath = "tempfilepath";
-    private String fbValueTempfilepath;
+    private String fbValueTempfilepath = GeneralSettings.TEMP_DIR;
+
+    private String keyTempfileLimit = "tempfilelimit";
+    private int fbValue = 5;
 
     private String keyPreferredFiletype = "preferredfiletype";
     private String fbValuePreferredFiletype = "asm;txt;asm,txt";
@@ -222,6 +225,21 @@ public class UserPreferences {
         //Return the user set path. If it's not set it defaults the the temp dir
         return userPref.get(keyTempfilepath, GeneralSettings.TEMP_DIR);
     }
+
+    /**
+     * Set the the limit on number of temp files to be stored.
+     * */
+    public void setTempFileLimit(int limit) {
+        userPref.putInt(keyTempfileLimit,limit);
+    }
+
+    /**
+     * Return the int limit of number of temp files to be stored.
+     * */
+    public int getTempFileLimit() {
+        return userPref.getInt(keyTempfileLimit, fbValue);
+    }
+
 
     /**
      * Removes temp file directory path attribute

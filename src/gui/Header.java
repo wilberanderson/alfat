@@ -46,7 +46,7 @@ public class Header {
         //Set up temp file manager
         //tfm = new TempFileManager(GeneralSettings.TEMP_DIR);
         tfm = new TempFileManager(GeneralSettings.USERPREF.getUserTempFileDirPath()); // Set to the last set user file path
-        tfm.setFileLimit(5);
+        tfm.setFileLimit(GeneralSettings.USERPREF.getTempFileLimit());
         //Please set this to null if not file has been opened on launch
         GeneralSettings.FILE_PATH = null;
 
@@ -454,6 +454,13 @@ public class Header {
         for(int i = 0; i < menuList.size(); i++) {
             menuList.get(i).changeButtonColors(GeneralSettings.USERPREF.getMenuBtnBGColor3f(), GeneralSettings.USERPREF.getMenuBtnHLColor3f());
         }
+    }
+
+    /**
+     * Changes the number of files that the temp file manger stores.
+     * */
+    public void changeTempFileManagerLimit(int limit) {
+        tfm.setFileLimit(limit);
     }
 
 
