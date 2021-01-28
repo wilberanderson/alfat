@@ -1,0 +1,448 @@
+{
+    "operation": [{
+            "name": "ADD"
+        },
+        {
+            "name": "SUB"
+        },
+        {
+            "name": "SBB"
+        },
+        {
+            "name": "INC"
+        },
+        {
+            "name": "DEC"
+        },
+        {
+            "name": "MUL"
+        },
+        {
+            "name": "DIV"
+        },
+        {
+            "name": "IDIV"
+        },
+        {
+            "name": "CBW"
+        },
+        {
+            "name": "CWD"
+        },
+        {
+            "name": "CDQ"
+        },
+        {
+            "name": "PUSH"
+        },
+        {
+            "name": "POP"
+        },
+        {
+            "name": "PUSHA"
+        },
+        {
+            "name": "POPA"
+        },
+        {
+            "name": "PUSHAD"
+        },
+        {
+            "name": "POPAD"
+        },
+        {
+            "name": "PUSHF"
+        },
+        {
+            "name": "POPF"
+        },
+        {
+            "name": "PUSHFD"
+        },
+        {
+            "name": "POPFD"
+        },
+        {
+            "name": "PUSHAD"
+        },
+        {
+            "name": "PUSHA"
+        },
+        {
+            "name": "POPAD"
+        },
+        {
+            "name": "POPA"
+        },
+        {
+            "name": "CMPSB"
+        },
+        {
+            "name": "CMPPSW"
+        },
+        {
+            "name": "CMPSD"
+        },
+        {
+            "name": "SCASB"
+        },
+        {
+            "name": "SCASW"
+        },
+        {
+            "name": "SCASD"
+        },
+        {
+            "name": "REP"
+        },
+        {
+            "name": "REPZ"
+        },
+        {
+            "name": "REPNZ"
+        },
+        {
+            "name": "REPNE"
+        },
+        {
+            "name": "ROL"
+        },
+        {
+            "name": "RCL"
+        },
+        {
+            "name": "ROR"
+        },
+        {
+            "name": "RCR"
+        },
+        {
+            "name": "SHR"
+        },
+        {
+            "name": "SHRD"
+        },
+        {
+            "name": "SHL"
+        },
+        {
+            "name": "SHLD"
+        },
+        {
+            "name": "SAR"
+        },
+        {
+            "name": "SAL"
+        },
+        {
+            "name": "AND"
+        },
+        {
+            "name": "OR"
+        },
+        {
+            "name": "XOR"
+        },
+        {
+            "name": "TEST"
+        },
+        {
+            "name": "NOT"
+        }
+    ],
+    "dataMovement": [{
+            "name": "MOV"
+        },
+        {
+            "name": "XCHG"
+        },
+        {
+            "name": "MOVSX"
+        },
+        {
+            "name": "MOVZX"
+        },
+        {
+            "name": "MOVSB"
+        },
+        {
+            "name": "MOVSW"
+        },
+        {
+            "name": "MOVSD"
+        },
+        {
+            "name": "STOSB"
+        },
+        {
+            "name": "STOSW"
+        },
+        {
+            "name": "STOSD"
+        },
+        {
+            "name": "LODSB"
+        },
+        {
+            "name": "LODSW"
+        },
+        {
+            "name": "LODSD"
+        }
+    ],
+    "control": [{
+            "name": "JZ"
+        },
+        {
+            "name": "JNZ"
+        },
+        {
+            "name": "JC"
+        },
+        {
+            "name": "JNC"
+        },
+        {
+            "name": "JO"
+        },
+        {
+            "name": "JNC"
+        },
+        {
+            "name": "JS"
+        },
+        {
+            "name": "JNS"
+        },
+        {
+            "name": "JP"
+        },
+        {
+            "name": "JNP"
+        },
+        {
+            "name": "JE"
+        },
+        {
+            "name": "JNE"
+        },
+        {
+            "name": "JCXZ"
+        },
+        {
+            "name": "JECXZ"
+        },
+        {
+            "name": "JA"
+        },
+        {
+            "name": "JNBE"
+        },
+        {
+            "name": "JAE"
+        },
+        {
+            "name": "JNB"
+        },
+        {
+            "name": "JB"
+        },
+        {
+            "name": "JNAE"
+        },
+        {
+            "name": "JBE"
+        },
+        {
+            "name": "JNA"
+        },
+        {
+            "name": "JG"
+        },
+        {
+            "name": "JNLE"
+        },
+        {
+            "name": "JGE"
+        },
+        {
+            "name": "JNL"
+        },
+        {
+            "name": "JL"
+        },
+        {
+            "name": "JNGE"
+        },
+        {
+            "name": "JLE"
+        },
+        {
+            "name": "JNG"
+        },
+        {
+            "name": "CALL"
+        },
+        {
+            "name": "RET"
+        },
+        {
+            "name": "JMP"
+        },
+        {
+            "name": "LOOP"
+        }
+    ],
+    "reserved": [{
+            "name": ".DATA"
+        },
+        {
+            "name": "BYTE"
+        },
+        {
+            "name": "WORD"
+        },
+        {
+            "name": "DWORD"
+        },
+        {
+            "name": "SDWORD"
+        },
+        {
+            "name": "QWORD"
+        },
+        {
+            "name": "TYPE"
+        },
+        {
+            "name": "LENGTHOF"
+        },
+        {
+            "name": "PTR"
+        },
+        {
+            "name": "SIZEOF"
+        },
+        {
+            "name": "DUP"
+        },
+        {
+            "name": "EQU"
+        },
+        {
+            "name": ".CODE"
+        },
+        {
+            "name": ".STACK"
+        },
+        {
+            "name": "ENDS"
+        },
+        {
+            "name": "PROC"
+        },
+        {
+            "name": "ENDP"
+        },
+        {
+            "name": "END"
+        },
+        {
+            "name": "OFFSET"
+        },
+        {
+            "name": "PROTO"
+        },
+        {
+            "name": "INVOKE"
+        },
+        {
+            "name": "ADDR"
+        },
+        {
+            "name": "CLD"
+        },
+        {
+            "name": "STD"
+        },
+        {
+            "name": "INCLUDE"
+        }
+    ],
+    "registers": [{
+            "name": "EAX"
+        },
+        {
+            "name": "EBX"
+        },
+        {
+            "name": "ECX"
+        },
+        {
+            "name": "EDX"
+        },
+        {
+            "name": "ESI"
+        },
+        {
+            "name": "EDI"
+        },
+        {
+            "name": "ESP"
+        },
+        {
+            "name": "EBP"
+        },
+        {
+            "name": "AX"
+        },
+        {
+            "name": "BX"
+        },
+        {
+            "name": "BX"
+        },
+        {
+            "name": "CX"
+        },
+        {
+            "name": "DX"
+        },
+        {
+            "name": "AH"
+        },
+        {
+            "name": "BH"
+        },
+        {
+            "name": "CH"
+        },
+        {
+            "name": "DH"
+        },
+        {
+            "name": "AL"
+        },
+        {
+            "name": "BL"
+        },
+        {
+            "name": "CL"
+        },
+        {
+            "name": "DL"
+        },
+        {
+            "name": "SI"
+        },
+        {
+            "name": "DI"
+        },
+        {
+            "name": "BP"
+        },
+        {
+            "name": "SP"
+        }
+    ]
+}
