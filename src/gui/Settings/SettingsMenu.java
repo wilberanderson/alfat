@@ -126,18 +126,6 @@ public class SettingsMenu extends Component {
 
         //Set icon
         root.setIconImage(Toolkit.getDefaultToolkit().getImage("src/res/icon/icon.png"));
-        //Set OS default look and feel
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (UnsupportedLookAndFeelException e) {
-            e.printStackTrace();
-        }
         root.setVisible(true);
     }
 
