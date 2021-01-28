@@ -50,6 +50,7 @@ public class SettingsMenu extends Component {
      * Builds and displays the settings GUI
      * */
     public SettingsMenu() {
+
         //Init fake button content
         setFakeButtonscontent();
 

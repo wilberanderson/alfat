@@ -132,6 +132,7 @@ public class Header {
                         testMenuButtonList.get(9).onPress(); //Split screen
                     }
                     if(GeneralSettings.USERPREF.getFullscreen() > 0) {
+
                         testMenuButtonList.get(7).onPress(); //full editor
                     }
                     if(GeneralSettings.USERPREF.getFullscreen() < 0) {
