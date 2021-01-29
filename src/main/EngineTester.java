@@ -182,6 +182,11 @@ public class EngineTester {
             //Render
             MasterRenderer.renderScene(guis, applicationController);
 
+            // Memory usage:
+            /*Runtime runtime = Runtime.getRuntime();
+            runtime.gc();
+            System.out.println("Used memory is: " + (runtime.totalMemory()-runtime.freeMemory())/1024);*/
+
         }
     }
 

@@ -128,21 +128,19 @@ public class FlowchartTextBoxController {
                 argv.set(0,argv.get(0).substring(1,argv.get(0).length()));
                 System.out.println("not " + argv.get(0));
             }
-            switch (argv.get(0)) {
-                case "not":
+            switch (argv.get(0).toUpperCase()) {
+                case "NOT":
                 case "!":
                     not = true;
                     break;
                 case "&":
                 case "&&":
                 case "AND":
-                case "and":
                     operation = "and";
                     break;
                 case "|":
                 case "||":
                 case "OR":
-                case "or":
                     operation = "or";
                     break;
                 default:
