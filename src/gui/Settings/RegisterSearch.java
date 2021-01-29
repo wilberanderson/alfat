@@ -43,7 +43,6 @@ public class RegisterSearch {
         });
 
         run.addActionListener(e -> {
-
             if(!inputTextField.getText().isEmpty()) {
                 result = inputTextField.getText();
             }

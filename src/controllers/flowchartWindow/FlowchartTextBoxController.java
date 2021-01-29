@@ -116,13 +116,23 @@ public class FlowchartTextBoxController {
 
     public void locateRegisters(String args) {
         String operation = "and";
+        boolean not = false;
         boolean[] candidate = new boolean[textBoxes.size()];
         Arrays.fill(candidate, true);
 
         List<String> argv = new LinkedList<String>(Arrays.asList(args.split(" ")));
 
         while (argv.size() >= 1){
-            switch (argv.get(0)){
+            if (argv.get(0).charAt(0)=='!' && argv.get(0).length() > 1){
+                not = true;
+                argv.set(0,argv.get(0).substring(1,argv.get(0).length()));
+                System.out.println("not " + argv.get(0));
+            }
+            switch (argv.get(0)) {
+                case "not":
+                case "!":
+                    not = true;
+                    break;
                 case "&":
                 case "&&":
                 case "AND":
@@ -136,15 +146,30 @@ public class FlowchartTextBoxController {
                     operation = "or";
                     break;
                 default:
-                    if (operation.equals("and")) {
-                        //System.out.println();
-                        for (int i = 0; i < textBoxes.size(); i++) {
-                            //System.out.println(candidate[i] + " && " + textBoxes.get(i).getRegisters().contains(argv.get(0)) + " -> " + (candidate[i] && textBoxes.get(i).getRegisters().contains(argv.get(0))));
-                            candidate[i] = candidate[i] && textBoxes.get(i).getRegisters().contains(argv.get(0));
+                    if (not) {
+                        if (operation.equals("and")) {
+                            //System.out.println();
+                            for (int i = 0; i < textBoxes.size(); i++) {
+                                //System.out.println(candidate[i] + " && " + textBoxes.get(i).getRegisters().contains(argv.get(0)) + " -> " + (candidate[i] && textBoxes.get(i).getRegisters().contains(argv.get(0))));
+                                candidate[i] = candidate[i] && !textBoxes.get(i).getRegisters().contains(argv.get(0));
+                            }
+                        } else {
+                            for (int i = 0; i < textBoxes.size(); i++) {
+                                candidate[i] = candidate[i] || !textBoxes.get(i).getRegisters().contains(argv.get(0));
+                            }
                         }
+                        not = false;
                     } else {
-                        for (int i = 0; i < textBoxes.size(); i++) {
-                            candidate[i] = candidate[i] || textBoxes.get(i).getRegisters().contains(argv.get(0));
+                        if (operation.equals("and")) {
+                            //System.out.println();
+                            for (int i = 0; i < textBoxes.size(); i++) {
+                                //System.out.println(candidate[i] + " && " + textBoxes.get(i).getRegisters().contains(argv.get(0)) + " -> " + (candidate[i] && textBoxes.get(i).getRegisters().contains(argv.get(0))));
+                                candidate[i] = candidate[i] && textBoxes.get(i).getRegisters().contains(argv.get(0));
+                            }
+                        } else {
+                            for (int i = 0; i < textBoxes.size(); i++) {
+                                candidate[i] = candidate[i] || textBoxes.get(i).getRegisters().contains(argv.get(0));
+                            }
                         }
                     }
             }
