@@ -5,10 +5,13 @@ import gui.GUIFilledBox;
 import gui.texts.*;
 import gui.textBoxes.FlowchartTextBox;
 import main.GeneralSettings;
+import org.lwjgl.system.CallbackI;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 public class FlowchartTextBoxController {
@@ -42,8 +45,6 @@ public class FlowchartTextBoxController {
             }
         }
     }
-
-
 
     public void add(Vector2f position, List<TextLine> textLines, int lineNumber, List<String> registers, String alert){
         FlowchartTextBox textBox = new FlowchartTextBox(position, registers, alert);
@@ -106,18 +107,56 @@ public class FlowchartTextBoxController {
         textBox.getGuiFilledBox().setPosition(new Vector2f(position));
     }
 
-    public void locateRegister(String register) {
-        for (FlowchartTextBox box : textBoxes) {
-            if (verbose) System.out.println("Checking box " + box + " for register " + register);
-            if (verbose) System.out.println("Contains registers: " + box.getRegisters());
-            if (register != null && box.getRegisters().contains(register)) {
-                if (verbose) System.out.println("Match found");
-                box.setBackgroundColor(GeneralSettings.TEXT_COLOR);
-                box.setTextColor(GeneralSettings.TEXT_BOX_BACKGROUND_COLOR);
+    public void clearHighlighting(){
+        for (FlowchartTextBox box : textBoxes){
+            box.setBackgroundColor(GeneralSettings.TEXT_BOX_BACKGROUND_COLOR);
+            box.setTextColor(GeneralSettings.TEXT_COLOR);
+        }
+    }
 
+    public void locateRegisters(String args) {
+        String operation = "and";
+        boolean[] candidate = new boolean[textBoxes.size()];
+        Arrays.fill(candidate, true);
+
+        List<String> argv = new LinkedList<String>(Arrays.asList(args.split(" ")));
+
+        while (argv.size() >= 1){
+            switch (argv.get(0)){
+                case "&":
+                case "&&":
+                case "AND":
+                case "and":
+                    operation = "and";
+                    break;
+                case "|":
+                case "||":
+                case "OR":
+                case "or":
+                    operation = "or";
+                    break;
+                default:
+                    if (operation.equals("and")) {
+                        //System.out.println();
+                        for (int i = 0; i < textBoxes.size(); i++) {
+                            //System.out.println(candidate[i] + " && " + textBoxes.get(i).getRegisters().contains(argv.get(0)) + " -> " + (candidate[i] && textBoxes.get(i).getRegisters().contains(argv.get(0))));
+                            candidate[i] = candidate[i] && textBoxes.get(i).getRegisters().contains(argv.get(0));
+                        }
+                    } else {
+                        for (int i = 0; i < textBoxes.size(); i++) {
+                            candidate[i] = candidate[i] || textBoxes.get(i).getRegisters().contains(argv.get(0));
+                        }
+                    }
+            }
+            argv.remove(0);
+        }
+        for (int i = 0; i < textBoxes.size(); i++){
+            if (candidate[i]){
+                textBoxes.get(i).setBackgroundColor(GeneralSettings.TEXT_COLOR);
+                textBoxes.get(i).setTextColor(GeneralSettings.TEXT_BOX_BACKGROUND_COLOR);
             } else {
-                box.setBackgroundColor(GeneralSettings.TEXT_BOX_BACKGROUND_COLOR);
-                box.setTextColor(GeneralSettings.TEXT_COLOR);
+                textBoxes.get(i).setBackgroundColor(GeneralSettings.TEXT_BOX_BACKGROUND_COLOR);
+                textBoxes.get(i).setTextColor(GeneralSettings.TEXT_COLOR);
             }
         }
     }

@@ -53,7 +53,6 @@ public class Header {
         GeneralSettings.FILE_PATH = null;
 
         List<TextButton> testMenuButtonList = new ArrayList<>();
-        List<TextButton> registerMenuButtonList = new ArrayList<>();
         List<TextButton> analyticsMenuButtonList = new ArrayList<>();
         List<TextButton> settingsMenuButtonList = new ArrayList<>();
 
@@ -365,38 +364,25 @@ public class Header {
             @Override
             public void onPress() {
                 if (controller.getFlowchartWindowController() != null) {
-                    controller.getFlowchartWindowController().locateRegister(null);
+                    controller.getFlowchartWindowController().locateAlert(null);
                     GLFW.glfwSetWindowTitle(EngineTester.getWindow(), windowTitle);
                 }
             }
         };
-        registerMenuButtonList.add(button);
+        analyticsMenuButtonList.add(button);
 
-
-
-        //Adds register values from the json currently pointed to
-        for(String s: registers){
-            button = new TextButton(s) {
-                @Override
-                public void onPress() {
-                    if(controller.getFlowchartWindowController() != null) {
-                        controller.getFlowchartWindowController().locateRegister(s);
-                        GLFW.glfwSetWindowTitle(EngineTester.getWindow(), windowTitle + " ["+s+"]");
-                    }
-                }
-            };
-            registerMenuButtonList.add(button);
-        }
-
-        HeaderMenu registerButton = new HeaderMenu(new Vector2f(-1f + fileButton.getSize().x, 1 - GeneralSettings.FONT_SIZE * GeneralSettings.FONT_SCALING_FACTOR - 2 * GeneralSettings.TEXT_BUTTON_PADDING), "Registers ", GeneralSettings.USERPREF.getMenuBtnBGColor3f(), GeneralSettings.HIGHLIGHT_COLOR, GeneralSettings.TEXT_COLOR, GeneralSettings.FONT, GeneralSettings.FONT_SIZE, GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE, registerMenuButtonList);
-        menuList.add(registerButton);
-
-        button = new TextButton("Clear") {
+        // search for registers
+        button = new TextButton("Registers") {
             @Override
             public void onPress() {
-                if (controller.getFlowchartWindowController() != null) {
-                    controller.getFlowchartWindowController().locateAlert(null);
-                    GLFW.glfwSetWindowTitle(EngineTester.getWindow(), windowTitle);
+                if(controller.getFlowchartWindowController() != null) {
+                    String args = RegisterSearch.search();
+                    if (args != null){
+                        GLFW.glfwSetWindowTitle(EngineTester.getWindow(), windowTitle + " [" + args + "]");
+                        controller.getFlowchartWindowController().locateRegisters(args);
+                    } else {
+                        controller.getFlowchartWindowController().clearHighlighting();
+                    }
                 }
             }
         };
@@ -413,7 +399,7 @@ public class Header {
         };
         analyticsMenuButtonList.add(button);
 
-        HeaderMenu analyticsButton = new HeaderMenu(new Vector2f(-1f + fileButton.getSize().x + registerButton.getSize().x, 1 - GeneralSettings.FONT_SIZE * GeneralSettings.FONT_SCALING_FACTOR - 2 * GeneralSettings.TEXT_BUTTON_PADDING), "Analysis ", GeneralSettings.USERPREF.getMenuBtnBGColor3f(), GeneralSettings.HIGHLIGHT_COLOR, GeneralSettings.TEXT_COLOR, GeneralSettings.FONT, GeneralSettings.FONT_SIZE, GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE, analyticsMenuButtonList);
+        HeaderMenu analyticsButton = new HeaderMenu(new Vector2f(-1f + fileButton.getSize().x, 1 - GeneralSettings.FONT_SIZE * GeneralSettings.FONT_SCALING_FACTOR - 2 * GeneralSettings.TEXT_BUTTON_PADDING), "Analysis ", GeneralSettings.USERPREF.getMenuBtnBGColor3f(), GeneralSettings.HIGHLIGHT_COLOR, GeneralSettings.TEXT_COLOR, GeneralSettings.FONT, GeneralSettings.FONT_SIZE, GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE, analyticsMenuButtonList);
         menuList.add(analyticsButton);
 
         // User Settings Start
@@ -454,7 +440,7 @@ public class Header {
         };
         settingsMenuButtonList.add(button);
 
-        HeaderMenu settingsButton = new HeaderMenu(new Vector2f(-1f + fileButton.getSize().x + registerButton.getSize().x + analyticsButton.getSize().x, 1-GeneralSettings.FONT_SIZE*GeneralSettings.FONT_SCALING_FACTOR - 2*GeneralSettings.TEXT_BUTTON_PADDING), "Settings ", GeneralSettings.USERPREF.getMenuBtnBGColor3f(), GeneralSettings.HIGHLIGHT_COLOR, GeneralSettings.TEXT_COLOR, GeneralSettings.FONT, GeneralSettings.FONT_SIZE, GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE, settingsMenuButtonList);
+        HeaderMenu settingsButton = new HeaderMenu(new Vector2f(-1f + fileButton.getSize().x + analyticsButton.getSize().x, 1-GeneralSettings.FONT_SIZE*GeneralSettings.FONT_SCALING_FACTOR - 2*GeneralSettings.TEXT_BUTTON_PADDING), "Settings ", GeneralSettings.USERPREF.getMenuBtnBGColor3f(), GeneralSettings.HIGHLIGHT_COLOR, GeneralSettings.TEXT_COLOR, GeneralSettings.FONT, GeneralSettings.FONT_SIZE, GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE, settingsMenuButtonList);
         menuList.add(settingsButton);
 
         for(HeaderMenu headerMenu: menuList){
