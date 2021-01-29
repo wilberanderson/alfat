@@ -43,8 +43,10 @@ public class RegisterSearch {
         });
 
         run.addActionListener(e -> {
-            result = inputTextField.getText();
 
+            if(!inputTextField.getText().isEmpty()) {
+                result = inputTextField.getText();
+            }
             JButton button = (JButton)e.getSource();
             SwingUtilities.getWindowAncestor(button).dispose();
         });
