@@ -3,6 +3,7 @@ package gui;
 import controllers.ApplicationController;
 import controllers.codeWindow.CodeWindowController;
 import controllers.gui.ButtonController;
+import gui.Settings.RegisterSearch;
 import gui.Settings.SettingsMenu;
 import gui.buttons.HeaderMenu;
 import gui.buttons.TextButton;
@@ -370,6 +371,9 @@ public class Header {
             }
         };
         registerMenuButtonList.add(button);
+
+
+
         //Adds register values from the json currently pointed to
         for(String s: registers){
             button = new TextButton(s) {
