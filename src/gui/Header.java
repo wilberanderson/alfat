@@ -3,6 +3,7 @@ package gui;
 import controllers.ApplicationController;
 import controllers.codeWindow.CodeWindowController;
 import controllers.gui.ButtonController;
+import gui.Settings.RegisterSearch;
 import gui.Settings.SettingsMenu;
 import gui.buttons.HeaderMenu;
 import gui.buttons.TextButton;
@@ -14,6 +15,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
+import parser.CodeSyntax;
 import parser.JsonReader;
 import parser.LC3Syntax;
 import parser.Parser;
@@ -55,8 +57,9 @@ public class Header {
         List<TextButton> analyticsMenuButtonList = new ArrayList<>();
         List<TextButton> settingsMenuButtonList = new ArrayList<>();
 
-        JsonReader jr = new JsonReader(new File(GeneralSettings.SYNTAX_PATH));
-        LC3Syntax syn = jr.mapJsonLC3Syntax();
+        JsonReader jr = new JsonReader(new File(GeneralSettings.USERPREF.getSyntaxPath()));
+        //LC3Syntax syn = jr.mapJsonLC3Syntax();
+        CodeSyntax syn = jr.mapJsonToSyntax();
         String[] registers = syn.getRegisterNames();
 
         //open file
@@ -71,6 +74,25 @@ public class Header {
 
                 // If the file exists, load it into the text editor.
                 if (GeneralSettings.FILE_PATH != null){
+
+                    //Regenerate Register List
+//                    int j = registerMenuButtonList.size();
+//                    for(int i = 1; i < j; i++) {
+//                        registerMenuButtonList.remove(i);
+//                    }
+//                    for(String s: registers){
+//                        TextButton btn = new TextButton(s) {
+//                            @Override
+//                            public void onPress() {
+//                                if(controller.getFlowchartWindowController() != null) {
+//                                    controller.getFlowchartWindowController().locateRegister(s);
+//                                    GLFW.glfwSetWindowTitle(EngineTester.getWindow(), windowTitle + " ["+s+"]");
+//                                }
+//                            }
+//                        };
+//                        registerMenuButtonList.add(btn);
+//                    }
+
                     if (GeneralSettings.FILE_PATH.contains("/")){
                         windowTitle = "ALFAT – " + GeneralSettings.FILE_PATH.substring(GeneralSettings.FILE_PATH.lastIndexOf('/')+1);
                         GLFW.glfwSetWindowTitle(EngineTester.getWindow(), "ALFAT – " + GeneralSettings.FILE_PATH.substring(GeneralSettings.FILE_PATH.lastIndexOf('/')+1));
@@ -111,6 +133,7 @@ public class Header {
                         testMenuButtonList.get(9).onPress(); //Split screen
                     }
                     if(GeneralSettings.USERPREF.getFullscreen() > 0) {
+
                         testMenuButtonList.get(7).onPress(); //full editor
                     }
                     if(GeneralSettings.USERPREF.getFullscreen() < 0) {
@@ -349,6 +372,9 @@ public class Header {
         };
         registerMenuButtonList.add(button);
 
+
+
+        //Adds register values from the json currently pointed to
         for(String s: registers){
             button = new TextButton(s) {
                 @Override

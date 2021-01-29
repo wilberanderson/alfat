@@ -1,0 +1,109 @@
+{
+    "operation": [{
+            "name": "ADD"
+        },
+        {
+            "name": "AND"
+        },
+        {
+            "name": "NOT"
+        }
+    ],
+    "dataMovement": [{
+            "name": "LD"
+        },
+        {
+            "name": "LDR"
+        },
+        {
+            "name": "LDI"
+        },
+        {
+            "name": "LEA"
+        },
+        {
+            "name": "ST"
+        },
+        {
+            "name": "STR"
+        },
+        {
+            "name": "STI"
+        }
+    ],
+    "control": [{
+            "name": "BR"
+        },
+        {
+            "name": "JMP"
+        },
+        {
+            "name": "JSR"
+        },
+        {
+            "name": "JSRR"
+        }
+    ],
+    "reserved": [{
+            "name": "RET"
+        },
+        {
+            "name": "RTI"
+        },
+        {
+            "name": "TRAP"
+        },
+        {
+            "name": ".ORIG"
+        },
+        {
+            "name": ".FILL"
+        },
+        {
+            "name": ".BLKW"
+        },
+        {
+            "name": ".STRING"
+        },
+        {
+            "name": ".END"
+        },
+        {
+            "name": "PUTS"
+        },
+        {
+            "name": "GETC"
+        },
+        {
+            "name": "OUT"
+        },
+        {
+            "name": "HALT"
+        }
+    ],
+    "registers": [{
+            "name": "R0"
+        },
+        {
+            "name": "R1"
+        },
+        {
+            "name": "R2"
+        },
+        {
+            "name": "R3"
+        },
+        {
+            "name": "R4"
+        },
+        {
+            "name": "R5"
+        },
+        {
+            "name": "R6"
+        },
+        {
+            "name": "R7"
+        }
+    ]
+}

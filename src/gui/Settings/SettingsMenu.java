@@ -12,15 +12,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
-/*
-* TODO:
-*  Add start up sizes to display
-*  Add menu and header bar color options
-*  Add highlight color option
-*  Add light theme
-*  Add temp file store limit
-*  Add font options...
-* */
 /**
  * This is a swing gui class that manages user settings for ALFAT
  * */
@@ -59,19 +50,7 @@ public class SettingsMenu extends Component {
      * Builds and displays the settings GUI
      * */
     public SettingsMenu() {
-        //Set OS default look and feel
-        try {
-            //UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (UnsupportedLookAndFeelException e) {
-            e.printStackTrace();
-        }
+
         //Init fake button content
         setFakeButtonscontent();
 

@@ -140,7 +140,7 @@ public class GeneralSettings {
 
 	//******************************File input/output fields**********************************
 	public static String FILE_PATH;                                             //A string used for holding the current file path of the file open in the text editor
-	public static String SYNTAX_PATH = "CodeSyntax/LC3.json";                   //The location of the syntax file for LC3
+	public static String SYNTAX_PATH = "CodeSyntax/LC3-Simple.json";                   //The location of the syntax file for LC3
 	public static String TEMP_DIR = "temp";                                     //The directory where temporary files are saved
 
 
