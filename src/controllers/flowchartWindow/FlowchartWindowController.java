@@ -120,7 +120,19 @@ public class FlowchartWindowController {
         return flowchartWindow.getZoom();
     }
 
+    public void setZoom(float zoom){
+        flowchartWindow.setZoom(zoom);
+    }
+
     public FlowchartTextBoxController getFlowchartTextBoxController() {
         return flowchartTextBoxController;
+    }
+
+    public void click(int key, int action){
+        flowchartTextBoxController.click(key, action);
+    }
+
+    public void moveMouse(double xPos, double yPos){
+        flowchartTextBoxController.moveMouse(xPos - flowchartWindow.getZoomTranslateMatrix().m20, yPos - flowchartWindow.getZoomTranslateMatrix().m21);
     }
 }

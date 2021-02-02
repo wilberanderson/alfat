@@ -1,6 +1,7 @@
 package controllers;
 
 import controllers.codeWindow.CodeWindowController;
+import controllers.flowchartWindow.FlowchartTextBoxController;
 import controllers.flowchartWindow.FlowchartWindowController;
 import controllers.gui.ButtonController;
 import controllers.gui.GUIController;
@@ -49,8 +50,10 @@ public class ApplicationController {
 
         //Flowchart background color and flowchart line color
         if(flowchartWindowController != null && flowchartWindowController.getFlowchartTextBoxController() != null) {
-            flowchartWindowController.getFlowchartTextBoxController().changeTextBoxBackgroundcolor3f(GeneralSettings.USERPREF.getFlowchartBoxbackgroundColor3f());
-            flowchartWindowController.getFlowchartTextBoxController().changeTextBoxNumberLineBGColor3f(GeneralSettings.USERPREF.getFlowchartBoxlinenumberBGColor3f());
+            //flowchartWindowController.getFlowchartTextBoxController().changeTextBoxBackgroundcolor3f();
+            FlowchartTextBoxController.setTextNumberBackgroundColor(GeneralSettings.USERPREF.getFlowchartBoxlinenumberBGColor3f());
+            FlowchartTextBoxController.setBackgroundColor(GeneralSettings.USERPREF.getFlowchartBoxbackgroundColor3f());
+            FlowchartTextBoxController.setHighlightedColor(GeneralSettings.USERPREF.getFlowchartBoxHighlightColor3f());
         }
 
         if(codeWindowController != null && codeWindowController.getCodeWindow() != null) {
@@ -175,6 +178,9 @@ public class ApplicationController {
 
             ButtonController.click(new Vector2f((float)MOUSE_X, (float)MOUSE_Y));
 
+            if(flowchartWindowController != null){
+                flowchartWindowController.click(button, action);
+            }
 
 
         }else if(button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS) {
@@ -189,26 +195,28 @@ public class ApplicationController {
      * @param xPosition the mouses new x position in pixels
      * @param yPosition the mouses new y position in pixels
      */
-    public void moveMouse(double xPosition, double yPosition){
+    public void moveMouse(double xPosition, double yPosition) {
         //Save the old mouse position for processing position changes
         previousMouseX = MOUSE_X;
         previousMouseY = MOUSE_Y;
 
         //Convert xPosition and yPosition and convert them into the standard coordinate system
-        MOUSE_X = xPosition/GeneralSettings.DISPLAY_WIDTH*2 - 1f;
-        MOUSE_Y = 1-yPosition/GeneralSettings.DISPLAY_HEIGHT*2;
+        MOUSE_X = xPosition / GeneralSettings.DISPLAY_WIDTH * 2 - 1f;
+        MOUSE_Y = 1 - yPosition / GeneralSettings.DISPLAY_HEIGHT * 2;
 
-        if(codeWindowController != null){
+        if (codeWindowController != null) {
             //Process the mouse movement in the code window
-            codeWindowController.moveMouse(new Vector2f((float)MOUSE_X, (float)MOUSE_Y));
+            codeWindowController.moveMouse(new Vector2f((float) MOUSE_X, (float) MOUSE_Y));
         }
 
-        ButtonController.hover(new Vector2f((float)MOUSE_X, (float)MOUSE_Y));
-
-        if(LEFT_MOUSE_HELD && flowchartWindowController != null) {
-            float xChange = (float)(MOUSE_X - previousMouseX);
-            float yChange = (float)(MOUSE_Y - previousMouseY);
-            flowchartWindowController.updateTranslation(new Vector2f((float) xChange*flowchartWindowController.getZoom(), (float) yChange*flowchartWindowController.getZoom()));
+        ButtonController.hover(new Vector2f((float) MOUSE_X, (float) MOUSE_Y));
+        if (flowchartWindowController != null){
+            if (LEFT_MOUSE_HELD) {
+                float xChange = (float) (MOUSE_X - previousMouseX);
+                float yChange = (float) (MOUSE_Y - previousMouseY);
+                flowchartWindowController.updateTranslation(new Vector2f((float) xChange * flowchartWindowController.getZoom(), (float) yChange * flowchartWindowController.getZoom()));
+            }
+            flowchartWindowController.moveMouse(MOUSE_X, MOUSE_Y);
         }
     }
 
@@ -235,15 +243,17 @@ public class ApplicationController {
     }
     
     public void textEditorView(){
-        if(codeWindowController != null && flowchartWindowController != null) {
+        if(codeWindowController != null){
             codeWindowController.maximize();
-            flowchartWindowController.minimize();
             activeWindow = ControllerSettings.CODE_WINDOW;
+            if(flowchartWindowController != null) {
+                flowchartWindowController.minimize();
+            }
         }
     }
     
     public void flowchartView(){
-        if(codeWindowController != null && flowchartWindowController != null) {
+        if(flowchartWindowController != null) {
             codeWindowController.minimize();
             flowchartWindowController.maximize();
             activeWindow = ControllerSettings.FLOWCHART_WINDOW;
@@ -251,9 +261,11 @@ public class ApplicationController {
     }
     
     public void splitScreen(){
-        if(codeWindowController != null && flowchartWindowController != null) {
+        if(codeWindowController != null){
             codeWindowController.goSplitScreen();
-            flowchartWindowController.goSplitScreen();
+            if(flowchartWindowController != null) {
+                flowchartWindowController.goSplitScreen();
+            }
         }
     }
 }

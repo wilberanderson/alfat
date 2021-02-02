@@ -5,6 +5,7 @@ import gui.GUIFilledBox;
 import gui.texts.*;
 import gui.textBoxes.FlowchartTextBox;
 import main.GeneralSettings;
+import org.lwjgl.glfw.GLFW;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 
@@ -16,48 +17,33 @@ public class FlowchartTextBoxController {
     private List<FlowchartTextBox> textBoxes = new ArrayList<>();
     private TextLineController textLineController;
     boolean verbose = false;
+    private FlowchartTextBox selectedTextBox;
+
+    private static Vector3f backgroundColor;
+    private static Vector3f highlightedColor;
+    private static Vector3f textNumberBackgroundColor;
+    private Vector2f mousePosition = new Vector2f();
 
     public FlowchartTextBoxController(TextLineController textLineController){
         this.textLineController = textLineController;
+        backgroundColor = GeneralSettings.USERPREF.getFlowchartBoxbackgroundColor3f();
+        highlightedColor = GeneralSettings.USERPREF.getFlowchartBoxHighlightColor3f();
+        textNumberBackgroundColor = GeneralSettings.USERPREF.getFlowchartBoxlinenumberBGColor3f();
     }
 
-    /**
-     * Changes the background color of the flowchart boxes
-     * */
-    public void changeTextBoxBackgroundcolor3f(Vector3f newBackgroundColor) {
-        if(textBoxes != null || !textBoxes.isEmpty()) {
-            for(int i = 0; i < textBoxes.size(); i++) {
-                textBoxes.get(i).setBackgroundColor(newBackgroundColor);
-            }
-        }
-    }
-
-    /**
-     * Changes the background color of the flowcharts number line background color
-     * */
-    public void changeTextBoxNumberLineBGColor3f(Vector3f newBackgroundColor) {
-        if(textBoxes != null || !textBoxes.isEmpty()) {
-            for(int i = 0; i < textBoxes.size(); i++) {
-                textBoxes.get(i).setTextNumberFilledBoxBackgroundColor(newBackgroundColor);
-            }
-        }
-    }
-
-
-
-    public void add(Vector2f position, List<TextLine> textLines, int lineNumber, List<String> registers, String alert){
+    public void add(Vector2f position, List<FormattedTextLine> formattedTextLines, int lineNumber, List<String> registers, String alert){
         FlowchartTextBox textBox = new FlowchartTextBox(position, registers, alert);
         //background color unhighlighted
         textBox.setBackgroundColor(GeneralSettings.TEXT_BOX_BACKGROUND_COLOR);
         textBox.setBorderColor(GeneralSettings.TEXT_BOX_BORDER_COLOR);
-        textBox.setTextColor(GeneralSettings.TEXT_COLOR);
+//        textBox.setTextColor(GeneralSettings.TEXT_COLOR);
 
         float minHeight = GeneralSettings.TEXT_BOX_BORDER_WIDTH;
         double greatestLength = 0;
         float longestLineNumber = 0;
         float lineHeight = GeneralSettings.FONT_SIZE * GeneralSettings.FONT_SCALING_FACTOR;
 
-        for (TextLine line : textLines) {
+        for (FormattedTextLine line : formattedTextLines) {
             if (line.getLength() > greatestLength) {
                 greatestLength = line.getLength();
             }
@@ -65,7 +51,7 @@ public class FlowchartTextBoxController {
             line.getPosition().setX(GeneralSettings.TEXT_BOX_BORDER_WIDTH * 2 + position.x);
             line.getPosition().setY(position.y - minHeight);
 
-            LineNumberWord lineNumberText = new LineNumberWord(Integer.toString(lineNumber),new Vector2f(GeneralSettings.TEXT_BOX_BORDER_WIDTH + position.x, line.getPosition().y - lineHeight * textLines.size() - GeneralSettings.TEXT_BOX_BORDER_WIDTH), "");
+            LineNumberWord lineNumberText = new LineNumberWord(Integer.toString(lineNumber),new Vector2f(GeneralSettings.TEXT_BOX_BORDER_WIDTH + position.x, line.getPosition().y - lineHeight * formattedTextLines.size() - GeneralSettings.TEXT_BOX_BORDER_WIDTH), "");
             line.getWords()[0] = lineNumberText;
             if (lineNumberText.getLength() > longestLineNumber) {
                 longestLineNumber = (float) lineNumberText.getLength();
@@ -78,20 +64,19 @@ public class FlowchartTextBoxController {
 
         }
 
-        textBox.setTextNumberFilledBox(new GUIFilledBox(position, new Vector2f(longestLineNumber * 2 + 2 * GeneralSettings.TEXT_BOX_BORDER_WIDTH, minHeight), GeneralSettings.USERPREF.getFlowchartBoxlinenumberBGColor3f()));
-        textBox.setSize(new Vector2f((float) greatestLength * 2 + 4 * GeneralSettings.TEXT_BOX_BORDER_WIDTH + textBox.getTextNumberFilledBox().getSize().x + GeneralSettings.FLOWCHART_TEXT_BOX_INTERNAL_PAD_RIGHT, lineHeight * textLines.size() + GeneralSettings.TEXT_BOX_BORDER_WIDTH));
-        //Background color of text box
-        textBox.setGuiFilledBox(new GUIFilledBox(position, textBox.getSize(), GeneralSettings.USERPREF.getFlowchartBoxbackgroundColor3f()));
-        for (Text text : textBox.getTexts()) {
-            text.setPosition(new Vector2f(textBox.getTextNumberFilledBox().getPosition().x + textBox.getTextNumberFilledBox().getSize().x, text.getPosition().y));
-        }
+        textBox.setTextNumberFilledBox(new GUIFilledBox(position, new Vector2f(longestLineNumber * 2 + 2 * GeneralSettings.TEXT_BOX_BORDER_WIDTH, minHeight), GeneralSettings.LINE_NUMBER_BACKGROUND_COLOR));
+        textBox.setSize(new Vector2f((float) greatestLength * 2 + 4 * GeneralSettings.TEXT_BOX_BORDER_WIDTH + textBox.getTextNumberFilledBox().getSize().x + GeneralSettings.FLOWCHART_TEXT_BOX_INTERNAL_PAD_RIGHT, lineHeight * formattedTextLines.size() + GeneralSettings.TEXT_BOX_BORDER_WIDTH));
+        textBox.setGuiFilledBox(new GUIFilledBox(position, textBox.getSize(), GeneralSettings.TEXT_BOX_BACKGROUND_COLOR));
+//        for (Text text : textBox.getTexts()) {
+//            text.setPosition(new Vector2f(textBox.getTextNumberFilledBox().getPosition().x + textBox.getTextNumberFilledBox().getSize().x, text.getPosition().y));
+//        }
         setPosition(new Vector2f(textBox.getPosition().x, textBox.getPosition().y - textBox.getSize().y), textBox);
         textBoxes.add(textBox);
     }
 
     public void clear(){
         for(FlowchartTextBox textBox : textBoxes){
-            textBox.clear();
+//            textBox.clear();
 
         }
         textBoxes.clear();
@@ -99,40 +84,43 @@ public class FlowchartTextBoxController {
     }
 
     public void setPosition(Vector2f position, FlowchartTextBox textBox){
-        textBox.changeHorizontalPosition(textBox.getPosition().x - position.x);
-        textBox.changeVerticalPosition(textBox.getPosition().y - position.y);
+//        textBox.changeHorizontalPosition(textBox.getPosition().x - position.x);
+//        textBox.changeVerticalPosition(textBox.getPosition().y - position.y);
         textBox.setPosition(position);
         textBox.getTextNumberFilledBox().setPosition(new Vector2f(position));
         textBox.getGuiFilledBox().setPosition(new Vector2f(position));
     }
 
-    public void locateRegister(String register) {
+    void locateRegister(String register) {
         for (FlowchartTextBox box : textBoxes) {
             if (verbose) System.out.println("Checking box " + box + " for register " + register);
             if (verbose) System.out.println("Contains registers: " + box.getRegisters());
             if (register != null && box.getRegisters().contains(register)) {
                 if (verbose) System.out.println("Match found");
-                box.setBackgroundColor(GeneralSettings.TEXT_COLOR);
-                box.setTextColor(GeneralSettings.TEXT_BOX_BACKGROUND_COLOR);
-
+                box.setHighlighted(true);
+                //box.setBackgroundColor(GeneralSettings.TEXT_COLOR);
+                //box.setTextColor(GeneralSettings.TEXT_BOX_BACKGROUND_COLOR);
             } else {
-                box.setBackgroundColor(GeneralSettings.TEXT_BOX_BACKGROUND_COLOR);
-                box.setTextColor(GeneralSettings.TEXT_COLOR);
+                box.setHighlighted(false);
+                //box.setBackgroundColor(GeneralSettings.TEXT_BOX_BACKGROUND_COLOR);
+                //box.setTextColor(GeneralSettings.TEXT_COLOR);
             }
         }
     }
 
-    public void locateAlert(String alert){
+    void locateAlert(String alert){
         for (FlowchartTextBox box : textBoxes){
             if (verbose) System.out.println("Checking box " + box + " for alert " + alert);
             if (verbose) System.out.println("Contains registers: " + box.getRegisters());
             if (alert != null && box.getAlert().equals(alert)) {
                 if (verbose) System.out.println("Match found");
-                box.setBackgroundColor(GeneralSettings.TEXT_COLOR);
-                box.setTextColor(GeneralSettings.TEXT_BOX_BACKGROUND_COLOR);
+                box.setHighlighted(true);
+                //box.setBackgroundColor(GeneralSettings.TEXT_COLOR);
+                //box.setTextColor(GeneralSettings.TEXT_BOX_BACKGROUND_COLOR);
             } else {
-                box.setBackgroundColor(GeneralSettings.TEXT_BOX_BACKGROUND_COLOR);
-                box.setTextColor(GeneralSettings.TEXT_COLOR);
+                box.setHighlighted(false);
+                //box.setBackgroundColor(GeneralSettings.TEXT_BOX_BACKGROUND_COLOR);
+                //box.setTextColor(GeneralSettings.TEXT_COLOR);
             }
         }
     }
@@ -143,5 +131,49 @@ public class FlowchartTextBoxController {
 
     public List<FlowchartTextBox> getTextBoxes() {
         return textBoxes;
+    }
+
+    public static Vector3f getBackgroundColor() {
+        return backgroundColor;
+    }
+
+    public static void setBackgroundColor(Vector3f backgroundColor) {
+        FlowchartTextBoxController.backgroundColor = backgroundColor;
+    }
+
+    public static Vector3f getHighlightedColor() {
+        return highlightedColor;
+    }
+
+    public static void setHighlightedColor(Vector3f highlightedColor) {
+        FlowchartTextBoxController.highlightedColor = highlightedColor;
+    }
+
+    public static Vector3f getTextNumberBackgroundColor() {
+        return textNumberBackgroundColor;
+    }
+
+    public static void setTextNumberBackgroundColor(Vector3f textNumberBackgroundColor) {
+        FlowchartTextBoxController.textNumberBackgroundColor = textNumberBackgroundColor;
+    }
+
+    public void click(int key, int action){
+        if(key == GLFW.GLFW_MOUSE_BUTTON_LEFT && action == GLFW.GLFW_RELEASE){
+            for(FlowchartTextBox textBox : textBoxes){
+                if(mousePosition.x > textBox.getPosition().x && mousePosition.y > textBox.getPosition().y && mousePosition.x < textBox.getPosition().x + textBox.getSize().x && mousePosition.y < textBox.getPosition().y + textBox.getSize().y){
+                    selectedTextBox = textBox;
+                    return;
+                }
+            }
+        }
+    }
+
+    public void moveMouse(double xPos, double yPos){
+        mousePosition.x = (float)xPos;
+        mousePosition.y = (float)yPos;
+    }
+
+    public FlowchartTextBox getSelectedTextBox(){
+        return selectedTextBox;
     }
 }
