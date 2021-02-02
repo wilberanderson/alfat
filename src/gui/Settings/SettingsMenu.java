@@ -248,6 +248,11 @@ public class SettingsMenu extends Component {
         //Radio button logic
         ssYes.addActionListener(e->{
 
+            //Un gray out auto gen flowchart
+             yesBtn.setEnabled(true);
+             noBtn.setEnabled(true);
+
+
             fsNo.setEnabled(false);
             fsYes.setEnabled(false);
             fsGroup.clearSelection();
@@ -296,6 +301,14 @@ public class SettingsMenu extends Component {
             fsYes.setSelected(true);
             fsNo.setSelected(false);
         } else if (GeneralSettings.USERPREF.getFullscreen() < 0) {
+
+            //Toggle on auto gen flowchart and gray out
+            yesBtn.setSelected(true);
+            noBtn.setSelected(false);
+            yesBtn.setEnabled(false);
+            noBtn.setEnabled(false);
+            GeneralSettings.USERPREF.setAutoGenFlowchart(true);
+
             //To Flowchart
             fsYes.setSelected(false);
             fsNo.setSelected(true);
@@ -303,11 +316,22 @@ public class SettingsMenu extends Component {
 
         //Radio button logic
         fsYes.addActionListener(e->{
+            //Un gray out auto gen flowchart
+            yesBtn.setEnabled(true);
+            noBtn.setEnabled(true);
+
+
 
             GeneralSettings.USERPREF.setFullscreen(1);
         });
-
+        //To flowchart
         fsNo.addActionListener(e->{
+            //Toggle on auto gen flowchart and gray out
+            yesBtn.setSelected(true);
+            noBtn.setSelected(false);
+            yesBtn.setEnabled(false);
+            noBtn.setEnabled(false);
+            GeneralSettings.USERPREF.setAutoGenFlowchart(true);
 
             GeneralSettings.USERPREF.setFullscreen(-1);
         });
