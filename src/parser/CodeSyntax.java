@@ -2,49 +2,50 @@ package parser;
 
 import java.util.ArrayList;
 
-public class LC3Syntax {
-
-    private ArrayList<Pair> operation = new ArrayList<Pair>();
-    private ArrayList<Pair> dataMovement = new ArrayList<Pair>();
-    private ArrayList<Pair> control = new ArrayList<Pair>();
-    private ArrayList<Pair> registers = new ArrayList<Pair>();
-    private ArrayList<Pair> reserved = new ArrayList<Pair>();
+public class CodeSyntax {
 
 
-    public ArrayList<Pair> getReserved() { return reserved; }
+    private ArrayList<Single> operation = new ArrayList<Single>();
+    private ArrayList<Single> dataMovement = new ArrayList<Single>();
+    private ArrayList<Single> control = new ArrayList<Single>();
+    private ArrayList<Single> registers = new ArrayList<Single>();
+    private ArrayList<Single> reserved = new ArrayList<Single>();
 
-    public void setReserved(ArrayList<Pair> reserved) { this.reserved = reserved; }
+
+    public ArrayList<Single> getReserved() { return reserved; }
+
+    public void setReserved(ArrayList<Single> reserved) { this.reserved = reserved; }
 
 
-    public ArrayList<Pair> getOperation() {
+    public ArrayList<Single> getOperation() {
         return operation;
     }
 
-    public void setOperation(ArrayList<Pair> operation) {
+    public void setOperation(ArrayList<Single> operation) {
         this.operation = operation;
     }
 
-    public ArrayList<Pair> getDataMovement() {
+    public ArrayList<Single> getDataMovement() {
         return dataMovement;
     }
 
-    public void setDataMovement(ArrayList<Pair> dataMovement) {
+    public void setDataMovement(ArrayList<Single> dataMovement) {
         this.dataMovement = dataMovement;
     }
 
-    public ArrayList<Pair> getControl() {
+    public ArrayList<Single> getControl() {
         return control;
     }
 
-    public void setControl(ArrayList<Pair> control) {
+    public void setControl(ArrayList<Single> control) {
         this.control = control;
     }
 
-    public ArrayList<Pair> getRegisters() {
+    public ArrayList<Single> getRegisters() {
         return registers;
     }
 
-    public void setRegisters(ArrayList<Pair> registers) {
+    public void setRegisters(ArrayList<Single> registers) {
         this.registers = registers;
     }
 
@@ -106,7 +107,7 @@ public class LC3Syntax {
 
     @Override
     public String toString() {
-        return "LC3Syntax{" +
+        return "CodeSyntax{" +
                 "operation=" + operation +
                 ", dataMovemnet=" + dataMovement +
                 ", control=" + control +
@@ -114,6 +115,4 @@ public class LC3Syntax {
                 ", registers=" + registers +
                 '}';
     }
-
-
 }

@@ -8,7 +8,7 @@ import java.util.List;
 public class FlowChartObject {
     public String label = "";
     public String target = "";
-    public ArrayList<LC3TLine> lines = new ArrayList<>();
+    public ArrayList<CodeLine> lines = new ArrayList<>();
     public int lineCount = 0;   //number of lines in the box
     public int startLine;   //the starting line number of the box
     public String alert = "";
@@ -21,14 +21,14 @@ public class FlowChartObject {
 
     public String getFullText(boolean comments){
         String temp = "";
-        for (LC3TLine line : lines){
+        for (CodeLine line : lines){
             temp = (temp + line.getLineText(comments) + "\n");
         }
         temp = temp.substring(0,temp.length()-1); //remove extra newline
         return temp;
     }
 
-    public void addLine(LC3TLine line){
+    public void addLine(CodeLine line){
         lines.add(line);
         textLines.add(line.getTextLine());
     }
@@ -63,7 +63,7 @@ public class FlowChartObject {
 
     public ArrayList<String> getRegisters(){
         ArrayList<String> registers = new ArrayList<>();
-        for (LC3TLine line : lines){
+        for (CodeLine line : lines){
             if (!line.getRegisters().isEmpty()){
                 for (String register : line.getRegisters()){
                     if (!registers.contains(register)) {

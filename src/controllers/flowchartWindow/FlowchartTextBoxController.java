@@ -5,11 +5,14 @@ import gui.GUIFilledBox;
 import gui.texts.*;
 import gui.textBoxes.FlowchartTextBox;
 import main.GeneralSettings;
+import org.lwjgl.system.CallbackI;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 public class FlowchartTextBoxController {
@@ -104,6 +107,79 @@ public class FlowchartTextBoxController {
                 box.setHighlighted(false);
                 //box.setBackgroundColor(GeneralSettings.TEXT_BOX_BACKGROUND_COLOR);
                 //box.setTextColor(GeneralSettings.TEXT_COLOR);
+    public void clearHighlighting(){
+        for (FlowchartTextBox box : textBoxes){
+            box.setBackgroundColor(GeneralSettings.TEXT_BOX_BACKGROUND_COLOR);
+            box.setTextColor(GeneralSettings.TEXT_COLOR);
+        }
+    }
+
+    public void locateRegisters(String args) {
+        String operation = "and";
+        boolean not = false;
+        boolean[] candidate = new boolean[textBoxes.size()];
+        Arrays.fill(candidate, true);
+
+        List<String> argv = new LinkedList<String>(Arrays.asList(args.split(" ")));
+
+        while (argv.size() >= 1){
+            if (argv.get(0).charAt(0)=='!' && argv.get(0).length() > 1){
+                not = true;
+                argv.set(0,argv.get(0).substring(1,argv.get(0).length()));
+                System.out.println("not " + argv.get(0));
+            }
+            switch (argv.get(0).toUpperCase()) {
+                case "NOT":
+                case "!":
+                    not = true;
+                    break;
+                case "&":
+                case "&&":
+                case "AND":
+                    operation = "and";
+                    break;
+                case "|":
+                case "||":
+                case "OR":
+                    operation = "or";
+                    break;
+                default:
+                    if (not) {
+                        if (operation.equals("and")) {
+                            //System.out.println();
+                            for (int i = 0; i < textBoxes.size(); i++) {
+                                //System.out.println(candidate[i] + " && " + textBoxes.get(i).getRegisters().contains(argv.get(0)) + " -> " + (candidate[i] && textBoxes.get(i).getRegisters().contains(argv.get(0))));
+                                candidate[i] = candidate[i] && !textBoxes.get(i).getRegisters().contains(argv.get(0));
+                            }
+                        } else {
+                            for (int i = 0; i < textBoxes.size(); i++) {
+                                candidate[i] = candidate[i] || !textBoxes.get(i).getRegisters().contains(argv.get(0));
+                            }
+                        }
+                        not = false;
+                    } else {
+                        if (operation.equals("and")) {
+                            //System.out.println();
+                            for (int i = 0; i < textBoxes.size(); i++) {
+                                //System.out.println(candidate[i] + " && " + textBoxes.get(i).getRegisters().contains(argv.get(0)) + " -> " + (candidate[i] && textBoxes.get(i).getRegisters().contains(argv.get(0))));
+                                candidate[i] = candidate[i] && textBoxes.get(i).getRegisters().contains(argv.get(0));
+                            }
+                        } else {
+                            for (int i = 0; i < textBoxes.size(); i++) {
+                                candidate[i] = candidate[i] || textBoxes.get(i).getRegisters().contains(argv.get(0));
+                            }
+                        }
+                    }
+            }
+            argv.remove(0);
+        }
+        for (int i = 0; i < textBoxes.size(); i++){
+            if (candidate[i]){
+                textBoxes.get(i).setBackgroundColor(GeneralSettings.TEXT_COLOR);
+                textBoxes.get(i).setTextColor(GeneralSettings.TEXT_BOX_BACKGROUND_COLOR);
+            } else {
+                textBoxes.get(i).setBackgroundColor(GeneralSettings.TEXT_BOX_BACKGROUND_COLOR);
+                textBoxes.get(i).setTextColor(GeneralSettings.TEXT_COLOR);
             }
         }
     }

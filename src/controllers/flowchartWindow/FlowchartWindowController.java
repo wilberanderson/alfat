@@ -79,8 +79,12 @@ public class FlowchartWindowController {
     }
 
 
-    public void locateRegister(String register) {
-        flowchartTextBoxController.locateRegister(register);
+    public void locateRegisters(String args) {
+        flowchartTextBoxController.locateRegisters(args);
+    }
+
+    public void clearHighlighting(){
+        flowchartTextBoxController.clearHighlighting();
     }
 
     public void locateAlert(String alert){

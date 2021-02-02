@@ -6,18 +6,12 @@ import org.lwjgl.util.vector.Vector3f;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
-/*
-* TODO:
-*  Add start up sizes to display
-*  Add menu and header bar color options
-*  Add highlight color option
-*  Add light theme
-*  Add temp file store limit
-*  Add font options...
-* */
 /**
  * This is a swing gui class that manages user settings for ALFAT
  * */
@@ -48,7 +42,7 @@ public class SettingsMenu extends Component {
 
     //Regx
     private String validFileType = "^(\\w+)$|(\\w+(,|;)\\w+)*$";
-    private String validIntType = "^\\d+$";
+    private String validIntType = "^[1-9]\\d*$";
 
 
 
@@ -56,19 +50,7 @@ public class SettingsMenu extends Component {
      * Builds and displays the settings GUI
      * */
     public SettingsMenu() {
-        //Set OS default look and feel
-        try {
-            //UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (UnsupportedLookAndFeelException e) {
-            e.printStackTrace();
-        }
+
         //Init fake button content
         setFakeButtonscontent();
 
@@ -123,8 +105,6 @@ public class SettingsMenu extends Component {
 
         //Set icon
         root.setIconImage(Toolkit.getDefaultToolkit().getImage("src/res/icon/icon.png"));
-
-
         root.setVisible(true);
     }
 
@@ -268,6 +248,11 @@ public class SettingsMenu extends Component {
         //Radio button logic
         ssYes.addActionListener(e->{
 
+            //Un gray out auto gen flowchart
+             yesBtn.setEnabled(true);
+             noBtn.setEnabled(true);
+
+
             fsNo.setEnabled(false);
             fsYes.setEnabled(false);
             fsGroup.clearSelection();
@@ -316,6 +301,14 @@ public class SettingsMenu extends Component {
             fsYes.setSelected(true);
             fsNo.setSelected(false);
         } else if (GeneralSettings.USERPREF.getFullscreen() < 0) {
+
+            //Toggle on auto gen flowchart and gray out
+            yesBtn.setSelected(true);
+            noBtn.setSelected(false);
+            yesBtn.setEnabled(false);
+            noBtn.setEnabled(false);
+            GeneralSettings.USERPREF.setAutoGenFlowchart(true);
+
             //To Flowchart
             fsYes.setSelected(false);
             fsNo.setSelected(true);
@@ -323,11 +316,22 @@ public class SettingsMenu extends Component {
 
         //Radio button logic
         fsYes.addActionListener(e->{
+            //Un gray out auto gen flowchart
+            yesBtn.setEnabled(true);
+            noBtn.setEnabled(true);
+
+
 
             GeneralSettings.USERPREF.setFullscreen(1);
         });
-
+        //To flowchart
         fsNo.addActionListener(e->{
+            //Toggle on auto gen flowchart and gray out
+            yesBtn.setSelected(true);
+            noBtn.setSelected(false);
+            yesBtn.setEnabled(false);
+            noBtn.setEnabled(false);
+            GeneralSettings.USERPREF.setAutoGenFlowchart(true);
 
             GeneralSettings.USERPREF.setFullscreen(-1);
         });
@@ -387,29 +391,47 @@ public class SettingsMenu extends Component {
         tempFilePathPane.add(tempFilePath);
         JButton changePath = new JButton("Change Path");
         changePath.addActionListener(e-> {
-            SwingUtilities.invokeLater(new Runnable() {
-                @Override
-                public void run() {
-                    OpenFileDialog ofd = new OpenFileDialog();
-                    ofd.saveFolderWindow();
-                    if(ofd.getFilePath() != null) {
-                        GeneralSettings.USERPREF.setUserTempFileDirPath(ofd.getFilePath());
-                        tempFilePath.setText(GeneralSettings.USERPREF.getUserTempFileDirPath());
-                        tempFilePathPane.updateUI();
-                        //updateMenucontent(fileSettingsContent());
-                    }
-                }
-            });
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.saveFolderWindow();
+            if(ofd.getFilePath() != null) {
+                GeneralSettings.USERPREF.setUserTempFileDirPath(ofd.getFilePath());
+                updateMenucontent(fileSettingsContent());
+            }
         });
         tempFilePathPane.add(changePath);
 
 
         //------------------------------------------
         //Temp File Limit
+        JPanel tempFileLimitPane = new JPanel(new FlowLayout());
+        JLabel curTempFileLimitJlabel = new JLabel("Number of Temp files stored: ");
+        curTempFileLimitJlabel.setFont(labelFont);
+        tempFileLimitPane.add(curTempFileLimitJlabel);
+        JTextField limitTextField = new JTextField(Integer.toString(GeneralSettings.USERPREF.getTempFileLimit()));
+        limitTextField.setPreferredSize(new Dimension(100, 20));
+        tempFileLimitPane.add(limitTextField);
+        limitTextField.addKeyListener(new KeyAdapter() {
+            public void keyPressed(KeyEvent e) {
+                if(!limitTextField.getText().matches(validIntType)) {
+                    limitTextField.setForeground(Color.RED);
+                } else {
+                    limitTextField.setForeground(Color.BLACK);
+                }
+            }
+        });
 
+        JButton submitLimitChange = new JButton("Submit Change");
+        submitLimitChange.addActionListener(e->{
 
-
-
+            if(!limitTextField.getText().matches(validIntType)) {
+                limitTextField.setForeground(Color.RED);
+            } else {
+                GeneralSettings.USERPREF.setTempFileLimit(Integer.parseInt(limitTextField.getText()));
+                GeneralSettings.MasterRendererUserPrefToggle = true;
+                limitTextField.setForeground(Color.BLACK);
+            }
+        });
+        tempFileLimitPane.add(submitLimitChange);
 
         //-----------------------------------------
         //Change preferred file type for open and save as
@@ -419,17 +441,17 @@ public class SettingsMenu extends Component {
         JLabel enterPrefFileTypeLabel = new JLabel("Enter preferred file type");
         enterPrefFileTypeLabel.setFont(labelFont);
         preferredFileTypePane.add(enterPrefFileTypeLabel);
-        JTextField pft = new JTextField(GeneralSettings.USERPREF.getPreferredFiletype());
-        pft.setPreferredSize(new Dimension(300, 20));
-        preferredFileTypePane.add(pft);
+        JTextField pftTextField = new JTextField(GeneralSettings.USERPREF.getPreferredFiletype());
+        pftTextField.setPreferredSize(new Dimension(300, 20));
+        preferredFileTypePane.add(pftTextField);
 
         //Change color if file type is wrong
-        pft.addKeyListener(new KeyAdapter() {
+        pftTextField.addKeyListener(new KeyAdapter() {
             public void keyPressed(KeyEvent e) {
-                if(!pft.getText().matches(validFileType)) {
-                    pft.setForeground(Color.RED);
+                if(!pftTextField.getText().matches(validFileType)) {
+                    pftTextField.setForeground(Color.RED);
                 } else {
-                    pft.setForeground(Color.BLACK);
+                    pftTextField.setForeground(Color.BLACK);
                 }
             }
         });
@@ -439,11 +461,11 @@ public class SettingsMenu extends Component {
         JButton submitChange = new JButton("Submit Change");
         submitChange.addActionListener(e->{
 
-            if(!pft.getText().matches(validFileType)) {
-                pft.setForeground(Color.RED);
+            if(!pftTextField.getText().matches(validFileType)) {
+                pftTextField.setForeground(Color.RED);
             } else {
-                GeneralSettings.USERPREF.setPreferredFileType(pft.getText());
-                pft.setForeground(Color.BLACK);
+                GeneralSettings.USERPREF.setPreferredFileType(pftTextField.getText());
+                pftTextField.setForeground(Color.BLACK);
             }
         });
 
@@ -452,6 +474,7 @@ public class SettingsMenu extends Component {
 
         superContainer.add(syntaxFilePathPane);
         superContainer.add(tempFilePathPane);
+        superContainer.add(tempFileLimitPane);
         superContainer.add(preferredFileTypePane);
 
         main.add(superContainer);

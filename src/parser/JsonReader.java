@@ -39,4 +39,20 @@ public class JsonReader {
         }
         return null;
     }
+
+    //Generic Syntax
+    public CodeSyntax mapJsonToSyntax() {
+        ObjectMapper objectMapper = new ObjectMapper();
+        CodeSyntax outputClass;
+        try {
+            outputClass = objectMapper.readValue(input, CodeSyntax.class);
+            return outputClass;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+
 }

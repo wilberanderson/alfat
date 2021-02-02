@@ -4,7 +4,6 @@ package parser;
  * A simple mapping object used with the LC3Syntax class
  * store mapped json parameters.
  * @see parser.LC3Syntax
- * @author Thomas
 */
 public class Pair {
     //A string to hold the name of the LC3 instruction
