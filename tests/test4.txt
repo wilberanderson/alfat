@@ -1,4 +1,4 @@
-    .ORIG    x3"
+    .ORIG    x3000"
 ;Start
         LEA    R0, PROMPT1
         PUTS            ;Display beginning prompt
@@ -7,13 +7,13 @@
         LD    R4, BLANK    ;Load \"_\"
         AND    R5, R5, #0    ;Initialized to 0    
 ;Word Input
-INPUT        GETC
+INPUT   GETC
         LD    R1, BACKSP
         NOT    R1, R1
         ADD    R1, R1, #1
         ADD    R1, R0, R1
         BRz    INPUT        ;Goto [INPUT] backspace read skip it
-        LDaaaaaaa     R1, NEWLN
+        LD     R1, NEWLN
         NOT    R1, R1
         ADD    R1, R1, #1
         ADD     R1, R0, R1
@@ -48,7 +48,7 @@ INPUT_DONE    LEA    R0, PROMPT2    ;Display second prompt
         STR    R0, R2, #0
         STR    R0, R3, #0
         STR    R0, R5, #0    ;Null terminate the strings
-TOP        LD    R2, WORD    
+TOP     LD    R2, WORD
         LD    R3, GUESS    ;Load starting words
         LD    R5, USED
         LEA    R0, PROMPT3
@@ -66,10 +66,10 @@ TOP        LD    R2, WORD
         LD    R4, LENGTH
         BRnzp    WORD1        ;Goto [WORD1] to get rid of pre changes.
 ;Is char in the word?
-WORD0        ADD    R4, R4, #-1    ;Decrement counter
+WORD0   ADD    R4, R4, #-1    ;Decrement counter
         ADD    R2, R2, #1    ;Increment word
         ADD    R3, R3, #2    ;Increment guess
-WORD1        ADD    R4, R4, #0
+WORD1   ADD    R4, R4, #0
         BRz    IN_USED        ;Goto [IN_USED] done going through word
         LDR    R1, R2, #0
         NOT    R1, R1
@@ -78,7 +78,7 @@ WORD1        ADD    R4, R4, #0
         BRnp    WORD0        ;Goto [WORD0] if char does not match
         STR    R0, R3, #0
 ;Is char everywhere in word?
-WORD2        ADD    R4, R4, #0
+WORD2   ADD    R4, R4, #0
         BRz    CHECK        ;Goto [CHECK] Done with input char checking
         ADD    R4, R4, #-1    ;Decrement counter
         ADD    R2, R2, #1    ;Increment word
@@ -91,21 +91,21 @@ WORD2        ADD    R4, R4, #0
         STR    R0, R3, #0    ;Store the char matched into \"Guess\"
         BRnzp    WORD2        ;Goto [WORD2] Is a match, continue
 ;has char been in \"used\" already?
-IN_USED        LDR    R1, R5, #0
+IN_USED LDR    R1, R5, #0
         BRnp    IN_CHAR        ;Goto [CHAR] Not end, so check for char
         STR    R0, R5, #0    ;Store char into used
         ADD    R5, R5, #1    ;Increment used
         AND    R0, R0, #0
         STR    R0, R5, #0    ;Null terminate used
         BRnzp    CHECK        ;Goto [CHECK] char stored
-IN_CHAR        NOT    R1, R1
+IN_CHAR NOT    R1, R1
         ADD    R1, R1, #1
         ADD    R1, R0, R1    ;Subtract Used value from char
         BRz    CHECK        ;Goto [CHECK] char was already there
         ADD    R5, R5, #1    ;Increment address of used
         BRnzp    IN_USED        ;Goto [IN_USED] no match found try next.
 ;Check to see if strings match
-CHECK        LD    R2, WORD    
+CHECK   LD    R2, WORD
         LD    R3, GUESS
         LD    R4, LENGTH
 CHECK_AGAIN    LDR    R0, R2, #0
@@ -121,7 +121,7 @@ CHECK_AGAIN    LDR    R0, R2, #0
         ADD    R3, R3, #2    ;Increment guess
         BRnzp    CHECK_AGAIN    ;Goto [CHECK_AGAIN] chars so far have been equal
 ;End
-DONE        LEA    R0, PROMPT2
+DONE    LEA    R0, PROMPT2
         PUTS
         LEA    R0, PROMPT3
         PUTS

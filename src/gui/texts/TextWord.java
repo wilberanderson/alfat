@@ -9,19 +9,13 @@ import rendering.text.TextMaster;
 
 public class TextWord extends Text {
 
-    String separator;
     private static float width = GeneralSettings.FONT_WIDTH;
     private static float edge = GeneralSettings.FONT_EDGE;
     private static FontType font = GeneralSettings.FONT;
 
-    public TextWord(String text, Vector2f position, String separator){
+    public TextWord(String text, Vector2f position){
         super(text, GeneralSettings.FONT_SIZE, position);
-        this.separator = separator;
         TextMaster.removeText(this);
-    }
-
-    public String getSeparator(){
-        return separator;
     }
 
     public static float getWidth() {

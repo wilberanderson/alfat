@@ -54,11 +54,15 @@ public class FormattedTextLine {
                 if(word == null){
                     continue;
                 }
-                if (word.getSeparator().length() == 1 && word.getSeparator().charAt(0) == ' ') {
-                    length += spaceSize;
-                } else if (word.getSeparator().length() == 1 && word.getSeparator().charAt(0) == '\t') {
-                    length += spaceSize * (GeneralSettings.DEFAULT_TAB_WIDTH-numberOfCharacters%4);//((numberOfCharacters % GeneralSettings.DEFAULT_TAB_WIDTH) == 0 ? GeneralSettings.DEFAULT_TAB_WIDTH : numberOfCharacters % GeneralSettings.DEFAULT_TAB_WIDTH);
-                    numberOfCharacters = 0;
+                if(word instanceof SeparatorWord){
+                    if(((SeparatorWord) word).getText().length() > 0) {
+                        if (((SeparatorWord) word).getText().charAt(0) == ' ') {
+                            length += spaceSize;
+                        } else if (((SeparatorWord) word).getText().charAt(0) == '\t') {
+                            length += spaceSize * (GeneralSettings.DEFAULT_TAB_WIDTH - numberOfCharacters % 4);//((numberOfCharacters % GeneralSettings.DEFAULT_TAB_WIDTH) == 0 ? GeneralSettings.DEFAULT_TAB_WIDTH : numberOfCharacters % GeneralSettings.DEFAULT_TAB_WIDTH);
+                            numberOfCharacters = 0;
+                        }
+                    }
                 }
                 length += word.getCharacterEdges()[word.getCharacterEdges().length - 1];
                 numberOfCharacters += word.getCharacterEdges().length - 1;

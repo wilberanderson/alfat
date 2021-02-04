@@ -65,12 +65,13 @@ public class Parser implements CodeReader {
                 //parse line:
                 i++;    //line numbers start at 1
                 if (verbose) System.out.println("\nparsing line #" + i + "`" + line + "`");
-                line = line.replace("\t", "    ");
+                // replaces tabs with spaces
+                //line = line.replace("\t", "    ");
 
                 //take entire line before semicolon
                 int index = line.indexOf(";");
                 if (index == -1) index = line.length();
-                String[] arrLine = line.substring(0, index).split("[ ,\t]");
+                String[] arrLine = line.substring(0, index).split("((?<=\\s)|(?=\\s+))");
 
                 //temp variables:
                 Optional<String> comm = Optional.empty();
@@ -87,23 +88,24 @@ public class Parser implements CodeReader {
                     //grab each command in the line, if they exist:
                     if (Arrays.asList(commands).contains(fragment.toUpperCase())) {
                         comm = Arrays.stream(commands).filter(fragment.toUpperCase()::equals).findAny();
-                        formattedString.add(new CommandWord(comm.get(), new Vector2f(0f, 0), "\t"));
+                        formattedString.add(new CommandWord(comm.get(), new Vector2f(0f, 0)));
                         first = false;
                     } else if (Arrays.asList(jumps).contains(fragment.toUpperCase()) || fragment.matches("^BR[nzp]{0,3}$")) {
                         comm = Optional.of(fragment);
-                        formattedString.add(new CommandWord(comm.get(), new Vector2f(0f, 0), "\t"));
+                        formattedString.add(new CommandWord(comm.get(), new Vector2f(0f, 0)));
                         jump = true;
                         first = false;
                     } else if (registerMatch(fragment)) {  //register
                         if (fragment.contains(",")) {
                             if (!registers.contains(fragment.substring(0, fragment.length() - 1))) {
                                 registers.add(fragment.substring(0, fragment.length() - 1));
-                                formattedString.add(new RegisterWord(fragment.substring(0, fragment.length()-1), new Vector2f(0f, 0), "\t"));
+                                formattedString.add(new RegisterWord(fragment.substring(0, fragment.length()-1), new Vector2f(0f, 0)));
+                                formattedString.add(new LabelWord(",", new Vector2f(0f, 0)));
                             }
                         } else {
                             if (!registers.contains(fragment)) {
                                 registers.add(fragment);
-                                formattedString.add(new RegisterWord(fragment, new Vector2f(0f, 0), "\t"));
+                                formattedString.add(new RegisterWord(fragment, new Vector2f(0f, 0)));
                             }
                         }
                         first = false;
@@ -111,29 +113,34 @@ public class Parser implements CodeReader {
                         //immediate value, literal or trap
                         //just skip this for now
                         first = false;
-                        formattedString.add(new ImmediateWord(fragment, new Vector2f(0f, 0), "\t"));
+                        formattedString.add(new ImmediateWord(fragment, new Vector2f(0f, 0)));
                     } else if (jump && fragment.matches("^[a-zA-Z0-9\\-_]+")) {   //jump statement, this matches a label
                         //if the line is a jump statement,
                         //this matches the label or labels pointed to by the command
                         //if the language supports having the label BEFORE the command,
                         //remove the `jump &&` statement as it will cause problems.
                         targetLabel = fragment;
-                        formattedString.add(new LabelWord(fragment, new Vector2f(0f, 0), ""));
+                        formattedString.add(new LabelWord(fragment, new Vector2f(0f, 0)));
                         first = false;
                     } else if (first && fragment.matches("^[a-zA-Z0-9\\-_]+")) {
                         //this is the (optional) label for the line
                         label = fragment;
                         labelMap.put(label, i);
-                        formattedString.add(new LabelWord(fragment, new Vector2f(0f, 0), ""));
+                        formattedString.add(new LabelWord(fragment, new Vector2f(0f, 0)));
                         first = false;
                     } else if (!jump && fragment.matches("^[a-zA-Z0-9\\-_]+")) {
                         //the command isn't a jump statement, so the label must be a variable i.e. string, etc.
-                        formattedString.add(new LabelWord(fragment, new Vector2f(0f, 0), "\t"));
+                        formattedString.add(new LabelWord(fragment, new Vector2f(0f, 0)));
+                    } else if (fragment.matches("[ ,\t]")){
+                        formattedString.add(new SeparatorWord(fragment, new Vector2f(0f,0f)));
+                    } else {
+                        formattedString.add(new ErrorWord(fragment, new Vector2f(0f,0f)));
                     }
+
                 }
 
                 if (index < line.length() - 1) {
-                    formattedString.add(new CommentWord(line.substring(index), new Vector2f(0f, 0), "\t"));
+                    formattedString.add(new CommentWord(line.substring(index), new Vector2f(0f, 0)));
                 }
 
                 //Put formatted text into an object
@@ -178,7 +185,7 @@ public class Parser implements CodeReader {
         //take entire line before semicolon
         int index = line.indexOf(";");
         if (index == -1) index = line.length();
-        String[] arrLine = line.substring(0, index).split("[ ,\t]");
+        String[] arrLine = line.substring(0, index).split("((?<=\\s)|(?=\\s+))");
 
         //temp variables:
         Optional<String> comm = Optional.empty();
@@ -195,23 +202,24 @@ public class Parser implements CodeReader {
             //grab each command in the line, if they exist:
             if (Arrays.asList(commands).contains(fragment.toUpperCase())) {
                 comm = Arrays.stream(commands).filter(fragment.toUpperCase()::equals).findAny();
-                formattedString.add(new CommandWord(comm.get(), new Vector2f(0f, 0), "\t"));
+                formattedString.add(new CommandWord(comm.get(), new Vector2f(0f, 0)));
                 first = false;
             } else if (Arrays.asList(jumps).contains(fragment.toUpperCase()) || fragment.matches("^BR[nzp]{0,3}$")) {
                 comm = Optional.of(fragment);
-                formattedString.add(new CommandWord(comm.get(), new Vector2f(0f, 0), "\t"));
+                formattedString.add(new CommandWord(comm.get(), new Vector2f(0f, 0)));
                 jump = true;
                 first = false;
             } else if (Arrays.stream(registerNames).anyMatch(fragment.toUpperCase()::contains)) {  //register
                 if (fragment.contains(",")) {
                     if (!registers.contains(fragment.substring(0, fragment.length() - 1))) {
                         registers.add(fragment.substring(0, fragment.length() - 1));
-                        formattedString.add(new RegisterWord(fragment.substring(0, fragment.length()-1), new Vector2f(0f, 0), "\t"));
+                        formattedString.add(new RegisterWord(fragment.substring(0, fragment.length()-1), new Vector2f(0f, 0)));
+                        formattedString.add(new LabelWord(",", new Vector2f(0f, 0)));
                     }
                 } else {
                     if (!registers.contains(fragment)) {
                         registers.add(fragment);
-                        formattedString.add(new RegisterWord(fragment, new Vector2f(0f, 0), "\t"));
+                        formattedString.add(new RegisterWord(fragment, new Vector2f(0f, 0)));
                     }
                 }
                 first = false;
@@ -219,28 +227,33 @@ public class Parser implements CodeReader {
                 //immediate value, literal or trap
                 //just skip this for now
                 first = false;
-                formattedString.add(new ImmediateWord(fragment, new Vector2f(0f, 0), "\t"));
+                formattedString.add(new ImmediateWord(fragment, new Vector2f(0f, 0)));
             } else if (jump && fragment.matches("^[a-zA-Z0-9\\-_]+")) {   //jump statement, this matches a label
                 //if the line is a jump statement,
                 //this matches the label or labels pointed to by the command
                 //if the language supports having the label BEFORE the command,
                 //remove the `jump &&` statement as it will cause problems.
                 targetLabel = fragment;
-                formattedString.add(new LabelWord(fragment, new Vector2f(0f, 0), ""));
+                formattedString.add(new LabelWord(fragment, new Vector2f(0f, 0)));
                 first = false;
             } else if (first && fragment.matches("^[a-zA-Z0-9\\-_]+")) {
                 //this is the (optional) label for the line
                 label = fragment;
-                formattedString.add(new LabelWord(fragment, new Vector2f(0f, 0), ""));
+                formattedString.add(new LabelWord(fragment, new Vector2f(0f, 0)));
                 first = false;
             } else if (!jump && fragment.matches("^[a-zA-Z0-9\\-_]+")) {
                 //the command isn't a jump statement, so the label must be a variable i.e. string, etc.
-                formattedString.add(new LabelWord(fragment, new Vector2f(0f, 0), "\t"));
+                formattedString.add(new LabelWord(fragment, new Vector2f(0f, 0)));
+            } else if (fragment.matches("[ ,\t]")){
+                formattedString.add(new SeparatorWord(fragment, new Vector2f(0f,0f)));
+            } else {
+                formattedString.add(new ErrorWord(fragment, new Vector2f(0f, 0f)));
             }
         }
 
         if (index < line.length() - 1) {
-            formattedString.add(new CommentWord(line.substring(index), new Vector2f(0f, 0), "\t"));
+            formattedString.add(new CommentWord(line.substring(index), new Vector2f(0f, 0)));
+            //formattedString.add(new SeparatorWord("\t", new Vector2f(0f,0f)));
         }
 
         //Put formatted text into an object

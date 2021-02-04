@@ -75,7 +75,7 @@ public class CodeWindowController {
             EditableFormattedTextLine formattedTextLine = parser.getFormattedLine(line);
 
             //this.codeWindow.getTexts().add(new CodeWindowText(line, fontSize, new Vector2f(border + position.x,position.y-minHeight+size.y)));
-            LineNumberWord lineNumberWord = new LineNumberWord(Integer.toString(lineNumber), new Vector2f(border + position.x, position.y-minHeight+size.y), "");
+            LineNumberWord lineNumberWord = new LineNumberWord(Integer.toString(lineNumber), new Vector2f(border + position.x, position.y-minHeight+size.y));
             //this.codeWindow.getLineNumbers().add(lineNumberText);
 
             formattedTextLine.getWords()[0] = lineNumberWord;

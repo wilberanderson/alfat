@@ -31,13 +31,24 @@ public class EditableFormattedTextLine extends FormattedTextLine{
             float last = lineNumberOffset;
             for (TextWord word : words) {
                 if (!(word instanceof LineNumberWord)) {
-                    if (word.getSeparator().equals(" ")) {
-                        last += word.getFont().getSpaceSize();
-                    } else if (word.getSeparator().equals("\t")) {
-                        numberOfCharacters %= 4;
-                        last += word.getFont().getSpaceSize() * (GeneralSettings.DEFAULT_TAB_WIDTH-numberOfCharacters);
-                        numberOfCharacters = 0;
+                    float spaceSize = word.getFont().getSpaceSize();
+                    if(word instanceof SeparatorWord){
+                        if(((SeparatorWord) word).getText().length() > 0) {
+                            if (((SeparatorWord) word).getText().charAt(0) == ' ') {
+                                length += spaceSize;
+                            } else if (((SeparatorWord) word).getText().charAt(0) == '\t') {
+                                length += spaceSize * (GeneralSettings.DEFAULT_TAB_WIDTH - numberOfCharacters % 4);//((numberOfCharacters % GeneralSettings.DEFAULT_TAB_WIDTH) == 0 ? GeneralSettings.DEFAULT_TAB_WIDTH : numberOfCharacters % GeneralSettings.DEFAULT_TAB_WIDTH);
+                                numberOfCharacters = 0;
+                            }
+                        }
                     }
+//                    if (word.getSeparator().equals(" ")) {
+//                        last += word.getFont().getSpaceSize();
+//                    } else if (word.getSeparator().equals("\t")) {
+//                        numberOfCharacters %= 4;
+//                        last += word.getFont().getSpaceSize() * (GeneralSettings.DEFAULT_TAB_WIDTH-numberOfCharacters);
+//                        numberOfCharacters = 0;
+//                    }
                     for (int i = 0; i < word.getCharacterEdges().length; i++) {
                         characterEdges[index] = word.getCharacterEdges()[i] + last;
                         index++;

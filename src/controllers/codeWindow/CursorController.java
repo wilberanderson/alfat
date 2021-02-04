@@ -138,21 +138,27 @@ public class CursorController {
     }
 
     public void backSpace(){
-//        if (characterIndex > 0){
+        if (characterIndex > 0){
+            currentGUIText = codeWindow.getTextLineController().backspace(currentGUIText, characterIndex, true);
+            characterIndex--;
 //            characterIndex--;
 //            String newContent = currentGUIText.getTextString().substring(0, characterIndex) + currentGUIText.getTextString().substring(characterIndex + 1);
 //            currentGUIText = new CodeWindowText(newContent, currentGUIText, true);
 //            codeWindow.getTexts().set(lineIndex, currentGUIText);
 //            updateXPosition();
-//        } else if (lineIndex > 0) {
+        } else if (lineIndex > 0) {
+            characterIndex = codeWindow.getTextLineController().getCodeWindowTextLines().get(lineIndex-1).getCharacterEdges().length-1;
+            currentGUIText = codeWindow.getTextLineController().merge(codeWindow.getTextLineController().getCodeWindowTextLines().get(lineIndex-1), currentGUIText);
 //            lineIndex--;
 //            characterIndex = texts.get(lineIndex).getCharacterEdges().length - 1;
 //            currentGUIText = codeWindow.mergeTexts(texts.get(lineIndex), currentGUIText);
 //            updatePosition();
-//        }
+        }
+        updatePosition();
     }
 
     public void delete(){
+        currentGUIText = codeWindow.getTextLineController().backspace(currentGUIText, characterIndex, false);
 //        if (characterIndex < currentGUIText.getCharacterEdges().length - 1){
 //            String newContent = currentGUIText.getTextString().substring(0, characterIndex) + currentGUIText.getTextString().substring(characterIndex + 1);
 //            currentGUIText = new CodeWindowText(newContent, currentGUIText, true);

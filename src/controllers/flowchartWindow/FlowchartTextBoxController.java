@@ -54,7 +54,7 @@ public class FlowchartTextBoxController {
             line.getPosition().setX(GeneralSettings.TEXT_BOX_BORDER_WIDTH * 2 + position.x);
             line.getPosition().setY(position.y - minHeight);
 
-            LineNumberWord lineNumberText = new LineNumberWord(Integer.toString(lineNumber),new Vector2f(GeneralSettings.TEXT_BOX_BORDER_WIDTH + position.x, line.getPosition().y - lineHeight * formattedTextLines.size() - GeneralSettings.TEXT_BOX_BORDER_WIDTH), "");
+            LineNumberWord lineNumberText = new LineNumberWord(Integer.toString(lineNumber),new Vector2f(GeneralSettings.TEXT_BOX_BORDER_WIDTH + position.x, line.getPosition().y - lineHeight * formattedTextLines.size() - GeneralSettings.TEXT_BOX_BORDER_WIDTH));
             line.getWords()[0] = lineNumberText;
             if (lineNumberText.getLength() > longestLineNumber) {
                 longestLineNumber = (float) lineNumberText.getLength();

@@ -7,8 +7,8 @@ import org.lwjgl.util.vector.Vector3f;
 public class CommentWord extends TextWord{
     private static Vector3f color = GeneralSettings.commentColor;
 
-    public CommentWord(String text, Vector2f position, String separator) {
-        super(text, position, separator);
+    public CommentWord(String text, Vector2f position) {
+        super(text, position);
     }
 
     public Vector3f getColor() {

@@ -1,6 +1,7 @@
 package gui.fontMeshCreator;
 
 import gui.texts.Text;
+import main.GeneralSettings;
 import utils.MyFile;
 
 import java.util.ArrayList;
@@ -32,11 +33,12 @@ public class TextMeshCreator {
 				line.addWord(currentWord);
 				currentWord = new Word(text.getFontSize());
 				continue;
-			}/*else if(c == '\t'){
+			}else if(c == '\t'){
 				 line.addSpaces(GeneralSettings.DEFAULT_TAB_WIDTH);
-			}*/
-			Character character = metaData.getCharacter(c);
-			currentWord.addCharacter(character);
+			}else {
+				Character character = metaData.getCharacter(c);
+				currentWord.addCharacter(character);
+			}
 		}
 		line.addWord(currentWord);
 		text.setLength(line.getLineLength());
