@@ -80,6 +80,7 @@ public class CodeWindowController {
 
             formattedTextLine.getWords()[0] = lineNumberWord;
             formattedTextLine.setPosition(new Vector2f(border + position.x,position.y-minHeight+size.y));
+            formattedTextLine.changeContentsHorizontalPosition(-border*8);
 
             newLines.add(formattedTextLine);
             //textLineController.addCodeWindowTextLine(formattedTextLine, -1);
@@ -99,6 +100,8 @@ public class CodeWindowController {
         }
         for(EditableFormattedTextLine line : textLineController.getCodeWindowTextLines()){
             line.getWords()[0].getPosition().x = -1f;
+            //TODO: Figure out why this is needed
+            line.getWords()[0].getPosition().y -= 0.025f;
             //line.setPosition(new Vector2f(-1, line.getPosition().y));
             line.generateCharacterEdges();
         }
@@ -197,8 +200,8 @@ public class CodeWindowController {
 //        }
         startingHeight = codeWindow.getSize().y - 1;
         startingHeight /= aspectRatio.y;
-        for(FormattedTextLine line:textLineController.getCodeWindowTextLines()){
-            line.setPosition(new Vector2f((codeWindow.getPosition().x+padding*8)/aspectRatio.x, startingHeight));//+contentsVerticalPosition));
+        for(EditableFormattedTextLine line:textLineController.getCodeWindowTextLines()){
+            line.setPosition(new Vector2f((codeWindow.getPosition().x+padding*2)/aspectRatio.x, startingHeight), true);//+contentsVerticalPosition));
             startingHeight -= lineHeight;
         }
         this.aspectRatio = aspectRatio;
