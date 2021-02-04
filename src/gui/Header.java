@@ -254,14 +254,15 @@ public class Header {
             public void onPress() {
                 //Create temp file
 
-                //Save To Temp Location
-                if (!GeneralSettings.FILE_PATH.equals("null")) {
-                    if (controller.getCodeWindowController() != null) {
-                        tfm.copyFiletoTempFile(GeneralSettings.FILE_PATH, GeneralSettings.USERPREF.getUserTempFileDirPath());
-
-                    }
-                } else {
+                //Ensure that a file is open
+                if (GeneralSettings.FILE_PATH == null) {
                     return;
+                }
+
+                //Save To Temp Location
+                if (controller.getCodeWindowController() != null) {
+                    tfm.copyFiletoTempFile(GeneralSettings.FILE_PATH, GeneralSettings.USERPREF.getUserTempFileDirPath());
+
                 }
 
                 tfm.update(); // Must be called if you change the files in temp!
