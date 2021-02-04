@@ -26,7 +26,7 @@ public class EditableFormattedTextLine extends FormattedTextLine{
         int numberOfCharacters = 0;
         int index = 0;
         if(characterEdges.length > 0) {
-            characterEdges[0] = words[0].getCharacterEdges()[0] + lineNumberOffset;
+            characterEdges[0] = words[0].getCharacterEdges()[0] + lineNumberOffset*2;
             float last = lineNumberOffset;
             for (TextWord word : words) {
                 if (!(word instanceof LineNumberWord)) {
@@ -58,11 +58,15 @@ public class EditableFormattedTextLine extends FormattedTextLine{
         }
         float[] newEdges = new float[characterEdges.length-duplicateCount];
         int index = 0;
-        for(int i = 1; i < characterEdges.length; i++){
+        int i;
+        for(i = 1; i < characterEdges.length; i++){
             if(characterEdges[i-1] != characterEdges[i]){
                 newEdges[index] = characterEdges[i-1];
                 index++;
             }
+        }
+        if(i > 1) {
+            newEdges[index] = characterEdges[i - 1];
         }
         characterEdges = newEdges;
     }

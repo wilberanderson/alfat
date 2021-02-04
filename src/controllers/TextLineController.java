@@ -87,7 +87,7 @@ public class TextLineController {
         EditableFormattedTextLine originalLine = parser.getFormattedLine(line.getTextString().substring(0, characterIndex-1));
         EditableFormattedTextLine newLine = parser.getFormattedLine(line.getTextString().substring(characterIndex-1));
 
-        originalLine.setPosition(line.getPosition());
+        originalLine.setPosition(new Vector2f(line.getPosition()));
         newLine.setPosition(line.getPosition());
 
         originalLine.getWords()[0] = line.getWords()[0];
@@ -96,7 +96,6 @@ public class TextLineController {
             lastLine.getWords()[0] = codeWindowFormattedTextLines.get(i).getWords()[0];
             lastLine = codeWindowFormattedTextLines.get(i);
         }
-        System.out.println(originalLine.getWords().length);
         codeWindowFormattedTextLines.remove(line);
         addCodeWindowTextLine(originalLine, index);
         addCodeWindowTextLine(newLine, index + 1);
