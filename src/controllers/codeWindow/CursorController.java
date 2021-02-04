@@ -196,7 +196,7 @@ public class CursorController {
 
     public void type(char c){
         if(c == '\n'){
-            currentGUIText = codeWindow.getTextLineController().split(currentGUIText, characterIndex);
+            currentGUIText = codeWindow.getTextLineController().split(currentGUIText, characterIndex, codeWindow);
             characterIndex = 0;
         }else{
             currentGUIText = codeWindow.getTextLineController().update(currentGUIText, characterIndex, c);

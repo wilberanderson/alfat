@@ -76,7 +76,7 @@ public class FormattedTextLine {
 
     public void setPosition(Vector2f position){
         for(TextWord word : words) {
-            if (word != null) {
+            if (!(word instanceof LineNumberWord) && word != null) {
                 word.setPosition(new Vector2f(position.x + (word.getPosition().x - this.position.x), word.getPosition().y + position.y - this.position.y));
             }
         }

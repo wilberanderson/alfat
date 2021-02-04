@@ -1,6 +1,7 @@
 package gui.texts;
 
 import main.GeneralSettings;
+import org.lwjgl.util.vector.Vector2f;
 
 import java.util.List;
 
@@ -94,5 +95,14 @@ public class EditableFormattedTextLine extends FormattedTextLine{
             }
         }
         EditableFormattedTextLine.lineNumberOffset = lineNumberOffset;
+    }
+
+    public void changeContentsVerticalPosition(float offset){
+        for(TextWord word : words){
+            if(!(word instanceof LineNumberWord)){
+                word.setPosition(new Vector2f(word.getPosition().x, word.getPosition().y+offset));
+            }
+        }
+        position.y += offset;
     }
 }

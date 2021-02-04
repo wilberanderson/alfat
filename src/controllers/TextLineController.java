@@ -1,5 +1,6 @@
 package controllers;
 
+import controllers.codeWindow.CodeWindowController;
 import gui.texts.EditableFormattedTextLine;
 import gui.texts.LineNumberWord;
 import gui.texts.FormattedTextLine;
@@ -82,7 +83,7 @@ public class TextLineController {
         }
     }
 
-    public EditableFormattedTextLine split(EditableFormattedTextLine line, int characterIndex){
+    public EditableFormattedTextLine split(EditableFormattedTextLine line, int characterIndex, CodeWindowController controller){
         int index = codeWindowFormattedTextLines.indexOf(line);
         EditableFormattedTextLine originalLine = parser.getFormattedLine(line.getTextString().substring(0, characterIndex-1));
         EditableFormattedTextLine newLine = parser.getFormattedLine(line.getTextString().substring(characterIndex-1));
@@ -92,18 +93,23 @@ public class TextLineController {
 
         originalLine.getWords()[0] = line.getWords()[0];
         EditableFormattedTextLine lastLine = newLine;
-        for(int i = index+1; i < codeWindowFormattedTextLines.size() - 1; i++){
+        for(int i = index+1; i < codeWindowFormattedTextLines.size(); i++){
             lastLine.getWords()[0] = codeWindowFormattedTextLines.get(i).getWords()[0];
             lastLine = codeWindowFormattedTextLines.get(i);
         }
+        controller.changeNumberOfLines(1);
         codeWindowFormattedTextLines.remove(line);
         addCodeWindowTextLine(originalLine, index);
         addCodeWindowTextLine(newLine, index + 1);
         float change = GeneralSettings.FONT_SIZE*GeneralSettings.FONT_SCALING_FACTOR;
         for(int i = index + 1; i < codeWindowFormattedTextLines.size(); i++){
             EditableFormattedTextLine thisLine = codeWindowFormattedTextLines.get(i);
-            thisLine.changeVerticalPosition(-change);
+            thisLine.changeContentsVerticalPosition(-change);
         }
+        LineNumberWord newLineNumber = new LineNumberWord(Integer.toString(controller.getNumberOfLines()), new Vector2f(lastLine.getWords()[0].getPosition().x, lastLine.getPosition().y),"");
+        lastLine.getWords()[0] = newLineNumber;
+        //TODO: Determine why this is needed
+        lastLine.changeVerticalPosition(0.009f);
         return newLine;
     }
 
