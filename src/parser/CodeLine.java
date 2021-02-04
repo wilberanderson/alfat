@@ -1,6 +1,7 @@
 package parser;
 
-import gui.texts.TextLine;
+import gui.texts.EditableFormattedTextLine;
+import gui.texts.FormattedTextLine;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +25,7 @@ public class CodeLine {
     private String target;
     private List<String> registers = new ArrayList<>();
     private boolean jump;
-    private TextLine textLine;
+    private FormattedTextLine textLine;
     //general constructor:
     private CodeLine(){
         //left blank
@@ -137,11 +138,11 @@ public class CodeLine {
         this.target = target;
     }
 
-    public TextLine getTextLine() {
+    public FormattedTextLine getTextLine() {
         return textLine;
     }
 
-    public void setTextLine(TextLine textLine) {
+    public void setTextLine(FormattedTextLine textLine) {
         this.textLine = textLine;
     }
 }

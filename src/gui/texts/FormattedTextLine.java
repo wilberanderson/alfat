@@ -8,7 +8,7 @@ import java.util.List;
 /**
  *
  */
-public class TextLine {
+public class FormattedTextLine {
 
     private static float fontSize = GeneralSettings.FONT_SIZE;
     //List<TextWord> words;
@@ -20,12 +20,13 @@ public class TextLine {
     /**
      * @param words
      */
-    public TextLine(List<TextWord> words) {
+    public FormattedTextLine(List<TextWord> words) {
         words.add(0, null);
         this.words = new TextWord[words.size()];
         for(int i = 0; i < words.size(); i++){
             this.words[i] = words.get(i);
         }
+        this.position = new Vector2f(0, 0);
     }
 
     /**
@@ -56,7 +57,8 @@ public class TextLine {
                 if (word.getSeparator().length() == 1 && word.getSeparator().charAt(0) == ' ') {
                     length += spaceSize;
                 } else if (word.getSeparator().length() == 1 && word.getSeparator().charAt(0) == '\t') {
-                    length += spaceSize * ((numberOfCharacters % GeneralSettings.DEFAULT_TAB_WIDTH) == 0 ? GeneralSettings.DEFAULT_TAB_WIDTH : numberOfCharacters % GeneralSettings.DEFAULT_TAB_WIDTH);
+                    length += spaceSize * (GeneralSettings.DEFAULT_TAB_WIDTH-numberOfCharacters%4);//((numberOfCharacters % GeneralSettings.DEFAULT_TAB_WIDTH) == 0 ? GeneralSettings.DEFAULT_TAB_WIDTH : numberOfCharacters % GeneralSettings.DEFAULT_TAB_WIDTH);
+                    numberOfCharacters = 0;
                 }
                 length += word.getCharacterEdges()[word.getCharacterEdges().length - 1];
                 numberOfCharacters += word.getCharacterEdges().length - 1;
@@ -73,8 +75,10 @@ public class TextLine {
     }
 
     public void setPosition(Vector2f position){
-        for(TextWord word : words){
-            word.setPosition(new Vector2f(word.getPosition().x + position.x - this.position.x, word.getPosition().y + position.y - this.position.y));
+        for(TextWord word : words) {
+            if (word != null) {
+                word.setPosition(new Vector2f(position.x + (word.getPosition().x - this.position.x), word.getPosition().y + position.y - this.position.y));
+            }
         }
         this.position = position;
     }

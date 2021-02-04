@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import gui.SaveToFile;
 import gui.texts.CodeWindowText;
+import gui.texts.EditableFormattedTextLine;
 import gui.texts.Text;
 import main.GeneralSettings;
 import org.junit.jupiter.api.Test;
@@ -25,7 +26,7 @@ public class SaveToFileTest {
 
     @Test
     public void testSave() {
-        List<CodeWindowText> textLines = new ArrayList<>();
+        List<EditableFormattedTextLine> textLines = new ArrayList<>();
         SaveToFile test = new SaveToFile(GeneralSettings.TEMP_DIR);
 
         assertDoesNotThrow(() -> test.save(textLines));
@@ -34,7 +35,7 @@ public class SaveToFileTest {
     @Test
     public void testTestSave() {
         File file = new File(GeneralSettings.TEMP_DIR);
-        List<CodeWindowText> textLines = new ArrayList<>();
+        List<EditableFormattedTextLine> textLines = new ArrayList<>();
 
         SaveToFile test = new SaveToFile(GeneralSettings.TEMP_DIR);
 
@@ -44,7 +45,7 @@ public class SaveToFileTest {
 
     @Test
     public void testTestSave1() {
-        List<CodeWindowText> textLines = new ArrayList<>();
+        List<EditableFormattedTextLine> textLines = new ArrayList<>();
         SaveToFile test = new SaveToFile(GeneralSettings.TEMP_DIR);
 
         assertDoesNotThrow(() -> test.save(textLines, GeneralSettings.TEMP_DIR));

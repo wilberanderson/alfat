@@ -1,6 +1,7 @@
 package gui;
 
 import gui.texts.CodeWindowText;
+import gui.texts.EditableFormattedTextLine;
 import gui.texts.GUIText;
 import gui.texts.Text;
 
@@ -286,7 +287,7 @@ public class TempFileManager {
      * @param textLines A java LIST<GUIText>
      * @param currentFilePath java string literal
      * */
-    public void saveCodeEditorTextToFile(List<CodeWindowText> textLines, String currentFilePath, String destinationPath) {
+    public void saveCodeEditorTextToFile(List<EditableFormattedTextLine> textLines, String currentFilePath, String destinationPath) {
         SaveToFile stf = new SaveToFile(destinationPath);
         String timeStamp = getTimeStamp(timePattern);
         File tempFile;

@@ -49,7 +49,7 @@ public class TextWord extends Text {
     }
 
     public static float getSpaceSize(){
-        return font.getSpaceSize();
+        return font.getSpaceSize()*2;
     }
 
     public Vector3f getColor(){

@@ -2,6 +2,7 @@ package gui;
 
 
 import gui.texts.CodeWindowText;
+import gui.texts.EditableFormattedTextLine;
 import gui.texts.Text;
 
 import java.io.*;
@@ -35,7 +36,7 @@ public class SaveToFile {
      * Saves GUI text to file a file. File path is set in constructor.
      * @param textLines List<GUIText>
      * */
-    public void save(List<CodeWindowText> textLines)  {
+    public void save(List<EditableFormattedTextLine> textLines)  {
         try {
             File file = new File(saveFilepath);
             FileWriter fw = new FileWriter(file.getAbsoluteFile());
@@ -54,7 +55,7 @@ public class SaveToFile {
      * @param textLines List<GUIText>
      * @param filePath string literal to file path to be saved
      * */
-    public void save(List<CodeWindowText> textLines, String filePath)  {
+    public void save(List<EditableFormattedTextLine> textLines, String filePath)  {
         try {
             File file = new File(filePath);
             FileWriter fw = new FileWriter(file.getAbsoluteFile());
@@ -76,7 +77,7 @@ public class SaveToFile {
      * @param textLines List<GUIText>
      * @param file file path to be saved to
      * */
-    public void save(List<CodeWindowText> textLines, File file)  {
+    public void save(List<EditableFormattedTextLine> textLines, File file)  {
         try {
             FileWriter fw = new FileWriter(file.getAbsoluteFile());
             BufferedWriter bw = new BufferedWriter(fw);

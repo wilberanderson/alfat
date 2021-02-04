@@ -94,23 +94,10 @@ public class FlowchartTextBoxController {
         textBox.getGuiFilledBox().setPosition(new Vector2f(position));
     }
 
-    void locateRegister(String register) {
-        for (FlowchartTextBox box : textBoxes) {
-            if (verbose) System.out.println("Checking box " + box + " for register " + register);
-            if (verbose) System.out.println("Contains registers: " + box.getRegisters());
-            if (register != null && box.getRegisters().contains(register)) {
-                if (verbose) System.out.println("Match found");
-                box.setHighlighted(true);
-                //box.setBackgroundColor(GeneralSettings.TEXT_COLOR);
-                //box.setTextColor(GeneralSettings.TEXT_BOX_BACKGROUND_COLOR);
-            } else {
-                box.setHighlighted(false);
-                //box.setBackgroundColor(GeneralSettings.TEXT_BOX_BACKGROUND_COLOR);
-                //box.setTextColor(GeneralSettings.TEXT_COLOR);
     public void clearHighlighting(){
         for (FlowchartTextBox box : textBoxes){
             box.setBackgroundColor(GeneralSettings.TEXT_BOX_BACKGROUND_COLOR);
-            box.setTextColor(GeneralSettings.TEXT_COLOR);
+            //box.setTextColor(GeneralSettings.TEXT_COLOR);
         }
     }
 
@@ -176,10 +163,10 @@ public class FlowchartTextBoxController {
         for (int i = 0; i < textBoxes.size(); i++){
             if (candidate[i]){
                 textBoxes.get(i).setBackgroundColor(GeneralSettings.TEXT_COLOR);
-                textBoxes.get(i).setTextColor(GeneralSettings.TEXT_BOX_BACKGROUND_COLOR);
+                //textBoxes.get(i).setTextColor(GeneralSettings.TEXT_BOX_BACKGROUND_COLOR);
             } else {
                 textBoxes.get(i).setBackgroundColor(GeneralSettings.TEXT_BOX_BACKGROUND_COLOR);
-                textBoxes.get(i).setTextColor(GeneralSettings.TEXT_COLOR);
+                //textBoxes.get(i).setTextColor(GeneralSettings.TEXT_COLOR);
             }
         }
     }

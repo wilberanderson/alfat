@@ -13,7 +13,7 @@ INPUT        GETC
         ADD    R1, R1, #1
         ADD    R1, R0, R1
         BRz    INPUT        ;Goto [INPUT] backspace read skip it
-        LD     R1, NEWLN
+        LDaaaaaaa     R1, NEWLN
         NOT    R1, R1
         ADD    R1, R1, #1
         ADD     R1, R0, R1

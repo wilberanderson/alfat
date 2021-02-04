@@ -15,7 +15,7 @@ import org.lwjgl.util.vector.Matrix3f;
 import org.lwjgl.util.vector.Vector2f;
 
 /**
- * Controls rendering lines of {@link TextLine "formatted text"}, such as inside {@link gui.textBoxes.FlowchartTextBox flowchart text boxes} and the {@link CodeWindow}'s TextBox.
+ * Controls rendering lines of {@link FormattedTextLine "formatted text"}, such as inside {@link gui.textBoxes.FlowchartTextBox flowchart text boxes} and the {@link CodeWindow}'s TextBox.
  */
 public class TextLineRenderer {
 
@@ -41,11 +41,11 @@ public class TextLineRenderer {
 
 
 
-		for (TextLine textLine : textLineController.getCodeWindowTextLines()) {
-			if (textLine.getWords().length > 0) {
+		for (FormattedTextLine formattedTextLine : textLineController.getCodeWindowTextLines()) {
+			if (formattedTextLine.getWords().length > 0) {
 				GL13.glActiveTexture(GL13.GL_TEXTURE0);
-				GL11.glBindTexture(GL11.GL_TEXTURE_2D, textLine.getWords()[0].getFont().getTextureAtlas());
-				for (TextWord text : textLine.getWords()) {
+				GL11.glBindTexture(GL11.GL_TEXTURE_2D, formattedTextLine.getWords()[0].getFont().getTextureAtlas());
+				for (TextWord text : formattedTextLine.getWords()) {
 					if(text instanceof LineNumberWord){
 						renderText(text, codeWindowController.getCodeWindow().getPosition(), codeWindowController.getCodeWindow().getSize(), GeneralSettings.IDENTITY3);
 					}else{
@@ -54,11 +54,11 @@ public class TextLineRenderer {
 				}
 			}
 		}
-		for (TextLine textLine : textLineController.getFlowchartTextLines()) {
-			if (textLine.getWords().length > 0) {
+		for (FormattedTextLine formattedTextLine : textLineController.getFlowchartTextLines()) {
+			if (formattedTextLine.getWords().length > 0) {
 				GL13.glActiveTexture(GL13.GL_TEXTURE0);
-				GL11.glBindTexture(GL11.GL_TEXTURE_2D, textLine.getWords()[0].getFont().getTextureAtlas());
-				for (TextWord text : textLine.getWords()) {
+				GL11.glBindTexture(GL11.GL_TEXTURE_2D, formattedTextLine.getWords()[0].getFont().getTextureAtlas());
+				for (TextWord text : formattedTextLine.getWords()) {
 					renderText(text, flowChartWindowController.getPosition(), flowChartWindowController.getSize(), flowChartWindowController.getZoomTranslateMatrix());
 				}
 			}
@@ -87,9 +87,9 @@ public class TextLineRenderer {
 			return;
 		}
 
-		for (TextLine textLine : textLineController.getFlowchartTextLines()) {
-			if (textLine.getWords().length > 0) {
-				for (TextWord text : textLine.getWords()) {
+		for (FormattedTextLine formattedTextLine : textLineController.getFlowchartTextLines()) {
+			if (formattedTextLine.getWords().length > 0) {
+				for (TextWord text : formattedTextLine.getWords()) {
 					renderText(text, new Vector2f(-1, -1), new Vector2f(2, 2), GeneralSettings.IMAGE_TRANSLATION);
 				}
 			}
@@ -122,7 +122,7 @@ public class TextLineRenderer {
 
 	/**
 	 * Renders a single {@link GUIText} onto the screen. Also accounts for what region of the screen clipping should be evaluated for.
-	 * @param text the GUIText to be rendered. For a formatted {@link TextLine "line of text"} it is specifically a {@link TextWord}.
+	 * @param text the GUIText to be rendered. For a formatted {@link FormattedTextLine "line of text"} it is specifically a {@link TextWord}.
 	 */
 	private void renderText(TextWord text, Vector2f windowPosition, Vector2f windowSize, Matrix3f zoomTranslateMatrix) {
 		//Bind the vertex array which represents the quads behind each letter in the text

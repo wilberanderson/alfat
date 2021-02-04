@@ -286,7 +286,7 @@ public class Header {
 
                 //Save what is in codeWindow
                 if (controller.getCodeWindowController() != null && GeneralSettings.FILE_PATH != null) {
-                    tfm.saveCodeEditorTextToFile(controller.getCodeWindowController().getTexts(), GeneralSettings.FILE_PATH, GeneralSettings.USERPREF.getUserTempFileDirPath());
+                    tfm.saveCodeEditorTextToFile(controller.getCodeWindowController().getTextLineController().getCodeWindowTextLines(), GeneralSettings.FILE_PATH, GeneralSettings.USERPREF.getUserTempFileDirPath());
                 } else {
                     return;
                 }

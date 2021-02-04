@@ -137,7 +137,7 @@ public class Parser implements CodeReader {
                 }
 
                 //Put formatted text into an object
-                TextLine FormLine = new TextLine(formattedString);
+                FormattedTextLine FormLine = new FormattedTextLine(formattedString);
 
                 //log testing data, if verbose parsing is on:
                 if (verbose) {
@@ -170,7 +170,7 @@ public class Parser implements CodeReader {
      * @param line The line to be parsed
      * @return
      */
-    public TextLine getFormattedLine(String line){
+    public EditableFormattedTextLine getFormattedLine(String line){
         boolean first = true;
         //parse line:
         line = line.replace("\t", "    ");
@@ -244,7 +244,7 @@ public class Parser implements CodeReader {
         }
 
         //Put formatted text into an object
-        TextLine FormLine = new TextLine(formattedString);
+        EditableFormattedTextLine FormLine = new EditableFormattedTextLine(formattedString, line);
 
         //log testing data, if verbose parsing is on:
         if (verbose) {

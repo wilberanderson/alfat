@@ -17,30 +17,11 @@ public class TextBox {
     private Vector3f backgroundColor;
     private Vector3f borderColor;
     private Vector3f textColor;
-    private List<CodeWindowText> texts = new ArrayList<>();
-    private List<CodeWindowText> lineNumbers = new ArrayList<>();
     private GUIFilledBox guiFilledBox;
     private GUIFilledBox textNumberFilledBox;
+    private boolean highlighted;
 
     public TextBox(){
-    }
-
-    public void changeVerticalPosition(float change){
-        for(Text text : texts){
-            text.changeVerticalPosition(change);
-        }
-        for(Text text : lineNumbers){
-            text.changeVerticalPosition(change);
-        }
-    }
-
-    public void changeHorizontalPosition(float change){
-        for(Text text : texts){
-            text.changeHorizontalPosition(change);
-        }
-        for(Text text : lineNumbers){
-            text.changeVerticalPosition(change);
-        }
     }
 
     public Vector2f getPosition() {
@@ -87,25 +68,6 @@ public class TextBox {
         this.guiFilledBox = guiFilledBox;
     }
 
-
-    public List<CodeWindowText> getTexts(){
-        return texts;
-    }
-
-    public List<CodeWindowText> getLineNumbers(){
-        return lineNumbers;
-    }
-
-
-
-    public void setTextColor(Vector3f textColor){
-        this.textColor = textColor;
-        for(CodeWindowText text : getTexts()){
-            text.setColor(textColor);
-        }
-    }
-
-
     public void setBorderColor(Vector3f borderColor){
         this.borderColor = borderColor;
     }
@@ -118,14 +80,11 @@ public class TextBox {
         return textNumberFilledBox;
     }
 
+    public boolean isHighlighted() {
+        return highlighted;
+    }
 
-
-    public void clear(){
-        for(Text text: texts){
-            text.remove(text);
-        }
-        for(Text text: lineNumbers){
-            text.remove(text);
-        }
+    public void setHighlighted(boolean highlighted){
+        this.highlighted = highlighted;
     }
 }

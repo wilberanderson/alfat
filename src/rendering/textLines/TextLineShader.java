@@ -1,12 +1,12 @@
 package rendering.textLines;
 
-import gui.texts.TextLine;
+import gui.texts.FormattedTextLine;
 import main.GeneralSettings;
 import rendering.shaders.ShaderProgram;
 import rendering.shaders.uniforms.*;
 
 /**
- * Handles the interaction with the {@link TextLine} vertex and fragment shaders.
+ * Handles the interaction with the {@link FormattedTextLine} vertex and fragment shaders.
  */
 public class TextLineShader extends ShaderProgram {
 
@@ -21,7 +21,7 @@ public class TextLineShader extends ShaderProgram {
 	protected UniformMat2 aspectRatio = new UniformMat2("aspectRatio");
 
 	/**
-	 * Creates the shader program which is used for rendering a {@link TextLine}.
+	 * Creates the shader program which is used for rendering a {@link FormattedTextLine}.
 	 */
 	public TextLineShader() {
 		//A text line's position is at attribute 0 and texture coordinates are at attribute 1

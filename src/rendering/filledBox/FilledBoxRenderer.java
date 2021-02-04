@@ -1,6 +1,7 @@
 package rendering.filledBox;
 
 import controllers.codeWindow.CodeWindowController;
+import controllers.flowchartWindow.FlowchartTextBoxController;
 import controllers.flowchartWindow.FlowchartWindowController;
 import controllers.gui.ButtonController;
 import dataStructures.RawModel;
@@ -74,8 +75,10 @@ public class FilledBoxRenderer {
             shader.aspectRatio.loadMatrix(GeneralSettings.IDENTITY2);
             shader.zoomTranslateMatrix.loadMatrix(GeneralSettings.IDENTITY3);
             //Render the text box behind the line numbers
+            shader.color.loadVec3(codeWindowController.getCodeWindow().getTextNumberFilledBox().getColor());
             renderFilledBox(codeWindowController.getCodeWindow().getTextNumberFilledBox());
             //Render the text box behind the main text
+            shader.color.loadVec3(codeWindowController.getCodeWindow().getGuiFilledBox().getColor());
             renderFilledBox(codeWindowController.getCodeWindow().getGuiFilledBox());
 
             //The flowchart window can only be open if the code window is open
@@ -92,9 +95,16 @@ public class FilledBoxRenderer {
                 for (TextBox textBox : flowchartWindowController.getFlowchartTextBoxController().getTextBoxes()) {
                     //If the text box is a flowchart text box render it's text boxes
                     if (textBox instanceof FlowchartTextBox) {
+                        //Determine the color of the text boxes filled box
+                        if(textBox.isHighlighted()){
+                            shader.color.loadVec3(FlowchartTextBoxController.getHighlightedColor());
+                        }else{
+                            shader.color.loadVec3(FlowchartTextBoxController.getBackgroundColor());
+                        }
                         //Render the text box behind the main text
                         renderFilledBox(textBox.getGuiFilledBox());
                         //Render the text box behind the line numbers
+                        shader.color.loadVec3(FlowchartTextBoxController.getTextNumberBackgroundColor());
                         renderFilledBox(textBox.getTextNumberFilledBox());
                     } else {
                         //Something is wrong with setup, print an error message
@@ -163,12 +173,14 @@ public class FilledBoxRenderer {
         shader.doClipping.loadBoolean(false);
 
         //Render the headers filled box
+        shader.color.loadVec3(header.getGuiFilledBox().getColor());
         renderFilledBox(header.getGuiFilledBox());
 
         //For each TextButton there is a filled box behind it
         for (Button button : ButtonController.getButtons()) {
             if (button instanceof TextButton) {
                 //Render the buttons filled box
+                shader.color.loadVec3(((TextButton) button).getGuiFilledBox().getColor());
                 renderFilledBox(((TextButton) button).getGuiFilledBox());
             }
         }
@@ -186,9 +198,6 @@ public class FilledBoxRenderer {
      * system.
      */
     private void renderFilledBox(GUIFilledBox filledBox) {
-        //Filled boxes may have different colors, load the color for each
-        shader.color.loadVec3(filledBox.getColor());
-
         //Create a transformation matrix in the text box coordinate system based on the
         //filled boxes size and position and load it to the shader
         shader.transformation.loadMatrix(Maths.createTransformationMatrix(filledBox.getSize(), filledBox.getPosition()));

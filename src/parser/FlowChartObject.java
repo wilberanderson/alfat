@@ -1,6 +1,6 @@
 package parser;
 
-import gui.texts.TextLine;
+import gui.texts.FormattedTextLine;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +17,7 @@ public class FlowChartObject {
     public boolean jumps = false;
     public FlowChartObject connection = null;
 
-    private List<TextLine> textLines = new ArrayList<>();
+    private List<FormattedTextLine> formattedTextLines = new ArrayList<>();
 
     public String getFullText(boolean comments){
         String temp = "";
@@ -30,7 +30,7 @@ public class FlowChartObject {
 
     public void addLine(CodeLine line){
         lines.add(line);
-        textLines.add(line.getTextLine());
+        formattedTextLines.add(line.getTextLine());
     }
 
     public void setLineCount(int lineCount) {
@@ -83,7 +83,7 @@ public class FlowChartObject {
         return boxNumber;
     }
 
-    public List<TextLine> getTextLines(){
-        return textLines;
+    public List<FormattedTextLine> getTextLines(){
+        return formattedTextLines;
     }
 }
