@@ -218,8 +218,8 @@ public class CodeWindowController {
     }
 
     public void changeContentsHorizontalPosition(float change){
-        for(FormattedTextLine text : textLineController.getCodeWindowTextLines()){
-            text.changeHorizontalPosition(change);
+        for(EditableFormattedTextLine text : textLineController.getCodeWindowTextLines()){
+            text.changeContentsHorizontalPosition(change);
         }
     }
     
