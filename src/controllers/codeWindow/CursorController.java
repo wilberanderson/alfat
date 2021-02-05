@@ -149,6 +149,7 @@ public class CursorController {
         } else if (lineIndex > 0) {
             characterIndex = codeWindow.getTextLineController().getCodeWindowTextLines().get(lineIndex-1).getCharacterEdges().length-1;
             currentGUIText = codeWindow.getTextLineController().merge(codeWindow.getTextLineController().getCodeWindowTextLines().get(lineIndex-1), currentGUIText);
+            lineIndex--;
 //            lineIndex--;
 //            characterIndex = texts.get(lineIndex).getCharacterEdges().length - 1;
 //            currentGUIText = codeWindow.mergeTexts(texts.get(lineIndex), currentGUIText);
@@ -158,7 +159,11 @@ public class CursorController {
     }
 
     public void delete(){
-        currentGUIText = codeWindow.getTextLineController().backspace(currentGUIText, characterIndex, false);
+        if(characterIndex < currentGUIText.getCharacterEdges().length-1) {
+            currentGUIText = codeWindow.getTextLineController().backspace(currentGUIText, characterIndex, false);
+        }else if(lineIndex < texts.size()-1){
+            currentGUIText = codeWindow.getTextLineController().merge(currentGUIText, codeWindow.getTextLineController().getCodeWindowTextLines().get(lineIndex+1));
+        }
 //        if (characterIndex < currentGUIText.getCharacterEdges().length - 1){
 //            String newContent = currentGUIText.getTextString().substring(0, characterIndex) + currentGUIText.getTextString().substring(characterIndex + 1);
 //            currentGUIText = new CodeWindowText(newContent, currentGUIText, true);
