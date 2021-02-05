@@ -161,10 +161,12 @@ public class FlowchartTextBoxController {
         }
         for (int i = 0; i < textBoxes.size(); i++){
             if (candidate[i]){
-                textBoxes.get(i).setBackgroundColor(GeneralSettings.TEXT_COLOR);
+                textBoxes.get(i).setHighlighted(true);
+                //textBoxes.get(i).setBackgroundColor(GeneralSettings.TEXT_COLOR);
                 //textBoxes.get(i).setTextColor(GeneralSettings.TEXT_BOX_BACKGROUND_COLOR);
             } else {
-                textBoxes.get(i).setBackgroundColor(GeneralSettings.TEXT_BOX_BACKGROUND_COLOR);
+                textBoxes.get(i).setHighlighted(false);
+                //textBoxes.get(i).setBackgroundColor(GeneralSettings.TEXT_BOX_BACKGROUND_COLOR);
                 //textBoxes.get(i).setTextColor(GeneralSettings.TEXT_COLOR);
             }
         }

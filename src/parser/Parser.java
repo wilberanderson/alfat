@@ -99,14 +99,14 @@ public class Parser implements CodeReader {
                         if (fragment.contains(",")) {
                             if (!registers.contains(fragment.substring(0, fragment.length() - 1))) {
                                 registers.add(fragment.substring(0, fragment.length() - 1));
-                                formattedString.add(new RegisterWord(fragment.substring(0, fragment.length()-1), new Vector2f(0f, 0)));
-                                formattedString.add(new LabelWord(",", new Vector2f(0f, 0)));
                             }
+                            formattedString.add(new RegisterWord(fragment.substring(0, fragment.length()-1), new Vector2f(0f, 0)));
+                            formattedString.add(new LabelWord(",", new Vector2f(0f, 0)));
                         } else {
                             if (!registers.contains(fragment)) {
                                 registers.add(fragment);
-                                formattedString.add(new RegisterWord(fragment, new Vector2f(0f, 0)));
                             }
+                            formattedString.add(new RegisterWord(fragment, new Vector2f(0f, 0)));
                         }
                         first = false;
                     } else if (fragment.matches("^[x#]-?[0-9]+")) {
@@ -128,7 +128,7 @@ public class Parser implements CodeReader {
                         labelMap.put(label, i);
                         formattedString.add(new LabelWord(fragment, new Vector2f(0f, 0)));
                         first = false;
-                    } else if (!jump && fragment.matches("^[a-zA-Z0-9\\-_]+")) {
+                    } else if (!jump && fragment.matches("^[a-zA-Z0-9\\-_\"\\\\\\[\\]\\!<>]+")) {
                         //the command isn't a jump statement, so the label must be a variable i.e. string, etc.
                         formattedString.add(new LabelWord(fragment, new Vector2f(0f, 0)));
                     } else if (fragment.matches("[ ,\t]")){
@@ -213,14 +213,14 @@ public class Parser implements CodeReader {
                 if (fragment.contains(",")) {
                     if (!registers.contains(fragment.substring(0, fragment.length() - 1))) {
                         registers.add(fragment.substring(0, fragment.length() - 1));
-                        formattedString.add(new RegisterWord(fragment.substring(0, fragment.length()-1), new Vector2f(0f, 0)));
-                        formattedString.add(new LabelWord(",", new Vector2f(0f, 0)));
                     }
+                    formattedString.add(new RegisterWord(fragment.substring(0, fragment.length()-1), new Vector2f(0f, 0)));
+                    formattedString.add(new LabelWord(",", new Vector2f(0f, 0)));
                 } else {
                     if (!registers.contains(fragment)) {
                         registers.add(fragment);
-                        formattedString.add(new RegisterWord(fragment, new Vector2f(0f, 0)));
                     }
+                    formattedString.add(new RegisterWord(fragment, new Vector2f(0f, 0)));
                 }
                 first = false;
             } else if (fragment.matches("^[x#]-?[0-9]+")) {
@@ -541,10 +541,35 @@ public class Parser implements CodeReader {
         return flowchartWindowController;
     }
 
-    public boolean registerMatch(String s){
-        for (String r: registerNames) {
-            if(s.matches("^"+r+"(,)?")){ return true; }
+    public FlowchartWindowController createFlowchart2(ApplicationController controller){
+        FlowchartWindowController flowchartWindowController = controller.getFlowchartWindowController();
+        if (flowchartWindowController == null) {
+            flowchartWindowController = new FlowchartWindowController(controller.getTextLineController());
+        } else {
+            flowchartWindowController.clear();
         }
-        return false;
+
+        /*
+        boxes:
+        place first box at origin.
+        if jump: split.
+            if label already place, do nothing.
+            otherwise place one box left and mark the right as jump label.
+        if label:
+            if label already marked down, put the box there and mark both jumps as pointing to box.
+            otherwise, place label as the next box vertically.
+
+        lines: connect all connections.
+
+         */
+
+        return flowchartWindowController;
+    }
+
+    public boolean registerMatch(String s){
+        /*for (String r: registerNames) {
+            if(s.matches("^"+r+"(,)?")){ return true; }
+        }*/
+        return (s.matches("R[0-7](,)?"));
     }
 }

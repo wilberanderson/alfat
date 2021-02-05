@@ -66,6 +66,9 @@
             "name": ".STRING"
         },
         {
+            "name": ".STRINGZ"
+        },
+        {
             "name": ".END"
         },
         {
