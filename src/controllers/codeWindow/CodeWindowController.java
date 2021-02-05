@@ -207,6 +207,8 @@ public class CodeWindowController {
 
 
         cursorController.updateAspectRatio();
+
+        textLineController.update(textLineController.getCodeWindowTextLines().get(0), 0, '\0');
     }
 
     public void changeContentsVerticalPosition(float change){

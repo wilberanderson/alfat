@@ -204,7 +204,9 @@ public class TextLineController {
 
     public EditableFormattedTextLine update(EditableFormattedTextLine line, int index, char c){
         String string = line.getTextString().substring(0, index);
-        string += c;
+        if(c != '\0') {
+            string += c;
+        }
         string += line.getTextString().substring(index);
         EditableFormattedTextLine newLine = parser.getFormattedLine(string);
         newLine.setPosition(line.getPosition());
