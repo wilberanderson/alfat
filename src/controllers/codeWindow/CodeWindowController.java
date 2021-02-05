@@ -99,8 +99,6 @@ public class CodeWindowController {
         }
         for(EditableFormattedTextLine line : textLineController.getCodeWindowTextLines()){
 //            line.getWords()[0].getPosition().x = -1f;
-            //TODO: Figure out why this is needed
-            line.getWords()[0].getPosition().x = -1.02f;
             //line.setPosition(new Vector2f(-1, line.getPosition().y));
             line.generateCharacterEdges();
         }
@@ -200,7 +198,7 @@ public class CodeWindowController {
         startingHeight = codeWindow.getSize().y - 1;
         startingHeight /= aspectRatio.y;
         for(EditableFormattedTextLine line:textLineController.getCodeWindowTextLines()){
-            line.setPosition(new Vector2f((codeWindow.getPosition().x+padding*8)/aspectRatio.x, startingHeight), true);//+contentsVerticalPosition));
+            line.setPosition(new Vector2f((codeWindow.getPosition().x+padding*8-.02f)/aspectRatio.x, startingHeight), true);//+contentsVerticalPosition));
             startingHeight -= lineHeight;
         }
         this.aspectRatio = aspectRatio;
