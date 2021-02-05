@@ -1,595 +1,448 @@
 {
     "operation": [{
-            "name": "ADD",
-            "parameters": 0
+            "name": "ADD"
         },
         {
-            "name": "SUB",
-            "parameters": 0
+            "name": "SUB"
         },
         {
-            "name": "SBB",
-            "parameters": 0
+            "name": "SBB"
         },
         {
-            "name": "INC",
-            "parameters": 0
+            "name": "INC"
         },
         {
-            "name": "DEC",
-            "parameters": 0
+            "name": "DEC"
         },
         {
-            "name": "MUL",
-            "parameters": 0
+            "name": "MUL"
         },
         {
-            "name": "DIV",
-            "parameters": 0
+            "name": "DIV"
         },
         {
-            "name": "IDIV",
-            "parameters": 0
+            "name": "IDIV"
         },
         {
-            "name": "CBW",
-            "parameters": 0
+            "name": "CBW"
         },
         {
-            "name": "CWD",
-            "parameters": 0
+            "name": "CWD"
         },
         {
-            "name": "CDQ",
-            "parameters": 0
+            "name": "CDQ"
         },
         {
-            "name": "PUSH",
-            "parameters": 0
+            "name": "PUSH"
         },
         {
-            "name": "POP",
-            "parameters": 0
+            "name": "POP"
         },
         {
-            "name": "PUSHA",
-            "parameters": 0
+            "name": "PUSHA"
         },
         {
-            "name": "POPA",
-            "parameters": 0
+            "name": "POPA"
         },
         {
-            "name": "PUSHAD",
-            "parameters": 0
+            "name": "PUSHAD"
         },
         {
-            "name": "POPAD",
-            "parameters": 0
+            "name": "POPAD"
         },
         {
-            "name": "PUSHF",
-            "parameters": 0
+            "name": "PUSHF"
         },
         {
-            "name": "POPF",
-            "parameters": 0
+            "name": "POPF"
         },
         {
-            "name": "PUSHFD",
-            "parameters": 0
+            "name": "PUSHFD"
         },
         {
-            "name": "POPFD",
-            "parameters": 0
+            "name": "POPFD"
         },
         {
-            "name": "PUSHAD",
-            "parameters": 0
+            "name": "PUSHAD"
         },
         {
-            "name": "PUSHA",
-            "parameters": 0
+            "name": "PUSHA"
         },
         {
-            "name": "POPAD",
-            "parameters": 0
+            "name": "POPAD"
         },
         {
-            "name": "POPA",
-            "parameters": 0
+            "name": "POPA"
         },
         {
-            "name": "CMPSB",
-            "parameters": 0
+            "name": "CMPSB"
         },
         {
-            "name": "CMPPSW",
-            "parameters": 0
+            "name": "CMPPSW"
         },
         {
-            "name": "CMPSD",
-            "parameters": 0
+            "name": "CMPSD"
         },
         {
-            "name": "SCASB",
-            "parameters": 0
+            "name": "SCASB"
         },
         {
-            "name": "SCASW",
-            "parameters": 0
+            "name": "SCASW"
         },
         {
-            "name": "SCASD",
-            "parameters": 0
+            "name": "SCASD"
         },
         {
-            "name": "REP",
-            "parameters": 0
+            "name": "REP"
         },
         {
-            "name": "REPZ",
-            "parameters": 0
+            "name": "REPZ"
         },
         {
-            "name": "REPNZ",
-            "parameters": 0
+            "name": "REPNZ"
         },
         {
-            "name": "REPNE",
-            "parameters": 0
+            "name": "REPNE"
         },
         {
-            "name": "ROL",
-            "parameters": 0
+            "name": "ROL"
         },
         {
-            "name": "RCL",
-            "parameters": 0
+            "name": "RCL"
         },
         {
-            "name": "ROR",
-            "parameters": 0
+            "name": "ROR"
         },
         {
-            "name": "RCR",
-            "parameters": 0
+            "name": "RCR"
         },
         {
-            "name": "SHR",
-            "parameters": 0
+            "name": "SHR"
         },
         {
-            "name": "SHRD",
-            "parameters": 0
+            "name": "SHRD"
         },
         {
-            "name": "SHL",
-            "parameters": 0
+            "name": "SHL"
         },
         {
-            "name": "SHLD",
-            "parameters": 0
+            "name": "SHLD"
         },
         {
-            "name": "SAR",
-            "parameters": 0
+            "name": "SAR"
         },
         {
-            "name": "SAL",
-            "parameters": 0
+            "name": "SAL"
         },
         {
-            "name": "AND",
-            "parameters": 0
+            "name": "AND"
         },
         {
-            "name": "OR",
-            "parameters": 0
+            "name": "OR"
         },
         {
-            "name": "XOR",
-            "parameters": 0
+            "name": "XOR"
         },
         {
-            "name": "TEST",
-            "parameters": 0
+            "name": "TEST"
         },
         {
-            "name": "NOT",
-            "parameters": 0
+            "name": "NOT"
         }
     ],
     "dataMovement": [{
-            "name": "MOV",
-            "parameters": 0
+            "name": "MOV"
         },
         {
-            "name": "XCHG",
-            "parameters": 0
+            "name": "XCHG"
         },
         {
-            "name": "MOVSX",
-            "parameters": 0
+            "name": "MOVSX"
         },
         {
-            "name": "MOVZX",
-            "parameters": 0
+            "name": "MOVZX"
         },
         {
-            "name": "MOVSB",
-            "parameters": 0
+            "name": "MOVSB"
         },
         {
-            "name": "MOVSW",
-            "parameters": 0
+            "name": "MOVSW"
         },
         {
-            "name": "MOVSD",
-            "parameters": 0
+            "name": "MOVSD"
         },
         {
-            "name": "STOSB",
-            "parameters": 0
+            "name": "STOSB"
         },
         {
-            "name": "STOSW",
-            "parameters": 0
+            "name": "STOSW"
         },
         {
-            "name": "STOSD",
-            "parameters": 0
+            "name": "STOSD"
         },
         {
-            "name": "LODSB",
-            "parameters": 0
+            "name": "LODSB"
         },
         {
-            "name": "LODSW",
-            "parameters": 0
+            "name": "LODSW"
         },
         {
-            "name": "LODSD",
-            "parameters": 0
+            "name": "LODSD"
         }
     ],
     "control": [{
-            "name": "JZ",
-            "parameters": 0
+            "name": "JZ"
         },
         {
-            "name": "JNZ",
-            "parameters": 0
+            "name": "JNZ"
         },
         {
-            "name": "JC",
-            "parameters": 0
+            "name": "JC"
         },
         {
-            "name": "JNC",
-            "parameters": 0
+            "name": "JNC"
         },
         {
-            "name": "JO",
-            "parameters": 0
+            "name": "JO"
         },
         {
-            "name": "JNC",
-            "parameters": 0
+            "name": "JNC"
         },
         {
-            "name": "JS",
-            "parameters": 0
+            "name": "JS"
         },
         {
-            "name": "JNS",
-            "parameters": 0
+            "name": "JNS"
         },
         {
-            "name": "JP",
-            "parameters": 0
+            "name": "JP"
         },
         {
-            "name": "JNP",
-            "parameters": 0
+            "name": "JNP"
         },
         {
-            "name": "JE",
-            "parameters": 0
+            "name": "JE"
         },
         {
-            "name": "JNE",
-            "parameters": 0
+            "name": "JNE"
         },
         {
-            "name": "JCXZ",
-            "parameters": 0
+            "name": "JCXZ"
         },
         {
-            "name": "JECXZ",
-            "parameters": 0
+            "name": "JECXZ"
         },
         {
-            "name": "JA",
-            "parameters": 0
+            "name": "JA"
         },
         {
-            "name": "JNBE",
-            "parameters": 0
+            "name": "JNBE"
         },
         {
-            "name": "JAE",
-            "parameters": 0
+            "name": "JAE"
         },
         {
-            "name": "JNB",
-            "parameters": 0
+            "name": "JNB"
         },
         {
-            "name": "JB",
-            "parameters": 0
+            "name": "JB"
         },
         {
-            "name": "JNAE",
-            "parameters": 0
+            "name": "JNAE"
         },
         {
-            "name": "JBE",
-            "parameters": 0
+            "name": "JBE"
         },
         {
-            "name": "JNA",
-            "parameters": 0
+            "name": "JNA"
         },
         {
-            "name": "JG",
-            "parameters": 0
+            "name": "JG"
         },
         {
-            "name": "JNLE",
-            "parameters": 0
+            "name": "JNLE"
         },
         {
-            "name": "JGE",
-            "parameters": 0
+            "name": "JGE"
         },
         {
-            "name": "JNL",
-            "parameters": 0
+            "name": "JNL"
         },
         {
-            "name": "JL",
-            "parameters": 0
+            "name": "JL"
         },
         {
-            "name": "JNGE",
-            "parameters": 0
+            "name": "JNGE"
         },
         {
-            "name": "JLE",
-            "parameters": 0
+            "name": "JLE"
         },
         {
-            "name": "JNG",
-            "parameters": 0
+            "name": "JNG"
         },
         {
-            "name": "CALL",
-            "parameters": 0
+            "name": "CALL"
         },
         {
-            "name": "RET",
-            "parameters": 0
+            "name": "RET"
         },
         {
-            "name": "JMP",
-            "parameters": 0
+            "name": "JMP"
         },
         {
-            "name": "LOOP",
-            "parameters": 0
+            "name": "LOOP"
         }
     ],
     "reserved": [{
-            "name": ".DATA",
-            "parameters": 0
+            "name": ".DATA"
         },
         {
-            "name": "BYTE",
-            "parameters": 0
+            "name": "BYTE"
         },
         {
-            "name": "WORD",
-            "parameters": 0
+            "name": "WORD"
         },
         {
-            "name": "DWORD",
-            "parameters": 0
+            "name": "DWORD"
         },
         {
-            "name": "SDWORD",
-            "parameters": 0
+            "name": "SDWORD"
         },
         {
-            "name": "QWORD",
-            "parameters": 0
+            "name": "QWORD"
         },
         {
-            "name": "TYPE",
-            "parameters": 0
+            "name": "TYPE"
         },
         {
-            "name": "LENGTHOF",
-            "parameters": 0
+            "name": "LENGTHOF"
         },
         {
-            "name": "PTR",
-            "parameters": 0
+            "name": "PTR"
         },
         {
-            "name": "SIZEOF",
-            "parameters": 0
+            "name": "SIZEOF"
         },
         {
-            "name": "DUP",
-            "parameters": 0
+            "name": "DUP"
         },
         {
-            "name": "EQU",
-            "parameters": 0
+            "name": "EQU"
         },
         {
-            "name": ".CODE",
-            "parameters": 0
+            "name": ".CODE"
         },
         {
-            "name": ".STACK",
-            "parameters": 0
+            "name": ".STACK"
         },
         {
-            "name": "ENDS",
-            "parameters": 0
+            "name": "ENDS"
         },
         {
-            "name": "PROC",
-            "parameters": 0
+            "name": "PROC"
         },
         {
-            "name": "ENDP",
-            "parameters": 0
+            "name": "ENDP"
         },
         {
-            "name": "END",
-            "parameters": 0
+            "name": "END"
         },
         {
-            "name": "OFFSET",
-            "parameters": 0
+            "name": "OFFSET"
         },
         {
-            "name": "PROTO",
-            "parameters": 0
+            "name": "PROTO"
         },
         {
-            "name": "INVOKE",
-            "parameters": 0
+            "name": "INVOKE"
         },
         {
-            "name": "ADDR",
-            "parameters": 0
+            "name": "ADDR"
         },
         {
-            "name": "CLD",
-            "parameters": 0
+            "name": "CLD"
         },
         {
-            "name": "STD",
-            "parameters": 0
+            "name": "STD"
         },
         {
-            "name": "INCLUDE",
-            "parameters": 0
+            "name": "INCLUDE"
         }
     ],
     "registers": [{
-            "name": "EAX",
-            "parameters": 0
+            "name": "EAX"
         },
         {
-            "name": "EBX",
-            "parameters": 0
+            "name": "EBX"
         },
         {
-            "name": "ECX",
-            "parameters": 0
+            "name": "ECX"
         },
         {
-            "name": "EDX",
-            "parameters": 0
+            "name": "EDX"
         },
         {
-            "name": "ESI",
-            "parameters": 0
+            "name": "ESI"
         },
         {
-            "name": "EDI",
-            "parameters": 0
+            "name": "EDI"
         },
         {
-            "name": "ESP",
-            "parameters": 0
+            "name": "ESP"
         },
         {
-            "name": "EBP",
-            "parameters": 0
+            "name": "EBP"
         },
         {
-            "name": "AX",
-            "parameters": 0
+            "name": "AX"
         },
         {
-            "name": "BX",
-            "parameters": 0
+            "name": "BX"
         },
         {
-            "name": "BX",
-            "parameters": 0
+            "name": "BX"
         },
         {
-            "name": "CX",
-            "parameters": 0
+            "name": "CX"
         },
         {
-            "name": "DX",
-            "parameters": 0
+            "name": "DX"
         },
         {
-            "name": "AH",
-            "parameters": 0
+            "name": "AH"
         },
         {
-            "name": "BH",
-            "parameters": 0
+            "name": "BH"
         },
         {
-            "name": "CH",
-            "parameters": 0
+            "name": "CH"
         },
         {
-            "name": "DH",
-            "parameters": 0
+            "name": "DH"
         },
         {
-            "name": "AL",
-            "parameters": 0
+            "name": "AL"
         },
         {
-            "name": "BL",
-            "parameters": 0
+            "name": "BL"
         },
         {
-            "name": "CL",
-            "parameters": 0
+            "name": "CL"
         },
         {
-            "name": "DL",
-            "parameters": 0
+            "name": "DL"
         },
         {
-            "name": "SI",
-            "parameters": 0
+            "name": "SI"
         },
         {
-            "name": "DI",
-            "parameters": 0
+            "name": "DI"
         },
         {
-            "name": "BP",
-            "parameters": 0
+            "name": "BP"
         },
         {
-            "name": "SP",
-            "parameters": 0
+            "name": "SP"
         }
     ]
 }

@@ -101,17 +101,20 @@ public class Header {
                     }
 
                     String content = "";
+                    // Load the text file:
                     try {
                         File file = new File(GeneralSettings.FILE_PATH);
                         BufferedReader reader = new BufferedReader(new FileReader(file));
                         String line;
                         while ((line = reader.readLine()) != null) {
-                            content += line.replace("\t", "    ");
-                            content += '\n';
+                            // content += line.replace("\t", "    ")
+                            content += line + '\n';
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
+
+
                     if (controller.getCodeWindowController() != null) {
                         controller.getCodeWindowController().clear();
                     }
@@ -127,6 +130,10 @@ public class Header {
                     //Auto gen flowchart
                     if(GeneralSettings.USERPREF.getAutoGenFlowchart()) {
                         testMenuButtonList.get(4).onPress(); //gen flowchart
+                        if(GeneralSettings.USERPREF.getFullscreen() < 0) {
+                            //full flowchart
+                            testMenuButtonList.get(8).onPress();
+                        }
                     }
                     if(GeneralSettings.USERPREF.getSplitScreen()){
                         testMenuButtonList.get(9).onPress(); //Split screen
@@ -134,11 +141,6 @@ public class Header {
                     if(GeneralSettings.USERPREF.getFullscreen() > 0) {
 
                         testMenuButtonList.get(7).onPress(); //full editor
-                    }
-                    if(GeneralSettings.USERPREF.getFullscreen() < 0) {
-                        //full flowchart
-                        testMenuButtonList.get(4).onPress();
-                        testMenuButtonList.get(8).onPress();
                     }
                 }
             }

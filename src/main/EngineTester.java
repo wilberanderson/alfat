@@ -193,9 +193,9 @@ public class EngineTester {
                 guiWindow.render();
             }
             // Memory usage:
-            /*Runtime runtime = Runtime.getRuntime();
-            runtime.gc();
-            System.out.println("Used memory is: " + (runtime.totalMemory()-runtime.freeMemory())/1024);*/
+//            Runtime runtime = Runtime.getRuntime();
+//            runtime.gc();
+//            System.out.println("Used memory is: " + (runtime.totalMemory()-runtime.freeMemory())/1024);
 
         }while( !GLFW.glfwWindowShouldClose(window));
     }

@@ -1,406 +1,277 @@
 {
-  "operation": [
-    {
-      "name": "add",
-      "parameters": 3
-
-    },
-    {
-      "name": "addu",
-      "parameters": 3
-    },
-    
-    {
-      "name": "addi",
-      "parameters": 3
-    },
-
-    {
-      "name": "addiu",
-      "parameters": 3
-    },
-
-    {
-      "name": "and",
-      "parameters": 3
-    },
-
-    {
-      "name": "andi",
-      "parameters": 3
-    },
-
-    {
-      "name": "div",
-      "parameters": 2
-    },
-
-    {
-      "name": "divu",
-      "parameters": 2
-    },
-
-    {
-      "name": "mult",
-      "parameters": 2
-    },
-
-    {
-      "name": "multu",
-      "parameters": 3
-    },
-
-    {
-      "name": "nor",
-      "parameters": 3
-    },
-
-    {
-      "name": "or",
-      "parameters": 3
-    },
-
-    {
-      "name": "sll",
-      "parameters": 3
-    },
-
-    {
-      "name": "sllv",
-      "parameters": 3
-    },
-
-    {
-      "name": "sra",
-      "parameters": 3
-    },
-
-    {
-      "name": "srav",
-      "parameters": 3
-    },
-
-    {
-      "name": "srl",
-      "parameters": 3
-    },
-
-    {
-      "name": "srlv",
-      "parameters": 3
-    },
-
-    {
-      "name": "sub",
-      "parameters": 3
-    },
-
-    {
-      "name": "subu",
-      "parameters": 3
-    },
-
-    {
-      "name": "xor",
-      "parameters": 3
-    },
-
-    {
-      "name": "xori",
-      "parameters": 3
-    },
-
-    {
-      "name": "lhi",
-      "parameters": 2
-    },
-
-    {
-      "name": "llo",
-      "parameters": 2
-    },
-
-    {
-      "name": "slt",
-      "parameters": 3
-    },
-
-    {
-      "name": "sltu",
-      "parameters": 3
-    },
-
-    {
-      "name": "slti",
-      "parameters": 3
-    },
-
-    {
-      "name": "sltui",
-      "parameters": 3
-    }
-  ],
-  "dataMovement": [
-    {
-      "name": "la",
-      "parameters": 1
-    },
-
-    {
-      "name": "lb",
-      "parameters": 2
-    },
-
-    {
-      "name": "lbu",
-      "parameters": 2
-    },
-
-    {
-      "name": "lh",
-      "parameters": 2
-    },
-
-    {
-      "name": "li",
-      "parameters": 1
-    },
-
-    {
-      "name": "lhu",
-      "parameters": 2
-    },
-
-    {
-      "name": "lw",
-      "parameters": 2
-    },
-
-    {
-      "name": "sb",
-      "parameters": 2
-    },
-
-    {
-      "name": "sh",
-      "parameters": 2
-    },
-
-    {
-      "name": "sw",
-      "parameters": 2
-    },
-
-    {
-      "name": "mfhi",
-      "parameters": 1
-    },
-
-    {
-      "name": "mflo",
-      "parameters": 1
-    },
-
-    {
-      "name": "mthi",
-      "parameters": 1
-    },
-
-    {
-      "name": "mtlo",
-      "parameters": 1
-    }
-  ],
-  "control": [
-    {
-      "name": "beq",
-      "parameters": 3
-    },
-
-    {
-      "name": "bgtz",
-      "parameters": 2
-    },
-
-    {
-      "name": "blez",
-      "parameters": 2
-    },
-
-    {
-      "name": "bne",
-      "parameters": 3
-    },
-
-    {
-      "name": "j",
-      "parameters": 1
-    },
-
-    {
-      "name": "jal",
-      "parameters": 1
-    },
-
-    {
-      "name": "jalr",
-      "parameters": 1
-    },
-
-    {
-      "name": "jr",
-      "parameters": 1
-    }
-  ],
-  "reserved": [
-    {"name": "TRAP",
-      "parameters": 0
-    },
-    {"name": ".global",
-      "parameters": 1
-    },
-    {"name": ".data",
-      "parameters": 1
-    },
-    {"name": ".text",
-      "parameters": 1
-    },
-    {"name": ".word",
-      "parameters": 1
-    },
-    {"name": ".half",
-      "parameters": 1
-    },
-    {"name": ".byte",
-      "parameters": 1
-    },
-    {"name": ".float",
-      "parameters": 1
-    },
-    {"name": ".double",
-      "parameters": 1
-    },
-    {"name": ".space",
-      "parameters": 1
-    },
-    {"name": ".align",
-      "parameters": 1
-    },
-    {"name": ".ascii",
-      "parameters": 1
-    },
-    {"name": ".asciiz",
-      "parameters": 1
-    },
-    {"name": "syscall",
-      "parameters": 1
-    }
-   
-  ],
-  "registers": [
-    {
-      "name": "$zero",
-      "parameters": 0
-    },
-    {
-      "name": "$v0",
-      "parameters": 0
-    },
-    {
-      "name": "$v1",
-      "parameters": 0
-    },
-    {
-      "name": "$a0",
-      "parameters": 0
-    },
-    {
-      "name": "$a1",
-      "parameters": 0
-    },
-    {
-      "name": "$a2",
-      "parameters": 0
-    },
-    {
-      "name": "$a3",
-      "parameters": 0
-    },
-    {
-      "name": "$t0",
-      "parameters": 0
-    },
-    {
-      "name": "$t1",
-      "parameters": 0
-    },
-    {
-      "name": "$t2",
-      "parameters": 0
-    },
-    {
-      "name": "$t3",
-      "parameters": 0
-    },
-    {
-      "name": "$t4",
-      "parameters": 0
-    },
-    {
-      "name": "$t5",
-      "parameters": 0
-    },
-    {
-      "name": "$t6",
-      "parameters": 0
-    },
-    {
-      "name": "$t7",
-      "parameters": 0
-    },
-    {
-      "name": "$t8",
-      "parameters": 0
-    },
-    {
-      "name": "$t9",
-      "parameters": 0
-    },
-    {
-      "name": "$s0",
-      "parameters": 0
-    },
-    {
-      "name": "$s1",
-      "parameters": 0
-    },
-    {
-      "name": "$s2",
-      "parameters": 0
-    },
-    {
-      "name": "$s3",
-      "parameters": 0
-    },
-    {
-      "name": "$s4",
-      "parameters": 0
-    },
-    {
-      "name": "$s5",
-      "parameters": 0
-    },
-    {
-      "name": "$s6",
-      "parameters": 0
-    },
-    {
-      "name": "$s7",
-      "parameters": 0
-    },
-    {
-      "name": "$ra",
-      "parameters": 0
-    }
-  ]
+    "operation": [{
+            "name": "add"
+        },
+        {
+            "name": "addu"
+        },
+        {
+            "name": "addi"
+        },
+        {
+            "name": "addiu"
+        },
+        {
+            "name": "and"
+        },
+        {
+            "name": "andi"
+        },
+        {
+            "name": "div"
+        },
+        {
+            "name": "divu"
+        },
+        {
+            "name": "mult"
+        },
+        {
+            "name": "multu"
+        },
+        {
+            "name": "nor"
+        },
+        {
+            "name": "or"
+        },
+        {
+            "name": "sll"
+        },
+        {
+            "name": "sllv"
+        },
+        {
+            "name": "sra"
+        },
+        {
+            "name": "srav"
+        },
+        {
+            "name": "srl"
+        },
+        {
+            "name": "srlv"
+        },
+        {
+            "name": "sub"
+        },
+        {
+            "name": "subu"
+        },
+        {
+            "name": "xor"
+        },
+        {
+            "name": "xori"
+        },
+        {
+            "name": "lhi"
+        },
+        {
+            "name": "llo"
+        },
+        {
+            "name": "slt"
+        },
+        {
+            "name": "sltu"
+        },
+        {
+            "name": "slti"
+        },
+        {
+            "name": "sltui"
+        }
+    ],
+    "dataMovement": [{
+            "name": "la"
+        },
+        {
+            "name": "lb"
+        },
+        {
+            "name": "lbu"
+        },
+        {
+            "name": "lh"
+        },
+        {
+            "name": "li"
+        },
+        {
+            "name": "lhu"
+        },
+        {
+            "name": "lw"
+        },
+        {
+            "name": "sb"
+        },
+        {
+            "name": "sh"
+        },
+        {
+            "name": "sw"
+        },
+        {
+            "name": "mfhi"
+        },
+        {
+            "name": "mflo"
+        },
+        {
+            "name": "mthi"
+        },
+        {
+            "name": "mtlo"
+        }
+    ],
+    "control": [{
+            "name": "beq"
+        },
+        {
+            "name": "bgtz"
+        },
+        {
+            "name": "blez"
+        },
+        {
+            "name": "bne"
+        },
+        {
+            "name": "j"
+        },
+        {
+            "name": "jal"
+        },
+        {
+            "name": "jalr"
+        },
+        {
+            "name": "jr"
+        }
+    ],
+    "reserved": [{
+            "name": "TRAP"
+        },
+        {
+            "name": ".global"
+        },
+        {
+            "name": ".data"
+        },
+        {
+            "name": ".text"
+        },
+        {
+            "name": ".word"
+        },
+        {
+            "name": ".half"
+        },
+        {
+            "name": ".byte"
+        },
+        {
+            "name": ".float"
+        },
+        {
+            "name": ".double"
+        },
+        {
+            "name": ".space"
+        },
+        {
+            "name": ".align"
+        },
+        {
+            "name": ".ascii"
+        },
+        {
+            "name": ".asciiz"
+        },
+        {
+            "name": "syscall"
+        }
+    ],
+    "registers": [{
+            "name": "$zero"
+        },
+        {
+            "name": "$v0"
+        },
+        {
+            "name": "$v1"
+        },
+        {
+            "name": "$a0"
+        },
+        {
+            "name": "$a1"
+        },
+        {
+            "name": "$a2"
+        },
+        {
+            "name": "$a3"
+        },
+        {
+            "name": "$t0"
+        },
+        {
+            "name": "$t1"
+        },
+        {
+            "name": "$t2"
+        },
+        {
+            "name": "$t3"
+        },
+        {
+            "name": "$t4"
+        },
+        {
+            "name": "$t5"
+        },
+        {
+            "name": "$t6"
+        },
+        {
+            "name": "$t7"
+        },
+        {
+            "name": "$t8"
+        },
+        {
+            "name": "$t9"
+        },
+        {
+            "name": "$s0"
+        },
+        {
+            "name": "$s1"
+        },
+        {
+            "name": "$s2"
+        },
+        {
+            "name": "$s3"
+        },
+        {
+            "name": "$s4"
+        },
+        {
+            "name": "$s5"
+        },
+        {
+            "name": "$s6"
+        },
+        {
+            "name": "$s7"
+        },
+        {
+            "name": "$ra"
+        }
+    ]
 }
