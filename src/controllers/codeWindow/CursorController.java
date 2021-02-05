@@ -148,7 +148,7 @@ public class CursorController {
 //            updateXPosition();
         } else if (lineIndex > 0) {
             characterIndex = codeWindow.getTextLineController().getCodeWindowTextLines().get(lineIndex-1).getCharacterEdges().length-1;
-            currentGUIText = codeWindow.getTextLineController().merge(codeWindow.getTextLineController().getCodeWindowTextLines().get(lineIndex-1), currentGUIText);
+            currentGUIText = codeWindow.getTextLineController().merge(codeWindow.getTextLineController().getCodeWindowTextLines().get(lineIndex-1), currentGUIText, codeWindow);
             lineIndex--;
 //            lineIndex--;
 //            characterIndex = texts.get(lineIndex).getCharacterEdges().length - 1;
@@ -162,7 +162,7 @@ public class CursorController {
         if(characterIndex < currentGUIText.getCharacterEdges().length-1) {
             currentGUIText = codeWindow.getTextLineController().backspace(currentGUIText, characterIndex, false);
         }else if(lineIndex < texts.size()-1){
-            currentGUIText = codeWindow.getTextLineController().merge(currentGUIText, codeWindow.getTextLineController().getCodeWindowTextLines().get(lineIndex+1));
+            currentGUIText = codeWindow.getTextLineController().merge(currentGUIText, codeWindow.getTextLineController().getCodeWindowTextLines().get(lineIndex+1), codeWindow);
         }
 //        if (characterIndex < currentGUIText.getCharacterEdges().length - 1){
 //            String newContent = currentGUIText.getTextString().substring(0, characterIndex) + currentGUIText.getTextString().substring(characterIndex + 1);
@@ -229,7 +229,6 @@ public class CursorController {
         if(characterIndex == currentGUIText.getCharacterEdges().length || characterIndex == 0 && currentGUIText.getCharacterEdges().length == 1){
             cursor.getPosition().x = -1+EditableFormattedTextLine.getLineNumberOffset()*4;//// +0.000001f;
         }else {
-            System.out.println("test");
             cursor.getPosition().x = currentGUIText.getCharacterEdges()[characterIndex] * 2 + currentGUIText.getPosition().x;
 //            cursor.getPosition().x = currentGUIText.getCharacterEdges()[characterIndex] * 2 + currentGUIText.getWords()[1].getPosition().x;
         }

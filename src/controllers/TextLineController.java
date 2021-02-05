@@ -95,9 +95,15 @@ public class TextLineController {
 
     public EditableFormattedTextLine split(EditableFormattedTextLine line, int characterIndex, CodeWindowController controller){
         int index = codeWindowFormattedTextLines.indexOf(line);
-        EditableFormattedTextLine originalLine = parser.getFormattedLine(line.getTextString().substring(0, characterIndex-1));
-        EditableFormattedTextLine newLine = parser.getFormattedLine(line.getTextString().substring(characterIndex-1));
-
+        EditableFormattedTextLine originalLine;
+        EditableFormattedTextLine newLine;
+        if(characterIndex > 0) {
+             originalLine = parser.getFormattedLine(line.getTextString().substring(0, characterIndex - 1));
+             newLine = parser.getFormattedLine(line.getTextString().substring(characterIndex - 1));
+        }else{
+            originalLine = parser.getFormattedLine("");
+            newLine = parser.getFormattedLine(line.getTextString());
+        }
         originalLine.setPosition(new Vector2f(line.getPosition()));
         newLine.setPosition(line.getPosition());
 
@@ -119,11 +125,11 @@ public class TextLineController {
         LineNumberWord newLineNumber = new LineNumberWord(Integer.toString(controller.getNumberOfLines()), new Vector2f(lastLine.getWords()[0].getPosition().x, lastLine.getPosition().y));
         lastLine.getWords()[0] = newLineNumber;
         //TODO: Determine why this is needed
-        lastLine.changeVerticalPosition(0.009f);
+        // lastLine.changeVerticalPosition(0.009f);
         return newLine;
     }
 
-    public EditableFormattedTextLine merge(EditableFormattedTextLine left, EditableFormattedTextLine right){
+    public EditableFormattedTextLine merge(EditableFormattedTextLine left, EditableFormattedTextLine right, CodeWindowController controller){
         //Merge the two text strings together
         String string = left.getTextString()+right.getTextString();
 
@@ -148,6 +154,9 @@ public class TextLineController {
         //Delete right and replace left
         codeWindowFormattedTextLines.remove(right);
         replaceCodeWindowTextLine(newLine, codeWindowFormattedTextLines.indexOf(left));
+
+        //Update the number of lines which the controller has to ensure proper behavior of scrolling
+        controller.changeNumberOfLines(-1);
 
         //Return the line so that the cursor controller knows what line the cursor is currently in
         return newLine;
