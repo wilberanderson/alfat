@@ -13,6 +13,10 @@ public class CodeWindow extends TextBox{
     }
 
     public Vector2f getCodeWindowPosition(){
+        System.out.println();
+        System.out.println(super.getPosition().x);
+        System.out.println(super.getTextNumberFilledBox().getSize().x);
+        System.out.println();
         return new Vector2f(super.getPosition().x + super.getTextNumberFilledBox().getSize().x, super.getPosition().y);
     }
 

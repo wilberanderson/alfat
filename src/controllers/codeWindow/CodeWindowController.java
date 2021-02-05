@@ -75,12 +75,12 @@ public class CodeWindowController {
             EditableFormattedTextLine formattedTextLine = parser.getFormattedLine(line);
 
             //this.codeWindow.getTexts().add(new CodeWindowText(line, fontSize, new Vector2f(border + position.x,position.y-minHeight+size.y)));
-            LineNumberWord lineNumberWord = new LineNumberWord(Integer.toString(lineNumber), new Vector2f(border + position.x, position.y-minHeight+size.y));
+            LineNumberWord lineNumberWord = new LineNumberWord(Integer.toString(lineNumber), new Vector2f(-1, position.y-minHeight+size.y));
             //this.codeWindow.getLineNumbers().add(lineNumberText);
 
             formattedTextLine.getWords()[0] = lineNumberWord;
             formattedTextLine.setPosition(new Vector2f(border + position.x,position.y-minHeight+size.y));
-            formattedTextLine.changeContentsHorizontalPosition(-border*8);
+//            formattedTextLine.changeContentsHorizontalPosition(-border*10);
 
             newLines.add(formattedTextLine);
             //textLineController.addCodeWindowTextLine(formattedTextLine, -1);
@@ -99,9 +99,9 @@ public class CodeWindowController {
             }
         }
         for(EditableFormattedTextLine line : textLineController.getCodeWindowTextLines()){
-            line.getWords()[0].getPosition().x = -1f;
+//            line.getWords()[0].getPosition().x = -1f;
             //TODO: Figure out why this is needed
-            line.getWords()[0].getPosition().y -= 0.025f;
+            line.getWords()[0].getPosition().x = -1.02f;
             //line.setPosition(new Vector2f(-1, line.getPosition().y));
             line.generateCharacterEdges();
         }
@@ -201,7 +201,7 @@ public class CodeWindowController {
         startingHeight = codeWindow.getSize().y - 1;
         startingHeight /= aspectRatio.y;
         for(EditableFormattedTextLine line:textLineController.getCodeWindowTextLines()){
-            line.setPosition(new Vector2f((codeWindow.getPosition().x+padding*2)/aspectRatio.x, startingHeight), true);//+contentsVerticalPosition));
+            line.setPosition(new Vector2f((codeWindow.getPosition().x+padding*8)/aspectRatio.x, startingHeight), true);//+contentsVerticalPosition));
             startingHeight -= lineHeight;
         }
         this.aspectRatio = aspectRatio;

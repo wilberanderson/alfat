@@ -123,7 +123,7 @@ public class EditableFormattedTextLine extends FormattedTextLine{
                 word.setPosition(new Vector2f(word.getPosition().x+offset, word.getPosition().y));
             }
         }
-        position.y += offset;
+        position.x += offset;
     }
 
     public void setPosition(Vector2f position, boolean changeLineNumbers){

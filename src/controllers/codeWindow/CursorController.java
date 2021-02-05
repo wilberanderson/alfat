@@ -241,6 +241,7 @@ public class CursorController {
             cursor.getPosition().x = -1+EditableFormattedTextLine.getLineNumberOffset()*4+0.0001f;
         }else {
             cursor.getPosition().x = currentGUIText.getCharacterEdges()[characterIndex] * 2 + currentGUIText.getPosition().x;
+//            cursor.getPosition().x = currentGUIText.getCharacterEdges()[characterIndex] * 2 + currentGUIText.getWords()[1].getPosition().x;
         }
         if ((codeWindow.getCodeWindow().getCodeWindowPosition().x)/aspectRatio.x > cursor.getPosition().x){
             codeWindow.changeContentsHorizontalPosition((codeWindow.getCodeWindow().getCodeWindowPosition().x)/aspectRatio.x - (cursor.getPosition().x));
@@ -249,11 +250,11 @@ public class CursorController {
             codeWindow.changeContentsHorizontalPosition(-(cursor.getPosition().x - (codeWindow.getCodeWindow().getCodeWindowPosition().x + codeWindow.getCodeWindow().getCodeWindowSize().x)/aspectRatio.x));
             cursor.getPosition().x = (codeWindow.getCodeWindow().getCodeWindowPosition().x + codeWindow.getCodeWindow().getCodeWindowSize().x)/aspectRatio.x;
         }
+        System.out.println(currentGUIText.getWords()[1].getPosition().x);
     }
 
     private void updateYPosition(){
         cursor.getPosition().y = currentGUIText.getPosition().y;
-        System.out.println(currentGUIText);
         if(cursor.getPosition().y* aspectRatio.y > (codeWindow.getCodeWindow().getCodeWindowPosition().y + codeWindow.getCodeWindow().getCodeWindowSize().y)){
             float change = (codeWindow.getCodeWindow().getCodeWindowPosition().y + codeWindow.getCodeWindow().getCodeWindowSize().y)/aspectRatio.y-currentGUIText.getPosition().y;
             codeWindow.changeContentsVerticalPosition(change);
