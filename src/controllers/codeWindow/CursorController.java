@@ -201,35 +201,19 @@ public class CursorController {
     }
 
     public void type(char c){
+        //If the character is a newline then a new line should be created and the character and line index's should be updated as appropriate
         if(c == '\n'){
             currentGUIText = codeWindow.getTextLineController().split(currentGUIText, characterIndex, codeWindow);
             characterIndex = 0;
-        }else{
-            currentGUIText = codeWindow.getTextLineController().update(currentGUIText, characterIndex, c);
+            lineIndex++;
         }
-//        String originalText = currentGUIText.getTextString();
-//        String textString = originalText.substring(0, characterIndex);
-//        String endText = originalText.substring(characterIndex);
-//        StringBuilder stringBuilder = new StringBuilder(textString);
-//
-//        if(c == '\n'){
-//            CodeWindowText newText = new CodeWindowText(stringBuilder.toString(), currentGUIText, true);
-//            texts.set(lineIndex, newText);
-//            currentGUIText = new CodeWindowText(endText, newText, false);
-//            currentGUIText.setPosition(new Vector2f(currentGUIText.getPosition().x, currentGUIText.getPosition().y - currentGUIText.getFontSize()* GeneralSettings.FONT_SCALING_FACTOR));
-//            lineIndex++;
-//            codeWindow.addText(currentGUIText, lineIndex);
-//            stringBuilder = new StringBuilder();
-//            characterIndex = 0;
-//            updateYPosition();
-//        }else{
-//            stringBuilder.append(c);
-//            characterIndex++;
-//        }
-//
-//        currentGUIText = new CodeWindowText(stringBuilder.toString() + endText, currentGUIText, true);
-//        texts.set(lineIndex, currentGUIText);
-//        updateXPosition();
+        //If the character that was typed is any other character then the line will not be split, update it with the typed character and update the character index
+        else{
+            currentGUIText = codeWindow.getTextLineController().update(currentGUIText, characterIndex, c);
+            characterIndex++;
+        }
+        //After typing the position of the cursor will be different, update the position
+        updatePosition();
     }
 
     public void scroll(float scrollChange){
