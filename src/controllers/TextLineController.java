@@ -33,7 +33,7 @@ public class TextLineController {
         int numberOfCharacters = 0;
         for (TextWord word : line.getWords()) {
             if(word instanceof SeparatorWord){
-                float spaceSize = word.getFont().getSpaceSize();
+                float spaceSize = word.getFont().getSpaceSize()/64;
                 if(((SeparatorWord) word).getText().length() > 0) {
                     if (((SeparatorWord) word).getText().charAt(0) == ' ') {
                         offset += spaceSize;
