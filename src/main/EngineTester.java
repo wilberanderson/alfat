@@ -3,6 +3,7 @@ import controllers.ApplicationController;
 import controllers.flowchartWindow.FlowchartWindow;
 import gui.*;
 import gui.textBoxes.TextBox;
+import gui.windows.GUIWindow;
 import loaders.*;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
@@ -26,6 +27,7 @@ public class EngineTester {
     //Temporary attributes
     private List<GuiTexture> guis;
     private ApplicationController applicationController;
+    private GUIWindow guiWindow;
     /**
      * Used for all operations of the program
      *  - Initializes all relevant objects
@@ -159,6 +161,9 @@ public class EngineTester {
         guis = new ArrayList<>();
         //guis.add(new GuiTexture(engine.getRenderer().getReflectionTexture(), new Vector2f(0.5f, 0.5f), new Vector2f(0.5f, 0.5f)));
 
+        //guiWindow = new GUIWindow(200, 100);
+//        guiWindow.title("Alfat popup");
+//
     }
 
     /**
@@ -168,27 +173,31 @@ public class EngineTester {
 
         // Run the rendering loop until the user has attempted to close
         // the window or has pressed the ESCAPE key.
-        while ( !GLFW.glfwWindowShouldClose(window) ) {
+        do{
             //GLFW.glfwRequestWindowAttention(window);
 
             // Poll for window events. The event callbacks will be called when an event is received
-//            GLFW.glfwPollEvents();
+            GLFW.glfwPollEvents();
             long startTime = System.currentTimeMillis();
-            GLFW.glfwWaitEventsTimeout(0.5);
+            //GLFW.glfwWaitEventsTimeout(0.5);
             if(System.currentTimeMillis()-startTime < 500){
 //                System.out.println("Event received");
             }else{
 //                System.out.println("Timed out");
             }
             //Render
+            GLFW.glfwMakeContextCurrent(window);
             MasterRenderer.renderScene(guis, applicationController);
 
+            if(guiWindow != null) {
+                guiWindow.render();
+            }
             // Memory usage:
             /*Runtime runtime = Runtime.getRuntime();
             runtime.gc();
             System.out.println("Used memory is: " + (runtime.totalMemory()-runtime.freeMemory())/1024);*/
 
-        }
+        }while( !GLFW.glfwWindowShouldClose(window));
     }
 
 

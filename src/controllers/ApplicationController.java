@@ -8,7 +8,9 @@ import controllers.gui.GUIController;
 import gui.Header;
 import gui.UserPreferences;
 import gui.buttons.HeaderMenu;
+import main.EngineTester;
 import main.GeneralSettings;
+import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector2f;
 
@@ -155,7 +157,7 @@ public class ApplicationController {
      * @param action the GLFW action of the button press, either GLFW_PRESS or GLFW_RELEASE
      */
     public void click(int button, int action){
-
+        org.lwjgl.glfw.GLFW.glfwMakeContextCurrent(EngineTester.getWindow());
         if(button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
             LEFT_CLICK = true;
             LEFT_MOUSE_HELD = true;
