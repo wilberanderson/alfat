@@ -275,7 +275,7 @@ public class Header {
                 parser.ReadFile(tfm.getMostRecent());
 
                 parser.generateFlowObjects();
-                controller.setFlowchartWindowController(parser.createFlowchart(controller));
+                controller.setFlowchartWindowController(parser.createFlowchart2(controller));
 
                 controller.flowchartView();
             }
@@ -302,7 +302,7 @@ public class Header {
                 parser.ReadFile(tfm.getMostRecent());
 
                 parser.generateFlowObjects();
-                parser.createFlowchart(controller);
+                parser.createFlowchart2(controller);
 
             }
         };
@@ -319,7 +319,7 @@ public class Header {
                 parser = new Parser(GeneralSettings.FILE_PATH, true);
                 parser.ReadFile(GeneralSettings.FILE_PATH);
                 parser.generateFlowObjects();
-                parser.createFlowchart(controller);
+                parser.createFlowchart2(controller);
 
             }
         };

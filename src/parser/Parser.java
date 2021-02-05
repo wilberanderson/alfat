@@ -541,6 +541,10 @@ public class Parser implements CodeReader {
         return flowchartWindowController;
     }
 
+    /**
+     * Create flowchart.
+     * Creates flowchart boxes and draws lines. Unlike the other createFlowchart function, this one should create a branching flowchart.
+     */
     public FlowchartWindowController createFlowchart2(ApplicationController controller){
         FlowchartWindowController flowchartWindowController = controller.getFlowchartWindowController();
         if (flowchartWindowController == null) {
@@ -549,11 +553,127 @@ public class Parser implements CodeReader {
             flowchartWindowController.clear();
         }
 
+        // helper variables
+        int i = 0;
+        //origin
+        Vector2f location = new Vector2f(GeneralSettings.FLOWCHART_PAD_LEFT - 1, 0);
+        List<FlowchartTextBox> textBoxes = new ArrayList<>();
+        float max_right_width = -1000f;
+        List<Vector2f> locations = new ArrayList<>();
+        List<Vector2f> sizes = new ArrayList<>();
+
+        // Dump unmatched label heads into this dict.
+        // labelHeads.set(label) = [[last box]]
+        Dictionary<String, Vector2f> labelHeads = new Hashtable();
+        // All boxes with labels get put here once placed.
+        Dictionary<String, FlowchartTextBox> placedLabels = new Hashtable();
+
+        // TODO: Add line object array here
+
+        for (FlowChartObject box : flowchart) {
+            if (flowchart.indexOf(box)==0) {
+                // first box placed at origin.
+                flowchartWindowController.getFlowchartTextBoxController().add(new Vector2f(location.x, location.y), box.getTextLines(), box.getStartLine() + 1, box.getRegisters(), box.alert);
+                // current box is always flowchartWindowController.getTextBoxes().get(flowchartWindowController.getTextBoxes().size-1)
+                // Get the box:
+                FlowchartTextBox textBox = flowchartWindowController.getFlowchartTextBoxController().getTextBoxes().get(flowchartWindowController.getFlowchartTextBoxController().getTextBoxes().size() - 1);
+                if (verbose) System.out.println("Position: " + textBox.getPosition() + " Size: " + textBox.getSize());
+                location.x = (location.x - textBox.getSize().x - GeneralSettings.FLOWCHART_PAD_LEFT);
+                location.y = (location.y - textBox.getSize().y - GeneralSettings.FLOWCHART_PAD_TOP);
+                i++;
+                // Line helpers:
+                locations.add(textBox.getPosition());
+                sizes.add(textBox.getSize());
+            } else {
+                // If box has label:
+                if (!box.label.isBlank()){
+                    // If label has already been seen but NOT placed:
+                    if (labelHeads.get(box.label) != null && placedLabels.get(box.label) == null){
+                        // place on right side of the box in the dict. (at the point saved in dictionary.)
+                        flowchartWindowController.getFlowchartTextBoxController().add(new Vector2f(labelHeads.get(box.label)), box.getTextLines(), box.getStartLine() + 1, box.getRegisters(), box.alert);
+                        // Get the box:
+                        FlowchartTextBox textBox = flowchartWindowController.getFlowchartTextBoxController().getTextBoxes().get(flowchartWindowController.getFlowchartTextBoxController().getTextBoxes().size() - 1);
+
+                        location.x = (location.x - textBox.getSize().x - GeneralSettings.FLOWCHART_PAD_LEFT);
+                        location.y = (location.y - textBox.getSize().y - GeneralSettings.FLOWCHART_PAD_TOP);
+                        i++;
+                        // Line helpers:
+                        locations.add(textBox.getPosition());
+                        sizes.add(textBox.getSize());
+                        // Add to dict of placed labels.
+                        placedLabels.put(box.label, textBox);
+                    } else if (labelHeads.get(box.label) != null && placedLabels.get(box.label) != null) {
+                        // Label seen and placed: do nothing
+                        System.out.println("already placed, maybe shouldn't see this???");
+                        // TODO: line should be connected between the boxes.
+                    } else {
+                        // only remaining option: label not seen, label not placed.
+                        // place below most recent box.
+                        flowchartWindowController.getFlowchartTextBoxController().add(location, box.getTextLines(), box.getStartLine() + 1, box.getRegisters(), box.alert);
+                        // Get the box:
+                        FlowchartTextBox textBox = flowchartWindowController.getFlowchartTextBoxController().getTextBoxes().get(flowchartWindowController.getFlowchartTextBoxController().getTextBoxes().size() - 1);
+
+                        location.x = (location.x - textBox.getSize().x - GeneralSettings.FLOWCHART_PAD_LEFT);
+                        location.y = (location.y - textBox.getSize().y - GeneralSettings.FLOWCHART_PAD_TOP);
+                        i++;
+                        // Line helpers:
+                        locations.add(textBox.getPosition());
+                        sizes.add(textBox.getSize());
+                        // Add to dict of placed labels.
+                        placedLabels.put(box.label, textBox);
+                    }
+                } else {
+                    // box does not have label.
+                    // place box normally. set location to this box.
+                    flowchartWindowController.getFlowchartTextBoxController().add(location, box.getTextLines(), box.getStartLine() + 1, box.getRegisters(), box.alert);
+                    // Get the box:
+                    FlowchartTextBox textBox = flowchartWindowController.getFlowchartTextBoxController().getTextBoxes().get(flowchartWindowController.getFlowchartTextBoxController().getTextBoxes().size() - 1);
+
+                    location.x = (location.x - textBox.getSize().x - GeneralSettings.FLOWCHART_PAD_LEFT);
+                    location.y = (location.y - textBox.getSize().y - GeneralSettings.FLOWCHART_PAD_TOP);
+                    i++;
+                    // Line helpers:
+                    locations.add(textBox.getPosition());
+                    sizes.add(textBox.getSize());
+                }
+                // if box jumps, look for label. (labelHeads)
+                if (box.jumps){
+                    // if label has been placed, connect current box to that box.
+                    // if label has not been placed, put into labelHeads and fork.
+                    if (labelHeads.get(box.target) != null && placedLabels.get(box.target) != null){
+                        // label has been placed:
+                        System.out.println("found connecting boxes.");
+                        //TODO: connect boxes
+                    } else if (labelHeads.get(box.target) != null){
+                        // label location marked but label not placed:
+                        // TODO: figure out how to backwards connect these boxes. idk
+                        flowchartWindowController.getFlowchartTextBoxController().add(labelHeads.get(box.target), box.getTextLines(), box.getStartLine() + 1, box.getRegisters(), box.alert);
+                        // Get the box:
+                        FlowchartTextBox textBox = flowchartWindowController.getFlowchartTextBoxController().getTextBoxes().get(flowchartWindowController.getFlowchartTextBoxController().getTextBoxes().size() - 1);
+
+                        location.x = (location.x - textBox.getSize().x - GeneralSettings.FLOWCHART_PAD_LEFT);
+                        location.y = (location.y - textBox.getSize().y - GeneralSettings.FLOWCHART_PAD_TOP);
+                        i++;
+                        // Line helpers:
+                        locations.add(textBox.getPosition());
+                        sizes.add(textBox.getSize());
+                        // after box is placed, put it into the placedLabels dictionary.
+                        placedLabels.put(box.target, textBox);
+                    } else {
+                        // label has not been seen or placed.
+                        // create split and add to labelHeads.
+                        labelHeads.put(box.target, new Vector2f(location.x + 1, location.y));
+                        location.x = location.x - 1;
+                    }
+                }
+
+            }
+        }
         /*
         boxes:
         place first box at origin.
         if jump: split.
-            if label already place, do nothing.
+            if label already placed, do nothing.
             otherwise place one box left and mark the right as jump label.
         if label:
             if label already marked down, put the box there and mark both jumps as pointing to box.

@@ -2,10 +2,10 @@
 ;Start
         LEA    R0, PROMPT1
         PUTS            ;Display beginning prompt
-        LD    R2, WORD        
+        LD    R2, WORD
         LD    R3, GUESS    ;Load address's
         LD    R4, BLANK    ;Load \"_\"
-        AND    R5, R5, #0    ;Initialized to 0    
+        AND    R5, R5, #0    ;Initialized to 0
 ;Word Input
 INPUT   GETC
         LD    R1, BACKSP
@@ -21,7 +21,7 @@ INPUT   GETC
         STR    R0, R2, #0    ;Store char in word string
         STR    R4, R3, #0    ;Store \"_\" in guess string
         LD    R0, ASCII
-        ADD    R0, R0, #-6    
+        ADD    R0, R0, #-6
         OUT            ;Echo \"*\"
         ADD    R2, R2, #1    ;Increment word
         ADD    R3, R3, #1    ;Increment guess
