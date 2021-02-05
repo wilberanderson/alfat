@@ -1,137 +1,112 @@
 {
-  "operation": [
-    {
-      "name": "ADD",
-      "parameters": 3
-
-    },
-    {
-      "name": "AND",
-      "parameters": 3
-    },
-    {
-      "name": "NOT",
-      "parameters": 2
-    }
-  ],
-  "dataMovement": [
-    {
-      "name": "LD",
-      "parameters": 2
-    },
-    {
-      "name": "LDR",
-      "parameters": 3
-    },
-    {
-      "name": "LDI",
-      "parameters": 3
-    },
-    {
-      "name": "LEA",
-      "parameters": 2
-    },
-    {
-      "name": "ST",
-      "parameters": 2
-    },
-    {
-      "name": "STR",
-      "parameters": 3
-    },
-    {
-      "name": "STI",
-      "parameters": 2
-    }
-  ],
-  "control": [
-    {
-      "name": "BR",
-      "parameters": 1
-    },
-    {
-      "name": "JMP",
-      "parameters": 1
-    },
-    {
-      "name": "JSR",
-      "parameters": 1
-    },
-    {
-      "name": "JSRR",
-      "parameters": 1
-    }
-  ],
-  "reserved": [
-    {"name": "RET",
-      "parameters": 0
-    },
-    {"name": "RTI",
-      "parameters": 0
-    },
-    {"name": "TRAP",
-      "parameters": 0
-    },
-    {"name": ".ORIG",
-      "parameters": 1
-    },
-    {"name": ".FILL",
-      "parameters": 1
-    },
-    {"name": ".BLKW",
-      "parameters": 1
-    },
-    {"name": ".STRING",
-      "parameters": 1
-    },
-    {"name": ".END",
-      "parameters": 1
-    },
-    {"name": "PUTS",
-      "parameters": 1
-    },
-    {"name": "GETC",
-      "parameters": 1
-    },
-    {"name": "OUT",
-      "parameters": 1
-    },
-    {"name": "HALT",
-      "parameters": 1
-    }
-  ],
-  "registers": [
-    {
-      "name": "R0",
-      "parameters": 0
-    },
-    {
-      "name": "R1",
-      "parameters": 0
-    },
-    {
-      "name": "R2",
-      "parameters": 0
-    },
-    {
-      "name": "R3",
-      "parameters": 0
-    },
-    {
-      "name": "R4",
-      "parameters": 0
-    },
-    {
-      "name": "R5",
-      "parameters": 0
-    },
-    {
-      "name": "R6",
-      "parameters": 0
-    },
-    {
-      "name": "R7",
-      "parameters": 0
-    }
-  ]
+    "operation": [{
+            "name": "ADD"
+        },
+        {
+            "name": "AND"
+        },
+        {
+            "name": "NOT"
+        }
+    ],
+    "dataMovement": [{
+            "name": "LD"
+        },
+        {
+            "name": "LDR"
+        },
+        {
+            "name": "LDI"
+        },
+        {
+            "name": "LEA"
+        },
+        {
+            "name": "ST"
+        },
+        {
+            "name": "STR"
+        },
+        {
+            "name": "STI"
+        }
+    ],
+    "control": [{
+            "name": "BR"
+        },
+        {
+            "name": "JMP"
+        },
+        {
+            "name": "JSR"
+        },
+        {
+            "name": "JSRR"
+        }
+    ],
+    "reserved": [{
+            "name": "RET"
+        },
+        {
+            "name": "RTI"
+        },
+        {
+            "name": "TRAP"
+        },
+        {
+            "name": ".ORIG"
+        },
+        {
+            "name": ".FILL"
+        },
+        {
+            "name": ".BLKW"
+        },
+        {
+            "name": ".STRING"
+        },
+        {
+            "name": ".STRINGZ"
+        },
+        {
+            "name": ".END"
+        },
+        {
+            "name": "PUTS"
+        },
+        {
+            "name": "GETC"
+        },
+        {
+            "name": "OUT"
+        },
+        {
+            "name": "HALT"
+        }
+    ],
+    "registers": [{
+            "name": "R0"
+        },
+        {
+            "name": "R1"
+        },
+        {
+            "name": "R2"
+        },
+        {
+            "name": "R3"
+        },
+        {
+            "name": "R4"
+        },
+        {
+            "name": "R5"
+        },
+        {
+            "name": "R6"
+        },
+        {
+            "name": "R7"
+        }
+    ]
 }
