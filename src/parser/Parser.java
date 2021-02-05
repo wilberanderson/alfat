@@ -585,6 +585,7 @@ public class Parser implements CodeReader {
                 locations.add(textBox.getPosition());
                 sizes.add(textBox.getSize());
             } else {
+                List<Vector2f> coordinates = new ArrayList<>();
                 // If box has label:
                 if (!box.label.isBlank()){
                     // If label has already been seen but NOT placed:
@@ -613,7 +614,7 @@ public class Parser implements CodeReader {
                         // Get the box:
                         FlowchartTextBox textBox = flowchartWindowController.getFlowchartTextBoxController().getTextBoxes().get(flowchartWindowController.getFlowchartTextBoxController().getTextBoxes().size() - 1);
 
-                        location.x = (location.x - textBox.getSize().x - GeneralSettings.FLOWCHART_PAD_LEFT);
+                        //location.x = (location.x - textBox.getSize().x - GeneralSettings.FLOWCHART_PAD_LEFT);
                         location.y = (location.y - textBox.getSize().y - GeneralSettings.FLOWCHART_PAD_TOP);
                         i++;
                         // Line helpers:
@@ -629,7 +630,7 @@ public class Parser implements CodeReader {
                     // Get the box:
                     FlowchartTextBox textBox = flowchartWindowController.getFlowchartTextBoxController().getTextBoxes().get(flowchartWindowController.getFlowchartTextBoxController().getTextBoxes().size() - 1);
 
-                    location.x = (location.x - textBox.getSize().x - GeneralSettings.FLOWCHART_PAD_LEFT);
+                    //location.x = (location.x - textBox.getSize().x - GeneralSettings.FLOWCHART_PAD_LEFT);
                     location.y = (location.y - textBox.getSize().y - GeneralSettings.FLOWCHART_PAD_TOP);
                     i++;
                     // Line helpers:
@@ -651,7 +652,7 @@ public class Parser implements CodeReader {
                         // Get the box:
                         FlowchartTextBox textBox = flowchartWindowController.getFlowchartTextBoxController().getTextBoxes().get(flowchartWindowController.getFlowchartTextBoxController().getTextBoxes().size() - 1);
 
-                        location.x = (location.x - textBox.getSize().x - GeneralSettings.FLOWCHART_PAD_LEFT);
+                        //location.x = (location.x - textBox.getSize().x - GeneralSettings.FLOWCHART_PAD_LEFT);
                         location.y = (location.y - textBox.getSize().y - GeneralSettings.FLOWCHART_PAD_TOP);
                         i++;
                         // Line helpers:
