@@ -68,17 +68,17 @@ public class TextLineController {
             }
 
             if(word instanceof SeparatorWord){
-                float spaceSize = word.getFont().getSpaceSize();
+                float spaceSize = word.getFont().getSpaceSize()/64;
                 if(((SeparatorWord) word).getText().length() > 0) {
                     if (((SeparatorWord) word).getText().charAt(0) == ' ') {
                         offset += spaceSize;
                     } else if (((SeparatorWord) word).getText().charAt(0) == '\t') {
                         offset += spaceSize * (GeneralSettings.DEFAULT_TAB_WIDTH - numberOfCharacters % 4);//((numberOfCharacters % GeneralSettings.DEFAULT_TAB_WIDTH) == 0 ? GeneralSettings.DEFAULT_TAB_WIDTH : numberOfCharacters % GeneralSettings.DEFAULT_TAB_WIDTH);
                         numberOfCharacters = 0;
+
                     }
                 }
             }
-
             word.setPosition(new Vector2f(line.getPosition().x + offset, line.getPosition().y));
             offset += word.getCharacterEdges()[word.getCharacterEdges().length - 1] * 2;
             if(!(word instanceof LineNumberWord)) {
@@ -148,7 +148,6 @@ public class TextLineController {
         //Delete right and replace left
         codeWindowFormattedTextLines.remove(right);
         replaceCodeWindowTextLine(newLine, codeWindowFormattedTextLines.indexOf(left));
-        System.out.println(codeWindowFormattedTextLines.indexOf(newLine));
 
         //Return the line so that the cursor controller knows what line the cursor is currently in
         return newLine;
@@ -166,6 +165,18 @@ public class TextLineController {
             if(word instanceof LineNumberWord){
                 continue;
             }
+            if(word instanceof SeparatorWord){
+                float spaceSize = word.getFont().getSpaceSize()/64;
+                if(((SeparatorWord) word).getText().length() > 0) {
+                    if (((SeparatorWord) word).getText().charAt(0) == ' ') {
+                        offset += spaceSize;
+                    } else if (((SeparatorWord) word).getText().charAt(0) == '\t') {
+                        offset += spaceSize * (GeneralSettings.DEFAULT_TAB_WIDTH - numberOfCharacters % 4);//((numberOfCharacters % GeneralSettings.DEFAULT_TAB_WIDTH) == 0 ? GeneralSettings.DEFAULT_TAB_WIDTH : numberOfCharacters % GeneralSettings.DEFAULT_TAB_WIDTH);
+                        numberOfCharacters = 0;
+                    }
+                }
+            }
+
 //            if (word.getSeparator().length() == 1 && word.getSeparator().charAt(0) == ' ') {
 //                offset += word.getSpaceSize();
 //            } else if (word.getSeparator().length() == 1 && word.getSeparator().charAt(0) == '\t') {
@@ -186,7 +197,6 @@ public class TextLineController {
         String string = line.getTextString().substring(0, index);
         string += c;
         string += line.getTextString().substring(index);
-        System.out.println(string);
         EditableFormattedTextLine newLine = parser.getFormattedLine(string);
         newLine.setPosition(line.getPosition());
         newLine.getWords()[0] = line.getWords()[0];
@@ -201,8 +211,6 @@ public class TextLineController {
             //Create a string that contains all of the lines text except for the character before the cursor
             String string = line.getTextString().substring(0, characterIndex-1);
             string += line.getTextString().substring(characterIndex);
-            System.out.println(line.getTextString());
-            System.out.println(string);
 
             //Create a new line with this string and the
             EditableFormattedTextLine newLine = parser.getFormattedLine(string);

@@ -95,7 +95,6 @@ public class CodeWindowController {
             newLines.get(0).setLineNumberOffset(longestLineNumber/2 + padding);
             for(EditableFormattedTextLine textLine : newLines){
                 textLineController.addCodeWindowTextLine(textLine, -1);
-                //System.out.println(textLine.getWords()[1].getPosition());
             }
         }
         for(EditableFormattedTextLine line : textLineController.getCodeWindowTextLines()){

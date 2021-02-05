@@ -221,9 +221,10 @@ public class CursorController {
     }
 
     private void updateXPosition(){
-        if(characterIndex == currentGUIText.getCharacterEdges().length){
-            cursor.getPosition().x = -1+EditableFormattedTextLine.getLineNumberOffset()*4+0.0001f;
+        if(characterIndex == currentGUIText.getCharacterEdges().length || characterIndex == 0 && currentGUIText.getCharacterEdges().length == 1){
+            cursor.getPosition().x = -1+EditableFormattedTextLine.getLineNumberOffset()*4;//// +0.000001f;
         }else {
+            System.out.println("test");
             cursor.getPosition().x = currentGUIText.getCharacterEdges()[characterIndex] * 2 + currentGUIText.getPosition().x;
 //            cursor.getPosition().x = currentGUIText.getCharacterEdges()[characterIndex] * 2 + currentGUIText.getWords()[1].getPosition().x;
         }
@@ -234,7 +235,6 @@ public class CursorController {
             codeWindow.changeContentsHorizontalPosition(-(cursor.getPosition().x - (codeWindow.getCodeWindow().getCodeWindowPosition().x + codeWindow.getCodeWindow().getCodeWindowSize().x)/aspectRatio.x));
             cursor.getPosition().x = (codeWindow.getCodeWindow().getCodeWindowPosition().x + codeWindow.getCodeWindow().getCodeWindowSize().x)/aspectRatio.x;
         }
-        System.out.println(currentGUIText.getWords()[1].getPosition().x);
     }
 
     private void updateYPosition(){

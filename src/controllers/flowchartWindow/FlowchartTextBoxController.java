@@ -146,7 +146,6 @@ public class FlowchartTextBoxController {
                         not = false;
                     } else {
                         if (operation.equals("and")) {
-                            //System.out.println();
                             for (int i = 0; i < textBoxes.size(); i++) {
                                 //System.out.println(candidate[i] + " && " + textBoxes.get(i).getRegisters().contains(argv.get(0)) + " -> " + (candidate[i] && textBoxes.get(i).getRegisters().contains(argv.get(0))));
                                 candidate[i] = candidate[i] && textBoxes.get(i).getRegisters().contains(argv.get(0));

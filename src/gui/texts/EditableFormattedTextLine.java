@@ -31,7 +31,7 @@ public class EditableFormattedTextLine extends FormattedTextLine{
             float last = lineNumberOffset;
             for (TextWord word : words) {
                 if (!(word instanceof LineNumberWord)) {
-                    float spaceSize = word.getFont().getSpaceSize();
+                    float spaceSize = word.getFont().getSpaceSize()*2;
                     if(word instanceof SeparatorWord){
                         if(((SeparatorWord) word).getText().length() > 0) {
                             if (((SeparatorWord) word).getText().charAt(0) == ' ') {
