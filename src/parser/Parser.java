@@ -365,6 +365,95 @@ public class Parser implements CodeReader {
     }
 
     /**
+     *  Generate flowchart objects, breaking ONLY on new labels.
+     */
+    public void generateFlowObjects2() {
+        //generate naive boxes for flowchart.
+        if (verbose) System.out.println("\n\nBeginning flowchart parsing:");
+        flowchart.add(new FlowChartObject());
+        flowchart.get(flowchart.size() - 1).setBoxNumber(flowchart.size() - 1);
+
+        for (CodeLine line : lines) {
+            if (verbose) {
+                System.out.println();
+                System.out.println("line text \"" + line.getLineText(true) + "\"");
+                System.out.println("jumps = " + line.isJumps());
+            }
+            //This line has a label, start a new box:
+            if (verbose) System.out.println("line label: \"" + line.getLabel() + "\"");
+            if (!line.getLabel().isEmpty()) {
+                //start new box
+                if (verbose) System.out.println("label found \"" + line.getLabel() + "\"");
+                flowchart.add(new FlowChartObject());
+                flowchart.get(flowchart.size() - 1).setStartLine(line.getLineNumber() - 1);
+                flowchart.get(flowchart.size() - 1).setLabel(line.getLabel());
+            }
+
+            // Add the line to the current box.
+            if (flowchart.get(flowchart.size() - 1).getStartLine() == line.getLineNumber() - 1) {
+                //first line in box, don't add if blank
+                if (!line.getLineText(true).isBlank()) {
+                    flowchart.get(flowchart.size() - 1).addLine(line);
+                    flowchart.get(flowchart.size() - 1).lineCount++;
+                } else {
+                    flowchart.get(flowchart.size() - 1).setStartLine(flowchart.get(flowchart.size() - 1).getStartLine() + 1);
+                }
+            } else {
+                flowchart.get(flowchart.size() - 1).addLine(line);
+                flowchart.get(flowchart.size() - 1).lineCount++;
+            }
+
+            //if the line is a jump/branch, mark box as jumping.
+            if (line.isJumps()) {
+                if (verbose) System.out.println("Line jumps, box marked.");
+                flowchart.get(flowchart.size() - 1).jumps = true;
+                flowchart.get(flowchart.size() - 1).target = line.getTarget();
+                // TODO: target should be array?
+            }
+        }
+
+        //remove all empty boxes
+        flowchart.removeIf(box -> box.getLineCount() == 0);
+        flowchart.removeIf(box -> box.getFullText(true).isBlank());
+
+        //create linkages
+        int i = 1;
+        for (FlowChartObject box : flowchart) {
+            box.setBoxNumber(i);
+            // If the box jumps, find where it targets and link them.
+            if (box.isJumps()) {
+                if (verbose) System.out.println("Creating linkage for box " + box.label + " targeting " + box.target);
+                for (FlowChartObject candidate : flowchart) {
+                    if (verbose) System.out.println(" -> Checking against box " + box.label);
+                    if (candidate.label.equals(box.target)) {
+                        if (verbose) System.out.println("✓ Match found");
+                        box.connection = candidate;
+                        break;
+                    }
+                }
+                if (box.connection == null) {
+                    box.jumps = false;
+                    box.alert += "invalid_label";
+                }
+            }
+            i++;
+        }
+
+        if (verbose) {
+            int n = 0;
+            for (FlowChartObject box : flowchart) {
+                n++;
+                System.out.println("─ " + box.getBoxNumber() + "\t──────────────────────────────────────────────────────────────────────────");
+                System.out.println(box.getFullText(true));
+                if (box.isJumps())
+                    System.out.println(" Target label: " + box.connection.label + " @ box " + box.connection.getBoxNumber());
+                else if (!box.alert.isEmpty()) System.out.println("┌╼ " + box.alert);
+                System.out.println("────────────────────────────────────────────────────────────────────────────────");
+            }
+        }
+    }
+
+    /**
      * Create flowchart.
      * Creates flowchart boxes and draws lines.
      */
@@ -568,7 +657,8 @@ public class Parser implements CodeReader {
         // All boxes with labels get put here once placed.
         Dictionary<String, FlowchartTextBox> placedLabels = new Hashtable();
 
-        // TODO: Add line object array here
+        // List of lines.
+        List<FlowchartLine> linesList = new ArrayList<>();
 
         for (FlowChartObject box : flowchart) {
             if (flowchart.indexOf(box)==0) {
@@ -579,13 +669,14 @@ public class Parser implements CodeReader {
                 FlowchartTextBox textBox = flowchartWindowController.getFlowchartTextBoxController().getTextBoxes().get(flowchartWindowController.getFlowchartTextBoxController().getTextBoxes().size() - 1);
                 if (verbose) System.out.println("Position: " + textBox.getPosition() + " Size: " + textBox.getSize());
                 location.x = (location.x - textBox.getSize().x - GeneralSettings.FLOWCHART_PAD_LEFT);
-                location.y = (location.y - textBox.getSize().y - GeneralSettings.FLOWCHART_PAD_TOP);
+                location.y = (location.y - textBox.getSize().y - 2* GeneralSettings.FLOWCHART_PAD_TOP);
                 i++;
                 // Line helpers:
                 locations.add(textBox.getPosition());
                 sizes.add(textBox.getSize());
             } else {
                 List<Vector2f> coordinates = new ArrayList<>();
+                coordinates.add(new Vector2f(flowchartWindowController.getFlowchartTextBoxController().getTextBoxes().get(flowchartWindowController.getFlowchartTextBoxController().getTextBoxes().size() - 1).getPosition()));
                 // If box has label:
                 if (!box.label.isBlank()){
                     // If label has already been seen but NOT placed:
@@ -596,7 +687,18 @@ public class Parser implements CodeReader {
                         FlowchartTextBox textBox = flowchartWindowController.getFlowchartTextBoxController().getTextBoxes().get(flowchartWindowController.getFlowchartTextBoxController().getTextBoxes().size() - 1);
 
                         location.x = (location.x - textBox.getSize().x - GeneralSettings.FLOWCHART_PAD_LEFT);
-                        location.y = (location.y - textBox.getSize().y - GeneralSettings.FLOWCHART_PAD_TOP);
+                        location.y = (location.y - textBox.getSize().y - 2* GeneralSettings.FLOWCHART_PAD_TOP);
+
+                        coordinates.add(new Vector2f(location.x, location.y));
+                        Terminator terminator;
+                        if (coordinates.get(coordinates.size() - 1).y < coordinates.get((coordinates.size() - 2)).y) {
+                            terminator = new ArrowHead(coordinates.get(coordinates.size() - 1), false);
+                        } else {
+                            terminator = new ArrowHead(coordinates.get(coordinates.size() - 1), true);
+                        }
+                        FlowchartLine line = new FlowchartLine(coordinates, terminator);
+                        linesList.add(line);
+
                         i++;
                         // Line helpers:
                         locations.add(textBox.getPosition());
@@ -605,8 +707,15 @@ public class Parser implements CodeReader {
                         placedLabels.put(box.label, textBox);
                     } else if (labelHeads.get(box.label) != null && placedLabels.get(box.label) != null) {
                         // Label seen and placed: do nothing
-                        System.out.println("already placed, maybe shouldn't see this???");
-                        // TODO: line should be connected between the boxes.
+                        coordinates.add(new Vector2f(placedLabels.get(box.label).getPosition()));
+                        Terminator terminator;
+                        if (coordinates.get(coordinates.size() - 1).y < coordinates.get((coordinates.size() - 2)).y) {
+                            terminator = new ArrowHead(coordinates.get(coordinates.size() - 1), false);
+                        } else {
+                            terminator = new ArrowHead(coordinates.get(coordinates.size() - 1), true);
+                        }
+                        FlowchartLine line = new FlowchartLine(coordinates, terminator);
+                        linesList.add(line);
                     } else {
                         // only remaining option: label not seen, label not placed.
                         // place below most recent box.
@@ -615,7 +724,7 @@ public class Parser implements CodeReader {
                         FlowchartTextBox textBox = flowchartWindowController.getFlowchartTextBoxController().getTextBoxes().get(flowchartWindowController.getFlowchartTextBoxController().getTextBoxes().size() - 1);
 
                         //location.x = (location.x - textBox.getSize().x - GeneralSettings.FLOWCHART_PAD_LEFT);
-                        location.y = (location.y - textBox.getSize().y - GeneralSettings.FLOWCHART_PAD_TOP);
+                        location.y = (location.y - textBox.getSize().y - 2 * GeneralSettings.FLOWCHART_PAD_TOP);
                         i++;
                         // Line helpers:
                         locations.add(textBox.getPosition());
@@ -631,7 +740,7 @@ public class Parser implements CodeReader {
                     FlowchartTextBox textBox = flowchartWindowController.getFlowchartTextBoxController().getTextBoxes().get(flowchartWindowController.getFlowchartTextBoxController().getTextBoxes().size() - 1);
 
                     //location.x = (location.x - textBox.getSize().x - GeneralSettings.FLOWCHART_PAD_LEFT);
-                    location.y = (location.y - textBox.getSize().y - GeneralSettings.FLOWCHART_PAD_TOP);
+                    location.y = (location.y - textBox.getSize().y - 2 * GeneralSettings.FLOWCHART_PAD_TOP);
                     i++;
                     // Line helpers:
                     locations.add(textBox.getPosition());
@@ -653,7 +762,7 @@ public class Parser implements CodeReader {
                         FlowchartTextBox textBox = flowchartWindowController.getFlowchartTextBoxController().getTextBoxes().get(flowchartWindowController.getFlowchartTextBoxController().getTextBoxes().size() - 1);
 
                         //location.x = (location.x - textBox.getSize().x - GeneralSettings.FLOWCHART_PAD_LEFT);
-                        location.y = (location.y - textBox.getSize().y - GeneralSettings.FLOWCHART_PAD_TOP);
+                        location.y = (location.y - textBox.getSize().y - 2 * GeneralSettings.FLOWCHART_PAD_TOP);
                         i++;
                         // Line helpers:
                         locations.add(textBox.getPosition());
@@ -663,27 +772,15 @@ public class Parser implements CodeReader {
                     } else {
                         // label has not been seen or placed.
                         // create split and add to labelHeads.
-                        labelHeads.put(box.target, new Vector2f(location.x + 1, location.y));
-                        location.x = location.x - 1;
+                        labelHeads.put(box.target, new Vector2f(location.x + sizes.get(sizes.size()-1).x, location.y));
+                        //location.x = location.x - .6f;
                     }
                 }
 
             }
         }
-        /*
-        boxes:
-        place first box at origin.
-        if jump: split.
-            if label already placed, do nothing.
-            otherwise place one box left and mark the right as jump label.
-        if label:
-            if label already marked down, put the box there and mark both jumps as pointing to box.
-            otherwise, place label as the next box vertically.
 
-        lines: connect all connections.
-
-         */
-
+        flowchartWindowController.setFlowchartLineList(linesList);
         return flowchartWindowController;
     }
 
