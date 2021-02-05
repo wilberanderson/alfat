@@ -79,12 +79,6 @@ public class TextLineController {
                 }
             }
 
-//            if (word.getSeparator().length() == 1 && word.getSeparator().charAt(0) == ' ') {
-//                offset += word.getSpaceSize();
-//            } else if (word.getSeparator().length() == 1 && word.getSeparator().charAt(0) == '\t') {
-//                offset += word.getSpaceSize() * (GeneralSettings.DEFAULT_TAB_WIDTH-numberOfCharacters%4);
-//                numberOfCharacters = 0;
-//            }
             word.setPosition(new Vector2f(line.getPosition().x + offset, line.getPosition().y));
             offset += word.getCharacterEdges()[word.getCharacterEdges().length - 1] * 2;
             if(!(word instanceof LineNumberWord)) {
@@ -163,7 +157,7 @@ public class TextLineController {
     public void replaceCodeWindowTextLine(EditableFormattedTextLine line, int index){
         float offset;
         if(line.getWords().length > 1){
-            offset = line.getPosition().x + EditableFormattedTextLine.getLineNumberOffset()*3.5f - line.getWords()[1].getPosition().x;
+            offset = line.getPosition().x + EditableFormattedTextLine.getLineNumberOffset()*2f - line.getWords()[1].getPosition().x;
         }else{
             offset = 0;
         }
