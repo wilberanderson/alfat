@@ -346,6 +346,38 @@ public class SettingsMenu extends Component {
 
         container.add(subContainer3);
 
+        ////
+        JPanel subContainer4 = new JPanel(new FlowLayout());
+        JLabel defaultWidthSizeLabel = new JLabel("Default line width:");
+        JTextField defaultSizeTextfield = new JTextField(GeneralSettings.USERPREF.getDefaultLineWidth()+"", 10);
+        JButton btnSubmitDWsize = new JButton("Submit");
+
+        btnSubmitDWsize.addActionListener(e -> {
+            GeneralSettings.USERPREF.setHighlightedLineWidth(Float.parseFloat(defaultSizeTextfield.getText()));
+        });
+
+        subContainer4.add(defaultWidthSizeLabel);
+        subContainer4.add(defaultSizeTextfield);
+        subContainer4.add(btnSubmitDWsize);
+        container.add(subContainer4);
+
+
+        JPanel subContainer5 = new JPanel(new FlowLayout());
+        JLabel highlightWidthSizeLabel = new JLabel("Highlighted line width:");
+        JTextField highlightSizeTextfield = new JTextField(GeneralSettings.USERPREF.getHighlightedLineWidth()+"", 10);
+        JButton btnSubmitHWsize = new JButton("Submit");
+
+        btnSubmitHWsize.addActionListener(e -> {
+            GeneralSettings.USERPREF.setHighlightedLineWidth(Float.parseFloat(highlightSizeTextfield.getText()));
+        });
+        subContainer5.add(highlightWidthSizeLabel);
+        subContainer5.add(highlightSizeTextfield);
+        subContainer5.add(btnSubmitHWsize);
+        container.add(subContainer5);
+
+
+
+
         main.add(BorderLayout.CENTER,container);
         return main;
     }

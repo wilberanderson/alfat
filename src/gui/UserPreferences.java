@@ -149,7 +149,12 @@ public class UserPreferences {
     private String KeyMenuBtnHLColor_BLUE = "menubtnhlcolorblue";
     private float  fbValueMenuBtnHLColor_BLUE = GeneralSettings.HIGHLIGHT_COLOR.z;
 
+    //Line width settings
+    private String keyMenuDefaultLineWidth = "defaultlinewidth";
+    private float fbValueDefaultLineWidth = GeneralSettings.DEFAULT_LINE_WIDTH;
 
+    private String keyMenuHighlightedLineWidth = "highlightedlinewidth";
+    private float fbValueHighlightedLineWidth = GeneralSettings.HIGHLIGHTED_LINE_WIDTH;
 
 
 
@@ -592,6 +597,23 @@ public class UserPreferences {
                 userPref.getFloat(KeyMenuBtnHLColor_BLUE, fbValueMenuBtnHLColor_BLUE)
         );
         return bgColor;
+    }
+
+    // flowchart connector line widths
+    public void setDefaultLineWidth(float lineWidth){
+        userPref.putFloat(keyMenuDefaultLineWidth,lineWidth);
+    }
+
+    public void setHighlightedLineWidth(float lineWidth){
+        userPref.putFloat(keyMenuHighlightedLineWidth,lineWidth);
+    }
+
+    public float getDefaultLineWidth(){
+        return userPref.getFloat(keyMenuDefaultLineWidth, fbValueDefaultLineWidth);
+    }
+
+    public float getHighlightedLineWidth(){
+        return userPref.getFloat(keyMenuHighlightedLineWidth, fbValueHighlightedLineWidth);
     }
 
 

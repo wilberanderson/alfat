@@ -10,6 +10,7 @@ public class FlowchartLine {
     private List<Vector2f> positions;
     private Vector3f color = new Vector3f(1,1,1);
     private Terminator terminator;
+    private boolean highlight = false;
 
     public FlowchartLine(List<Vector2f> positions, Terminator terminator){
         this.positions = positions;
@@ -34,5 +35,13 @@ public class FlowchartLine {
 
     public void setTerminator(Terminator terminator) {
         this.terminator = terminator;
+    }
+
+    public void setHighlight(boolean highlight) {
+        this.highlight = highlight;
+    }
+
+    public boolean isHighlighted() {
+        return highlight;
     }
 }

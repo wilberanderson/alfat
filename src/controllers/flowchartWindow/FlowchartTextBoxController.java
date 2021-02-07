@@ -1,6 +1,7 @@
 package controllers.flowchartWindow;
 
 import controllers.TextLineController;
+import gui.FlowchartLine;
 import gui.GUIFilledBox;
 import gui.texts.*;
 import gui.textBoxes.FlowchartTextBox;
@@ -26,9 +27,11 @@ public class FlowchartTextBoxController {
     private static Vector3f highlightedColor;
     private static Vector3f textNumberBackgroundColor;
     private Vector2f mousePosition = new Vector2f();
+    private FlowchartWindowController parent;
 
-    public FlowchartTextBoxController(TextLineController textLineController){
+    public FlowchartTextBoxController(TextLineController textLineController, FlowchartWindowController parent){
         this.textLineController = textLineController;
+        this.parent = parent;
         backgroundColor = GeneralSettings.USERPREF.getFlowchartBoxbackgroundColor3f();
         highlightedColor = GeneralSettings.USERPREF.getFlowchartBoxHighlightColor3f();
         textNumberBackgroundColor = GeneralSettings.USERPREF.getFlowchartBoxlinenumberBGColor3f();
@@ -223,11 +226,38 @@ public class FlowchartTextBoxController {
 
     public void click(int key, int action){
         if(key == GLFW.GLFW_MOUSE_BUTTON_LEFT && action == GLFW.GLFW_RELEASE){
+            // selectedTextBox = null;
+            for(FlowchartTextBox textBox : textBoxes) {
+                textBox.setHighlighted(false);
+            }
             for(FlowchartTextBox textBox : textBoxes){
                 if(mousePosition.x > textBox.getPosition().x && mousePosition.y > textBox.getPosition().y && mousePosition.x < textBox.getPosition().x + textBox.getSize().x && mousePosition.y < textBox.getPosition().y + textBox.getSize().y){
                     selectedTextBox = textBox;
+                    textBox.setHighlighted(true);
+                    // highlight lines
+                    for (FlowchartLine line : parent.getFlowchartLineList()){
+                        if (line.getPositions().get(0).x == textBox.getPosition().x ||
+                                line.getPositions().get(line.getPositions().size()-1).x == textBox.getPosition().x ||
+                                line.getPositions().get(0).x   == textBox.getPosition().x + textBox.getSize().x ||
+                                line.getPositions().get(line.getPositions().size()-1).x == textBox.getPosition().x + textBox.getSize().x ||
+                                line.getPositions().get(0).y == textBox.getPosition().y ||
+                                line.getPositions().get(line.getPositions().size()-1).y == textBox.getPosition().y ||
+                                line.getPositions().get(0).y   == textBox.getPosition().y + textBox.getSize().y ||
+                                line.getPositions().get(line.getPositions().size()-1).y == textBox.getPosition().y + textBox.getSize().y){
+                            // ^ if line touches current box
+                            line.setHighlight(true);
+                            line.getTerminator().setHighlighted(true);
+                        } else {
+                            line.setHighlight(false);
+                            line.getTerminator().setHighlighted(false);
+                        }
+                    }
                     return;
                 }
+            }
+            for (FlowchartLine line : parent.getFlowchartLineList()){
+                line.setHighlight(false);
+                line.getTerminator().setHighlighted(false);
             }
         }
     }
