@@ -206,19 +206,21 @@ public class CursorController {
     }
 
     public void type(char c){
-        //If the character is a newline then a new line should be created and the character and line index's should be updated as appropriate
-        if(c == '\n'){
-            currentGUIText = codeWindow.getTextLineController().split(currentGUIText, characterIndex, codeWindow);
-            characterIndex = 0;
-            lineIndex++;
+        if(currentGUIText != null) {
+            //If the character is a newline then a new line should be created and the character and line index's should be updated as appropriate
+            if (c == '\n') {
+                currentGUIText = codeWindow.getTextLineController().split(currentGUIText, characterIndex, codeWindow);
+                characterIndex = 0;
+                lineIndex++;
+            }
+            //If the character that was typed is any other character then the line will not be split, update it with the typed character and update the character index
+            else {
+                currentGUIText = codeWindow.getTextLineController().update(currentGUIText, characterIndex, c);
+                characterIndex++;
+            }
+            //After typing the position of the cursor will be different, update the position
+            updatePosition();
         }
-        //If the character that was typed is any other character then the line will not be split, update it with the typed character and update the character index
-        else{
-            currentGUIText = codeWindow.getTextLineController().update(currentGUIText, characterIndex, c);
-            characterIndex++;
-        }
-        //After typing the position of the cursor will be different, update the position
-        updatePosition();
     }
 
     public void scroll(float scrollChange){
