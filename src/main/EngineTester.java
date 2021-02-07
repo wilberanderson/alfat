@@ -1,6 +1,7 @@
 package main;
 import controllers.ApplicationController;
 import controllers.flowchartWindow.FlowchartWindow;
+import controllers.gui.GUIWindowController;
 import gui.*;
 import gui.textBoxes.TextBox;
 import gui.windows.GUIWindow;
@@ -189,9 +190,8 @@ public class EngineTester {
             GLFW.glfwMakeContextCurrent(window);
             MasterRenderer.renderScene(guis, applicationController);
 
-            if(guiWindow != null) {
-                guiWindow.render();
-            }
+            GUIWindowController.render();
+
             // Memory usage:
 //            Runtime runtime = Runtime.getRuntime();
 //            runtime.gc();

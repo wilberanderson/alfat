@@ -3,10 +3,12 @@ package gui;
 import controllers.ApplicationController;
 import controllers.codeWindow.CodeWindowController;
 import controllers.gui.ButtonController;
+import controllers.gui.GUIWindowController;
 import gui.Settings.RegisterSearch;
 import gui.Settings.SettingsMenu;
 import gui.buttons.HeaderMenu;
 import gui.buttons.TextButton;
+import gui.windows.GUIWindow;
 import main.EngineTester;
 import main.GeneralSettings;
 import org.lwjgl.BufferUtils;
@@ -360,6 +362,18 @@ public class Header {
         };
         testMenuButtonList.add(button);
 
+        button = new TextButton("Popup test"){
+            @Override
+            public void onPress() {
+                GUIWindow guiWindow = new GUIWindow(200, 100);
+                guiWindow.title("Popup test");
+                guiWindow.setSize(new Vector2f(0.5f, 0.25f));
+                guiWindow.setDeleteOnLostFocus(true);
+                guiWindow.setColor(0, 0xFF, 0);
+                GUIWindowController.add(guiWindow);
+            }
+        };
+        testMenuButtonList.add(button);
         HeaderMenu fileButton = new HeaderMenu(new Vector2f(-1f, 1 - GeneralSettings.FONT_SIZE * GeneralSettings.FONT_SCALING_FACTOR - 2 * GeneralSettings.TEXT_BUTTON_PADDING), "File ", GeneralSettings.USERPREF.getMenuBtnBGColor3f(), GeneralSettings.HIGHLIGHT_COLOR, GeneralSettings.TEXT_COLOR, GeneralSettings.FONT, GeneralSettings.FONT_SIZE, GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE, testMenuButtonList);
         menuList.add(fileButton);
 

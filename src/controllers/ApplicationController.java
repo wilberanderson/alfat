@@ -271,4 +271,8 @@ public class ApplicationController {
             }
         }
     }
+
+    public GUIController getGuiController() {
+        return guiController;
+    }
 }

@@ -1,11 +1,19 @@
 package gui.windows;
 
 
+import controllers.gui.GUIWindowController;
 import main.GeneralSettings;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
+import org.lwjgl.glfw.GLFWWindowCloseCallback;
+import org.lwjgl.glfw.GLFWWindowFocusCallback;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.system.MemoryUtil;
+import org.lwjgl.util.vector.Vector2f;
+import org.lwjgl.util.vector.Vector3f;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class GUIWindow {
 
@@ -13,7 +21,10 @@ public class GUIWindow {
 
     private String title = "";
     private WindowDecorator windowDecorator = null;
-    private boolean open = true;
+    private boolean deleteOnLostFocus = false;
+
+    //TODO: Switch to layouts containing elements
+    List<GUIElement> elementList = new ArrayList<>();
 
     public GUIWindow(int width, int height){
         //********************************Create the window************************************
@@ -43,6 +54,31 @@ public class GUIWindow {
         GLFW.glfwSwapInterval(0);
 
         GLFW.glfwShowWindow(window);
+
+        GUIWindow guiWindow = this;
+
+        //Create callbacks
+
+        //Callback that deletes the window on lost focus if desired
+        GLFWWindowFocusCallback windowFocusCallback;
+        GLFW.glfwSetWindowFocusCallback(window, windowFocusCallback = new GLFWWindowFocusCallback() {
+            @Override
+            public void invoke(long window, boolean focused) {
+                if(focused == false && deleteOnLostFocus == true){
+                    GUIWindowController.remove(guiWindow);
+                }
+            }
+        });
+
+        //Callback that handles closing the window
+        GLFWWindowCloseCallback windowCloseCallback;
+        GLFW.glfwSetWindowCloseCallback(window, windowCloseCallback = new GLFWWindowCloseCallback() {
+            @Override
+            public void invoke(long window) {
+                GUIWindowController.remove(guiWindow);
+            }
+        });
+
     }
 
     public void title(String title){
@@ -50,17 +86,55 @@ public class GUIWindow {
     }
 
     public void render(){
-
-        if(open) {
-            if(GLFW.glfwWindowShouldClose(window)){
-                GLFW.glfwDestroyWindow(window);
-                open = false;
-                return;
-            }
-
-            GLFW.glfwMakeContextCurrent(window);
-            GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
-            GLFW.glfwSwapBuffers(window);
+        if(GLFW.glfwWindowShouldClose(window)){
+            GLFW.glfwDestroyWindow(window);
+            GUIWindowController.remove(this);
+            return;
         }
+
+        GLFW.glfwMakeContextCurrent(window);
+        GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
+        GLFW.glfwSwapBuffers(window);
+
+    }
+
+    public void setSize(int width, int height){
+        GLFW.glfwSetWindowSize(window, width, height);
+    }
+
+    public void setSize(Vector2f size){
+        GLFW.glfwSetWindowSize(window, (int)(GeneralSettings.DISPLAY_WIDTH*size.x), (int)(GeneralSettings.DISPLAY_HEIGHT*size.y));
+    }
+
+    public void setDeleteOnLostFocus(boolean deleteOnLostFocus){
+        this.deleteOnLostFocus = deleteOnLostFocus;
+    }
+
+    public long getWindow() {
+        return window;
+    }
+
+    public void setColor(int r, int g, int b){
+        GLFW.glfwMakeContextCurrent(window);
+        GL11.glClearColor(r/255, g/255, b/255, 1);
+
+    }
+
+    public void setColor(float r, float g, float b){
+        GLFW.glfwMakeContextCurrent(window);
+        GL11.glClearColor(r, g, b, 1);
+    }
+
+    public void setColor(Vector3f color){
+        GLFW.glfwMakeContextCurrent(window);
+        GL11.glClearColor(color.x, color.y, color.z, 1);
+    }
+
+    public void addElement(GUIElement element){
+        elementList.add(element);
+    }
+
+    public void removeElement(GUIElement element){
+        elementList.remove(element);
     }
 }
