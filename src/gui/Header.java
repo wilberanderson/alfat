@@ -8,6 +8,7 @@ import gui.Settings.RegisterSearch;
 import gui.Settings.SettingsMenu;
 import gui.buttons.HeaderMenu;
 import gui.buttons.TextButton;
+import gui.windows.GUIElement;
 import gui.windows.GUIWindow;
 import main.EngineTester;
 import main.GeneralSettings;
@@ -370,6 +371,7 @@ public class Header {
                 guiWindow.setSize(new Vector2f(0.5f, 0.25f));
                 guiWindow.setDeleteOnLostFocus(true);
                 guiWindow.setColor(0, 0xFF, 0);
+                guiWindow.addElement(new GUIElement(new GUIFilledBox(new Vector2f(0, 0), new Vector2f(1, 1), new Vector3f(1, 0, 1))));
                 GUIWindowController.add(guiWindow);
             }
         };

@@ -79,13 +79,13 @@ public class MasterRenderer {
 			GeneralSettings.MasterRendererUserPrefToggle = false;
 		}
 
-		if(controller.getCodeWindowController() != null) {
-			if (controller.getFlowchartWindowController() == null) {
-				filledBoxRenderer.renderToScreen(controller.getFlowchartWindowController(), controller.getCodeWindowController());
-			} else {
-				filledBoxRenderer.renderToScreen(controller.getFlowchartWindowController(), controller.getCodeWindowController());
-			}
-		}
+//		if(controller.getCodeWindowController() != null) {
+//			if (controller.getFlowchartWindowController() == null) {
+//				filledBoxRenderer.renderToScreen(controller.getFlowchartWindowController(), controller.getCodeWindowController());
+//			} else {
+//				filledBoxRenderer.renderToScreen(controller.getFlowchartWindowController(), controller.getCodeWindowController());
+//			}
+//		}
 		if(controller.getFlowchartWindowController() != null) {
 			flowchartLineRenderer.renderToScreen(controller.getFlowchartWindowController());
 			terminatorRenderer.renderToScreen(controller.getFlowchartWindowController());

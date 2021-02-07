@@ -11,6 +11,7 @@ import gui.buttons.Button;
 import gui.buttons.TextButton;
 import gui.textBoxes.FlowchartTextBox;
 import gui.textBoxes.TextBox;
+import gui.windows.GUIElement;
 import loaders.Loader;
 import main.GeneralSettings;
 import org.lwjgl.opengl.GL11;
@@ -18,7 +19,10 @@ import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.util.vector.Matrix2f;
 import org.lwjgl.util.vector.Matrix3f;
+import rendering.renderEngine.GUIElementRenderer;
 import utils.Maths;
+
+import java.util.List;
 
 /**
  * Controls rendering {@link GUIFilledBox filled boxes}, such as those which appear
@@ -185,6 +189,34 @@ public class FilledBoxRenderer {
             }
         }
 
+
+        //Perform per render call cleanup which is performed regardless of which rendering method is used
+        endRendering();
+    }
+
+    /**
+     * Renders all {@link GUIElement gui elements} contained in a {@link gui.windows.GUIWindow gui window}.
+     * @param elementList the list of elements which may contain a filled box to render
+     */
+    public void renderGUIElements(List<GUIElement> elementList){
+        //Perform setup which is performed regardless of which rendering method is used
+        prepare();
+
+
+        //None of these filled boxes will be moved by the aspect ratio,
+        //Load identity matrices and disable clipping
+        //TODO: Enable aspect ratio changes in GUIElements
+        shader.aspectRatio.loadMatrix(GeneralSettings.IDENTITY2);
+        shader.zoomTranslateMatrix.loadMatrix(GeneralSettings.IDENTITY3);
+        shader.doClipping.loadBoolean(false);
+
+        //For each element render it's filled box if it has one
+        for(GUIElement element : elementList){
+            if(element.getFilledBox() != null){
+                shader.color.loadVec3(element.getFilledBox().getColor());
+                renderFilledBox(element.getFilledBox());
+            }
+        }
 
         //Perform per render call cleanup which is performed regardless of which rendering method is used
         endRendering();

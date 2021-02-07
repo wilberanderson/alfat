@@ -11,6 +11,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.system.MemoryUtil;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
+import rendering.renderEngine.GUIElementRenderer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +23,7 @@ public class GUIWindow {
     private String title = "";
     private WindowDecorator windowDecorator = null;
     private boolean deleteOnLostFocus = false;
+    private GUIElementRenderer renderer;
 
     //TODO: Switch to layouts containing elements
     List<GUIElement> elementList = new ArrayList<>();
@@ -75,10 +77,13 @@ public class GUIWindow {
         GLFW.glfwSetWindowCloseCallback(window, windowCloseCallback = new GLFWWindowCloseCallback() {
             @Override
             public void invoke(long window) {
+                renderer.cleanUp();
                 GUIWindowController.remove(guiWindow);
             }
         });
 
+        //Initialize the renderer
+        renderer = new GUIElementRenderer();
     }
 
     public void title(String title){
@@ -86,24 +91,21 @@ public class GUIWindow {
     }
 
     public void render(){
-        if(GLFW.glfwWindowShouldClose(window)){
-            GLFW.glfwDestroyWindow(window);
-            GUIWindowController.remove(this);
-            return;
-        }
-
-        GLFW.glfwMakeContextCurrent(window);
-        GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
-        GLFW.glfwSwapBuffers(window);
-
+        renderer.renderGUIElements(elementList, window);
     }
 
     public void setSize(int width, int height){
         GLFW.glfwSetWindowSize(window, width, height);
+        GLFW.glfwMakeContextCurrent(window);
+        GL11.glViewport(0, 0, width, height);
     }
 
     public void setSize(Vector2f size){
-        GLFW.glfwSetWindowSize(window, (int)(GeneralSettings.DISPLAY_WIDTH*size.x), (int)(GeneralSettings.DISPLAY_HEIGHT*size.y));
+        int width = (int)(GeneralSettings.DISPLAY_WIDTH*size.x);
+        int height = (int)(GeneralSettings.DISPLAY_HEIGHT*size.y);
+        GLFW.glfwSetWindowSize(window, width, height);
+        GLFW.glfwMakeContextCurrent(window);
+        GL11.glViewport(0, 0, width, height);
     }
 
     public void setDeleteOnLostFocus(boolean deleteOnLostFocus){

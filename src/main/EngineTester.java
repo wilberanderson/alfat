@@ -12,6 +12,7 @@ import org.lwjgl.system.*;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
+import rendering.renderEngine.GUIElementRenderer;
 import rendering.renderEngine.MasterRenderer;
 import controllers.GLFWEventController;
 
@@ -136,8 +137,10 @@ public class EngineTester {
         //Create the FontTypes in GeneralSettings, must happen before using any font
         GeneralSettings.initializeFonts();
 
-        //Initializes the render engine
+        //Initialize the render engine for the main window and popup windows
         MasterRenderer.init();
+
+
         //************************************Initialize input*************************************
         applicationController = new ApplicationController();
         GLFWEventController.init(window, applicationController);
