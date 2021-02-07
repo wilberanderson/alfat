@@ -64,10 +64,26 @@ public class TerminatorRenderer {
                 GL20.glEnableVertexAttribArray(0);
                 if (line.getTerminator() instanceof ArrowHead) {
                     transformationMatrix.setIdentity();
-                    if (((ArrowHead) line.getTerminator()).isUpwards()) {
+                    if (((ArrowHead) line.getTerminator()).getDirection() == 0) {
+                        transformationMatrix.m00 = 1;
+                        transformationMatrix.m01 = 0;
+                        transformationMatrix.m10 = 0;
                         transformationMatrix.m11 = 1;
-                    } else {
+                    } else if (((ArrowHead) line.getTerminator()).getDirection() == 1) {
+                        transformationMatrix.m00 = 0;
+                        transformationMatrix.m01 = 1;
+                        transformationMatrix.m10 = -1;
+                        transformationMatrix.m11 = 0;
+                    } else if (((ArrowHead) line.getTerminator()).getDirection() == 2) {
+                        transformationMatrix.m00 = -1;
+                        transformationMatrix.m01 = 0;
+                        transformationMatrix.m10 = 0;
                         transformationMatrix.m11 = -1;
+                    } else{
+                        transformationMatrix.m00 = 0;
+                        transformationMatrix.m01 = -1;
+                        transformationMatrix.m10 = 1;
+                        transformationMatrix.m11 = 0;
                     }
                     transformationMatrix.m20 = line.getTerminator().getPosition().x;
                     transformationMatrix.m21 = line.getTerminator().getPosition().y;
@@ -121,10 +137,26 @@ public class TerminatorRenderer {
         GL20.glEnableVertexAttribArray(0);
         if (line.getTerminator() instanceof ArrowHead) {
             transformationMatrix.setIdentity();
-            if (((ArrowHead) line.getTerminator()).isUpwards()) {
+            if (((ArrowHead) line.getTerminator()).getDirection() == 0) {
+                transformationMatrix.m00 = 1;
+                transformationMatrix.m01 = 0;
+                transformationMatrix.m10 = 0;
                 transformationMatrix.m11 = 1;
-            } else {
+            } else if (((ArrowHead) line.getTerminator()).getDirection() == 1) {
+                transformationMatrix.m00 = 0;
+                transformationMatrix.m01 = 1;
+                transformationMatrix.m10 = -1;
+                transformationMatrix.m11 = 0;
+            } else if (((ArrowHead) line.getTerminator()).getDirection() == 2) {
+                transformationMatrix.m00 = -1;
+                transformationMatrix.m01 = 0;
+                transformationMatrix.m10 = 0;
                 transformationMatrix.m11 = -1;
+            } else{
+                transformationMatrix.m00 = 0;
+                transformationMatrix.m01 = -1;
+                transformationMatrix.m10 = 1;
+                transformationMatrix.m11 = 0;
             }
             transformationMatrix.m20 = line.getTerminator().getPosition().x;
             transformationMatrix.m21 = line.getTerminator().getPosition().y;

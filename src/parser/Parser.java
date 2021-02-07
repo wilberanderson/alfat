@@ -430,12 +430,8 @@ public class Parser implements CodeReader {
                 //second point: top of next box:
                 coordinates.add(new Vector2f((locations.get(index).x) + .05f, (locations.get(index + 1).y + sizes.get(index + 1).y)));
                 //if (verbose) System.out.println("from " + (locations.get(index).y) + " to " + (-1 + locations.get(index+1).y + sizes.get(index+1).y) + "\n");
-                Terminator terminator;
-                if (coordinates.get(coordinates.size() - 1).y < coordinates.get((coordinates.size() - 2)).y) {
-                    terminator = new ArrowHead(coordinates.get(coordinates.size() - 1), false);
-                } else {
-                    terminator = new ArrowHead(coordinates.get(coordinates.size() - 1), true);
-                }
+                Terminator terminator = new ArrowHead(coordinates.get(coordinates.size() - 1), GeneralSettings.ARROWHEAD_DOWN);
+
                 FlowchartLine line = new FlowchartLine(coordinates, terminator);
                 linesList.add(line);
                 //if (verbose) System.out.println();
@@ -484,12 +480,8 @@ public class Parser implements CodeReader {
                     }
                     coordinates.add(new Vector2f((locations.get(index).x) + 2 * sizes.get(flowchart.get(index).connection.getBoxNumber() - 1).x / 3, (sizes.get(flowchart.get(index).connection.getBoxNumber() - 1).y + locations.get(flowchart.get(index).connection.getBoxNumber() - 1).y + (GeneralSettings.FLOWCHART_PAD_TOP / 3))));
                     coordinates.add(new Vector2f((locations.get(index).x) + 2 * sizes.get(flowchart.get(index).connection.getBoxNumber() - 1).x / 3, (sizes.get(flowchart.get(index).connection.getBoxNumber() - 1).y + locations.get(flowchart.get(index).connection.getBoxNumber() - 1).y)));
-                    Terminator terminator;
-                    if (coordinates.get(coordinates.size() - 1).y < coordinates.get((coordinates.size() - 2)).y) {
-                        terminator = new ArrowHead(coordinates.get(coordinates.size() - 1), false);
-                    } else {
-                        terminator = new ArrowHead(coordinates.get(coordinates.size() - 1), true);
-                    }
+                    Terminator terminator = new ArrowHead(coordinates.get(coordinates.size() - 1), GeneralSettings.ARROWHEAD_DOWN);
+
                     FlowchartLine line = new FlowchartLine(coordinates, terminator);
                     line.setColor(rainbow[jump_lines % rainbow.length]);
                     linesList.add(line);

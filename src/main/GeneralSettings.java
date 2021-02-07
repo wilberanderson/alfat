@@ -118,6 +118,10 @@ public class GeneralSettings {
 	public static final float FLOWCHART_PAD_LEFT = FLOWCHART_PAD_TOP * (DEFAULT_WIDTH / DEFAULT_HEIGHT);    //The horizontal spacing between flowchart boxes
 	public static final float LINE_OFFSET = .05f;                                                           //The minmum distance between lines pathing in the same direction in the flowchart
 	public static final float FLOWCHART_TEXT_BOX_INTERNAL_PAD_RIGHT = 0.1f;
+	public static final int ARROWHEAD_RIGHT = 3;
+	public static final int ARROWHEAD_LEFT = 1;
+	public static final int ARROWHEAD_UP = 0;
+	public static final int ARROWHEAD_DOWN = 2;
 
 	//************************************************Text settings***********************************
 	public static final float FONT_SIZE = 1f;                                           //The default size for rendered text, individual texts may override this value
