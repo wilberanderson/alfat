@@ -1,8 +1,6 @@
 package main;
 
-import gui.Settings.RegisterSearch;
-import gui.Settings.SettingsMenu;
-import parser.CodeSyntax;
+import parser.GenericSyntax;
 import parser.JsonReader;
 
 import java.io.File;

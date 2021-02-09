@@ -576,10 +576,4 @@ public class Parser implements CodeReader {
         return flowchartWindowController;
     }
 
-    public boolean registerMatch(String s){
-        /*for (String r: registerNames) {
-            if(s.matches("^"+r+"(,)?")){ return true; }
-        }*/
-        return (s.matches("R[0-7](,)?"));
-    }
 }
