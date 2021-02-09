@@ -59,11 +59,6 @@ public class Header {
         List<TextButton> analyticsMenuButtonList = new ArrayList<>();
         List<TextButton> settingsMenuButtonList = new ArrayList<>();
 
-        JsonReader jr = new JsonReader(new File(GeneralSettings.USERPREF.getSyntaxPath()));
-        //LC3Syntax syn = jr.mapJsonLC3Syntax();
-        CodeSyntax syn = jr.mapJsonToSyntax();
-        String[] registers = syn.getRegisterNames();
-
         //open file
         TextButton button = new TextButton("Open File") {
             @Override

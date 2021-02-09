@@ -55,4 +55,18 @@ public class JsonReader {
     }
 
 
+    public GenericSyntax mapJsonToGenericSyntax() {
+        ObjectMapper objectMapper = new ObjectMapper();
+        GenericSyntax outputClass;
+        try {
+            outputClass = objectMapper.readValue(input, GenericSyntax.class);
+            return outputClass;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+
 }
