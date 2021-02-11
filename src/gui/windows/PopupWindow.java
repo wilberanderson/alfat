@@ -38,6 +38,31 @@ public class PopupWindow extends GUIWindow{
         TextMaster.removeGuiText(this.elementList.get(2).getGuiText());
     }
 
+    public PopupWindow(String title, String contents, String continueText){
+        super(GeneralSettings.popupWidth, GeneralSettings.popupHeight);
+        this.title(title);
+        GLFW.glfwMakeContextCurrent(this.window);
+        this.addElement(new GUIElement(new GUIText(contents, 4, new Vector2f(-.9f, 0.9f))));
+        this.elementList.get(0).getGuiText().getPosition().x = 0 - (float)(2-this.elementList.get(0).getGuiText().getLength())/2;
+        Button button = new TextButton(new Vector2f(0.4f, -0.5f), continueText, new Vector3f(0.2f, 0.2f, 0.2f), new Vector3f(1, 1, 1), null, fontType, 4, 0, 0, window) {
+            @Override
+            public void onPress() {
+                onContinue();
+            }
+        };
+        ButtonController.add(button);
+        this.addElement(button);
+        TextMaster.removeGuiText(this.elementList.get(1).getGuiText());
+    }
+
+    public PopupWindow(String title, String contents){
+        super(GeneralSettings.popupWidth, GeneralSettings.popupHeight);
+        this.title(title);
+        GLFW.glfwMakeContextCurrent(this.window);
+        this.addElement(new GUIElement(new GUIText(contents, 4, new Vector2f(-.9f, 0.9f))));
+        this.elementList.get(0).getGuiText().getPosition().x = 0 - (float)(2-this.elementList.get(0).getGuiText().getLength())/2;
+    }
+
     public void onCancel(){
         System.out.println("Cancelled");
     }

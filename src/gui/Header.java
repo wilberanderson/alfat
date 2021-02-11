@@ -367,7 +367,7 @@ public class Header {
         button = new TextButton("Popup test"){
             @Override
             public void onPress() {
-                PopupWindow popupWindow = new PopupWindow("Popup test", "This is a popup test", "cancel", "continue");
+                PopupWindow popupWindow = new PopupWindow("Popup test", "This is a popup test");
 //                GUIWindow guiWindow = new GUIWindow(200, 100);
 //                guiWindow.title("Popup test");
 //                guiWindow.setSize(new Vector2f(0.5f, 0.25f));
