@@ -11,7 +11,7 @@
     "constantBinary": "\\b[01]+\\b",
     "constantCharacter": "[A-Za-z][A-Za-z0-9_]+",
     "doubleQuotedString": "^(\".*\")_|^([\\\"\\\\].*[\\\"\\\\])",
-    "emptySpace": "((?<=\\s)|(?=\\s+))|((?<=,))|(?=\\.)|(\".*?\")",
+    "emptySpace": "((?<=\\s)|(?=\\s+))|((?<=,))|(?=\\.)",
     "label": "^[a-zA-Z0-9\\-_]+",
     "comment": ";"
   }

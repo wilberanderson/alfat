@@ -57,15 +57,14 @@ public class JsonReader {
 
     public GenericSyntax mapJsonToGenericSyntax() {
         ObjectMapper objectMapper = new ObjectMapper();
-        GenericSyntax outputClass;
+        GenericSyntax outputClass = null;
         try {
             outputClass = objectMapper.readValue(input, GenericSyntax.class);
-            return outputClass;
-
         } catch (Exception e) {
             e.printStackTrace();
+            outputClass = null;
         }
-        return null;
+        return outputClass;
     }
 
 
