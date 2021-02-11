@@ -122,6 +122,8 @@ public class GeneralSettings {
 	public static final int ARROWHEAD_LEFT = 1;
 	public static final int ARROWHEAD_UP = 0;
 	public static final int ARROWHEAD_DOWN = 2;
+	public static final float DEFAULT_LINE_WIDTH = 1f;
+	public static final float HIGHLIGHTED_LINE_WIDTH = 3f;
 
 	//************************************************Text settings***********************************
 	public static final float FONT_SIZE = 1f;                                           //The default size for rendered text, individual texts may override this value

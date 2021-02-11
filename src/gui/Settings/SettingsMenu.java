@@ -43,8 +43,7 @@ public class SettingsMenu extends Component {
     //Regx
     private String validFileType = "^(\\w+)$|(\\w+(,|;)\\w+)*$";
     private String validIntType = "^[1-9]\\d*$";
-
-
+    private String validFloatType = "^\\d*\\.?\\d*$";
 
     /**
      * Builds and displays the settings GUI
@@ -345,6 +344,83 @@ public class SettingsMenu extends Component {
 
 
         container.add(subContainer3);
+
+        //// line width button options
+        JPanel subContainer4 = new JPanel(new FlowLayout());
+        JLabel defaultWidthSizeLabel = new JLabel("Default line width:");
+        JTextField defaultSizeTextfield = new JTextField(GeneralSettings.USERPREF.getDefaultLineWidth()+"", 10);
+        JButton btnSubmitDWsize = new JButton("Submit");
+
+        btnSubmitDWsize.addActionListener(e -> {
+
+            if(defaultSizeTextfield.getText().matches(validFloatType)) {
+                if (Float.parseFloat(defaultSizeTextfield.getText()) > 0) {
+                    defaultSizeTextfield.setForeground(Color.BLACK);
+                    GeneralSettings.USERPREF.setDefaultLineWidth(Float.parseFloat(defaultSizeTextfield.getText()));
+                }
+            } else {
+                defaultSizeTextfield.setForeground(Color.RED);
+            }
+        });
+
+        defaultSizeTextfield.addKeyListener(new KeyAdapter() {
+            public void keyPressed(KeyEvent e) {
+
+                if(defaultSizeTextfield.getText().matches(validFloatType)) {
+                    if (Float.parseFloat(defaultSizeTextfield.getText()) > 0) {
+                        defaultSizeTextfield.setForeground(Color.BLACK);
+
+                    }
+                } else {
+                    defaultSizeTextfield.setForeground(Color.RED);
+
+                }
+            }
+        });
+
+        subContainer4.add(defaultWidthSizeLabel);
+        subContainer4.add(defaultSizeTextfield);
+        subContainer4.add(btnSubmitDWsize);
+        container.add(subContainer4);
+
+
+        JPanel subContainer5 = new JPanel(new FlowLayout());
+        JLabel highlightWidthSizeLabel = new JLabel("Highlighted line width:");
+        JTextField highlightSizeTextfield = new JTextField(GeneralSettings.USERPREF.getHighlightedLineWidth()+"", 10);
+        JButton btnSubmitHWsize = new JButton("Submit");
+
+
+        highlightSizeTextfield.addKeyListener(new KeyAdapter() {
+            public void keyPressed(KeyEvent e) {
+                if(highlightSizeTextfield.getText().matches(validFloatType)) {
+                    if (Float.parseFloat(highlightSizeTextfield.getText()) > 0) {
+                        highlightSizeTextfield.setForeground(Color.BLACK);
+                    }
+                } else {
+                    highlightSizeTextfield.setForeground(Color.RED);
+                }
+            }
+        });
+
+
+        btnSubmitHWsize.addActionListener(e -> {
+
+            if(highlightSizeTextfield.getText().matches(validFloatType)) {
+                if (Float.parseFloat(highlightSizeTextfield.getText()) > 0) {
+                    highlightSizeTextfield.setForeground(Color.BLACK);
+                    GeneralSettings.USERPREF.setHighlightedLineWidth(Float.parseFloat(highlightSizeTextfield.getText()));
+                }
+            } else {
+                highlightSizeTextfield.setForeground(Color.RED);
+            }
+        });
+        subContainer5.add(highlightWidthSizeLabel);
+        subContainer5.add(highlightSizeTextfield);
+        subContainer5.add(btnSubmitHWsize);
+        container.add(subContainer5);
+
+
+
 
         main.add(BorderLayout.CENTER,container);
         return main;

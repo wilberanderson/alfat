@@ -34,16 +34,20 @@ public class Parser implements CodeReader {
 
     public Parser(){
         //default constructor, only use for helper functions.
-        this.verbose = false;
+        this.verbose = true;
     }
 
     //TODO: change from hardcoded to dynamically loaded from JSON
-    JsonReader jr = new JsonReader(new File(GeneralSettings.USERPREF.getSyntaxPath()));
+    JsonReader jr = new JsonReader(new File("CodeSyntax/LC3-New.json"));
     //LC3Syntax syn = jr.mapJsonLC3Syntax();
-    CodeSyntax syn = jr.mapJsonToSyntax();
-    String[] commands = syn.getCommands();
-    String[] jumps = syn.getJumps();
-    String[] registerNames = syn.getRegisterNames();
+    //CodeSyntax syn = jr.mapJsonToSyntax();
+    GenericSyntax syn = jr.mapJsonToGenericSyntax();
+    //String[] commands = syn.getCommands();
+    //String[] jumps = syn.getJumps();
+    //String[] registerNames = syn.getRegisterNames();
+    String commands = syn.getCommands();
+    String jumps = syn.getKeywordPatterns().getControl();
+    String registerNames = syn.getKeywordPatterns().getRegister();
 
     /**Read an input file. Parse the input file line by line, and store them in the arrayList of CodeLine objects.
      *
@@ -51,6 +55,9 @@ public class Parser implements CodeReader {
      */
     @Override
     public void ReadFile(String infile) {
+
+
+
         //prepare to read file:
         this.infile = infile;
         File file = new File(infile);
@@ -69,9 +76,9 @@ public class Parser implements CodeReader {
                 //line = line.replace("\t", "    ");
 
                 //take entire line before semicolon
-                int index = line.indexOf(";");
+                int index = line.indexOf(syn.getKeywordPatterns().getComment());
                 if (index == -1) index = line.length();
-                String[] arrLine = line.substring(0, index).split("((?<=\\s)|(?=\\s+))");
+                String[] arrLine = line.substring(0, index).split(syn.getKeywordPatterns().getEmptySpace());
 
                 //temp variables:
                 Optional<String> comm = Optional.empty();
@@ -86,17 +93,20 @@ public class Parser implements CodeReader {
                     if (verbose) System.out.print("[" + fragment + "]");
 
                     //grab each command in the line, if they exist:
-                    if (Arrays.asList(commands).contains(fragment.toUpperCase())) {
-                        comm = Arrays.stream(commands).filter(fragment.toUpperCase()::equals).findAny();
+                    //if (Arrays.asList(commands).contains(fragment.toUpperCase())) {
+                    if (fragment.matches(commands)) {
+                        //comm = Arrays.stream(commands).filter(fragment.toUpperCase()::equals).findAny();
+                        comm = Optional.of(fragment);
                         formattedString.add(new CommandWord(comm.get(), new Vector2f(0f, 0)));
                         first = false;
-                    } else if (Arrays.asList(jumps).contains(fragment.toUpperCase()) || fragment.matches("^BR[nzp]{0,3}$")) {
+                    //} else if (Arrays.asList(jumps).contains(fragment.toUpperCase()) || fragment.matches("^BR[nzp]{0,3}$")) { //Control
+                    } else if (fragment.matches(jumps)) { //Control
                         comm = Optional.of(fragment);
                         formattedString.add(new CommandWord(comm.get(), new Vector2f(0f, 0)));
                         jump = true;
                         first = false;
-                    } else if (registerMatch(fragment)) {  //register
-                        if (fragment.contains(",")) {
+                    } else if (fragment.matches(registerNames)) {  //register
+                        if (fragment.contains(",")){
                             if (!registers.contains(fragment.substring(0, fragment.length() - 1))) {
                                 registers.add(fragment.substring(0, fragment.length() - 1));
                             }
@@ -109,12 +119,14 @@ public class Parser implements CodeReader {
                             formattedString.add(new RegisterWord(fragment, new Vector2f(0f, 0)));
                         }
                         first = false;
-                    } else if (fragment.matches("^[x#]-?[0-9]+")) {
+                    } else if (fragment.matches(syn.getKeywordPatterns().getConstantNumeric())
+                            ||fragment.matches(syn.getKeywordPatterns().getConstantHex())
+                            ||fragment.matches(syn.getKeywordPatterns().getConstantNumeric())) {
                         //immediate value, literal or trap
                         //just skip this for now
                         first = false;
                         formattedString.add(new ImmediateWord(fragment, new Vector2f(0f, 0)));
-                    } else if (jump && fragment.matches("^[a-zA-Z0-9\\-_]+")) {   //jump statement, this matches a label
+                    } else if (jump && fragment.matches(syn.getKeywordPatterns().getLabel())) {   //jump statement, this matches a label
                         //if the line is a jump statement,
                         //this matches the label or labels pointed to by the command
                         //if the language supports having the label BEFORE the command,
@@ -122,13 +134,14 @@ public class Parser implements CodeReader {
                         targetLabel = fragment;
                         formattedString.add(new LabelWord(fragment, new Vector2f(0f, 0)));
                         first = false;
-                    } else if (first && fragment.matches("^[a-zA-Z0-9\\-_]+")) {
+                    } else if (first && fragment.matches(syn.getKeywordPatterns().getLabel())) {
                         //this is the (optional) label for the line
                         label = fragment;
                         labelMap.put(label, i);
                         formattedString.add(new LabelWord(fragment, new Vector2f(0f, 0)));
                         first = false;
-                    } else if (!jump && fragment.matches("^[a-zA-Z0-9\\-_\"\\\\\\[\\]\\!<>]+")) {
+                    //} else if (!jump && fragment.matches("^[a-zA-Z0-9\\-_\"\\\\\\[\\]\\!<>]+")) {
+                    } else if (!jump && fragment.matches(syn.getKeywordPatterns().getDoubleQuotedString())) {
                         //the command isn't a jump statement, so the label must be a variable i.e. string, etc.
                         formattedString.add(new LabelWord(fragment, new Vector2f(0f, 0)));
                     } else if (fragment.matches("[ ,\t]")){
@@ -183,9 +196,9 @@ public class Parser implements CodeReader {
         line = line.replace("\t", "    ");
 
         //take entire line before semicolon
-        int index = line.indexOf(";");
+        int index = line.indexOf(syn.getKeywordPatterns().getComment());
         if (index == -1) index = line.length();
-        String[] arrLine = line.substring(0, index).split("((?<=\\s)|(?=\\s+))");
+        String[] arrLine = line.substring(0, index).split(syn.getKeywordPatterns().getEmptySpace());
 
         //temp variables:
         Optional<String> comm = Optional.empty();
@@ -200,16 +213,18 @@ public class Parser implements CodeReader {
             if (verbose) System.out.print("[" + fragment + "]");
 
             //grab each command in the line, if they exist:
-            if (Arrays.asList(commands).contains(fragment.toUpperCase())) {
-                comm = Arrays.stream(commands).filter(fragment.toUpperCase()::equals).findAny();
+            //if (Arrays.asList(commands).contains(fragment.toUpperCase())) {
+            if (fragment.matches(commands)) {
+                comm = Optional.of(fragment);
                 formattedString.add(new CommandWord(comm.get(), new Vector2f(0f, 0)));
                 first = false;
-            } else if (Arrays.asList(jumps).contains(fragment.toUpperCase()) || fragment.matches("^BR[nzp]{0,3}$")) {
+            } else if (fragment.matches(jumps)) {
                 comm = Optional.of(fragment);
                 formattedString.add(new CommandWord(comm.get(), new Vector2f(0f, 0)));
                 jump = true;
                 first = false;
-            } else if (Arrays.stream(registerNames).anyMatch(fragment.toUpperCase()::contains)) {  //register
+            } else if (fragment.matches(registerNames)) {  //register
+
                 if (fragment.contains(",")) {
                     if (!registers.contains(fragment.substring(0, fragment.length() - 1))) {
                         registers.add(fragment.substring(0, fragment.length() - 1));
@@ -223,12 +238,15 @@ public class Parser implements CodeReader {
                     formattedString.add(new RegisterWord(fragment, new Vector2f(0f, 0)));
                 }
                 first = false;
-            } else if (fragment.matches("^[x#]-?[0-9]+")) {
+            } else if (fragment.matches(syn.getKeywordPatterns().getConstantNumeric())
+                       ||fragment.matches(syn.getKeywordPatterns().getConstantHex())
+                       ||fragment.matches(syn.getKeywordPatterns().getConstantNumeric())
+            ) {
                 //immediate value, literal or trap
                 //just skip this for now
                 first = false;
                 formattedString.add(new ImmediateWord(fragment, new Vector2f(0f, 0)));
-            } else if (jump && fragment.matches("^[a-zA-Z0-9\\-_]+")) {   //jump statement, this matches a label
+            } else if (jump && fragment.matches(syn.getKeywordPatterns().getLabel())) {   //jump statement, this matches a label
                 //if the line is a jump statement,
                 //this matches the label or labels pointed to by the command
                 //if the language supports having the label BEFORE the command,
@@ -236,12 +254,12 @@ public class Parser implements CodeReader {
                 targetLabel = fragment;
                 formattedString.add(new LabelWord(fragment, new Vector2f(0f, 0)));
                 first = false;
-            } else if (first && fragment.matches("^[a-zA-Z0-9\\-_]+")) {
+            } else if (first && fragment.matches(syn.getKeywordPatterns().getLabel())) {
                 //this is the (optional) label for the line
                 label = fragment;
                 formattedString.add(new LabelWord(fragment, new Vector2f(0f, 0)));
                 first = false;
-            } else if (!jump && fragment.matches("^[a-zA-Z0-9\\-_]+")) {
+            } else if (!jump && fragment.matches(syn.getKeywordPatterns().getLabel())) {
                 //the command isn't a jump statement, so the label must be a variable i.e. string, etc.
                 formattedString.add(new LabelWord(fragment, new Vector2f(0f, 0)));
             } else if (fragment.matches("[ ,\t]")){
@@ -558,10 +576,4 @@ public class Parser implements CodeReader {
         return flowchartWindowController;
     }
 
-    public boolean registerMatch(String s){
-        /*for (String r: registerNames) {
-            if(s.matches("^"+r+"(,)?")){ return true; }
-        }*/
-        return (s.matches("R[0-7](,)?"));
-    }
 }

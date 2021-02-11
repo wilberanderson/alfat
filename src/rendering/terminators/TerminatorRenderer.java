@@ -124,6 +124,12 @@ public class TerminatorRenderer {
         GL11.glEnable(GL11.GL_POINT_SMOOTH);
 
         for (FlowchartLine line : flowChartWindowController.getFlowchartLineList()) {
+            if (line.getTerminator().isHighlighted()){
+//              enbiggen terminator (should be highlighted)
+            } else {
+                // normal terminator size
+                GL11.glPointSize(pointSize);
+            }
             renderTerminator(line);
         }
         GL11.glPointSize(1);

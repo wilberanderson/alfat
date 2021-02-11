@@ -18,9 +18,9 @@ public class FlowchartWindowController {
     
     public FlowchartWindowController(TextLineController textLineController){
         flowchartWindow = new FlowchartWindow();
-        flowchartTextBoxController = new FlowchartTextBoxController(textLineController);
+        flowchartTextBoxController = new FlowchartTextBoxController(textLineController,this);
     }
-    
+
     public void updateZoom(float scrollChange){
         float oldZoom = flowchartWindow.getZoom();
         flowchartWindow.setZoom(flowchartWindow.getZoom()+scrollChange);
@@ -43,17 +43,17 @@ public class FlowchartWindowController {
         flowchartWindow.getZoomTranslateMatrix().m20 += translation.x/flowchartWindow.getZoom();
         flowchartWindow.getZoomTranslateMatrix().m21 += translation.y/flowchartWindow.getZoom();
     }
-    
+
     public void setTranslation(Vector2f translation){
         flowchartWindow.getZoomTranslateMatrix().m20 = translation.x /flowchartWindow.getZoom();
         flowchartWindow.getZoomTranslateMatrix().m21 = translation.y / flowchartWindow.getZoom();
         flowchartWindow.setTranslation(translation);
     }
-    
+
     public void updateAspectRatio(Matrix2f aspectRatio){
         flowchartWindow.setAspectRatio(aspectRatio);
     }
-    
+
     public void clear(){
 //        for(FlowchartTextBox textBox: flowchartWindow.getFlowchartTextBoxList()){
 //            textBox.clear();

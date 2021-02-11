@@ -8,7 +8,6 @@ import main.GeneralSettings;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
-import org.lwjgl.util.vector.Matrix2f;
 import org.lwjgl.util.vector.Vector2f;
 
 /**
@@ -75,6 +74,11 @@ public class FlowchartLineRenderer {
         GL30.glBindVertexArray(lineSegment.getVaoID());
         GL20.glEnableVertexAttribArray(0);
         Vector2f position = line.getPositions().get(0);
+        if (line.isHighlighted()){
+            GL11.glLineWidth(GeneralSettings.USERPREF.getHighlightedLineWidth());
+        } else {
+            GL11.glLineWidth(GeneralSettings.USERPREF.getDefaultLineWidth());
+        }
         for (int i = 1; i < line.getPositions().size(); i++) {
             shader.startPosition.loadVec2(position);
             position = line.getPositions().get(i);
@@ -109,6 +113,7 @@ public class FlowchartLineRenderer {
         shader.stop();
         GL11.glDisable(GL11.GL_BLEND);
         GL11.glEnable(GL11.GL_DEPTH_TEST);
+        GL11.glLineWidth(1f);
     }
 
 }
