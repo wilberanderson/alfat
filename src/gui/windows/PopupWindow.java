@@ -67,6 +67,6 @@ public class PopupWindow extends GUIWindow{
         System.out.println("Cancelled");
     }
     public void onContinue(){
-        System.out.println("Continued");
+        close();
     }
 }

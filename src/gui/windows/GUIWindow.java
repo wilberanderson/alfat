@@ -72,8 +72,7 @@ public class GUIWindow {
             @Override
             public void invoke(long window, boolean focused) {
                 if(focused == false && deleteOnLostFocus == true){
-                    renderer.cleanUp();
-                    GUIWindowController.remove(guiWindow);
+                    guiWindow.close();
                 }
             }
         });
@@ -83,8 +82,7 @@ public class GUIWindow {
         GLFW.glfwSetWindowCloseCallback(window, windowCloseCallback = new GLFWWindowCloseCallback() {
             @Override
             public void invoke(long window) {
-                renderer.cleanUp();
-                GUIWindowController.remove(guiWindow);
+                guiWindow.close();
             }
         });
 
@@ -181,5 +179,10 @@ public class GUIWindow {
 
     public void click(int button, int action){
 
+    }
+
+    protected void close(){
+        renderer.cleanUp();
+        GUIWindowController.remove(this);
     }
 }
