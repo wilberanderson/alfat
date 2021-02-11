@@ -100,4 +100,14 @@ public class FormattedTextLine {
         }
         position.x += change;
     }
+
+
+    public void changeContentsHorizontalPosition(float offset){
+        for(TextWord word : words){
+            if(!(word instanceof LineNumberWord)){
+                word.setPosition(new Vector2f(word.getPosition().x+offset, word.getPosition().y));
+            }
+        }
+        position.x += offset;
+    }
 }

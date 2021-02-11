@@ -46,6 +46,8 @@ public class FlowchartTextBoxController {
         float longestLineNumber = 0;
         float lineHeight = GeneralSettings.FONT_SIZE * GeneralSettings.FONT_SCALING_FACTOR;
 
+        boolean lineNumberChanged = false;
+
         for (FormattedTextLine line : formattedTextLines) {
             if (line.getLength() > greatestLength) {
                 greatestLength = line.getLength();
@@ -57,6 +59,9 @@ public class FlowchartTextBoxController {
             LineNumberWord lineNumberText = new LineNumberWord(Integer.toString(lineNumber),new Vector2f(GeneralSettings.TEXT_BOX_BORDER_WIDTH + position.x, line.getPosition().y - lineHeight * formattedTextLines.size() - GeneralSettings.TEXT_BOX_BORDER_WIDTH));
             line.getWords()[0] = lineNumberText;
             if (lineNumberText.getLength() > longestLineNumber) {
+                if(longestLineNumber > 0){
+                    lineNumberChanged = true;
+                }
                 longestLineNumber = (float) lineNumberText.getLength();
             }
 
@@ -65,6 +70,11 @@ public class FlowchartTextBoxController {
             minHeight += lineHeight;
             lineNumber++;
 
+        }
+        if(lineNumberChanged){
+            for(FormattedTextLine line: formattedTextLines){
+                line.changeContentsHorizontalPosition(longestLineNumber*2 - (float)formattedTextLines.get(0).getWords()[0].getLength()*2);
+            }
         }
 
         textBox.setTextNumberFilledBox(new GUIFilledBox(position, new Vector2f(longestLineNumber * 2 + 2 * GeneralSettings.TEXT_BOX_BORDER_WIDTH, minHeight), GeneralSettings.LINE_NUMBER_BACKGROUND_COLOR));

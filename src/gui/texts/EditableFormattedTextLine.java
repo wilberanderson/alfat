@@ -117,14 +117,6 @@ public class EditableFormattedTextLine extends FormattedTextLine{
         position.y += offset;
     }
 
-    public void changeContentsHorizontalPosition(float offset){
-        for(TextWord word : words){
-            if(!(word instanceof LineNumberWord)){
-                word.setPosition(new Vector2f(word.getPosition().x+offset, word.getPosition().y));
-            }
-        }
-        position.x += offset;
-    }
 
     public void setPosition(Vector2f position, boolean changeLineNumbers){
         for(TextWord word : words) {
