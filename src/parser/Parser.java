@@ -127,7 +127,10 @@ public class Parser implements CodeReader {
                         formattedString.add(new LabelWord(fragment, new Vector2f(0f, 0)));
                         first = false;
                     //} else if (!jump && fragment.matches("^[a-zA-Z0-9\\-_\"\\\\\\[\\]\\!<>]+")) {
-                    } else if (!jump && fragment.matches(syn.getKeywordPatterns().getDoubleQuotedString())) {
+                    } else if (!jump && fragment.matches(syn.getKeywordPatterns().getLabel())
+                            || !jump && fragment.matches(syn.getKeywordPatterns().getDoubleQuotedString())
+
+                    ) {
                         //the command isn't a jump statement, so the label must be a variable i.e. string, etc.
                         formattedString.add(new LabelWord(fragment, new Vector2f(0f, 0)));
                     } else if (fragment.matches("[ ,\t]")){
@@ -244,7 +247,10 @@ public class Parser implements CodeReader {
                 label = fragment;
                 formattedString.add(new LabelWord(fragment, new Vector2f(0f, 0)));
                 first = false;
-            } else if (!jump && fragment.matches(syn.getKeywordPatterns().getLabel())) {
+            } else if (!jump && fragment.matches(syn.getKeywordPatterns().getLabel())
+                    || !jump && fragment.matches(syn.getKeywordPatterns().getDoubleQuotedString())
+
+            ) {
                 //the command isn't a jump statement, so the label must be a variable i.e. string, etc.
                 formattedString.add(new LabelWord(fragment, new Vector2f(0f, 0)));
             } else if (fragment.matches("[ ,\t]")){

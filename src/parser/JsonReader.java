@@ -6,12 +6,8 @@ import java.io.File;
 import com.fasterxml.jackson.databind.ObjectMapper;
 /**
  * Takes a file as an input JSON and creates and object mapper based on the defined syntax in JSON to a Syntax object.
- * TODO: Find a more dynamic way to return a mapped class object...
- * @author Thomas
- * @author Brandon
 */
 public class JsonReader {
-    //Holds the input file
     private File input;
 
     /**
