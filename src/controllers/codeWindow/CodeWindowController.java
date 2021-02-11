@@ -4,6 +4,7 @@ import controllers.ControllerSettings;
 import controllers.TextLineController;
 import gui.Cursor;
 import gui.GUIFilledBox;
+import gui.buttons.VerticalScrollBar;
 import gui.texts.*;
 import gui.fontMeshCreator.FontType;
 import gui.textBoxes.CodeWindow;
@@ -40,6 +41,8 @@ public class CodeWindowController {
 
     private int numberOfLines = 0;
 
+    private boolean scrolling = false;
+    private VerticalScrollBar verticalScrollBar;
 
     public void changeCodewindowBGcolor3f(Vector3f newColor) {
         codeWindow.setBackgroundColor(newColor);
@@ -111,11 +114,22 @@ public class CodeWindowController {
         cursorController = new CursorController(new Cursor(), this);
         updateAspectRatio(new Vector2f(GeneralSettings.ASPECT_RATIO.m00, GeneralSettings.ASPECT_RATIO.m11), headerHeight);
 
+        verticalScrollBar = new VerticalScrollBar(new Vector2f(-0.02f, -.92f), 0.02f, size.y-0.08f, size.y, maxVerticalPosition + size.y, 0);
+
     }
 
     public boolean mouseLeftClick(){
         if(inBounds){
+            if(mousePosition.x > verticalScrollBar.getFilledBox().getPosition().x && mousePosition.y > verticalScrollBar.getFilledBox().getPosition().y
+                    && mousePosition.x < verticalScrollBar.getFilledBox().getPosition().x + verticalScrollBar.getFilledBox().getSize().x
+                    && mousePosition.y < verticalScrollBar.getFilledBox().getPosition().y + verticalScrollBar.getFilledBox().getSize().y){
+                scrolling = true;
+            }
+            System.out.println(mousePosition);
             cursorController.moveCursor(mousePosition, this);
+
+
+
             return true;
         }else{
             cursorController.setVisible(false);
@@ -126,6 +140,7 @@ public class CodeWindowController {
     public void mouseLeftRelease(){
         if(inBounds){
         }
+        scrolling = false;
     }
 
     public void keyPress(int key){
@@ -145,6 +160,8 @@ public class CodeWindowController {
     }
 
     public void scroll(float scrollChange){
+        System.out.println(contentsVerticalPosition);
+        System.out.println(maxVerticalPosition);
         if(maxVerticalPosition > codeWindow.getSize().y) {
             scrollChange = -scrollChange;
             scrollChange *= aspectRatio.y;
@@ -153,12 +170,15 @@ public class CodeWindowController {
                 if (newPosition < 0) {
                     changeContentsVerticalPosition(-contentsVerticalPosition);
                     cursorController.scroll(-contentsVerticalPosition);
+                    verticalScrollBar.changePosition(-contentsVerticalPosition);
                 } else if (newPosition > maxVerticalPosition) {
                     changeContentsVerticalPosition(maxVerticalPosition - contentsVerticalPosition);
                     cursorController.scroll(maxVerticalPosition - contentsVerticalPosition);
+                    verticalScrollBar.changePosition(maxVerticalPosition-contentsVerticalPosition);
                 } else {
                     changeContentsVerticalPosition(scrollChange);
                     cursorController.scroll(scrollChange);
+                    verticalScrollBar.changePosition(scrollChange);
                 }
             }
         }
@@ -171,6 +191,9 @@ public class CodeWindowController {
     public void moveMouse(Vector2f mousePosition){
         if(mousePosition.x > codeWindow.getPosition().x && mousePosition.y > codeWindow.getPosition().y && mousePosition.x < codeWindow.getPosition().x + codeWindow.getSize().x && mousePosition.y < codeWindow.getPosition().y + codeWindow.getSize().y){
             inBounds = true;
+            if(this.mousePosition != null && scrolling) {
+                scroll((mousePosition.y - this.mousePosition.y) / verticalScrollBar.getFactor());
+            }
             this.mousePosition = mousePosition;
         }else{
             inBounds = false;
@@ -286,9 +309,17 @@ public class CodeWindowController {
         }
         if(number != newNumber){
             EditableFormattedTextLine line = textLineController.getCodeWindowTextLines().get(textLineController.getCodeWindowTextLines().size()-1);
-            line.setLineNumberOffset(line.getLength()/2+padding);
+            line.setLineNumberOffset((float)line.getWords()[0].getLength()+padding);
+            codeWindow.getTextNumberFilledBox().getSize().x = EditableFormattedTextLine.getLineNumberOffset()*4;
+            codeWindow.getGuiFilledBox().getPosition().x = EditableFormattedTextLine.getLineNumberOffset()*4;
         }
+        System.out.println(maxVerticalPosition);
         maxVerticalPosition += change * GeneralSettings.FONT_SIZE * GeneralSettings.FONT_SCALING_FACTOR;
+        verticalScrollBar.changeContentsHeight(change*GeneralSettings.FONT_SIZE * GeneralSettings.FONT_SCALING_FACTOR);
         numberOfLines = newNumberOfLines;
+    }
+
+    public VerticalScrollBar getVerticalScrollBar() {
+        return verticalScrollBar;
     }
 }

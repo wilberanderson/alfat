@@ -98,14 +98,14 @@ public class TextLineController {
         EditableFormattedTextLine originalLine;
         EditableFormattedTextLine newLine;
         if(characterIndex > 0) {
-             originalLine = parser.getFormattedLine(line.getTextString().substring(0, characterIndex - 1));
-             newLine = parser.getFormattedLine(line.getTextString().substring(characterIndex - 1));
+             originalLine = parser.getFormattedLine(line.getTextString().substring(0, characterIndex));
+             newLine = parser.getFormattedLine(line.getTextString().substring(characterIndex));
         }else{
             originalLine = parser.getFormattedLine("");
             newLine = parser.getFormattedLine(line.getTextString());
         }
         originalLine.setPosition(new Vector2f(line.getPosition()));
-        newLine.setPosition(line.getPosition());
+        newLine.setPosition(new Vector2f(line.getPosition()));
 
         originalLine.getWords()[0] = line.getWords()[0];
         EditableFormattedTextLine lastLine = newLine;
@@ -113,10 +113,10 @@ public class TextLineController {
             lastLine.getWords()[0] = codeWindowFormattedTextLines.get(i).getWords()[0];
             lastLine = codeWindowFormattedTextLines.get(i);
         }
-        controller.changeNumberOfLines(1);
         codeWindowFormattedTextLines.remove(line);
         addCodeWindowTextLine(originalLine, index);
         addCodeWindowTextLine(newLine, index + 1);
+        controller.changeNumberOfLines(1);
         float change = GeneralSettings.FONT_SIZE*GeneralSettings.FONT_SCALING_FACTOR;
         for(int i = index + 1; i < codeWindowFormattedTextLines.size(); i++){
             EditableFormattedTextLine thisLine = codeWindowFormattedTextLines.get(i);
