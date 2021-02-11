@@ -58,4 +58,19 @@ public class VerticalScrollBar {
         filledBox.getSize().y = fullRange*factor;
         filledBox.getPosition().y -= filledBox.getSize().y;
     }
+
+    public void goSplitScreen(){
+        position.x = 0f-width;
+        filledBox.getPosition().x = 0f-width;
+    }
+
+    public void minimize(){
+        position.x = -2f;
+        filledBox.getPosition().x = -2f;
+    }
+
+    public void maximize(){
+        position.x = 1f-width;
+        filledBox.getPosition().x = 1f-width;
+    }
 }
