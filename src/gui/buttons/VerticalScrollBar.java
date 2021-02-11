@@ -55,7 +55,7 @@ public class VerticalScrollBar {
             factor = 1;
         }
         filledBox.getPosition().y += filledBox.getSize().y;
-        filledBox.getSize().y = windowHeight*factor;
+        filledBox.getSize().y = fullRange*factor;
         filledBox.getPosition().y -= filledBox.getSize().y;
     }
 }

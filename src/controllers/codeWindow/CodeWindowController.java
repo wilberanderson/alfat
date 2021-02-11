@@ -160,6 +160,8 @@ public class CodeWindowController {
     }
 
     public void scroll(float scrollChange){
+        System.out.println(contentsVerticalPosition);
+        System.out.println(maxVerticalPosition);
         if(maxVerticalPosition > codeWindow.getSize().y) {
             scrollChange = -scrollChange;
             scrollChange *= aspectRatio.y;
@@ -307,8 +309,11 @@ public class CodeWindowController {
         }
         if(number != newNumber){
             EditableFormattedTextLine line = textLineController.getCodeWindowTextLines().get(textLineController.getCodeWindowTextLines().size()-1);
-            line.setLineNumberOffset(line.getLength()/2+padding);
+            line.setLineNumberOffset((float)line.getWords()[0].getLength()+padding);
+            codeWindow.getTextNumberFilledBox().getSize().x = EditableFormattedTextLine.getLineNumberOffset()*4;
+            codeWindow.getGuiFilledBox().getPosition().x = EditableFormattedTextLine.getLineNumberOffset()*4;
         }
+        System.out.println(maxVerticalPosition);
         maxVerticalPosition += change * GeneralSettings.FONT_SIZE * GeneralSettings.FONT_SCALING_FACTOR;
         verticalScrollBar.changeContentsHeight(change*GeneralSettings.FONT_SIZE * GeneralSettings.FONT_SCALING_FACTOR);
         numberOfLines = newNumberOfLines;
