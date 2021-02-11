@@ -368,13 +368,6 @@ public class Header {
             @Override
             public void onPress() {
                 PopupWindow popupWindow = new PopupWindow("Popup test", "This is a popup test", "cancel", "continue");
-//                GUIWindow guiWindow = new GUIWindow(200, 100);
-//                guiWindow.title("Popup test");
-//                guiWindow.setSize(new Vector2f(0.5f, 0.25f));
-//                guiWindow.setDeleteOnLostFocus(false);
-//                guiWindow.setColor(0, 0xFF, 0);
-//                guiWindow.addElement(new GUIElement(new GUIFilledBox(new Vector2f(-1, -1), new Vector2f(1.5f, 1.5f), new Vector3f(1, 0, 1))));
-//                GUIWindowController.add(guiWindow);
             }
         };
         testMenuButtonList.add(button);

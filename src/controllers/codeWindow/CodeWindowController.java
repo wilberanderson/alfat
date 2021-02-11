@@ -92,7 +92,7 @@ public class CodeWindowController {
             lineNumber++;
         }
         if(newLines.size() > 0){
-            newLines.get(0).setLineNumberOffset(longestLineNumber/2 + padding);
+            newLines.get(0).setLineNumberOffset(longestLineNumber + padding);
             for(EditableFormattedTextLine textLine : newLines){
                 textLineController.addCodeWindowTextLine(textLine, -1);
             }
@@ -198,7 +198,7 @@ public class CodeWindowController {
         startingHeight = codeWindow.getSize().y - 1;
         startingHeight /= aspectRatio.y;
         for(EditableFormattedTextLine line:textLineController.getCodeWindowTextLines()){
-            line.setPosition(new Vector2f((codeWindow.getPosition().x+padding*8)/aspectRatio.x, startingHeight), true);//+contentsVerticalPosition));
+            line.setPosition(new Vector2f((codeWindow.getPosition().x+padding*8 - 0.02f)/aspectRatio.x, startingHeight), true);//+contentsVerticalPosition));
             startingHeight -= lineHeight;
         }
         this.aspectRatio = aspectRatio;
