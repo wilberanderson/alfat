@@ -43,6 +43,7 @@ public class CodeWindowController {
 
     private boolean scrolling = false;
     private VerticalScrollBar verticalScrollBar;
+    private boolean selected = false;
 
     public void changeCodewindowBGcolor3f(Vector3f newColor) {
         codeWindow.setBackgroundColor(newColor);
@@ -95,7 +96,7 @@ public class CodeWindowController {
             lineNumber++;
         }
         if(newLines.size() > 0){
-            newLines.get(0).setLineNumberOffset(longestLineNumber + padding);
+            newLines.get(0).setLineNumberOffset(longestLineNumber/2 + padding);
             for(EditableFormattedTextLine textLine : newLines){
                 textLineController.addCodeWindowTextLine(textLine, -1);
             }
@@ -128,11 +129,12 @@ public class CodeWindowController {
             System.out.println(mousePosition);
             cursorController.moveCursor(mousePosition, this);
 
-
+            selected = true;
 
             return true;
         }else{
             cursorController.setVisible(false);
+            selected = false;
             return false;
         }
     }
@@ -141,6 +143,9 @@ public class CodeWindowController {
         if(inBounds){
         }
         scrolling = false;
+        selected = false;
+        if(!inBounds){
+        }
     }
 
     public void keyPress(int key){
@@ -198,6 +203,9 @@ public class CodeWindowController {
         }else{
             inBounds = false;
         }
+        if(!inBounds && scrolling){
+            selected = true;
+        }
     }
 
     public void updateAspectRatio(Vector2f aspectRatio, float headerHeight){
@@ -222,6 +230,7 @@ public class CodeWindowController {
         startingHeight /= aspectRatio.y;
         for(EditableFormattedTextLine line:textLineController.getCodeWindowTextLines()){
             line.setPosition(new Vector2f((codeWindow.getPosition().x+padding*8 - 0.02f)/aspectRatio.x, startingHeight), true);//+contentsVerticalPosition));
+            line.changeContentsHorizontalPosition(EditableFormattedTextLine.getLineNumberOffset());
             startingHeight -= lineHeight;
         }
         this.aspectRatio = aspectRatio;
@@ -312,8 +321,9 @@ public class CodeWindowController {
             line.setLineNumberOffset((float)line.getWords()[0].getLength()+padding);
             codeWindow.getTextNumberFilledBox().getSize().x = EditableFormattedTextLine.getLineNumberOffset()*4;
             codeWindow.getGuiFilledBox().getPosition().x = EditableFormattedTextLine.getLineNumberOffset()*4;
+            changeContentsHorizontalPosition(-EditableFormattedTextLine.getLineNumberOffset()*4);
+            changeContentsHorizontalPosition(EditableFormattedTextLine.getLineNumberOffset()*2);
         }
-        System.out.println(maxVerticalPosition);
         maxVerticalPosition += change * GeneralSettings.FONT_SIZE * GeneralSettings.FONT_SCALING_FACTOR;
         verticalScrollBar.changeContentsHeight(change*GeneralSettings.FONT_SIZE * GeneralSettings.FONT_SCALING_FACTOR);
         numberOfLines = newNumberOfLines;
@@ -321,5 +331,9 @@ public class CodeWindowController {
 
     public VerticalScrollBar getVerticalScrollBar() {
         return verticalScrollBar;
+    }
+
+    public boolean isSelected() {
+        return selected;
     }
 }
