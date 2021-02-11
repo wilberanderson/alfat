@@ -209,7 +209,7 @@ public class CursorController {
         if(currentGUIText != null) {
             //If the character is a newline then a new line should be created and the character and line index's should be updated as appropriate
             if (c == '\n') {
-                currentGUIText = codeWindow.getTextLineController().split(currentGUIText, characterIndex, codeWindow);
+                currentGUIText = codeWindow.getTextLineController().split(currentGUIText, characterIndex+1, codeWindow);
                 characterIndex = 0;
                 lineIndex++;
             }
