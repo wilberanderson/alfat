@@ -7,6 +7,7 @@ import gui.texts.Text;
 import gui.fontMeshCreator.FontType;
 import gui.textBoxes.CodeWindow;
 import gui.texts.TextWord;
+import gui.windows.GUIElement;
 import main.GeneralSettings;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
@@ -55,7 +56,19 @@ public class FontRenderer {
 			}
 		}
 		endRendering();
+	}
 
+	public void renderGUIElements(List<GUIElement> elementList){
+		prepare();
+		shader.aspectRatio.loadMatrix(GeneralSettings.IDENTITY2);
+		for(GUIElement element : elementList){
+			if(element.getGuiText() != null){
+				GL13.glActiveTexture(GL13.GL_TEXTURE0);
+				GL11.glBindTexture(GL11.GL_TEXTURE_2D, element.getGuiText().getFont().getTextureAtlas());
+				renderText(element.getGuiText(), null, null, false);
+			}
+		}
+		endRendering();
 	}
 
 	/**

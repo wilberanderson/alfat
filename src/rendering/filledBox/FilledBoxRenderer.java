@@ -13,6 +13,7 @@ import gui.textBoxes.FlowchartTextBox;
 import gui.textBoxes.TextBox;
 import gui.windows.GUIElement;
 import loaders.Loader;
+import main.EngineTester;
 import main.GeneralSettings;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
@@ -183,9 +184,12 @@ public class FilledBoxRenderer {
         //For each TextButton there is a filled box behind it
         for (Button button : ButtonController.getButtons()) {
             if (button instanceof TextButton) {
-                //Render the buttons filled box
-                shader.color.loadVec3(((TextButton) button).getGuiFilledBox().getColor());
-                renderFilledBox(((TextButton) button).getGuiFilledBox());
+                //This should only render filled boxes which are part of the main window
+                if(((TextButton) button).getWindow() == EngineTester.getWindow()) {
+                    //Render the buttons filled box
+                    shader.color.loadVec3(((TextButton) button).getGuiFilledBox().getColor());
+                    renderFilledBox(((TextButton) button).getGuiFilledBox());
+                }
             }
         }
 

@@ -5,6 +5,7 @@ import controllers.flowchartWindow.FlowchartTextBoxController;
 import controllers.flowchartWindow.FlowchartWindowController;
 import controllers.gui.ButtonController;
 import controllers.gui.GUIController;
+import controllers.gui.GUIWindowController;
 import gui.Header;
 import gui.UserPreferences;
 import gui.buttons.HeaderMenu;
@@ -156,40 +157,47 @@ public class ApplicationController {
      * @param button the GLFW mouse button representation of which mouse button was pressed
      * @param action the GLFW action of the button press, either GLFW_PRESS or GLFW_RELEASE
      */
-    public void click(int button, int action){
+    public void click(long window, int button, int action){
         org.lwjgl.glfw.GLFW.glfwMakeContextCurrent(EngineTester.getWindow());
         if(button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
             LEFT_CLICK = true;
             LEFT_MOUSE_HELD = true;
 
-            if(codeWindowController != null) {
-                //Process the mouse click in code window
-                if(codeWindowController.mouseLeftClick()){
-                    activeWindow = ControllerSettings.CODE_WINDOW;
-                }else{
-                    activeWindow = ControllerSettings.FLOWCHART_WINDOW;
+
+            if(window == EngineTester.getWindow()) {
+                if (codeWindowController != null) {
+                    //Process the mouse click in code window
+                    if (codeWindowController.mouseLeftClick()) {
+                        activeWindow = ControllerSettings.CODE_WINDOW;
+                    } else {
+                        activeWindow = ControllerSettings.FLOWCHART_WINDOW;
+                    }
                 }
             }
         }else if(button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE){
             LEFT_CLICK = false;
             LEFT_MOUSE_HELD = false;
 
-            if(codeWindowController != null) {
-                //Process the mouse release in code window
-                codeWindowController.mouseLeftRelease();
+            if(window == EngineTester.getWindow()) {
+                if (codeWindowController != null) {
+                    //Process the mouse release in code window
+                    codeWindowController.mouseLeftRelease();
+                }
+                if(flowchartWindowController != null){
+                    flowchartWindowController.click(button, action);
+                }
             }
 
-            ButtonController.click(new Vector2f((float)MOUSE_X, (float)MOUSE_Y));
-
-            if(flowchartWindowController != null){
-                flowchartWindowController.click(button, action);
-            }
+            ButtonController.click(window, new Vector2f((float)MOUSE_X, (float)MOUSE_Y));
 
 
         }else if(button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS) {
             RIGHT_CLICK = true;
         }else if(button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_RELEASE) {
             RIGHT_CLICK = false;
+        }
+        if(window != EngineTester.getWindow()) {
+            GUIWindowController.click(window, button, action);
         }
     }
 
@@ -198,7 +206,7 @@ public class ApplicationController {
      * @param xPosition the mouses new x position in pixels
      * @param yPosition the mouses new y position in pixels
      */
-    public void moveMouse(double xPosition, double yPosition) {
+    public void moveMouse(long window, double xPosition, double yPosition) {
         //Save the old mouse position for processing position changes
         previousMouseX = MOUSE_X;
         previousMouseY = MOUSE_Y;
@@ -212,7 +220,7 @@ public class ApplicationController {
             codeWindowController.moveMouse(new Vector2f((float) MOUSE_X, (float) MOUSE_Y));
         }
 
-        ButtonController.hover(new Vector2f((float) MOUSE_X, (float) MOUSE_Y));
+        ButtonController.hover(window, new Vector2f((float) MOUSE_X, (float) MOUSE_Y));
         if (flowchartWindowController != null){
             if (LEFT_MOUSE_HELD) {
                 float xChange = (float) (MOUSE_X - previousMouseX);

@@ -2,6 +2,7 @@ package gui.windows;
 
 import gui.GUIFilledBox;
 import gui.texts.GUIText;
+import rendering.text.TextMaster;
 
 public class GUIElement {
     private GUIFilledBox filledBox;
@@ -18,11 +19,13 @@ public class GUIElement {
 
     public GUIElement(GUIText guiText){
         this.guiText = guiText;
+        TextMaster.removeGuiText(guiText);
     }
 
     public GUIElement(GUIFilledBox filledBox, GUIText guiText){
         this.filledBox = filledBox;
         this.guiText = guiText;
+        TextMaster.removeGuiText(guiText);
     }
 
     public GUIFilledBox getFilledBox() {

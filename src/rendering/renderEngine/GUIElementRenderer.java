@@ -53,6 +53,9 @@ public class GUIElementRenderer {
         //Render the filled boxes.
         filledBoxRenderer.renderGUIElements(elementList);
 
+        //Render the texts
+        fontRenderer.renderGUIElements(elementList);
+
         //Swap the color buffers to update the screen
         GLFW.glfwSwapBuffers(window);
     }

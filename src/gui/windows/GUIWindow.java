@@ -1,29 +1,34 @@
 package gui.windows;
 
 
+import controllers.gui.ButtonController;
 import controllers.gui.GUIWindowController;
+import gui.fontMeshCreator.FontType;
+import loaders.Loader;
 import main.GeneralSettings;
-import org.lwjgl.glfw.GLFW;
-import org.lwjgl.glfw.GLFWErrorCallback;
-import org.lwjgl.glfw.GLFWWindowCloseCallback;
-import org.lwjgl.glfw.GLFWWindowFocusCallback;
+import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.system.MemoryUtil;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 import rendering.renderEngine.GUIElementRenderer;
+import utils.MyFile;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
+import static org.lwjgl.glfw.GLFW.GLFW_RELEASE;
 
 public class GUIWindow {
 
     long window;
 
     private String title = "";
-    private WindowDecorator windowDecorator = null;
-    private boolean deleteOnLostFocus = false;
+    private boolean deleteOnLostFocus = true;
     private GUIElementRenderer renderer;
+    protected FontType fontType;
+    Vector2f mousePosition = new Vector2f(-2, -2);
 
     //TODO: Switch to layouts containing elements
     List<GUIElement> elementList = new ArrayList<>();
@@ -46,7 +51,7 @@ public class GUIWindow {
         //        GLFW.glfwWindowHint(GLFW.)
 
         // Create the window
-        window = GLFW.glfwCreateWindow(200, 100, "ALFAT", MemoryUtil.NULL, MemoryUtil.NULL);
+        window = GLFW.glfwCreateWindow(width, height, "ALFAT", MemoryUtil.NULL, MemoryUtil.NULL);
         GLFW.glfwSetWindowTitle(window, "");
 
         // Make the OpenGL context current
@@ -67,6 +72,7 @@ public class GUIWindow {
             @Override
             public void invoke(long window, boolean focused) {
                 if(focused == false && deleteOnLostFocus == true){
+                    renderer.cleanUp();
                     GUIWindowController.remove(guiWindow);
                 }
             }
@@ -82,8 +88,37 @@ public class GUIWindow {
             }
         });
 
+        GLFWCursorPosCallback cursorPosCallback;
+        GLFW.glfwSetCursorPosCallback(window, cursorPosCallback = new GLFWCursorPosCallback() {
+            @Override
+            public void invoke(long window, double xpos, double ypos) {
+                int[] width = new int[1];
+                int[] height = new int[1];
+                GLFW.glfwGetWindowSize(window, width, height);
+                mousePosition.x = (float)xpos / width[0]*2-1;
+                mousePosition.y = 1 - (float)ypos / height[0]*2;
+                ButtonController.hover(window, mousePosition);
+            }
+        });
+
+        GLFWMouseButtonCallback mouseButtonCallback;
+        GLFW.glfwSetMouseButtonCallback(window, mouseButtonCallback = new GLFWMouseButtonCallback() {
+            @Override
+            public void invoke(long window, int button, int action, int mods) {
+                if(button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE){
+                    ButtonController.click(window, mousePosition);
+                }
+            }
+        });
+
         //Initialize the renderer
         renderer = new GUIElementRenderer();
+
+        //Add this window to the window controller
+        GUIWindowController.add(this);
+
+        //Initialize the font type
+        fontType = new FontType(Loader.loadTexture(new MyFile(GeneralSettings.DEFAULT_FONT_LOCATION + ".png")), new MyFile(GeneralSettings.DEFAULT_FONT_LOCATION + ".fnt"));
     }
 
     public void title(String title){
@@ -138,5 +173,13 @@ public class GUIWindow {
 
     public void removeElement(GUIElement element){
         elementList.remove(element);
+    }
+
+    public void moveMouse(){
+
+    }
+
+    public void click(int button, int action){
+
     }
 }

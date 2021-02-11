@@ -1,5 +1,6 @@
 package controllers;
 
+import main.EngineTester;
 import org.lwjgl.glfw.*;
 
 import static org.lwjgl.glfw.GLFW.*;
@@ -40,14 +41,14 @@ public class GLFWEventController {
         glfwSetMouseButtonCallback(window, mouseButtonCallback = new GLFWMouseButtonCallback() {
             @Override
             public void invoke(long window, int button, int action, int mods) {
-                GLFWEventController.controller.click(button, action);
+                GLFWEventController.controller.click(window, button, action);
             }
         });
 
         glfwSetCursorPosCallback(window, cursorPosCallback = new GLFWCursorPosCallback() {
             @Override
             public void invoke(long window, double xpos, double ypos) {
-                GLFWEventController.controller.moveMouse(xpos, ypos);
+                GLFWEventController.controller.moveMouse(window, xpos, ypos);
             }
         });
 
@@ -61,7 +62,7 @@ public class GLFWEventController {
         glfwSetFramebufferSizeCallback(window, framebufferSizeCallback = new GLFWFramebufferSizeCallback() {
             @Override
             public void invoke(long window, int width, int height) {
-                if(width > 0 && height > 0) {
+                if (width > 0 && height > 0) {
                     GLFWEventController.controller.setFrameBufferSize(width, height);
                 }
             }

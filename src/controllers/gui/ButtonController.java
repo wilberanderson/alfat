@@ -26,25 +26,27 @@ public class ButtonController {
         buttons.remove(b);
     }
 
-    public static void click(Vector2f position){
+    public static void click(long window, Vector2f position){
 
         boolean buttonPressed = false;
         List<HeaderMenu> toClose = new ArrayList<>();
 
         for(int i = buttons.size()-1; i >= 0; i--){
             Button b = buttons.get(i);
-            if(position.x > b.getPosition().x && position.y > b.getPosition().y && position.x < b.getPosition().x + b.getSize().x && position.y < b.getPosition().y + b.getSize().y){
-                if (b instanceof HeaderMenu){
-                    if(openMenu != b && openMenu != null){
+            if (position.x > b.getPosition().x && position.y > b.getPosition().y && position.x < b.getPosition().x + b.getSize().x && position.y < b.getPosition().y + b.getSize().y) {
+                if (b instanceof HeaderMenu) {
+                    if (openMenu != b && openMenu != null) {
                         toClose.add(openMenu);
                     }
                     openMenu = (HeaderMenu) b;
-                } else {
+                } else if(openMenu != null){
                     toClose.add(openMenu);
                     openMenu = null;
                 }
-                b.onPress();
-                buttonPressed = true;
+                if(b.getWindow() == window) {
+                    b.onPress();
+                    buttonPressed = true;
+                }
                 break;
             }
         }
@@ -62,17 +64,19 @@ public class ButtonController {
         }
     }
 
-    public static void hover(Vector2f position){
+    public static void hover(long window, Vector2f position){
         for(int i = buttons.size()-1; i >= 0; i--){
             Button b = buttons.get(i);
-            if(b instanceof HighlightableButton) {
-                if (position.x > b.getPosition().x && position.y > b.getPosition().y && position.x < b.getPosition().x + b.getSize().x && position.y < b.getPosition().y + b.getSize().y) {
-                    if (!((HighlightableButton) b).isHighlighted()) {
-                        ((HighlightableButton) b).highlight();
-                    }
-                } else {
-                    if (((HighlightableButton) b).isHighlighted()){
-                        ((HighlightableButton) b).unhighlight();
+            if(b.getWindow() == window) {
+                if (b instanceof HighlightableButton) {
+                    if (position.x > b.getPosition().x && position.y > b.getPosition().y && position.x < b.getPosition().x + b.getSize().x && position.y < b.getPosition().y + b.getSize().y) {
+                        if (!((HighlightableButton) b).isHighlighted()) {
+                            ((HighlightableButton) b).highlight();
+                        }
+                    } else {
+                        if (((HighlightableButton) b).isHighlighted()) {
+                            ((HighlightableButton) b).unhighlight();
+                        }
                     }
                 }
             }
