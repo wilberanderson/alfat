@@ -27,6 +27,10 @@ public class Parser implements CodeReader {
     HashMap<String, Integer> labelMap = new HashMap<>(); // map of labels -> line numbers
     List<CodeLine> lines = new ArrayList<>();
 
+
+    JsonReader jr = new JsonReader(new File("CodeSyntax/LC3-New.json"));
+    GenericSyntax syn = jr.mapJsonToGenericSyntax();
+
     public Parser(String infile, boolean verbose) {
         this.infile = infile;
         this.verbose = verbose;
@@ -34,20 +38,8 @@ public class Parser implements CodeReader {
 
     public Parser(){
         //default constructor, only use for helper functions.
-        this.verbose = true;
+        this.verbose = false;
     }
-
-    //TODO: change from hardcoded to dynamically loaded from JSON
-    JsonReader jr = new JsonReader(new File("CodeSyntax/LC3-New.json"));
-    //LC3Syntax syn = jr.mapJsonLC3Syntax();
-    //CodeSyntax syn = jr.mapJsonToSyntax();
-    GenericSyntax syn = jr.mapJsonToGenericSyntax();
-    //String[] commands = syn.getCommands();
-    //String[] jumps = syn.getJumps();
-    //String[] registerNames = syn.getRegisterNames();
-    String commands = syn.getCommands();
-    String jumps = syn.getKeywordPatterns().getControl();
-    String registerNames = syn.getKeywordPatterns().getRegister();
 
     /**Read an input file. Parse the input file line by line, and store them in the arrayList of CodeLine objects.
      *
@@ -55,9 +47,6 @@ public class Parser implements CodeReader {
      */
     @Override
     public void ReadFile(String infile) {
-
-
-
         //prepare to read file:
         this.infile = infile;
         File file = new File(infile);
@@ -93,19 +82,16 @@ public class Parser implements CodeReader {
                     if (verbose) System.out.print("[" + fragment + "]");
 
                     //grab each command in the line, if they exist:
-                    //if (Arrays.asList(commands).contains(fragment.toUpperCase())) {
-                    if (fragment.matches(commands)) {
-                        //comm = Arrays.stream(commands).filter(fragment.toUpperCase()::equals).findAny();
+                    if (fragment.matches(syn.getCommands())) {
                         comm = Optional.of(fragment);
                         formattedString.add(new CommandWord(comm.get(), new Vector2f(0f, 0)));
                         first = false;
-                    //} else if (Arrays.asList(jumps).contains(fragment.toUpperCase()) || fragment.matches("^BR[nzp]{0,3}$")) { //Control
-                    } else if (fragment.matches(jumps)) { //Control
+                    } else if (fragment.matches(syn.getKeywordPatterns().getControl())) { //Control
                         comm = Optional.of(fragment);
                         formattedString.add(new CommandWord(comm.get(), new Vector2f(0f, 0)));
                         jump = true;
                         first = false;
-                    } else if (fragment.matches(registerNames)) {  //register
+                    } else if (fragment.matches(syn.getKeywordPatterns().getRegister())) {  //register
                         if (fragment.contains(",")){
                             if (!registers.contains(fragment.substring(0, fragment.length() - 1))) {
                                 registers.add(fragment.substring(0, fragment.length() - 1));
@@ -213,17 +199,16 @@ public class Parser implements CodeReader {
             if (verbose) System.out.print("[" + fragment + "]");
 
             //grab each command in the line, if they exist:
-            //if (Arrays.asList(commands).contains(fragment.toUpperCase())) {
-            if (fragment.matches(commands)) {
+            if (fragment.matches(syn.getCommands())) {
                 comm = Optional.of(fragment);
                 formattedString.add(new CommandWord(comm.get(), new Vector2f(0f, 0)));
                 first = false;
-            } else if (fragment.matches(jumps)) {
+            } else if (fragment.matches(syn.getKeywordPatterns().getControl())) {
                 comm = Optional.of(fragment);
                 formattedString.add(new CommandWord(comm.get(), new Vector2f(0f, 0)));
                 jump = true;
                 first = false;
-            } else if (fragment.matches(registerNames)) {  //register
+            } else if (fragment.matches(syn.getKeywordPatterns().getRegister())) {  //register
 
                 if (fragment.contains(",")) {
                     if (!registers.contains(fragment.substring(0, fragment.length() - 1))) {

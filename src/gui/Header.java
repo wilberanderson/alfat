@@ -19,9 +19,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
-import parser.CodeSyntax;
 import parser.JsonReader;
-import parser.LC3Syntax;
 import parser.Parser;
 import rendering.renderEngine.MasterRenderer;
 
