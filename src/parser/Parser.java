@@ -389,6 +389,7 @@ public class Parser implements CodeReader {
         Vector2f location = new Vector2f(GeneralSettings.FLOWCHART_PAD_LEFT - 1, 0);
         List<FlowchartTextBox> textBoxes = new ArrayList<>();
         float max_right_width = -1000f;
+        float magic_number = -.1f;
         List<Vector2f> locations = new ArrayList<>();
         List<Vector2f> sizes = new ArrayList<>();
 
@@ -514,10 +515,14 @@ public class Parser implements CodeReader {
         GeneralSettings.IMAGE_SIZE = new Vector2f(Math.abs(x_bound) + 1f, Math.abs(y_bound) + 1f + GeneralSettings.FLOWCHART_PAD_TOP);
         Matrix3f translation = new Matrix3f();
         translation.setIdentity();
-        translation.m00 = 2 / GeneralSettings.IMAGE_SIZE.x;
-        translation.m11 = 2 / GeneralSettings.IMAGE_SIZE.y;
-        translation.m20 = -.2f;
-        translation.m21 = -(y_bound * translation.m11) - .875f;
+        magic_number = -.875f;
+        translation.m00 = 2 / GeneralSettings.IMAGE_SIZE.x;         // X scaling
+        translation.m11 = 2 / GeneralSettings.IMAGE_SIZE.y;         // Y scale
+        translation.m20 = 0f - GeneralSettings.FLOWCHART_PAD_LEFT;//-.2f;                                     // X translation
+        translation.m21 = - (y_bound * translation.m11) + magic_number; // Y translation
+        System.out.println(infile + ": " + translation.m00 + "," + translation.m11);
+        System.out.println("y_bound: " + y_bound);
+        System.out.println("m20 and m21" + ": " + translation.m20 + "," + translation.m21);
         GeneralSettings.IMAGE_TRANSLATION = translation;
         //Find line overlaps:
         for (FlowchartLine line1 : linesList) {

@@ -103,7 +103,7 @@ public class SettingsMenu extends Component {
 //        });
 
         //Set icon
-        root.setIconImage(Toolkit.getDefaultToolkit().getImage("src/res/icon/icon.png"));
+        root.setIconImage(Toolkit.getDefaultToolkit().getImage("src/res/icon/alfatlogo2.png"));
         root.setVisible(true);
     }
 

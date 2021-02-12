@@ -74,7 +74,7 @@ public class GeneralSettings {
 
 
 	//**************Icons*******************
-	public static final String ICON_LOCATION = "/res/icon/icon.png";                                            //Stores the file location of the icon which displays in the task bar and on the window
+	public static final String ICON_LOCATION = "/res/icon/alfatlogo2.png";                                            //Stores the file location of the icon which displays in the task bar and on the window
 	public static final int ICON_WIDTH = 512;                                                                   //The width of the icon in pixels
 	public static final int ICON_HEIGHT = ICON_WIDTH;                                                           //The height of the icon in pixels. The icon is currently set to be a square.
 
