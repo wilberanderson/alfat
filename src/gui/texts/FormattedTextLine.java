@@ -102,12 +102,14 @@ public class FormattedTextLine {
     }
 
 
-    public void changeContentsHorizontalPosition(float offset){
+    public void changeContentsHorizontalPosition(float offset, boolean adjustPosition){
         for(TextWord word : words){
             if(!(word instanceof LineNumberWord)){
                 word.setPosition(new Vector2f(word.getPosition().x+offset, word.getPosition().y));
             }
         }
-        position.x += offset;
+        if(adjustPosition) {
+            position.x += offset;
+        }
     }
 }

@@ -125,9 +125,6 @@ public class TextLineController {
         LineNumberWord newLineNumber = new LineNumberWord(Integer.toString(controller.getNumberOfLines()), new Vector2f(lastLine.getWords()[0].getPosition().x, lastLine.getPosition().y));
         lastLine.getWords()[0] = newLineNumber;
 
-        System.out.println("Offset" + EditableFormattedTextLine.getLineNumberOffset());
-        newLine.changeContentsHorizontalPosition(-EditableFormattedTextLine.getLineNumberOffset()*2);
-
         return newLine;
     }
 
