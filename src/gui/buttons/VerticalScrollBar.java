@@ -33,7 +33,6 @@ public class VerticalScrollBar {
     public void updateAspectRatio(float width, float windowHeight, float fullRange, float contentsHeight){
         position.x = position.x + this.width - width;
         position.y = -1 + windowHeight - fullRange;
-        System.out.println(position.y);
         filledBox.getSize().x = width;
         filledBox.getPosition().x = position.x;
         this.width = width;
@@ -45,8 +44,6 @@ public class VerticalScrollBar {
         }else{
             factor = 1;
         }
-        System.out.println(windowHeight);
-        System.out.println(contentsHeight);
         height = fullRange * factor;
         filledBox.getSize().y = height;
         filledBox.getPosition().y = position.y + fullRange - height;

@@ -126,8 +126,7 @@ public class CodeWindowController {
                     && mousePosition.y < verticalScrollBar.getFilledBox().getPosition().y + verticalScrollBar.getFilledBox().getSize().y){
                 scrolling = true;
             }
-            System.out.println(mousePosition);
-            cursorController.moveCursor(mousePosition, this);
+            cursorController.moveCursor(new Vector2f(mousePosition), this);
 
             selected = true;
 
@@ -192,10 +191,12 @@ public class CodeWindowController {
     }
 
     public void moveMouse(Vector2f mousePosition){
+
         if(this.mousePosition != null && scrolling) {
-            scroll(((mousePosition.y - this.mousePosition.y)/aspectRatio.y) / verticalScrollBar.getFactor());
+
+            scroll(((mousePosition.y - this.mousePosition.y)) / verticalScrollBar.getFactor());
         }
-        this.mousePosition = mousePosition;
+        this.mousePosition = new Vector2f(mousePosition);
         if(mousePosition.x > codeWindow.getPosition().x && mousePosition.y > codeWindow.getPosition().y && mousePosition.x < codeWindow.getPosition().x + codeWindow.getSize().x && mousePosition.y < codeWindow.getPosition().y + codeWindow.getSize().y){
             inBounds = true;
         }else{
@@ -210,13 +211,16 @@ public class CodeWindowController {
         float lineNumberWidth = codeWindow.getTextNumberFilledBox().getSize().x/this.aspectRatio.x*aspectRatio.x;
         float height = 2-headerHeight;
         float codeWindowWidth = codeWindow.getSize().x-lineNumberWidth;
+        maxVerticalPosition += codeWindow.getSize().y/this.aspectRatio.y;
         codeWindow.setSize(new Vector2f(codeWindow.getSize().x, height));
+        maxVerticalPosition -= codeWindow.getSize().y/aspectRatio.y;
+
         codeWindow.getTextNumberFilledBox().setSize(new Vector2f(lineNumberWidth, height));
         codeWindow.getGuiFilledBox().setPosition(new Vector2f(lineNumberWidth-1, -1));
         codeWindow.getGuiFilledBox().setSize(new Vector2f(codeWindow.getSize().x-lineNumberWidth, height));
         //changeLineNumberVerticalPosition(-contentsVerticalPosition - ((codeWindow.getSize().y-1)-codeWindow.aspectRatio.y));
         contentsVerticalPosition = 0;//contentsVerticalPosition/this.aspectRatio.y*aspectRatio.y;
-        maxVerticalPosition = maxVerticalPosition / aspectRatio.y;//*this.aspectRatio.y/aspectRatio.y;
+//        maxVerticalPosition = maxVerticalPosition / aspectRatio.y;//*this.aspectRatio.y/aspectRatio.y;
         //changeLineNumberVerticalPosition(contentsVerticalPosition+((codeWindow.getSize().y-1)-aspectRatio.y));
         float startingHeight = codeWindow.getSize().y - 1;
         startingHeight /= aspectRatio.y;
@@ -233,7 +237,11 @@ public class CodeWindowController {
             line.changeContentsHorizontalPosition(EditableFormattedTextLine.getLineNumberOffset(), true);
             startingHeight -= lineHeight;
         }
-        this.aspectRatio = aspectRatio;
+
+//        if(mousePosition != null) {
+//            mousePosition.y = mousePosition.y * this.aspectRatio.y / aspectRatio.y;
+//        }
+        this.aspectRatio = new Vector2f(aspectRatio);
 //        maxVerticalPosition = -startingHeight + codeWindow.getSize().y;
         verticalScrollBar.updateAspectRatio(0.02f*aspectRatio.x, codeWindow.getSize().y, codeWindow.getSize().y - 0.08f*aspectRatio.y, maxVerticalPosition + codeWindow.getSize().y);
 //        verticalScrollBar = new VerticalScrollBar(new Vector2f(-0.02f, -.92f), 0.02f, size.y-0.08f, size.y, maxVerticalPosition + size.y, 0);
