@@ -76,7 +76,7 @@ public class FlowchartTextBoxController {
         }
         if(lineNumberChanged){
             for(FormattedTextLine line: formattedTextLines){
-                line.changeContentsHorizontalPosition(longestLineNumber*2 - (float)formattedTextLines.get(0).getWords()[0].getLength()*2);
+                line.changeContentsHorizontalPosition(longestLineNumber*2 - (float)formattedTextLines.get(0).getWords()[0].getLength()*2, false);
             }
         }
 
