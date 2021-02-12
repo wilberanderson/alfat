@@ -149,8 +149,14 @@ public class FilledBoxRenderer {
             //If the text box is a flowchart text box render it's text boxes
             if (textBox instanceof FlowchartTextBox) {
                 //Render the text box behind the main text
+//                if(textBox.isHighlighted()){
+//                    shader.color.loadVec3(FlowchartTextBoxController.getHighlightedColor());
+//                }else{
+                    shader.color.loadVec3(FlowchartTextBoxController.getBackgroundColor());
+//                }
                 renderFilledBox(textBox.getGuiFilledBox());
                 //Render the text box behind the line numbers
+                shader.color.loadVec3(FlowchartTextBoxController.getTextNumberBackgroundColor());
                 renderFilledBox(textBox.getTextNumberFilledBox());
             } else {
                 //Something is wrong with setup, print an error message

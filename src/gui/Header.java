@@ -360,7 +360,16 @@ public class Header {
         button = new TextButton("Popup test"){
             @Override
             public void onPress() {
-                PopupWindow popupWindow = new PopupWindow("Popup test", "This is a popup test", "cancel", "continue");
+                PopupWindow popupWindow = new PopupWindow("Popup test", "Flowchart generation complete!",  "continue"){
+                    @Override
+                    public void onCancel(){
+                        System.out.println("Cancel overriden");
+                    }
+                    @Override
+                    public void onContinue(){
+
+                    }
+                };
             }
         };
         testMenuButtonList.add(button);

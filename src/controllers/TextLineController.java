@@ -124,8 +124,7 @@ public class TextLineController {
         }
         LineNumberWord newLineNumber = new LineNumberWord(Integer.toString(controller.getNumberOfLines()), new Vector2f(lastLine.getWords()[0].getPosition().x, lastLine.getPosition().y));
         lastLine.getWords()[0] = newLineNumber;
-        //TODO: Determine why this is needed
-        // lastLine.changeVerticalPosition(0.009f);
+
         return newLine;
     }
 
@@ -165,7 +164,7 @@ public class TextLineController {
     public void replaceCodeWindowTextLine(EditableFormattedTextLine line, int index){
         float offset;
         if(line.getWords().length > 1){
-            offset = line.getPosition().x + EditableFormattedTextLine.getLineNumberOffset()*2f - line.getWords()[1].getPosition().x;
+            offset = line.getPosition().x + EditableFormattedTextLine.getLineNumberOffset()*2 - line.getWords()[1].getPosition().x;
         }else{
             offset = 0;
         }

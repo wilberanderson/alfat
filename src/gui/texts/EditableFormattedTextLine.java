@@ -100,9 +100,11 @@ public class EditableFormattedTextLine extends FormattedTextLine{
     }
 
     public void setLineNumberOffset(float lineNumberOffset) {
+        System.out.println(EditableFormattedTextLine.lineNumberOffset);
+        System.out.println(lineNumberOffset);
         for(TextWord word : words){
             if(!(word instanceof LineNumberWord)){
-                word.getPosition().x = word.getPosition().x - EditableFormattedTextLine.lineNumberOffset + lineNumberOffset;
+                word.getPosition().x = word.getPosition().x + (lineNumberOffset - EditableFormattedTextLine.lineNumberOffset)*4;
             }
         }
         EditableFormattedTextLine.lineNumberOffset = lineNumberOffset;

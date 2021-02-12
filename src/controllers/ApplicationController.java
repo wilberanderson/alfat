@@ -45,6 +45,7 @@ public class ApplicationController {
     TextLineController textLineController = new TextLineController();
     int activeWindow = ControllerSettings.GUI_WINDOW;
 
+
     /**
      * Updates user preferences
      * */
@@ -179,12 +180,12 @@ public class ApplicationController {
             LEFT_MOUSE_HELD = false;
 
             if(window == EngineTester.getWindow()) {
+                if(flowchartWindowController != null && !codeWindowController.isSelected()){
+                    flowchartWindowController.click(button, action);
+                }
                 if (codeWindowController != null) {
                     //Process the mouse release in code window
                     codeWindowController.mouseLeftRelease();
-                }
-                if(flowchartWindowController != null){
-                    flowchartWindowController.click(button, action);
                 }
             }
 
@@ -222,7 +223,7 @@ public class ApplicationController {
 
         ButtonController.hover(window, new Vector2f((float) MOUSE_X, (float) MOUSE_Y));
         if (flowchartWindowController != null){
-            if (LEFT_MOUSE_HELD) {
+            if (LEFT_MOUSE_HELD && !codeWindowController.isSelected()) {
                 float xChange = (float) (MOUSE_X - previousMouseX);
                 float yChange = (float) (MOUSE_Y - previousMouseY);
                 flowchartWindowController.updateTranslation(new Vector2f((float) xChange * flowchartWindowController.getZoom(), (float) yChange * flowchartWindowController.getZoom()));

@@ -111,7 +111,7 @@ public class EngineTester {
 
         //********************************Change the icon***************************************
         try {
-            IconLoader.setIcons("/res/icon/icon.png", window,512);
+            IconLoader.setIcons("/res/icon/alfatlogo2.png", window,512);
         }catch(Exception e){
             e.printStackTrace();
         }

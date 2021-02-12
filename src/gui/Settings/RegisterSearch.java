@@ -64,7 +64,7 @@ public class RegisterSearch {
         dialog.getContentPane().add(mainPanel);
         dialog.setPreferredSize(new Dimension(GUI_WIDTH, GUI_HEIGHT));
         dialog.setLocationRelativeTo(null);
-        dialog.setIconImage(Toolkit.getDefaultToolkit().getImage("src/res/icon/icon.png"));
+        dialog.setIconImage(Toolkit.getDefaultToolkit().getImage("src/res/icon/alfatlogo2.png"));
         dialog.setResizable(false);
         dialog.pack();
         dialog.setVisible(true);
