@@ -29,6 +29,7 @@ public class Parser implements CodeReader {
 
 
     JsonReader jr = new JsonReader(new File("CodeSyntax/LC3-New.json"));
+    //JsonReader jr = new JsonReader(new File("CodeSyntax/x86-New.json"));
     GenericSyntax syn = jr.mapJsonToGenericSyntax();
 
     public Parser(String infile, boolean verbose) {
@@ -189,6 +190,8 @@ public class Parser implements CodeReader {
     }
 
     //TODO:Get comment symbol from json
+    //TODO: Account for edge case of char const '"' or '/' that is not withing a string.
+    //TODO: Account for case in parser logic that should highlight the string has a error word if it's wrong e.g. { "asdfasdf } not { "asdfasdf" }
     private String getStringFromLine(String line) {
         int start = 0;
         int end = 0;
