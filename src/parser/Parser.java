@@ -64,10 +64,24 @@ public class Parser implements CodeReader {
                 // replaces tabs with spaces
                 //line = line.replace("\t", "    ");
 
+
+                //Remove possible string form line
+                String stringFromLine = getStringFromLine(line);
+                line = line.replace(stringFromLine,"");
+
                 //take entire line before semicolon
                 int index = line.indexOf(syn.getKeywordPatterns().getComment());
                 if (index == -1) index = line.length();
                 String[] arrLine = line.substring(0, index).split(syn.getKeywordPatterns().getEmptySpace());
+
+
+                //Add comment back to arrLine
+                List temp = new ArrayList<String>(Arrays.asList(arrLine));
+                temp.add(stringFromLine);
+                arrLine = new String[temp.size()];
+                temp.toArray(arrLine);
+
+
 
                 //temp variables:
                 Optional<String> comm = Optional.empty();
@@ -174,6 +188,34 @@ public class Parser implements CodeReader {
         }
     }
 
+    //TODO:Get comment symbol from json
+    private String getStringFromLine(String line) {
+        int start = 0;
+        int end = 0;
+        boolean startFound = false;
+        boolean startOfComment = false;
+        for(int i =0; i < line.length(); i++) {
+            if(startFound == false && startOfComment == false && line.charAt(i) == ';') {
+                i = line.length();
+                continue;
+            }
+            if((line.charAt(i) == '\"' || line.charAt(i) == '\\') && !startFound) {
+                startFound = true;
+                start = i;
+                end = i;
+            }
+            if(startFound == true && (line.charAt(i) == ';')) {
+                startOfComment = true;
+                end = i;
+                i = line.length();
+            } else if (startOfComment == false && startFound == true) {
+                end = i+1;
+            }
+        }
+        return line.substring(start, end);
+    }
+
+
     /** getFormattedLine(String line)
      *
      * @param line The line to be parsed
@@ -184,10 +226,22 @@ public class Parser implements CodeReader {
         //parse line:
         line = line.replace("\t", "    ");
 
+        //Remove possible string form line
+        String stringFromLine = getStringFromLine(line);
+        line = line.replace(stringFromLine,"");
+
         //take entire line before semicolon
         int index = line.indexOf(syn.getKeywordPatterns().getComment());
         if (index == -1) index = line.length();
         String[] arrLine = line.substring(0, index).split(syn.getKeywordPatterns().getEmptySpace());
+
+        //Add comment back to arrLine
+        List temp = new ArrayList<String>(Arrays.asList(arrLine));
+        temp.add(stringFromLine);
+        arrLine = new String[temp.size()];
+        temp.toArray(arrLine);
+
+
 
         //temp variables:
         Optional<String> comm = Optional.empty();
