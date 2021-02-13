@@ -3,13 +3,10 @@ package gui;
 import controllers.ApplicationController;
 import controllers.codeWindow.CodeWindowController;
 import controllers.gui.ButtonController;
-import controllers.gui.GUIWindowController;
-import gui.Settings.RegisterSearch;
+import gui.Settings.ReturnString;
 import gui.Settings.SettingsMenu;
 import gui.buttons.HeaderMenu;
 import gui.buttons.TextButton;
-import gui.windows.GUIElement;
-import gui.windows.GUIWindow;
 import gui.windows.PopupWindow;
 import main.EngineTester;
 import main.GeneralSettings;
@@ -19,7 +16,6 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
-import parser.JsonReader;
 import parser.Parser;
 import rendering.renderEngine.MasterRenderer;
 
@@ -392,7 +388,7 @@ public class Header {
             @Override
             public void onPress() {
                 if(controller.getFlowchartWindowController() != null) {
-                    String args = RegisterSearch.search();
+                    String args = ReturnString.search("Search", "Cancel", "Run", "Register Search");
                     if (args != null){
                         GLFW.glfwSetWindowTitle(EngineTester.getWindow(), windowTitle + " [" + args + "]");
                         controller.getFlowchartWindowController().locateRegisters(args);

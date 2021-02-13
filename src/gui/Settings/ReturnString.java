@@ -7,7 +7,7 @@ import java.awt.*;
  * A gui popup dialog that allows for entering in text and returns text.
  * Once called the application will freeze until the popup is terminated.
  * */
-public class RegisterSearch {
+public class ReturnString {
 
     private static final int GUI_WIDTH = 300;
     private static final int GUI_HEIGHT = 150;
@@ -18,21 +18,21 @@ public class RegisterSearch {
      * Opens a JDialog to allow text to be entered and returns as a string.
      * If there is no text returned or the window is closed it will return null.
      * */
-    public static String search() {
+    public static String search(String lableText, String cancelText, String doneText, String popupText) {
         //Set up content
         JPanel mainPanel = new JPanel();
         JPanel containerPanel = new JPanel(new GridLayout(0, 1, 10, 10));
 
         //Set up text filed
-        JLabel messageLabel = new JLabel("Search");
+        JLabel messageLabel = new JLabel(lableText);
         JTextField inputTextField = new JTextField(15);
         JPanel inputTextFieldPanel = new JPanel(new FlowLayout());
         inputTextFieldPanel.add(messageLabel);
         inputTextFieldPanel.add(inputTextField);
 
         //Set up buttons
-        JButton cancel = new JButton("Cancel");
-        JButton run = new JButton("Run");
+        JButton cancel = new JButton(cancelText);
+        JButton run = new JButton(doneText);
         JPanel buttonContainerPanel = new JPanel(new FlowLayout());
         buttonContainerPanel.add(cancel);
         buttonContainerPanel.add(run);
@@ -60,7 +60,7 @@ public class RegisterSearch {
         JDialog dialog = new JDialog();
         dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         dialog.setModal(true);
-        dialog.setTitle("Register Search");
+        dialog.setTitle(popupText);
         dialog.getContentPane().add(mainPanel);
         dialog.setPreferredSize(new Dimension(GUI_WIDTH, GUI_HEIGHT));
         dialog.setLocationRelativeTo(null);
