@@ -52,27 +52,17 @@ public class Header {
         //Please set this to null if not file has been opened on launch
         GeneralSettings.FILE_PATH = null;
 
-        List<TextButton> testMenuButtonList = new ArrayList<>();
-        List<TextButton> analyticsMenuButtonList = new ArrayList<>();
-        List<TextButton> settingsMenuButtonList = new ArrayList<>();
+        //*****************************File buttons*****************
+        //Create the buttons
+        List<TextButton> fileMenuButtonList = new ArrayList<>();
 
-        //open file
         TextButton button = new TextButton("Open File") {
             @Override
             public void onPress() {
                 openFile();
             }
         };
-        testMenuButtonList.add(button);
-
-        //save file
-        button = new TextButton("Save As") {
-            @Override
-            public void onPress() {
-                saveAs();
-            }
-        };
-        testMenuButtonList.add(button);
+        fileMenuButtonList.add(button);
 
         button = new TextButton("Save") {
             @Override
@@ -81,7 +71,15 @@ public class Header {
 
             }
         };
-        testMenuButtonList.add(button);
+        fileMenuButtonList.add(button);
+
+        button = new TextButton("Save As") {
+            @Override
+            public void onPress() {
+                saveAs();
+            }
+        };
+        fileMenuButtonList.add(button);
 
         button = new TextButton("Save flowchart") {
             @Override
@@ -89,16 +87,31 @@ public class Header {
                 saveFlowchart();
             }
         };
-        testMenuButtonList.add(button);
+        fileMenuButtonList.add(button);
 
-        //generate from file
+        button = new TextButton("Settings Menu") {
+            @Override
+            public void onPress() {
+                settings();
+            }
+        };
+        fileMenuButtonList.add(button);
+
+        //Create the header menu
+        HeaderMenu fileButton = new HeaderMenu(new Vector2f(-1f, 1 - GeneralSettings.FONT_SIZE * GeneralSettings.FONT_SCALING_FACTOR - 2 * GeneralSettings.TEXT_BUTTON_PADDING), "File ", GeneralSettings.USERPREF.getMenuBtnBGColor3f(), GeneralSettings.HIGHLIGHT_COLOR, GeneralSettings.TEXT_COLOR, GeneralSettings.FONT, GeneralSettings.FONT_SIZE, GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE, fileMenuButtonList);
+        menuList.add(fileButton);
+
+        //*****************************Flowchart*************************
+        //Create the buttons
+        List<TextButton> flowchartButtonList = new ArrayList<>();
+
         button = new TextButton("Generate Flowchart") {
             @Override
             public void onPress() {
                 generate();
             }
         };
-        testMenuButtonList.add(button);
+        flowchartButtonList.add(button);
 
         button = new TextButton("Regenerate Flowchart From Editor") {
             @Override
@@ -106,7 +119,7 @@ public class Header {
                 regenerateFromEditor();
             }
         };
-        testMenuButtonList.add(button);
+        flowchartButtonList.add(button);
 
         button = new TextButton("Regenerate Flowchart From Source") {
             @Override
@@ -114,7 +127,15 @@ public class Header {
                 regenerateFromSource();
             }
         };
-        testMenuButtonList.add(button);
+        flowchartButtonList.add(button);
+
+        //Create the header menu
+        HeaderMenu flowchartButton = new HeaderMenu(new Vector2f(fileButton.getPosition().x + fileButton.getSize().x, 1 - GeneralSettings.FONT_SIZE * GeneralSettings.FONT_SCALING_FACTOR - 2 * GeneralSettings.TEXT_BUTTON_PADDING), "Flowchart ", GeneralSettings.USERPREF.getMenuBtnBGColor3f(), GeneralSettings.HIGHLIGHT_COLOR, GeneralSettings.TEXT_COLOR, GeneralSettings.FONT, GeneralSettings.FONT_SIZE, GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE, flowchartButtonList);
+        menuList.add(flowchartButton);
+
+        //*******************View***********************
+        //Create the buttons
+        List<TextButton> viewButtonList = new ArrayList<>();
 
         button = new TextButton("Text Editor View") {
             @Override
@@ -122,7 +143,7 @@ public class Header {
                 textEditorView();
             }
         };
-        testMenuButtonList.add(button);
+        viewButtonList.add(button);
 
         button = new TextButton("Flowchart View") {
             @Override
@@ -130,7 +151,7 @@ public class Header {
                 flowchartView();
             }
         };
-        testMenuButtonList.add(button);
+        viewButtonList.add(button);
 
         button = new TextButton("Splitscreen View") {
             @Override
@@ -138,7 +159,7 @@ public class Header {
                 splitScreenView();
             }
         };
-        testMenuButtonList.add(button);
+        viewButtonList.add(button);
 
         button = new TextButton("Reset zoom") {
             @Override
@@ -146,36 +167,16 @@ public class Header {
                 resetZoom();
             }
         };
-        testMenuButtonList.add(button);
+        viewButtonList.add(button);
 
-        button = new TextButton("Popup test"){
-            @Override
-            public void onPress() {
-                PopupWindow popupWindow = new PopupWindow("Popup test", "Flowchart generation complete!",  "continue"){
-                    @Override
-                    public void onCancel(){
-                        System.out.println("Cancel overriden");
-                    }
-                    @Override
-                    public void onContinue(){
+        //Create the header menu
+        HeaderMenu viewButton = new HeaderMenu(new Vector2f(flowchartButton.getPosition().x + flowchartButton.getSize().x, 1 - GeneralSettings.FONT_SIZE * GeneralSettings.FONT_SCALING_FACTOR - 2 * GeneralSettings.TEXT_BUTTON_PADDING), "View ", GeneralSettings.USERPREF.getMenuBtnBGColor3f(), GeneralSettings.HIGHLIGHT_COLOR, GeneralSettings.TEXT_COLOR, GeneralSettings.FONT, GeneralSettings.FONT_SIZE, GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE, viewButtonList);
+        menuList.add(viewButton);
 
-                    }
-                };
-            }
-        };
-        testMenuButtonList.add(button);
-        HeaderMenu fileButton = new HeaderMenu(new Vector2f(-1f, 1 - GeneralSettings.FONT_SIZE * GeneralSettings.FONT_SCALING_FACTOR - 2 * GeneralSettings.TEXT_BUTTON_PADDING), "File ", GeneralSettings.USERPREF.getMenuBtnBGColor3f(), GeneralSettings.HIGHLIGHT_COLOR, GeneralSettings.TEXT_COLOR, GeneralSettings.FONT, GeneralSettings.FONT_SIZE, GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE, testMenuButtonList);
-        menuList.add(fileButton);
+        //*****************Analysis*******************
+        //Create the buttons
+        List<TextButton> analyticsMenuButtonList = new ArrayList<>();
 
-        button = new TextButton("Clear") {
-            @Override
-            public void onPress() {
-                clearRegisters();
-            }
-        };
-        analyticsMenuButtonList.add(button);
-
-        // search for registers
         button = new TextButton("Registers") {
             @Override
             public void onPress() {
@@ -192,49 +193,18 @@ public class Header {
         };
         analyticsMenuButtonList.add(button);
 
-        HeaderMenu analyticsButton = new HeaderMenu(new Vector2f(-1f + fileButton.getSize().x, 1 - GeneralSettings.FONT_SIZE * GeneralSettings.FONT_SCALING_FACTOR - 2 * GeneralSettings.TEXT_BUTTON_PADDING), "Analysis ", GeneralSettings.USERPREF.getMenuBtnBGColor3f(), GeneralSettings.HIGHLIGHT_COLOR, GeneralSettings.TEXT_COLOR, GeneralSettings.FONT, GeneralSettings.FONT_SIZE, GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE, analyticsMenuButtonList);
-        menuList.add(analyticsButton);
-
-        // User Settings Start
-//        button = new TextButton("Set Temp Folder Path") {
-//            @Override
-//            public void onPress() {
-//
-//                OpenFileDialog of = new OpenFileDialog();
-//
-//                of.saveFolderWindow();
-//                if(of.getFilePath() != null) {
-//                    GeneralSettings.USERPREF.setUserTempFileDirPath(of.getFilePath());
-//                    tfm.initializeDirectory(GeneralSettings.USERPREF.getUserTempFileDirPath());
-//                    tfm.update();
-//                }
-//            }
-//        };
-//        settingsMenuButtonList.add(button);
-
-
-//        button = new TextButton("Reset Temp Folder Path") {
-//            @Override
-//            public void onPress() {
-//                GeneralSettings.USERPREF.setUserTempFileDirPath(GeneralSettings.TEMP_DIR);
-//                tfm.initializeDirectory(GeneralSettings.USERPREF.getUserTempFileDirPath());
-//                tfm.update();
-//
-//            }
-//        };
-//        settingsMenuButtonList.add(button);
-
-        button = new TextButton("Settings Menu") {
+        button = new TextButton("Clear") {
             @Override
             public void onPress() {
-                settings();
+                clearRegisters();
             }
         };
-        settingsMenuButtonList.add(button);
+        analyticsMenuButtonList.add(button);
 
-        HeaderMenu settingsButton = new HeaderMenu(new Vector2f(-1f + fileButton.getSize().x + analyticsButton.getSize().x, 1-GeneralSettings.FONT_SIZE*GeneralSettings.FONT_SCALING_FACTOR - 2*GeneralSettings.TEXT_BUTTON_PADDING), "Settings ", GeneralSettings.USERPREF.getMenuBtnBGColor3f(), GeneralSettings.HIGHLIGHT_COLOR, GeneralSettings.TEXT_COLOR, GeneralSettings.FONT, GeneralSettings.FONT_SIZE, GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE, settingsMenuButtonList);
-        menuList.add(settingsButton);
+        HeaderMenu analyticsButton = new HeaderMenu(new Vector2f(viewButton.getPosition().x + viewButton.getSize().x, 1 - GeneralSettings.FONT_SIZE * GeneralSettings.FONT_SCALING_FACTOR - 2 * GeneralSettings.TEXT_BUTTON_PADDING), "Analysis ", GeneralSettings.USERPREF.getMenuBtnBGColor3f(), GeneralSettings.HIGHLIGHT_COLOR, GeneralSettings.TEXT_COLOR, GeneralSettings.FONT, GeneralSettings.FONT_SIZE, GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE, analyticsMenuButtonList);
+        menuList.add(analyticsButton);
 
+        //Add the header menus to the button controller to allow them to be used
         for(HeaderMenu headerMenu: menuList){
             ButtonController.add(headerMenu);
         }
