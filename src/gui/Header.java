@@ -399,27 +399,31 @@ public class Header {
         openFileDialog.setFilterList("png,jpg");
         openFileDialog.saveFileWindow();
 
-        //Create the file
-        File file = new File(openFileDialog.getFilePath());
-        String format = "PNG"; // Example: "PNG" or "JPG"
-        BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+        //Ensure a valid file path is entered before saving
+        String path = openFileDialog.getFilePath();
+        if(path != null) {
+            //Create the file
+            File file = new File(path);
+            String format = "PNG"; // Example: "PNG" or "JPG"
+            BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 
-        //Read the data from the byte buffer
-        for (int x = 0; x < width; x++) {
-            for (int y = 0; y < height; y++) {
-                int i = (x + (width * y)) * bpp;
-                int r = buffer.get(i) & 0xFF;
-                int g = buffer.get(i + 1) & 0xFF;
-                int b = buffer.get(i + 2) & 0xFF;
-                image.setRGB(x, height - (y + 1), (0xFF << 24) | (r << 16) | (g << 8) | b);
+            //Read the data from the byte buffer
+            for (int x = 0; x < width; x++) {
+                for (int y = 0; y < height; y++) {
+                    int i = (x + (width * y)) * bpp;
+                    int r = buffer.get(i) & 0xFF;
+                    int g = buffer.get(i + 1) & 0xFF;
+                    int b = buffer.get(i + 2) & 0xFF;
+                    image.setRGB(x, height - (y + 1), (0xFF << 24) | (r << 16) | (g << 8) | b);
+                }
             }
-        }
 
-        //Attempt to save the image
-        try {
-            ImageIO.write(image, format, file);
-        } catch (IOException e) {
-            e.printStackTrace();
+            //Attempt to save the image
+            try {
+                ImageIO.write(image, format, file);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
         //Delete the frame buffer when done

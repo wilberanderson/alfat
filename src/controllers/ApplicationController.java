@@ -21,6 +21,8 @@ public class ApplicationController {
 
     //Temporary variables
     public static boolean CTRL_PRESSED = false;
+    public static boolean ALT_PRESSED = false;
+    public static boolean SHIFT_PRESSED = false;
     public static boolean PASTE = false;
     public static boolean LEFT_CLICK = false;
     public static boolean RIGHT_CLICK = false;
@@ -117,6 +119,7 @@ public class ApplicationController {
      * @param action the GLFW action of the key, is either GLFW_PRESS, GLFW_RELEASE, or GLFW_REPEAT
      */
     public void pressKey(int key, int action){
+        //Processes cursor control keys
         if(key == GLFW_KEY_UP && (action == GLFW_PRESS || action == GLFW_REPEAT)) {
             codeWindowController.keyPress(ControllerSettings.CURSOR_UP);
         }else if(key == GLFW_KEY_DOWN && (action == GLFW_PRESS || action == GLFW_REPEAT)) {
@@ -129,14 +132,108 @@ public class ApplicationController {
             codeWindowController.keyPress(ControllerSettings.CURSOR_BACKSPACE);
         }else if(key == GLFW_KEY_DELETE && (action == GLFW_PRESS || action == GLFW_REPEAT)) {
             codeWindowController.keyPress(ControllerSettings.CURSOR_DELETE);
-        }else if((key == GLFW_KEY_LEFT_CONTROL || key == GLFW_KEY_RIGHT_CONTROL) && action == GLFW_PRESS) {
+        }else if(key == GLFW_KEY_ENTER && action == GLFW_PRESS) {
+            codeWindowController.type('\n');
+        }
+        //Process shortcut keys
+        else if((key == GLFW_KEY_LEFT_CONTROL || key == GLFW_KEY_RIGHT_CONTROL) && action == GLFW_PRESS) {
             CTRL_PRESSED = true;
         }else if((key == GLFW_KEY_LEFT_CONTROL || key == GLFW_KEY_RIGHT_CONTROL) && action == GLFW_RELEASE) {
             CTRL_PRESSED = false;
-        }else if(key == GLFW_KEY_V && CTRL_PRESSED && action == GLFW_PRESS){
-            PASTE = true;
-        }else if(key == GLFW_KEY_ENTER && action == GLFW_PRESS) {
-            codeWindowController.type('\n');
+        }else if((key == GLFW_KEY_LEFT_SHIFT || key == GLFW_KEY_RIGHT_SHIFT) && action == GLFW_PRESS) {
+            SHIFT_PRESSED = true;
+        }else if((key == GLFW_KEY_LEFT_SHIFT || key == GLFW_KEY_RIGHT_SHIFT) && action == GLFW_RELEASE) {
+            SHIFT_PRESSED = false;
+        }else if((key == GLFW_KEY_LEFT_ALT || key == GLFW_KEY_RIGHT_ALT) && action == GLFW_PRESS) {
+            ALT_PRESSED = true;
+        }else if((key == GLFW_KEY_LEFT_ALT || key == GLFW_KEY_RIGHT_ALT) && action == GLFW_RELEASE) {
+            ALT_PRESSED = false;
+        }
+//        else if(key == GLFW_KEY_V && CTRL_PRESSED && action == GLFW_PRESS){
+//            PASTE = true;
+//        }
+        //If a shortcut may have been performed process shortcut options
+        if(CTRL_PRESSED && action == GLFW_PRESS){
+            processShortcuts(ALT_PRESSED, SHIFT_PRESSED, key);
+        }
+    }
+
+    /**
+     * Processes keyboard shortcuts
+     * @param alt boolean that is true if the alt key is pressed
+     * @param shift boolean that is true if the shift key is pressed
+     * @param key the GLFW int representation of which key was just pressed
+     */
+    private void processShortcuts(boolean alt, boolean shift, int key){
+        //*******************File shortcuts****************
+        //Open options
+        if(key == GLFW_KEY_O){
+            header.openFile();
+            return;
+        }
+        //Save options
+        if(key == GLFW_KEY_S){
+            if(shift){
+                header.saveAs();
+                return;
+            }
+            if(alt){
+                header.saveFlowchart();
+                return;
+            }
+            header.save();
+            return;
+        }
+        //Open menu
+        if(key == GLFW_KEY_COMMA){
+            header.settings();
+            return;
+        }
+
+        //****************Flowchart shortcuts*******************
+        //Initial generation
+        if(key == GLFW_KEY_G){
+            header.generate();
+            return;
+        }
+        //Regeneration
+        if(key == GLFW_KEY_R){
+            if(shift){
+                header.regenerateFromSource();
+                return;
+            }
+            header.regenerateFromEditor();
+            return;
+        }
+        //*******************View shortcuts***************
+        if(key == GLFW_KEY_1){
+            header.textEditorView();
+            return;
+        }
+        if(key == GLFW_KEY_2){
+            header.flowchartView();
+            return;
+        }
+        if(key == GLFW_KEY_3){
+            header.splitScreenView();
+            return;
+        }
+        if(key == GLFW_KEY_0){
+            header.resetZoom();
+            return;
+        }
+        //**********************Analysis shortcuts**********
+        if(key == GLFW_KEY_L){
+            if(alt){
+                header.invalidLabels();
+                return;
+            }
+            if(shift){
+                header.clearRegisters();
+                return;
+            }
+            header.registers();
+            return;
         }
     }
 
@@ -159,12 +256,14 @@ public class ApplicationController {
      * @param action the GLFW action of the button press, either GLFW_PRESS or GLFW_RELEASE
      */
     public void click(long window, int button, int action){
-        org.lwjgl.glfw.GLFW.glfwMakeContextCurrent(EngineTester.getWindow());
+        //Ensure context is appropriate for processing the action
+        org.lwjgl.glfw.GLFW.glfwMakeContextCurrent(window);
+        //When left mouse button pressed
         if(button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
             LEFT_CLICK = true;
             LEFT_MOUSE_HELD = true;
 
-
+            //Mark the appropriate window to be active for processing scrolling and panning events
             if(window == EngineTester.getWindow()) {
                 if (codeWindowController != null) {
                     //Process the mouse click in code window
@@ -175,10 +274,13 @@ public class ApplicationController {
                     }
                 }
             }
-        }else if(button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE){
+        }
+        //When left mouse button released
+        else if(button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE){
             LEFT_CLICK = false;
             LEFT_MOUSE_HELD = false;
 
+            //Process events for CodeWindow or FlowchartWindow as appropriate
             if(window == EngineTester.getWindow()) {
                 if(flowchartWindowController != null && !codeWindowController.isSelected()){
                     flowchartWindowController.click(button, action);
@@ -189,14 +291,17 @@ public class ApplicationController {
                 }
             }
 
+            //A button may have been clicked, allow the button controller to test and see
             ButtonController.click(window, new Vector2f((float)MOUSE_X, (float)MOUSE_Y));
-
-
-        }else if(button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS) {
+        }
+        //Ability to handle right clicks
+        //TODO: Determine if these are needed
+        else if(button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS) {
             RIGHT_CLICK = true;
         }else if(button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_RELEASE) {
             RIGHT_CLICK = false;
         }
+        //If a different window was selected then a subwindow may need to process the action, send the event to the GUIWindowController
         if(window != EngineTester.getWindow()) {
             GUIWindowController.click(window, button, action);
         }
@@ -216,18 +321,24 @@ public class ApplicationController {
         MOUSE_X = xPosition / GeneralSettings.DISPLAY_WIDTH * 2 - 1f;
         MOUSE_Y = 1 - yPosition / GeneralSettings.DISPLAY_HEIGHT * 2;
 
+        //Code window needs to know mouse position for cursor movements and scrollbars
         if (codeWindowController != null) {
             //Process the mouse movement in the code window
             codeWindowController.moveMouse(new Vector2f((float) MOUSE_X, (float) MOUSE_Y));
         }
 
+        //Have button controller test to see if any highlightable buttons should be highlighted
         ButtonController.hover(window, new Vector2f((float) MOUSE_X, (float) MOUSE_Y));
+
+        //Flowchart window processing
         if (flowchartWindowController != null){
+            //Panning is based on the change in mouse position adjusted for the zoom level of the application
             if (LEFT_MOUSE_HELD && !codeWindowController.isSelected()) {
                 float xChange = (float) (MOUSE_X - previousMouseX);
                 float yChange = (float) (MOUSE_Y - previousMouseY);
                 flowchartWindowController.updateTranslation(new Vector2f((float) xChange * flowchartWindowController.getZoom(), (float) yChange * flowchartWindowController.getZoom()));
             }
+            //Selecting text boxes is based on the raw position
             flowchartWindowController.moveMouse(MOUSE_X, MOUSE_Y);
         }
     }
@@ -253,28 +364,48 @@ public class ApplicationController {
     public void setFlowchartWindowController(FlowchartWindowController flowchartWindowController) {
         this.flowchartWindowController = flowchartWindowController;
     }
-    
+
+    /**
+     * Makes the text editor full screen
+     */
     public void textEditorView(){
+        //If a code window exists maximize it and make it active
         if(codeWindowController != null){
             codeWindowController.maximize();
             activeWindow = ControllerSettings.CODE_WINDOW;
+
+            //If a flowchart window exists it needs to be minimized
             if(flowchartWindowController != null) {
                 flowchartWindowController.minimize();
             }
         }
     }
-    
+
+    /**
+     * Makes the flowchart window full screen
+     */
     public void flowchartView(){
+        //If a flowchart window exists
         if(flowchartWindowController != null) {
+            //The text editor needs to be minimized
             codeWindowController.minimize();
+            //The flowchart needs to be maximized
             flowchartWindowController.maximize();
+            //Make the flowchart window the active window for scrolling events
             activeWindow = ControllerSettings.FLOWCHART_WINDOW;
         }
     }
-    
+
+    /**
+     * Makes the program split screen between text editor and flowchart
+     * TODO: Determine whether to make it possible to go splitscreen before generating flowchart
+     */
     public void splitScreen(){
-        if(codeWindowController != null){
+        //If a code window has been created have it go split screen
+        if(codeWindowController != null ){
             codeWindowController.goSplitScreen();
+
+            //If a flowchart window has been created have it go split screen
             if(flowchartWindowController != null) {
                 flowchartWindowController.goSplitScreen();
             }
