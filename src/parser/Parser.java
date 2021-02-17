@@ -66,21 +66,9 @@ public class Parser implements CodeReader {
                 //line = line.replace("\t", "    ");
 
 
-                //Remove possible string form line
-                String stringFromLine = getStringFromLine(line);
-                line = line.replace(stringFromLine,"");
+                SimpleTokenizer st = new SimpleTokenizer();
 
-                //take entire line before semicolon
-                int index = line.indexOf(syn.getKeywordPatterns().getComment());
-                if (index == -1) index = line.length();
-                String[] arrLine = line.substring(0, index).split(syn.getKeywordPatterns().getEmptySpace());
-
-
-                //Add comment back to arrLine
-                List temp = new ArrayList<String>(Arrays.asList(arrLine));
-                temp.add(stringFromLine);
-                arrLine = new String[temp.size()];
-                temp.toArray(arrLine);
+                String[] arrLine = st.tokenizeString(line);
 
 
 
@@ -148,7 +136,10 @@ public class Parser implements CodeReader {
                     ) {
                         //the command isn't a jump statement, so the label must be a variable i.e. string, etc.
                         formattedString.add(new LabelWord(fragment, new Vector2f(0f, 0)));
-                    } else if (fragment.matches("[ ,\t]")){
+                    } else if (fragment.matches(syn.getKeywordPatterns().getCommentLine())) {
+                        formattedString.add(new CommentWord(fragment, new Vector2f(0f, 0)));
+                    }
+                    else if (fragment.matches("[ ,\t]")){
                         formattedString.add(new SeparatorWord(fragment, new Vector2f(0f,0f)));
                     } else {
                         formattedString.add(new ErrorWord(fragment, new Vector2f(0f,0f)));
@@ -156,9 +147,7 @@ public class Parser implements CodeReader {
 
                 }
 
-                if (index < line.length() - 1) {
-                    formattedString.add(new CommentWord(line.substring(index), new Vector2f(0f, 0)));
-                }
+
 
                 //Put formatted text into an object
                 FormattedTextLine FormLine = new FormattedTextLine(formattedString);
@@ -189,36 +178,6 @@ public class Parser implements CodeReader {
         }
     }
 
-    //TODO:Get comment symbol from json
-    //TODO: Account for edge case of char const '"' or '/' that is not withing a string.
-    //TODO: Account for case in parser logic that should highlight the string has a error word if it's wrong e.g. { "asdfasdf } not { "asdfasdf" }
-    private String getStringFromLine(String line) {
-        int start = 0;
-        int end = 0;
-        boolean startFound = false;
-        boolean startOfComment = false;
-        for(int i =0; i < line.length(); i++) {
-            if(startFound == false && startOfComment == false && line.charAt(i) == ';') {
-                i = line.length();
-                continue;
-            }
-            if((line.charAt(i) == '\"' || line.charAt(i) == '\\') && !startFound) {
-                startFound = true;
-                start = i;
-                end = i;
-            }
-            if(startFound == true && (line.charAt(i) == ';')) {
-                startOfComment = true;
-                end = i;
-                i = line.length();
-            } else if (startOfComment == false && startFound == true) {
-                end = i+1;
-            }
-        }
-        return line.substring(start, end);
-    }
-
-
     /** getFormattedLine(String line)
      *
      * @param line The line to be parsed
@@ -228,22 +187,9 @@ public class Parser implements CodeReader {
         boolean first = true;
         //parse line:
         line = line.replace("\t", "    ");
+        SimpleTokenizer st = new SimpleTokenizer();
 
-        //Remove possible string form line
-        String stringFromLine = getStringFromLine(line);
-        line = line.replace(stringFromLine,"");
-
-        //take entire line before semicolon
-        int index = line.indexOf(syn.getKeywordPatterns().getComment());
-        if (index == -1) index = line.length();
-        String[] arrLine = line.substring(0, index).split(syn.getKeywordPatterns().getEmptySpace());
-
-        //Add comment back to arrLine
-        List temp = new ArrayList<String>(Arrays.asList(arrLine));
-        temp.add(stringFromLine);
-        arrLine = new String[temp.size()];
-        temp.toArray(arrLine);
-
+        String[] arrLine = st.tokenizeString(line);
 
 
         //temp variables:
@@ -299,7 +245,10 @@ public class Parser implements CodeReader {
                 targetLabel = fragment;
                 formattedString.add(new LabelWord(fragment, new Vector2f(0f, 0)));
                 first = false;
-            } else if (first && fragment.matches(syn.getKeywordPatterns().getLabel())) {
+            } else if (fragment.matches(syn.getKeywordPatterns().getCommentLine())) {
+                formattedString.add(new CommentWord(fragment, new Vector2f(0f, 0)));
+            }
+            else if (first && fragment.matches(syn.getKeywordPatterns().getLabel())) {
                 //this is the (optional) label for the line
                 label = fragment;
                 formattedString.add(new LabelWord(fragment, new Vector2f(0f, 0)));
@@ -310,17 +259,15 @@ public class Parser implements CodeReader {
             ) {
                 //the command isn't a jump statement, so the label must be a variable i.e. string, etc.
                 formattedString.add(new LabelWord(fragment, new Vector2f(0f, 0)));
-            } else if (fragment.matches("[ ,\t]")){
+            }
+            else if (fragment.matches("[ ,\t]")){
                 formattedString.add(new SeparatorWord(fragment, new Vector2f(0f,0f)));
             } else {
                 formattedString.add(new ErrorWord(fragment, new Vector2f(0f, 0f)));
             }
         }
 
-        if (index < line.length() - 1) {
-            formattedString.add(new CommentWord(line.substring(index), new Vector2f(0f, 0)));
-            //formattedString.add(new SeparatorWord("\t", new Vector2f(0f,0f)));
-        }
+
 
         //Put formatted text into an object
         EditableFormattedTextLine FormLine = new EditableFormattedTextLine(formattedString, line);

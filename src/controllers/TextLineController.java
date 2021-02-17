@@ -212,6 +212,9 @@ public class TextLineController {
         newLine.getWords()[0] = line.getWords()[0];
         replaceCodeWindowTextLine(newLine, codeWindowFormattedTextLines.indexOf(line));
         //codeWindowFormattedTextLines.set(codeWindowFormattedTextLines.indexOf(line), newLine);
+
+
+        System.out.println("New LINE:" + newLine.getTextString());
         return newLine;
     }
 

@@ -5,7 +5,7 @@
     "arithmetic": "(NOT|AND|ADD|not|and|add)\\b",
     "dataMovement": "(LD|LDR|LDI|ST|STR|STI|LEA|ld|ldr|ldi|st|str|sti|lea)\\b",
     "register": "[rR][0-7](,)?",
-    "commentLine": "(;.+?$)",
+    "commentLine": "(;.+?$)|(;)",
     "constantHex": "[x][A-Fa-f0-9]{1,4}",
     "constantNumeric": "^[x#]-?[0-9]+|[0-9]+",
     "constantBinary": "\\b[01]+\\b",

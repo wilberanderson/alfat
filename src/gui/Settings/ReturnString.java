@@ -49,6 +49,9 @@ public class ReturnString {
             JButton button = (JButton)e.getSource();
             SwingUtilities.getWindowAncestor(button).dispose();
         });
+        
+        
+
 
 
         //Add panels to container
