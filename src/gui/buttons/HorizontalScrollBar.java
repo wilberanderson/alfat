@@ -15,6 +15,7 @@ public class HorizontalScrollBar {
     float contentsWidth;
     GUIFilledBox filledBox;
     boolean maximized = false;
+    boolean minimized = false;
     float splitscreenWidth;
     float fullscreenWidth;
 
@@ -44,11 +45,10 @@ public class HorizontalScrollBar {
     /**
      * Updates the scroll bar when window is resized
      * @param height the new height of the scroll bar
-     * @param windowHeight the new height of the window
+     * @param windowWidth the new height of the window
      * @param fullRange the new range where the scroll bar may travel
-     * @param contentsHeight the new height of the contents
      */
-    public void updateAspectRatio(Vector2f position, float height, float windowHeight, float fullRange, float contentsHeight){
+    public void updateAspectRatio(Vector2f position, float height, float windowWidth, float fullRange){
         //Update the position of the bottom left corner of the scroll bars travel
         this.position = position;
 
@@ -58,21 +58,25 @@ public class HorizontalScrollBar {
 
         //Update class members
         this.height = height;
-        this.windowWidth = windowHeight;
+        this.windowWidth = windowWidth;
         this.fullRange = fullRange;
-        this.contentsWidth = contentsHeight;
 
         //Update the scroll bars width
-        if(windowHeight < contentsHeight){
-            factor = windowHeight / contentsHeight;
+        if(windowWidth < contentsWidth){
+            factor = windowWidth / contentsWidth;
         }else{
             factor = 1;
         }
-        this.width = fullRange * factor;
-        filledBox.getSize().x = this.width;
+        //Account for full range vs window width
+        factor *= (fullRange/windowWidth);
 
-        //Set the scroll bar to be at the top of the window
-        //TODO: When resizing doesn't reset the horizontal scroll of the text make this update appropriately
+        width = fullRange * factor;
+        filledBox.getSize().x = width;
+        System.out.println(filledBox.getPosition());
+        System.out.println(filledBox.getSize());
+
+//        //Set the scroll bar to be at the top of the window
+//        //TODO: When resizing doesn't reset the horizontal scroll of the text make this update appropriately
         filledBox.getPosition().x = position.x;
     }
 
@@ -104,6 +108,8 @@ public class HorizontalScrollBar {
         }else{
             factor = 1;
         }
+        //Account for full range vs window width
+        factor *= (fullRange/windowWidth);
         //Change height while accounting for the size of the scrollbar
         filledBox.getPosition().x += filledBox.getSize().x;
         filledBox.getSize().x = fullRange*factor;
@@ -126,12 +132,18 @@ public class HorizontalScrollBar {
             }else {
                 factor = 1;
             }
-
+            //Account for full range vs window width
+            factor *= (fullRange/windowWidth);
             //Update the apparent size of the scroll bar
             filledBox.getSize().x = fullRange*factor;
 
             //Save that the window is not maximized to prevent repeat calls of these adjustments
             maximized = false;
+        }
+        //If minimized the scroll bar needs to be brought back into screen
+        if(minimized){
+            filledBox.getPosition().y += height;
+            minimized = false;
         }
 
         //Code window uses this return to determine whether the scroll bar should be rendered and properly adjust window contents
@@ -143,8 +155,10 @@ public class HorizontalScrollBar {
      */
     public void minimize(){
         //Move the scroll bar out of the visible screen
-        position.x = -2f;
-        filledBox.getPosition().x = -2f;
+        if(!minimized) {
+            filledBox.getPosition().y -= height;
+            minimized = true;
+        }
     }
 
     /**
@@ -163,6 +177,8 @@ public class HorizontalScrollBar {
             }else{
                 factor = 1;
             }
+            //Account for full range vs window width
+            factor *= (fullRange/windowWidth);
 
             //Update the apparent size of the scroll bar
             filledBox.getSize().x = fullRange*factor;
@@ -170,7 +186,11 @@ public class HorizontalScrollBar {
             //Save that the window is maximized to prevent repeat calls of these adjustments
             maximized = true;
         }
-
+        //If minimized the scroll bar needs to be brought back into screen
+        if(minimized){
+            filledBox.getPosition().y += height;
+            minimized = false;
+        }
         //Code window uses this return to determine whether the scroll bar should be rendered and properly adjust window contents
         return factor == 1;
     }

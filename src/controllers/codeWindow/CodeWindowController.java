@@ -129,7 +129,11 @@ public class CodeWindowController {
         horizontalScrollBar = new HorizontalScrollBar(new Vector2f(position.x + codeWindow.getTextNumberFilledBox().getSize().x, -1f),0.03f, size.x-codeWindow.getTextNumberFilledBox().getSize().x-0.03f, size.x-codeWindow.getTextNumberFilledBox().getSize().x, longestLine*2, 0);
 
         //Update the aspect ratio in case aspect ratio was changed before opening this file
-        updateAspectRatio(new Vector2f(GeneralSettings.ASPECT_RATIO.m00, GeneralSettings.ASPECT_RATIO.m11), headerHeight);
+        aspectRatio = new Vector2f(GeneralSettings.ASPECT_RATIO.m00, GeneralSettings.ASPECT_RATIO.m11);
+        updateAspectRatio(aspectRatio, headerHeight);
+
+//        scroll(maxVerticalPosition);
+//        scrollHorizontal(maxHorizontalPosition, horizontalScrollBar.getFactor());
     }
 
     /**
@@ -155,6 +159,7 @@ public class CodeWindowController {
 
         //TODO: Fix this to actually change the position to appear the same
         contentsVerticalPosition = 0;
+        contentsHorizontalPosition = 0;
 
         //The texts start at the top of the window
         float startingHeight = codeWindow.getSize().y - 1;
@@ -178,7 +183,8 @@ public class CodeWindowController {
         this.aspectRatio = new Vector2f(aspectRatio);
 
         //Update related entities
-        verticalScrollBar.updateAspectRatio(0.02f*aspectRatio.x, codeWindow.getSize().y, codeWindow.getSize().y - 0.08f*aspectRatio.y, maxVerticalPosition + codeWindow.getSize().y);
+        verticalScrollBar.updateAspectRatio(0.02f*aspectRatio.x, codeWindow.getSize().y, codeWindow.getSize().y-0.03f*aspectRatio.y, maxVerticalPosition + codeWindow.getSize().y);
+        horizontalScrollBar.updateAspectRatio(new Vector2f(codeWindow.getGuiFilledBox().getPosition()), 0.03f*aspectRatio.y, codeWindow.getGuiFilledBox().getSize().x, codeWindow.getGuiFilledBox().getSize().x-0.02f*aspectRatio.x);
         cursorController.updateAspectRatio();
         textLineController.update(textLineController.getCodeWindowTextLines().get(0), 0, '\0');
     }
@@ -203,6 +209,7 @@ public class CodeWindowController {
                 changeContentsVerticalPosition(maxVerticalPosition - contentsVerticalPosition);
                 cursorController.scroll(maxVerticalPosition - contentsVerticalPosition);
                 verticalScrollBar.changePosition(maxVerticalPosition-contentsVerticalPosition);
+
             }
             //Otherwise scroll
             else {

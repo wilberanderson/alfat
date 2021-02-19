@@ -45,6 +45,7 @@ public class VerticalScrollBar {
         //Update the position of the bottom left corner of the scroll bars travel
         position.x = position.x + this.width - width;
         position.y = -1 + windowHeight - fullRange;
+        System.out.println("Position" + position.y);
 
         //Update the scroll bars size and position
         filledBox.getSize().x = width;
@@ -63,6 +64,10 @@ public class VerticalScrollBar {
             factor = 1;
         }
         height = fullRange * factor;
+        //Account for full range vs window height
+        factor *= (fullRange/windowHeight);
+        System.out.println("Factor" + factor);
+
         filledBox.getSize().y = height;
 
         //Set the scroll bar to be at the top of the window
@@ -98,6 +103,8 @@ public class VerticalScrollBar {
         }else{
             factor = 1;
         }
+        //Account for full range vs window height
+        factor *= (fullRange/windowHeight);
         //Change height while accounting for the size of the scrollbar
         filledBox.getPosition().y += filledBox.getSize().y;
         filledBox.getSize().y = fullRange*factor;
