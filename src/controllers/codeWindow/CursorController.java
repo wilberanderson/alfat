@@ -141,19 +141,10 @@ public class CursorController {
         if (characterIndex > 0){
             currentGUIText = codeWindow.getTextLineController().backspace(currentGUIText, characterIndex, true);
             characterIndex--;
-//            characterIndex--;
-//            String newContent = currentGUIText.getTextString().substring(0, characterIndex) + currentGUIText.getTextString().substring(characterIndex + 1);
-//            currentGUIText = new CodeWindowText(newContent, currentGUIText, true);
-//            codeWindow.getTexts().set(lineIndex, currentGUIText);
-//            updateXPosition();
         } else if (lineIndex > 0) {
-            characterIndex = codeWindow.getTextLineController().getCodeWindowTextLines().get(lineIndex-1).getCharacterEdges().length-1;
-            currentGUIText = codeWindow.getTextLineController().merge(codeWindow.getTextLineController().getCodeWindowTextLines().get(lineIndex-1), currentGUIText, codeWindow);
+            characterIndex = codeWindow.getTextLineController().getCodeWindowTextLines().get(lineIndex - 1).getCharacterEdges().length - 1;
+            currentGUIText = codeWindow.getTextLineController().merge(codeWindow.getTextLineController().getCodeWindowTextLines().get(lineIndex - 1), currentGUIText, codeWindow);
             lineIndex--;
-//            lineIndex--;
-//            characterIndex = texts.get(lineIndex).getCharacterEdges().length - 1;
-//            currentGUIText = codeWindow.mergeTexts(texts.get(lineIndex), currentGUIText);
-//            updatePosition();
         }
         updatePosition();
     }
@@ -164,46 +155,8 @@ public class CursorController {
         }else if(lineIndex < texts.size()-1){
             currentGUIText = codeWindow.getTextLineController().merge(currentGUIText, codeWindow.getTextLineController().getCodeWindowTextLines().get(lineIndex+1), codeWindow);
         }
-//        if (characterIndex < currentGUIText.getCharacterEdges().length - 1){
-//            String newContent = currentGUIText.getTextString().substring(0, characterIndex) + currentGUIText.getTextString().substring(characterIndex + 1);
-//            currentGUIText = new CodeWindowText(newContent, currentGUIText, true);
-//            codeWindow.getTexts().set(lineIndex, currentGUIText);
-//        } else if (lineIndex < texts.size() - 1) {
-//            currentGUIText = codeWindow.mergeTexts(currentGUIText, texts.get(lineIndex+1));
-//        }
     }
 
-    public void paste(String clipboardContents){
-//        String originalText = currentGUIText.getTextString();
-//        String textString = originalText.substring(0, characterIndex);
-//        String endText = originalText.substring(characterIndex);
-//        StringBuilder stringBuilder = new StringBuilder(textString);
-//        char[] pastedChars = new char[clipboardContents.length()];
-//        for(int i = 0; i < clipboardContents.length(); i++) {
-//            pastedChars[i] = clipboardContents.charAt(i);
-//        }
-//
-//        for(char c : pastedChars){
-//            if(c == '\n'){
-//                CodeWindowText newText = new CodeWindowText(stringBuilder.toString(), currentGUIText, true);
-//                texts.set(lineIndex, newText);
-//                currentGUIText = new CodeWindowText(endText, newText, false);
-//                currentGUIText.setPosition(new Vector2f(currentGUIText.getPosition().x, currentGUIText.getPosition().y - currentGUIText.getFontSize()*0.06f));
-//                lineIndex++;
-//                codeWindow.addText(currentGUIText, lineIndex);
-//                stringBuilder = new StringBuilder();
-//                characterIndex = 0;
-//                updateYPosition();
-//            }else{
-//                stringBuilder.append(c);
-//                characterIndex++;
-//            }
-//        }
-//        currentGUIText = new CodeWindowText(stringBuilder.toString() + endText, currentGUIText, true);
-//        texts.set(lineIndex, currentGUIText);
-//        updateXPosition();
-//        ApplicationController.PASTE = false;
-    }
 
     public void type(char c){
         if(currentGUIText != null) {
@@ -291,9 +244,4 @@ public class CursorController {
         return visible && toggle;
     }
 
-    public void toggleVisible(){
-        if(visible){
-            toggle = !toggle;
-        }
-    }
 }

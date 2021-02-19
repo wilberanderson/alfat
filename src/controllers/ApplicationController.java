@@ -38,7 +38,6 @@ public class ApplicationController {
     //Permanent variables
     CodeWindowController codeWindowController;
     FlowchartWindowController flowchartWindowController;
-    GUIController guiController;
 
     public TextLineController getTextLineController() {
         return textLineController;
@@ -52,11 +51,8 @@ public class ApplicationController {
      * Updates user preferences
      * */
     public void updateUserPref() {
-
-
         //Flowchart background color and flowchart line color
         if(flowchartWindowController != null && flowchartWindowController.getFlowchartTextBoxController() != null) {
-            //flowchartWindowController.getFlowchartTextBoxController().changeTextBoxBackgroundcolor3f();
             FlowchartTextBoxController.setTextNumberBackgroundColor(GeneralSettings.USERPREF.getFlowchartBoxlinenumberBGColor3f());
             FlowchartTextBoxController.setBackgroundColor(GeneralSettings.USERPREF.getFlowchartBoxbackgroundColor3f());
             FlowchartTextBoxController.setHighlightedColor(GeneralSettings.USERPREF.getFlowchartBoxHighlightColor3f());
@@ -282,7 +278,7 @@ public class ApplicationController {
 
             //Process events for CodeWindow or FlowchartWindow as appropriate
             if(window == EngineTester.getWindow()) {
-                if(flowchartWindowController != null && !codeWindowController.isSelected()){
+                if(activeWindow == ControllerSettings.FLOWCHART_WINDOW){
                     flowchartWindowController.click(button, action);
                 }
                 if (codeWindowController != null) {
@@ -333,7 +329,7 @@ public class ApplicationController {
         //Flowchart window processing
         if (flowchartWindowController != null){
             //Panning is based on the change in mouse position adjusted for the zoom level of the application
-            if (LEFT_MOUSE_HELD && !codeWindowController.isSelected()) {
+            if (LEFT_MOUSE_HELD && activeWindow == ControllerSettings.FLOWCHART_WINDOW) {
                 float xChange = (float) (MOUSE_X - previousMouseX);
                 float yChange = (float) (MOUSE_Y - previousMouseY);
                 flowchartWindowController.updateTranslation(new Vector2f((float) xChange * flowchartWindowController.getZoom(), (float) yChange * flowchartWindowController.getZoom()));
@@ -410,9 +406,5 @@ public class ApplicationController {
                 flowchartWindowController.goSplitScreen();
             }
         }
-    }
-
-    public GUIController getGuiController() {
-        return guiController;
     }
 }
