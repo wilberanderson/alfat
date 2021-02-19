@@ -194,28 +194,30 @@ public class CodeWindowController {
      * @param scrollChange the amount to change
      */
     public void scroll(float scrollChange){
-        //If the contents are larger than the window
-        if(maxVerticalPosition > codeWindow.getSize().y) {
-            float newPosition = contentsVerticalPosition + scrollChange;
-            //Update the position of the contents, cursor, and scroll bar
-            //If the position would be negative change position so it would be 0 instead
-            if (newPosition < 0) {
-                changeContentsVerticalPosition(-contentsVerticalPosition);
-                cursorController.scroll(-contentsVerticalPosition);
-                verticalScrollBar.changePosition(-contentsVerticalPosition);
-            }
-            //If the position would be greater than max make it so it will be max instead
-            else if (newPosition > maxVerticalPosition) {
-                changeContentsVerticalPosition(maxVerticalPosition - contentsVerticalPosition);
-                cursorController.scroll(maxVerticalPosition - contentsVerticalPosition);
-                verticalScrollBar.changePosition(maxVerticalPosition-contentsVerticalPosition);
+        if(scrollChange != 0) {
+            //If the contents are larger than the window
+            if (maxVerticalPosition > codeWindow.getSize().y) {
+                float newPosition = contentsVerticalPosition + scrollChange;
+                //Update the position of the contents, cursor, and scroll bar
+                //If the position would be negative change position so it would be 0 instead
+                if (newPosition < 0) {
+                    changeContentsVerticalPosition(-contentsVerticalPosition);
+                    cursorController.scroll(-contentsVerticalPosition);
+                    verticalScrollBar.changePosition(-contentsVerticalPosition);
+                }
+                //If the position would be greater than max make it so it will be max instead
+                else if (newPosition > maxVerticalPosition) {
+                    changeContentsVerticalPosition(maxVerticalPosition - contentsVerticalPosition);
+                    cursorController.scroll(maxVerticalPosition - contentsVerticalPosition);
+                    verticalScrollBar.changePosition(maxVerticalPosition - contentsVerticalPosition);
 
-            }
-            //Otherwise scroll
-            else {
-                changeContentsVerticalPosition(scrollChange);
-                cursorController.scroll(scrollChange);
-                verticalScrollBar.changePosition(scrollChange);
+                }
+                //Otherwise scroll
+                else {
+                    changeContentsVerticalPosition(scrollChange);
+                    cursorController.scroll(scrollChange);
+                    verticalScrollBar.changePosition(scrollChange);
+                }
             }
         }
     }
@@ -226,20 +228,22 @@ public class CodeWindowController {
      * @param factor the scaling factor used by the horizontal scroll bar
      */
     public void scrollHorizontal(float scrollChange, float factor){
-        //If the contents are larger than the window
-        if(maxHorizontalPosition > codeWindow.getSize().x) {
-            float newPosition = contentsHorizontalPosition + scrollChange;
-            //If the position would be negative change position so it would be 0 instead
-            if (newPosition < 0) {
-                changeContentsHorizontalPosition(contentsHorizontalPosition, factor);
-            }
-            //If the position would be greater than max make it so it will be max instead
-            else if (newPosition > maxHorizontalPosition-codeWindow.getSize().x) {
-                changeContentsHorizontalPosition(-((maxHorizontalPosition - contentsHorizontalPosition)-codeWindow.getSize().x), factor);
-            }
-            //Otherwise scroll
-            else {
-                changeContentsHorizontalPosition(-scrollChange, factor);
+        if(scrollChange != 0) {
+            //If the contents are larger than the window
+            if (maxHorizontalPosition > codeWindow.getSize().x) {
+                float newPosition = contentsHorizontalPosition + scrollChange;
+                //If the position would be negative change position so it would be 0 instead
+                if (newPosition < 0) {
+                    changeContentsHorizontalPosition(contentsHorizontalPosition, factor);
+                }
+                //If the position would be greater than max make it so it will be max instead
+                else if (newPosition > maxHorizontalPosition - codeWindow.getSize().x) {
+                    changeContentsHorizontalPosition(-((maxHorizontalPosition - contentsHorizontalPosition) - codeWindow.getSize().x), factor);
+                }
+                //Otherwise scroll
+                else {
+                    changeContentsHorizontalPosition(-scrollChange, factor);
+                }
             }
         }
     }

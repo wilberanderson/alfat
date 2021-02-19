@@ -524,9 +524,9 @@ public class Parser implements CodeReader {
         translation.m11 = 2 / GeneralSettings.IMAGE_SIZE.y;         // Y scale
         translation.m20 = 0f - GeneralSettings.FLOWCHART_PAD_LEFT;//-.2f;                                     // X translation
         translation.m21 = - (y_bound * translation.m11) + magic_number; // Y translation
-        System.out.println(infile + ": " + translation.m00 + "," + translation.m11);
-        System.out.println("y_bound: " + y_bound);
-        System.out.println("m20 and m21" + ": " + translation.m20 + "," + translation.m21);
+//        System.out.println(infile + ": " + translation.m00 + "," + translation.m11);
+//        System.out.println("y_bound: " + y_bound);
+//        System.out.println("m20 and m21" + ": " + translation.m20 + "," + translation.m21);
         GeneralSettings.IMAGE_TRANSLATION = translation;
         //Find line overlaps:
         for (FlowchartLine line1 : linesList) {

@@ -45,7 +45,6 @@ public class VerticalScrollBar {
         //Update the position of the bottom left corner of the scroll bars travel
         position.x = position.x + this.width - width;
         position.y = -1 + windowHeight - fullRange;
-        System.out.println("Position" + position.y);
 
         //Update the scroll bars size and position
         filledBox.getSize().x = width;
@@ -66,7 +65,6 @@ public class VerticalScrollBar {
         height = fullRange * factor;
         //Account for full range vs window height
         factor *= (fullRange/windowHeight);
-        System.out.println("Factor" + factor);
 
         filledBox.getSize().y = height;
 
@@ -81,6 +79,16 @@ public class VerticalScrollBar {
      */
     public void changePosition(float change) {
         filledBox.getPosition().y -= change * factor;
+
+        //Without these lines of code only the vertical scroll bar will have it's position gradually shift in use
+
+        if(change == 0){
+            if(filledBox.getPosition().y > 0){
+                filledBox.getPosition().y = windowHeight - 1 - height;
+            }else{
+                filledBox.getPosition().y = windowHeight - fullRange - 1;
+            }
+        }
     }
 
     public GUIFilledBox getFilledBox() {

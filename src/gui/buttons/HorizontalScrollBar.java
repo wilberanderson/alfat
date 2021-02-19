@@ -72,11 +72,9 @@ public class HorizontalScrollBar {
 
         width = fullRange * factor;
         filledBox.getSize().x = width;
-        System.out.println(filledBox.getPosition());
-        System.out.println(filledBox.getSize());
 
-//        //Set the scroll bar to be at the top of the window
-//        //TODO: When resizing doesn't reset the horizontal scroll of the text make this update appropriately
+        //Set the scroll bar to be at the top of the window
+        //TODO: When resizing doesn't reset the horizontal scroll of the text make this update appropriately
         filledBox.getPosition().x = position.x;
     }
 
