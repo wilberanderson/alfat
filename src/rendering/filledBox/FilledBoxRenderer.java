@@ -85,9 +85,10 @@ public class FilledBoxRenderer {
             //Render the text box behind the main text
             shader.color.loadVec3(codeWindowController.getCodeWindow().getGuiFilledBox().getColor());
             renderFilledBox(codeWindowController.getCodeWindow().getGuiFilledBox());
-            //Render the scrollbar
+            //Render the scrollbars
             shader.color.loadVec3(codeWindowController.getVerticalScrollBar().getFilledBox().getColor());
             renderFilledBox(codeWindowController.getVerticalScrollBar().getFilledBox());
+            renderFilledBox(codeWindowController.getHorizontalScrollBar().getFilledBox());
 
             //The flowchart window can only be open if the code window is open
             //Test to see if the flowchart window was also opened

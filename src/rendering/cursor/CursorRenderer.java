@@ -67,7 +67,7 @@ public class CursorRenderer {
 
         //Load the cursors position and font height
         shader.mousePosition.loadVec2(cursorController.getCursor().getPosition());
-        shader.fontHeight.loadFloat(GeneralSettings.FONT_SCALING_FACTOR * GeneralSettings.FONT_SIZE);
+        shader.fontHeight.loadFloat(GeneralSettings.FONT_HEIGHT);
 
         //Load the position and size of the code window for clipping operations
         shader.isVisible.loadBoolean(cursorController.isVisible());

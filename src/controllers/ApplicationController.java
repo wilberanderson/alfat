@@ -244,7 +244,7 @@ public class ApplicationController {
     public void scroll(double scrollChange){
         //Scrolling is processed on frame, hold the net value of the scrolling
         if(activeWindow == ControllerSettings.CODE_WINDOW) {
-            codeWindowController.scroll((float) scrollChange / 10);
+            codeWindowController.scroll((float) -scrollChange / 10);
         }else if(flowchartWindowController != null){
             flowchartWindowController.updateZoom((float) scrollChange / 10);
         }

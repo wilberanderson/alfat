@@ -128,6 +128,7 @@ public class GeneralSettings {
 	//************************************************Text settings***********************************
 	public static final float FONT_SIZE = 1f;                                           //The default size for rendered text, individual texts may override this value
 	public static final float FONT_SCALING_FACTOR = 0.06f;                              //The amount that texts increase in size based on, cannot be modified
+	public static final float FONT_HEIGHT = FONT_SIZE * FONT_SCALING_FACTOR;
 	public static final float FONT_WIDTH = 0.5f;                                        //The alpha value on the distance field where a text will start falling off
 	public static final float FONT_EDGE = 0.1f;                                         //The alpha value greater than FONT_WIDTH where a text will finish falling off
 	public static final Vector3f TEXT_COLOR = base2;                                    //The default text color

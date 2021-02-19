@@ -21,24 +21,42 @@ public class VerticalScrollBar {
         this.fullRange = fullRange;
         this.windowHeight = windowHeight;
         this.contentsHeight = contentsHeight;
+        //The scroll bars height should be proportional to the ratio between the height of visible contents vs the full height of the contents
         if (windowHeight < contentsHeight) {
             factor = windowHeight / contentsHeight;
         } else {
             factor = 1;
         }
         height = fullRange * factor;
+
+        //Create the filled box which is used for the visible scroll bar
+        //TODO: Create color in general settings and user pref
         filledBox = new GUIFilledBox(new Vector2f(position.x, position.y + fullRange - height), new Vector2f(width, height), new Vector3f(0.3f, 0.3f, 0.3f));
     }
 
+    /**
+     * Updates the scroll bar when window is resized
+     * @param width the new width of the scroll bar
+     * @param windowHeight the new height of the window
+     * @param fullRange the new range where the scroll bar may travel
+     * @param contentsHeight the new height of the contents
+     */
     public void updateAspectRatio(float width, float windowHeight, float fullRange, float contentsHeight){
+        //Update the position of the bottom left corner of the scroll bars travel
         position.x = position.x + this.width - width;
         position.y = -1 + windowHeight - fullRange;
+
+        //Update the scroll bars size and position
         filledBox.getSize().x = width;
         filledBox.getPosition().x = position.x;
+
+        //Update class members
         this.width = width;
         this.windowHeight = windowHeight;
         this.fullRange = fullRange;
         this.contentsHeight = contentsHeight;
+
+        //Update the scroll bars height
         if(windowHeight < contentsHeight){
             factor = windowHeight / contentsHeight;
         }else{
@@ -46,9 +64,16 @@ public class VerticalScrollBar {
         }
         height = fullRange * factor;
         filledBox.getSize().y = height;
+
+        //Set the scroll bar to be at the top of the window
+        //TODO: When resizing doesn't reset the height of the text make this update appropriately
         filledBox.getPosition().y = position.y + fullRange - height;
     }
 
+    /**
+     * Updates the position of the scrollbar
+     * @param change the amount the height of the scrollbar should change in the OpenGL coordinate system
+     */
     public void changePosition(float change) {
         filledBox.getPosition().y -= change * factor;
     }
@@ -61,29 +86,47 @@ public class VerticalScrollBar {
         return factor;
     }
 
+    /**
+     * Updates the scrollbar to account for a change in the total contents of the window
+     * @param change
+     */
     public void changeContentsHeight(float change) {
+        //Update the scroll bars factor
         contentsHeight += change;
         if(windowHeight < contentsHeight){
             factor = windowHeight / contentsHeight;
         }else{
             factor = 1;
         }
+        //Change height while accounting for the size of the scrollbar
         filledBox.getPosition().y += filledBox.getSize().y;
         filledBox.getSize().y = fullRange*factor;
         filledBox.getPosition().y -= filledBox.getSize().y;
     }
 
+    /**
+     * Moves the scroll bar appropriately for splitscreen view
+     */
     public void goSplitScreen(){
+        //The scroll bar should be in the middle of the screen minus the width of the scroll bar
         position.x = 0f-width;
         filledBox.getPosition().x = 0f-width;
     }
 
+    /**
+     * Moves the scroll bar appropriately for minimized code window
+     */
     public void minimize(){
+        //move the scroll bar out of the visible screen
         position.x = -2f;
         filledBox.getPosition().x = -2f;
     }
 
+    /**
+     * Moves the scroll bar appropriately for maximized code window
+     */
     public void maximize(){
+        //The scroll bar should be at the right side of the screen minus the width of the scroll bar
         position.x = 1f-width;
         filledBox.getPosition().x = 1f-width;
     }

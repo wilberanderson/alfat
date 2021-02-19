@@ -25,67 +25,96 @@ public class TextLineController {
     }
 
     /**
-     * @param line
-     * @return
+     * Adds a text line which will be rendered when rendering the flowchart
+     * @param line the line to be added
+     * @return the line which was added
      */
     public FormattedTextLine addFlowchartTextLine(FormattedTextLine line) {
         float offset = 0;
         int numberOfCharacters = 0;
+        //For each text word
         for (TextWord word : line.getWords()) {
+            //If the text word is a separator
             if(word instanceof SeparatorWord){
                 float spaceSize = word.getFont().getSpaceSize()/64;
                 if(((SeparatorWord) word).getText().length() > 0) {
+                    //If the separator is a space add one space size
                     if (((SeparatorWord) word).getText().charAt(0) == ' ') {
                         offset += spaceSize;
-                    } else if (((SeparatorWord) word).getText().charAt(0) == '\t') {
+                    }
+                    //Tabs are used for alignment, add enough tabs to meet the currently used tab count
+                    else if (((SeparatorWord) word).getText().charAt(0) == '\t') {
                         offset += spaceSize * (GeneralSettings.DEFAULT_TAB_WIDTH - numberOfCharacters % 4);//((numberOfCharacters % GeneralSettings.DEFAULT_TAB_WIDTH) == 0 ? GeneralSettings.DEFAULT_TAB_WIDTH : numberOfCharacters % GeneralSettings.DEFAULT_TAB_WIDTH);
                         numberOfCharacters = 0;
                     }
                 }
             }
-
+            //Set the words position
             word.setPosition(new Vector2f(line.getPosition().x + offset, line.getPosition().y));
+            //Update the offset for the next word to be placed at
             offset += word.getCharacterEdges()[word.getCharacterEdges().length - 1] * 2;
+            //If the word is not the line number save the count of characters read for use in tab alignment
             if(!(word instanceof LineNumberWord)) {
                 numberOfCharacters += word.getCharacterEdges().length - 1;
             }
         }
+
+        //Save this word in text lines
         flowchartFormattedTextLines.add(line);
         return line;
     }
-
+    /**
+     * Adds a text line which will be rendered when rendering the text editor and
+     * be able to be edited
+     * @param line the line to be added
+     * @param index the index where the line is to be added, -1 indicates the end
+     * @return the line which was added
+     */
     public void addCodeWindowTextLine(EditableFormattedTextLine line, int index){
+        //If there is more than one word save the offset for positioning
         float offset;
         if(line.getWords().length > 1){
             offset = line.getPosition().x + EditableFormattedTextLine.getLineNumberOffset()*2 - line.getWords()[1].getPosition().x;
         }else{
             offset = 0;
         }
+
         int numberOfCharacters = 0;
+        //For each text word
         for (TextWord word : line.getWords()) {
+            //Skip line numbers
             if(word instanceof LineNumberWord){
                 continue;
             }
 
+            //If the text word is a separator
             if(word instanceof SeparatorWord){
                 float spaceSize = word.getFont().getSpaceSize()/64;
                 if(((SeparatorWord) word).getText().length() > 0) {
+                    //If the separator is a space add one space size
                     if (((SeparatorWord) word).getText().charAt(0) == ' ') {
                         offset += spaceSize;
-                    } else if (((SeparatorWord) word).getText().charAt(0) == '\t') {
+                    }
+                    //Tabs are used for alignment, add enough tabs to meet the currently used tab count
+                    else if (((SeparatorWord) word).getText().charAt(0) == '\t') {
                         offset += spaceSize * (GeneralSettings.DEFAULT_TAB_WIDTH - numberOfCharacters % 4);//((numberOfCharacters % GeneralSettings.DEFAULT_TAB_WIDTH) == 0 ? GeneralSettings.DEFAULT_TAB_WIDTH : numberOfCharacters % GeneralSettings.DEFAULT_TAB_WIDTH);
                         numberOfCharacters = 0;
-
                     }
                 }
             }
+
+            //Set the words position
             word.setPosition(new Vector2f(line.getPosition().x + offset, line.getPosition().y));
+            //Update the offset for the next word to be placed at
             offset += word.getCharacterEdges()[word.getCharacterEdges().length - 1] * 2;
+            //If the word is not the line number save the count of characters read for use in tab alignment
             if(!(word instanceof LineNumberWord)) {
                 numberOfCharacters += word.getCharacterEdges().length - 1;
             }
         }
+        //The edges of characters are needed to be known for editing, generate them
         line.generateCharacterEdges();
+        //An index of -1 indicates that it should be added to the end of the line rather than a specific index
         if(index == -1){
             codeWindowFormattedTextLines.add(line);
         }else {
@@ -93,41 +122,76 @@ public class TextLineController {
         }
     }
 
+    /**
+     * Splits a single text line into two
+     * @param line the line to be split
+     * @param characterIndex the index where the split is to be made
+     * @param controller the code window controller which needs to be updated
+     * @return the line which is to be selected by the cursor controller
+     */
     public EditableFormattedTextLine split(EditableFormattedTextLine line, int characterIndex, CodeWindowController controller){
+        //The index of of the line being split is saved
         int index = codeWindowFormattedTextLines.indexOf(line);
+        //Create two new lines
         EditableFormattedTextLine originalLine;
         EditableFormattedTextLine newLine;
+
+        //If the line is being split at an index greater than 0
         if(characterIndex > 0) {
-             originalLine = parser.getFormattedLine(line.getTextString().substring(0, characterIndex));
-             newLine = parser.getFormattedLine(line.getTextString().substring(characterIndex));
-        }else{
+            //Create new lines using the appropriate portions of the text string
+            originalLine = parser.getFormattedLine(line.getTextString().substring(0, characterIndex));
+            newLine = parser.getFormattedLine(line.getTextString().substring(characterIndex));
+        }
+        //If the index is 0 the first line should be generated with an empty string
+        else{
             originalLine = parser.getFormattedLine("");
             newLine = parser.getFormattedLine(line.getTextString());
         }
+
+        //Set both lines to be at the original lines position
         originalLine.setPosition(new Vector2f(line.getPosition()));
         newLine.setPosition(new Vector2f(line.getPosition()));
 
+        //Set originalLines line number to be the one from original lines
         originalLine.getWords()[0] = line.getWords()[0];
+
+        //For each line remaining in the file the line numbers should be associated with one word earlier
         EditableFormattedTextLine lastLine = newLine;
         for(int i = index+1; i < codeWindowFormattedTextLines.size(); i++){
             lastLine.getWords()[0] = codeWindowFormattedTextLines.get(i).getWords()[0];
             lastLine = codeWindowFormattedTextLines.get(i);
         }
+
+        //Remove the old line and add the two new lines
         codeWindowFormattedTextLines.remove(line);
         addCodeWindowTextLine(originalLine, index);
         addCodeWindowTextLine(newLine, index + 1);
+
+        //Tell the controller how the number of lines changed
         controller.changeNumberOfLines(1);
+
+        //Update the positions of all remaining lines
         float change = GeneralSettings.FONT_SIZE*GeneralSettings.FONT_SCALING_FACTOR;
         for(int i = index + 1; i < codeWindowFormattedTextLines.size(); i++){
             EditableFormattedTextLine thisLine = codeWindowFormattedTextLines.get(i);
             thisLine.changeContentsVerticalPosition(-change);
         }
+
+        //The last line needs a new line number
         LineNumberWord newLineNumber = new LineNumberWord(Integer.toString(controller.getNumberOfLines()), new Vector2f(lastLine.getWords()[0].getPosition().x, lastLine.getPosition().y));
         lastLine.getWords()[0] = newLineNumber;
 
+        //After splitting a line the user expects the cursor to be on the newly created line
         return newLine;
     }
 
+    /**
+     * Merges two lines together
+     * @param left the first line to be merged
+     * @param right the second line to be merged
+     * @param controller the code window controller which needs to be updated
+     * @return the line which is to be selected by the cursor controller
+     */
     public EditableFormattedTextLine merge(EditableFormattedTextLine left, EditableFormattedTextLine right, CodeWindowController controller){
         //Merge the two text strings together
         String string = left.getTextString()+right.getTextString();
@@ -162,59 +226,79 @@ public class TextLineController {
     }
 
     public void replaceCodeWindowTextLine(EditableFormattedTextLine line, int index){
+        //If there is more than one word save the offset for positioning
         float offset;
         if(line.getWords().length > 1){
             offset = line.getPosition().x + EditableFormattedTextLine.getLineNumberOffset()*2 - line.getWords()[1].getPosition().x;
         }else{
             offset = 0;
         }
+
         int numberOfCharacters = 0;
+        //For each text word
         for (TextWord word : line.getWords()) {
+            //Skip line numbers
             if(word instanceof LineNumberWord){
                 continue;
             }
+
+            //If the text word is a separator
             if(word instanceof SeparatorWord){
                 float spaceSize = word.getFont().getSpaceSize()/64;
                 if(((SeparatorWord) word).getText().length() > 0) {
+                    //If the separator is a space add one space size
                     if (((SeparatorWord) word).getText().charAt(0) == ' ') {
                         offset += spaceSize;
-                    } else if (((SeparatorWord) word).getText().charAt(0) == '\t') {
+                    }
+                    //Tabs are used for alignment, add enough tabs to meet the currently used tab count
+                    else if (((SeparatorWord) word).getText().charAt(0) == '\t') {
                         offset += spaceSize * (GeneralSettings.DEFAULT_TAB_WIDTH - numberOfCharacters % 4);//((numberOfCharacters % GeneralSettings.DEFAULT_TAB_WIDTH) == 0 ? GeneralSettings.DEFAULT_TAB_WIDTH : numberOfCharacters % GeneralSettings.DEFAULT_TAB_WIDTH);
                         numberOfCharacters = 0;
                     }
                 }
             }
 
-//            if (word.getSeparator().length() == 1 && word.getSeparator().charAt(0) == ' ') {
-//                offset += word.getSpaceSize();
-//            } else if (word.getSeparator().length() == 1 && word.getSeparator().charAt(0) == '\t') {
-//                offset += word.getSpaceSize() * (GeneralSettings.DEFAULT_TAB_WIDTH-numberOfCharacters%4);
-//                numberOfCharacters = 0;
-//            }
+            //Set the words position
             word.setPosition(new Vector2f(line.getPosition().x + offset, line.getPosition().y));
+            //Update the offset for the next word to be placed at
             offset += word.getCharacterEdges()[word.getCharacterEdges().length - 1] * 2;
+            //If the word is not the line number save the count of characters read for use in tab alignment
             if(!(word instanceof LineNumberWord)) {
                 numberOfCharacters += word.getCharacterEdges().length - 1;
             }
         }
+        //The edges of characters are needed to be known for editing, generate them
         line.generateCharacterEdges();
+        //Replace the line at this index with the new line
         codeWindowFormattedTextLines.set(index, line);
     }
 
+    /**
+     * Updates a text line to have one additional character
+     * @param line
+     * @param index
+     * @param c
+     * @return
+     */
     public EditableFormattedTextLine update(EditableFormattedTextLine line, int index, char c){
+        //Get the first portion of the string
         String string = line.getTextString().substring(0, index);
+        //Add the new character if one is being added
         if(c != '\0') {
             string += c;
         }
+        //Add the remainder of the original string
         string += line.getTextString().substring(index);
+
+        //Create the new line
         EditableFormattedTextLine newLine = parser.getFormattedLine(string);
+        //Set it's position
         newLine.setPosition(line.getPosition());
+        //Set it to use the old lines line number
         newLine.getWords()[0] = line.getWords()[0];
+        //Replace the old text line
         replaceCodeWindowTextLine(newLine, codeWindowFormattedTextLines.indexOf(line));
-        //codeWindowFormattedTextLines.set(codeWindowFormattedTextLines.indexOf(line), newLine);
-
-
-        System.out.println("New LINE:" + newLine.getTextString());
+        
         return newLine;
     }
 

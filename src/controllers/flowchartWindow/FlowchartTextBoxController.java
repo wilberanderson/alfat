@@ -47,7 +47,7 @@ public class FlowchartTextBoxController {
         float minHeight = GeneralSettings.TEXT_BOX_BORDER_WIDTH;
         double greatestLength = 0;
         float longestLineNumber = 0;
-        float lineHeight = GeneralSettings.FONT_SIZE * GeneralSettings.FONT_SCALING_FACTOR;
+        float lineHeight = GeneralSettings.FONT_HEIGHT;
 
         boolean lineNumberChanged = false;
 
