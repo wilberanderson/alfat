@@ -2,6 +2,7 @@ package controllers.flowchartWindow;
 
 import controllers.TextLineController;
 import gui.FlowchartLine;
+import gui.Mouse;
 import gui.textBoxes.FlowchartTextBox;
 import main.GeneralSettings;
 import org.lwjgl.util.vector.Matrix2f;
@@ -138,5 +139,8 @@ public class FlowchartWindowController {
 
     public void moveMouse(double xPos, double yPos){
         flowchartTextBoxController.moveMouse((xPos - flowchartWindow.getZoomTranslateMatrix().m20), (yPos - flowchartWindow.getZoomTranslateMatrix().m21));
+        if(xPos > getPosition().x && yPos > getPosition().y && xPos < getPosition().x + getSize().x && yPos < getPosition().y + getSize().y){
+            Mouse.setHand();
+        }
     }
 }

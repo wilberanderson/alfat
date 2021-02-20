@@ -1,6 +1,7 @@
 package controllers.gui;
 
 import controllers.ApplicationController;
+import gui.Mouse;
 import gui.buttons.Button;
 import gui.buttons.HeaderMenu;
 import gui.buttons.HighlightableButton;
@@ -22,10 +23,19 @@ public class ButtonController {
         buttons.add(b);
     }
 
+    /**
+     * Removes a button from the list
+     * @param b the button to be removed
+     */
     public static void remove(Button b){
         buttons.remove(b);
     }
 
+    /**
+     * Processes each button to determine whether it should be clicked
+     * @param window the window the click was detected in
+     * @param position the position where the mouse is
+     */
     public static void click(long window, Vector2f position){
 
         boolean buttonPressed = false;
@@ -68,15 +78,14 @@ public class ButtonController {
         for(int i = buttons.size()-1; i >= 0; i--){
             Button b = buttons.get(i);
             if(b.getWindow() == window) {
-                if (b instanceof HighlightableButton) {
-                    if (position.x > b.getPosition().x && position.y > b.getPosition().y && position.x < b.getPosition().x + b.getSize().x && position.y < b.getPosition().y + b.getSize().y) {
-                        if (!((HighlightableButton) b).isHighlighted()) {
-                            ((HighlightableButton) b).highlight();
-                        }
-                    } else {
-                        if (((HighlightableButton) b).isHighlighted()) {
-                            ((HighlightableButton) b).unhighlight();
-                        }
+                if (position.x > b.getPosition().x && position.y > b.getPosition().y && position.x < b.getPosition().x + b.getSize().x && position.y < b.getPosition().y + b.getSize().y) {
+                    Mouse.setPointer();
+                    if (b instanceof HighlightableButton && !((HighlightableButton) b).isHighlighted()) {
+                        ((HighlightableButton) b).highlight();
+                    }
+                } else {
+                    if (b instanceof HighlightableButton && ((HighlightableButton) b).isHighlighted()) {
+                        ((HighlightableButton) b).unhighlight();
                     }
                 }
             }

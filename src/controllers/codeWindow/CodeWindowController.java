@@ -4,6 +4,7 @@ import controllers.ControllerSettings;
 import controllers.TextLineController;
 import gui.Cursor;
 import gui.GUIFilledBox;
+import gui.Mouse;
 import gui.buttons.HorizontalScrollBar;
 import gui.buttons.VerticalScrollBar;
 import gui.texts.*;
@@ -44,6 +45,8 @@ public class CodeWindowController {
 
     private boolean scrollingVertical = false;
     private boolean scrollingHorizontal = false;
+    private boolean verticalHovered = false;
+    private boolean horizontalHovered = false;
     private VerticalScrollBar verticalScrollBar;
     private HorizontalScrollBar horizontalScrollBar;
 
@@ -334,15 +337,11 @@ public class CodeWindowController {
     public boolean mouseLeftClick(){
         if(inBounds){
             //If vertical  scroll bar was clicked start scrolling vertically
-            if(mousePosition.x > verticalScrollBar.getFilledBox().getPosition().x && mousePosition.y > verticalScrollBar.getFilledBox().getPosition().y
-                    && mousePosition.x < verticalScrollBar.getFilledBox().getPosition().x + verticalScrollBar.getFilledBox().getSize().x
-                    && mousePosition.y < verticalScrollBar.getFilledBox().getPosition().y + verticalScrollBar.getFilledBox().getSize().y){
+            if(verticalHovered){
                 scrollingVertical = true;
             }
             //If horizontal scroll bar was clicked start scrolling horizontally
-            else if(mousePosition.x > horizontalScrollBar.getFilledBox().getPosition().x && mousePosition.y > horizontalScrollBar.getFilledBox().getPosition().y
-                    && mousePosition.x < horizontalScrollBar.getFilledBox().getPosition().x + horizontalScrollBar.getFilledBox().getSize().x
-                    && mousePosition.y < horizontalScrollBar.getFilledBox().getPosition().y + horizontalScrollBar.getFilledBox().getSize().y){
+            else if(horizontalHovered){
                 scrollingHorizontal = true;
             }
             //Move the physical cursor to the mouse's position
@@ -374,6 +373,24 @@ public class CodeWindowController {
      * @param mousePosition
      */
     public void moveMouse(Vector2f mousePosition){
+        //If vertical  scroll bar was clicked start scrolling vertically
+        if(mousePosition.x > verticalScrollBar.getFilledBox().getPosition().x && mousePosition.y > verticalScrollBar.getFilledBox().getPosition().y
+                && mousePosition.x < verticalScrollBar.getFilledBox().getPosition().x + verticalScrollBar.getFilledBox().getSize().x
+                && mousePosition.y < verticalScrollBar.getFilledBox().getPosition().y + verticalScrollBar.getFilledBox().getSize().y){
+            verticalHovered = true;
+            Mouse.setHand();
+        }else{
+            verticalHovered = false;
+        }
+        //If horizontal scroll bar was clicked start scrolling horizontally
+        if(mousePosition.x > horizontalScrollBar.getFilledBox().getPosition().x && mousePosition.y > horizontalScrollBar.getFilledBox().getPosition().y
+                && mousePosition.x < horizontalScrollBar.getFilledBox().getPosition().x + horizontalScrollBar.getFilledBox().getSize().x
+                && mousePosition.y < horizontalScrollBar.getFilledBox().getPosition().y + horizontalScrollBar.getFilledBox().getSize().y){
+            horizontalHovered = true;
+            Mouse.setHand();
+        }else{
+            horizontalHovered = false;
+        }
         //If the position did not exist this will cause a crash or weird behavior
         if(this.mousePosition != null) {
             //If the vertical scroll bar is selected scroll appropriately
@@ -390,14 +407,13 @@ public class CodeWindowController {
         //Determine if the mouse is in the window
         if(!inBounds && mousePosition.x > codeWindow.getPosition().x && mousePosition.y > codeWindow.getPosition().y && mousePosition.x < codeWindow.getPosition().x + codeWindow.getSize().x && mousePosition.y < codeWindow.getPosition().y + codeWindow.getSize().y){
             inBounds = true;
-            //Change the cursor
-            long cursor = GLFW.glfwCreateStandardCursor(GLFW.GLFW_IBEAM_CURSOR);
-            GLFW.glfwSetCursor(EngineTester.getWindow(), cursor);
+
         }else if(inBounds && !(mousePosition.x > codeWindow.getPosition().x && mousePosition.y > codeWindow.getPosition().y && mousePosition.x < codeWindow.getPosition().x + codeWindow.getSize().x && mousePosition.y < codeWindow.getPosition().y + codeWindow.getSize().y)){
             inBounds = false;
-            //Change the cursor
-            long cursor = GLFW.glfwCreateStandardCursor(GLFW.GLFW_HAND_CURSOR);
-            GLFW.glfwSetCursor(EngineTester.getWindow(), cursor);
+        }
+        //Change the cursor
+        if(!horizontalHovered && !verticalHovered) {
+            Mouse.setIBeam();
         }
     }
 

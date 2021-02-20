@@ -323,8 +323,6 @@ public class ApplicationController {
             codeWindowController.moveMouse(new Vector2f((float) MOUSE_X, (float) MOUSE_Y));
         }
 
-        //Have button controller test to see if any highlightable buttons should be highlighted
-        ButtonController.hover(window, new Vector2f((float) MOUSE_X, (float) MOUSE_Y));
 
         //Flowchart window processing
         if (flowchartWindowController != null){
@@ -337,6 +335,9 @@ public class ApplicationController {
             //Selecting text boxes is based on the raw position
             flowchartWindowController.moveMouse(MOUSE_X, MOUSE_Y);
         }
+
+        //Have button controller test to see if any highlightable buttons should be highlighted
+        ButtonController.hover(window, new Vector2f((float) MOUSE_X, (float) MOUSE_Y));
     }
 
 
