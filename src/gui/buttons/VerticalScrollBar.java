@@ -15,6 +15,7 @@ public class VerticalScrollBar {
     float contentsHeight;
     GUIFilledBox filledBox;
 
+    //TODO: Gut this method
     public VerticalScrollBar(Vector2f position, float width, float fullRange, float windowHeight, float contentsHeight, float currentPos) {
         this.position = position;
         this.width = width;

@@ -47,6 +47,8 @@ public class CodeWindowController {
     private VerticalScrollBar verticalScrollBar;
     private HorizontalScrollBar horizontalScrollBar;
 
+    float longestLine = 0;
+
     public CodeWindowController(Vector2f position, Vector2f size, Vector3f backgroundColor, Vector3f textColor, Vector3f borderColor, String content, FontType font, float fontSize, float thickness, float borderWidth, float border, float headerHeight, TextLineController textLineController){
         this.textLineController = textLineController;
         this.codeWindow = new CodeWindow();
@@ -107,7 +109,6 @@ public class CodeWindowController {
             }
         }
         //Generate the character edges used for editing texts and find the longest line
-        float longestLine = 0;
         for(EditableFormattedTextLine line : textLineController.getCodeWindowTextLines()){
             line.generateCharacterEdges();
             if(line.getLength() > longestLine){
@@ -152,6 +153,11 @@ public class CodeWindowController {
         codeWindow.setSize(new Vector2f(codeWindow.getSize().x, height));
         maxVerticalPosition -= codeWindow.getSize().y/aspectRatio.y;
 
+        //Calculate new max horizontal position
+        maxHorizontalPosition = maxHorizontalPosition - codeWindow.getTextNumberFilledBox().getSize().x;
+        maxHorizontalPosition /= aspectRatio.x;
+        maxHorizontalPosition += lineNumberWidth;
+
         //Set various sizes to the appropriate values
         codeWindow.getTextNumberFilledBox().setSize(new Vector2f(lineNumberWidth, height));
         codeWindow.getGuiFilledBox().setPosition(new Vector2f(lineNumberWidth-1, -1));
@@ -183,8 +189,10 @@ public class CodeWindowController {
         this.aspectRatio = new Vector2f(aspectRatio);
 
         //Update related entities
+        float width = 0.02f * aspectRatio.x;
         verticalScrollBar.updateAspectRatio(0.02f*aspectRatio.x, codeWindow.getSize().y, codeWindow.getSize().y-0.03f*aspectRatio.y, maxVerticalPosition + codeWindow.getSize().y);
-        horizontalScrollBar.updateAspectRatio(new Vector2f(codeWindow.getGuiFilledBox().getPosition()), 0.03f*aspectRatio.y, codeWindow.getGuiFilledBox().getSize().x, codeWindow.getGuiFilledBox().getSize().x-0.02f*aspectRatio.x);
+        float range = codeWindow.getSize().x - codeWindow.getTextNumberFilledBox().getSize().x;
+        horizontalScrollBar.updateAspectRatio(new Vector2f(codeWindow.getGuiFilledBox().getPosition()), 0.03f*aspectRatio.y, range, range -0.02f*aspectRatio.x, maxHorizontalPosition-codeWindow.getTextNumberFilledBox().getSize().x);
         cursorController.updateAspectRatio();
         textLineController.update(textLineController.getCodeWindowTextLines().get(0), 0, '\0');
     }

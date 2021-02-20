@@ -19,6 +19,7 @@ public class HorizontalScrollBar {
     float splitscreenWidth;
     float fullscreenWidth;
 
+    //TODO: Gut this method
     public HorizontalScrollBar(Vector2f position, float height, float fullRange, float windowWidth, float contentsWidth, float currentPos) {
         this.position = position;
         this.height = height;
@@ -48,7 +49,7 @@ public class HorizontalScrollBar {
      * @param windowWidth the new height of the window
      * @param fullRange the new range where the scroll bar may travel
      */
-    public void updateAspectRatio(Vector2f position, float height, float windowWidth, float fullRange){
+    public void updateAspectRatio(Vector2f position, float height, float windowWidth, float fullRange, float contentsWidth){
         //Update the position of the bottom left corner of the scroll bars travel
         this.position = position;
 
@@ -60,6 +61,7 @@ public class HorizontalScrollBar {
         this.height = height;
         this.windowWidth = windowWidth;
         this.fullRange = fullRange;
+        this.contentsWidth = contentsWidth;
 
         //Update the scroll bars width
         if(windowWidth < contentsWidth){
@@ -67,10 +69,10 @@ public class HorizontalScrollBar {
         }else{
             factor = 1;
         }
+        width = fullRange * factor;
         //Account for full range vs window width
         factor *= (fullRange/windowWidth);
 
-        width = fullRange * factor;
         filledBox.getSize().x = width;
 
         //Set the scroll bar to be at the top of the window
@@ -106,12 +108,13 @@ public class HorizontalScrollBar {
         }else{
             factor = 1;
         }
-        //Account for full range vs window width
-        factor *= (fullRange/windowWidth);
         //Change height while accounting for the size of the scrollbar
         filledBox.getPosition().x += filledBox.getSize().x;
         filledBox.getSize().x = fullRange*factor;
         filledBox.getPosition().x -= filledBox.getSize().x;
+
+        //Account for full range vs window width
+        factor *= (fullRange/windowWidth);
     }
 
     /**
@@ -130,8 +133,10 @@ public class HorizontalScrollBar {
             }else {
                 factor = 1;
             }
+
             //Account for full range vs window width
             factor *= (fullRange/windowWidth);
+
             //Update the apparent size of the scroll bar
             filledBox.getSize().x = fullRange*factor;
 
@@ -175,9 +180,9 @@ public class HorizontalScrollBar {
             }else{
                 factor = 1;
             }
+
             //Account for full range vs window width
             factor *= (fullRange/windowWidth);
-
             //Update the apparent size of the scroll bar
             filledBox.getSize().x = fullRange*factor;
 
