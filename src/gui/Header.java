@@ -7,6 +7,7 @@ import gui.Settings.ReturnString;
 import gui.Settings.SettingsMenu;
 import gui.buttons.HeaderMenu;
 import gui.buttons.TextButton;
+import gui.windows.AnalysisWindow;
 import gui.windows.PopupWindow;
 import main.EngineTester;
 import main.GeneralSettings;
@@ -556,13 +557,14 @@ public class Header {
      */
     public void registers(){
         if(controller.getFlowchartWindowController() != null) {
-            String args = ReturnString.search("Search", "Cancel", "Run", "Register Search");
-            if (args != null){
-                GLFW.glfwSetWindowTitle(EngineTester.getWindow(), windowTitle + " [" + args + "]");
-                controller.getFlowchartWindowController().locateRegisters(args);
-            } else {
-                controller.getFlowchartWindowController().clearHighlighting();
-            }
+            AnalysisWindow analysisWindow = new AnalysisWindow(controller);
+//            String args = ReturnString.search("Search", "Cancel", "Run", "Register Search");
+//            if (args != null){
+//                GLFW.glfwSetWindowTitle(EngineTester.getWindow(), windowTitle + " [" + args + "]");
+//                controller.getFlowchartWindowController().locateRegisters(args);
+//            } else {
+//                controller.getFlowchartWindowController().clearHighlighting();
+//            }
         }
     }
 

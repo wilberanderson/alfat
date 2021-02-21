@@ -169,7 +169,7 @@ public class EngineTester {
         //guiWindow = new GUIWindow(200, 100);
 //        guiWindow.title("Alfat popup");
 //
-        PopupWindow popupWindow = new PopupWindow("Popup test", "This is a popup test", true);
+//        PopupWindow popupWindow = new PopupWindow("Popup test", "This is a popup test");
     }
 
     /**
