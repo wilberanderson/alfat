@@ -1,10 +1,7 @@
 package gui.buttons;
 
-import gui.windows.GUIElement;
+import gui.guiElements.GUIElement;
 import org.lwjgl.util.vector.Vector2f;
-
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public abstract class Button extends GUIElement {
 

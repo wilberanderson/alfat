@@ -11,16 +11,13 @@ import gui.buttons.Button;
 import gui.buttons.TextButton;
 import gui.textBoxes.FlowchartTextBox;
 import gui.textBoxes.TextBox;
-import gui.windows.GUIElement;
+import gui.guiElements.GUIElement;
 import loaders.Loader;
 import main.EngineTester;
 import main.GeneralSettings;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
-import org.lwjgl.util.vector.Matrix2f;
-import org.lwjgl.util.vector.Matrix3f;
-import rendering.renderEngine.GUIElementRenderer;
 import utils.Maths;
 
 import java.util.List;

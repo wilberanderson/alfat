@@ -293,6 +293,8 @@ public class CursorController {
         }
     }
 
+
+
     /**
      * Moves the cursor based on the scroll
      */

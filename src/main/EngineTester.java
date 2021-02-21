@@ -5,6 +5,7 @@ import controllers.gui.GUIWindowController;
 import gui.*;
 import gui.textBoxes.TextBox;
 import gui.windows.GUIWindow;
+import gui.windows.PopupWindow;
 import loaders.*;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
@@ -168,6 +169,7 @@ public class EngineTester {
         //guiWindow = new GUIWindow(200, 100);
 //        guiWindow.title("Alfat popup");
 //
+        PopupWindow popupWindow = new PopupWindow("Popup test", "This is a popup test", true);
     }
 
     /**

@@ -128,7 +128,7 @@ public class CodeWindowController {
         maxHorizontalPosition = longestLine*2 + codeWindow.getTextNumberFilledBox().getSize().x;// - size.x;
 
         //Create component elements
-        cursorController = new CursorController(new Cursor(), this);
+        cursorController = new CursorController(new Cursor(GeneralSettings.TEXT_COLOR), this);
         verticalScrollBar = new VerticalScrollBar(new Vector2f(-0.02f, -.92f), 0.02f, size.y-0.08f, size.y, maxVerticalPosition + size.y, 0);
         horizontalScrollBar = new HorizontalScrollBar(new Vector2f(position.x + codeWindow.getTextNumberFilledBox().getSize().x, -1f),0.03f, size.x-codeWindow.getTextNumberFilledBox().getSize().x-0.03f, size.x-codeWindow.getTextNumberFilledBox().getSize().x, longestLine*2, 0);
 

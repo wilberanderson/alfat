@@ -1,4 +1,4 @@
-package gui.windows;
+package gui.guiElements;
 
 import gui.GUIFilledBox;
 import gui.texts.GUIText;
@@ -25,7 +25,6 @@ public class GUIElement {
     public GUIElement(GUIFilledBox filledBox, GUIText guiText){
         this.filledBox = filledBox;
         this.guiText = guiText;
-        TextMaster.removeGuiText(guiText);
     }
 
     public GUIFilledBox getFilledBox() {

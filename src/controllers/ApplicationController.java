@@ -305,9 +305,9 @@ public class ApplicationController {
             RIGHT_CLICK = false;
         }
         //If a different window was selected then a subwindow may need to process the action, send the event to the GUIWindowController
-        if(window != EngineTester.getWindow()) {
-            GUIWindowController.click(window, button, action);
-        }
+//        if(window != EngineTester.getWindow()) {
+//            GUIWindowController.click(window, button, action);
+//        }
     }
 
     /**

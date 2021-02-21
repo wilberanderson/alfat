@@ -1,5 +1,6 @@
 package controllers.gui;
 
+import gui.guiElements.TextField;
 import gui.windows.GUIWindow;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.util.vector.Vector2f;
@@ -9,6 +10,7 @@ import java.util.List;
 
 public class GUIWindowController {
     private static List<GUIWindow> guiWindows= new ArrayList<>();
+    private static List<TextField> textFields = new ArrayList<>();
 
     public static void render(){
         for(GUIWindow window : guiWindows){
@@ -25,12 +27,13 @@ public class GUIWindowController {
         guiWindows.remove(window);
     }
 
-    public static void click(long window, int button, int action){
-        for(GUIWindow guiWindow : guiWindows){
-            if(guiWindow.getWindow() == window){
-                guiWindow.click(button, action);
-                return;
-            }
-        }
-    }
+//    public static void click(long window, int button, int action){
+//        for(GUIWindow guiWindow : guiWindows){
+//            if(guiWindow.getWindow() == window){
+//                guiWindow.click(button, action);
+//                return;
+//            }
+//        }
+//    }
+
 }

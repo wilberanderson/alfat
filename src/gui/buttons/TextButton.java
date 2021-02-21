@@ -2,14 +2,11 @@ package gui.buttons;
 
 import gui.GUIFilledBox;
 import gui.texts.GUIText;
-import gui.texts.Text;
 import gui.fontMeshCreator.FontType;
-import gui.windows.GUIElement;
 import main.EngineTester;
 import main.GeneralSettings;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
-import org.lwjgl.util.vector.Vector4f;
 
 public class TextButton extends HighlightableButton{
     private Vector3f backgroundColor;

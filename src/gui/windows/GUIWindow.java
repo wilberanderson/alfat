@@ -4,6 +4,8 @@ package gui.windows;
 import controllers.gui.ButtonController;
 import controllers.gui.GUIWindowController;
 import gui.fontMeshCreator.FontType;
+import gui.guiElements.GUIElement;
+import gui.guiElements.TextField;
 import loaders.Loader;
 import main.GeneralSettings;
 import org.lwjgl.glfw.*;
@@ -17,8 +19,7 @@ import utils.MyFile;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
-import static org.lwjgl.glfw.GLFW.GLFW_RELEASE;
+import static org.lwjgl.glfw.GLFW.*;
 
 public class GUIWindow {
 
@@ -29,6 +30,7 @@ public class GUIWindow {
     private GUIElementRenderer renderer;
     protected FontType fontType;
     Vector2f mousePosition = new Vector2f(-2, -2);
+    private TextField selectedTextField;
 
     //TODO: Switch to layouts containing elements
     List<GUIElement> elementList = new ArrayList<>();
@@ -105,6 +107,52 @@ public class GUIWindow {
             public void invoke(long window, int button, int action, int mods) {
                 if(button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE){
                     ButtonController.click(window, mousePosition);
+                }
+                if(button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW.GLFW_PRESS) {
+                    for (GUIElement element : elementList) {
+                        if (element instanceof TextField) {
+                            TextField e = (TextField) element;
+                            if (mousePosition.x > e.getPosition().x && mousePosition.y > e.getPosition().y && mousePosition.x < e.getPosition().x + e.getSize().x && mousePosition.y < e.getPosition().y + e.getSize().y) {
+                                selectedTextField = e;
+                            } else {
+                                if(selectedTextField == e) {
+                                    selectedTextField = null;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        GLFWCharCallback charCallback;
+        GLFW.glfwSetCharCallback(window, charCallback = new GLFWCharCallback() {
+            @Override
+            public void invoke(long window, int codepoint) {
+                if(selectedTextField != null){
+                    GLFW.glfwMakeContextCurrent(window);
+                    selectedTextField.type((char) codepoint);
+                }
+            }
+        });
+
+        GLFWKeyCallback keyCallback;
+        GLFW.glfwSetKeyCallback(window, keyCallback = new GLFWKeyCallback() {
+            @Override
+            public void invoke(long window, int key, int scancode, int action, int mods) {
+                if(selectedTextField != null){
+                    if(key == GLFW_KEY_LEFT && (action == GLFW_PRESS || action == GLFW_REPEAT)){
+                        selectedTextField.moveLeft();
+                    }
+                    else if(key == GLFW_KEY_RIGHT && (action == GLFW_PRESS || action == GLFW_REPEAT)){
+                        selectedTextField.moveRight();
+                    }
+                    else if(key == GLFW_KEY_BACKSPACE && (action == GLFW_PRESS || action == GLFW_REPEAT)){
+                        selectedTextField.delete(true);
+                    }
+                    else if(key == GLFW_KEY_DELETE && (action == GLFW_PRESS || action == GLFW_REPEAT)){
+                        selectedTextField.delete(false);
+                    }
                 }
             }
         });

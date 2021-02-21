@@ -1,22 +1,14 @@
 package rendering.renderEngine;
 
 import controllers.ApplicationController;
-import controllers.flowchartWindow.FlowchartWindowController;
-import controllers.TextLineController;
 import gui.GuiTexture;
-import gui.windows.GUIElement;
-import main.EngineTester;
-import main.GeneralSettings;
+import gui.guiElements.GUIElement;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
 import rendering.cursor.CursorRenderer;
 import rendering.filledBox.FilledBoxRenderer;
-import rendering.flowchartLine.FlowchartLineRenderer;
 //import rendering.guis.GuiRenderer;
-import rendering.terminators.TerminatorRenderer;
 import rendering.text.FontRenderer;
-import rendering.text.TextMaster;
-import rendering.textLines.TextLineRenderer;
 
 import java.util.List;
 
@@ -28,6 +20,7 @@ public class GUIElementRenderer {
     //private static GuiRenderer guiRenderer;
     private FilledBoxRenderer filledBoxRenderer;
     private FontRenderer fontRenderer;
+    private CursorRenderer cursorRenderer;
 
     /**
      * Initializes the MasterRenderer to be able to perform all tasks that it needs to. Initializes the various renderers that are needed to be used.
@@ -36,6 +29,7 @@ public class GUIElementRenderer {
     public GUIElementRenderer() {
         filledBoxRenderer = new FilledBoxRenderer();
         fontRenderer = new FontRenderer();
+        cursorRenderer = new CursorRenderer();
     }
 
     /**
@@ -56,6 +50,9 @@ public class GUIElementRenderer {
         //Render the texts
         fontRenderer.renderGUIElements(elementList);
 
+        //Render any cursors
+        cursorRenderer.renderGUIElements(elementList);
+
         //Swap the color buffers to update the screen
         GLFW.glfwSwapBuffers(window);
     }
@@ -66,5 +63,6 @@ public class GUIElementRenderer {
     public void cleanUp(){
         fontRenderer.cleanUp();
         filledBoxRenderer.cleanUp();
+        cursorRenderer.cleanUp();
     }
 }
