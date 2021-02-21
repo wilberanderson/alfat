@@ -285,7 +285,7 @@ public class ApplicationController {
 
             //Process events for CodeWindow or FlowchartWindow as appropriate
             if(window == EngineTester.getWindow()) {
-                if(activeWindow == ControllerSettings.FLOWCHART_WINDOW){
+                if(activeWindow == ControllerSettings.FLOWCHART_WINDOW && flowchartWindowController != nullSolved ){
                     flowchartWindowController.click(button, action);
                 }
                 if (codeWindowController != null) {
