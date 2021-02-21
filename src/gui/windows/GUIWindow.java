@@ -7,6 +7,7 @@ import gui.fontMeshCreator.FontType;
 import gui.guiElements.GUIElement;
 import gui.guiElements.TextField;
 import loaders.Loader;
+import main.EngineTester;
 import main.GeneralSettings;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.GL11;
@@ -65,6 +66,17 @@ public class GUIWindow {
         GLFW.glfwShowWindow(window);
 
         GUIWindow guiWindow = this;
+        int[] xpos = new int[1];
+        int[] xsize = new int[1];
+        int[] ypos = new int[1];
+        int[] ysize = new int[1];
+        GLFW.glfwGetWindowPos(EngineTester.getWindow(), xpos, ypos);
+        GLFW.glfwGetWindowSize(EngineTester.getWindow(), xsize, ysize);
+        System.out.println(xpos[0]);
+        System.out.println(ypos[0]);
+        System.out.println(xsize[0]);
+        System.out.println(ysize[0]);
+        GLFW.glfwSetWindowPos(window, (xpos[0] + xpos[0] + xsize[0]) / 2 - width/2, (ypos[0] + ypos[0] + ysize[0]) / 2 - height/2);
 
         //Create callbacks
 

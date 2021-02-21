@@ -95,7 +95,7 @@ public class ButtonController {
                 if (position.x > b.getPosition().x && position.y > b.getPosition().y && position.x < b.getPosition().x + b.getSize().x && position.y < b.getPosition().y + b.getSize().y) {
                     //Set an appropriate cursor icon
                     //TODO: Consider which cursor icon should be used
-                    Mouse.setPointer();
+                    Mouse.setHand();
                     //If the button is highlightable then perform highlight operations if it is not highlighted
                     if (b instanceof HighlightableButton && !((HighlightableButton) b).isHighlighted()) {
                         ((HighlightableButton) b).highlight();
