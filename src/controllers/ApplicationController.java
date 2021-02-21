@@ -7,6 +7,7 @@ import controllers.gui.ButtonController;
 import controllers.gui.GUIController;
 import controllers.gui.GUIWindowController;
 import gui.Header;
+import gui.Mouse;
 import gui.UserPreferences;
 import gui.buttons.HeaderMenu;
 import main.EngineTester;
@@ -34,6 +35,8 @@ public class ApplicationController {
     private static HeaderMenu openMenu = null;
     private static Header header;
     private static Vector2f aspectRatio = new Vector2f(1, 1);
+    private boolean hoveringBoundary = false;
+    private boolean draggingBoundary = false;
 
     //Permanent variables
     CodeWindowController codeWindowController;
@@ -261,7 +264,10 @@ public class ApplicationController {
 
             //Mark the appropriate window to be active for processing scrolling and panning events
             if(window == EngineTester.getWindow()) {
-                if (codeWindowController != null) {
+                if(hoveringBoundary){
+                    draggingBoundary = true;
+                }
+                if (!hoveringBoundary && codeWindowController != null) {
                     //Process the mouse click in code window
                     if (codeWindowController.mouseLeftClick()) {
                         activeWindow = ControllerSettings.CODE_WINDOW;
@@ -275,6 +281,7 @@ public class ApplicationController {
         else if(button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE){
             LEFT_CLICK = false;
             LEFT_MOUSE_HELD = false;
+            draggingBoundary = false;
 
             //Process events for CodeWindow or FlowchartWindow as appropriate
             if(window == EngineTester.getWindow()) {
@@ -325,9 +332,9 @@ public class ApplicationController {
 
 
         //Flowchart window processing
-        if (flowchartWindowController != null){
+        if (!draggingBoundary && flowchartWindowController != null){
             //Panning is based on the change in mouse position adjusted for the zoom level of the application
-            if (LEFT_MOUSE_HELD && activeWindow == ControllerSettings.FLOWCHART_WINDOW) {
+            if (LEFT_MOUSE_HELD && !hoveringBoundary && activeWindow == ControllerSettings.FLOWCHART_WINDOW) {
                 float xChange = (float) (MOUSE_X - previousMouseX);
                 float yChange = (float) (MOUSE_Y - previousMouseY);
                 flowchartWindowController.updateTranslation(new Vector2f((float) xChange * flowchartWindowController.getZoom(), (float) yChange * flowchartWindowController.getZoom()));
@@ -338,6 +345,21 @@ public class ApplicationController {
 
         //Have button controller test to see if any highlightable buttons should be highlighted
         ButtonController.hover(window, new Vector2f((float) MOUSE_X, (float) MOUSE_Y));
+
+        if(flowchartWindowController != null) {
+            if (!codeWindowController.isHoveringScroll() && MOUSE_X > flowchartWindowController.getPosition().x - 0.01 && MOUSE_X < flowchartWindowController.getPosition().x + 0.01 && MOUSE_Y < -1 + flowchartWindowController.getSize().y) {
+                Mouse.setResize();
+                hoveringBoundary = true;
+            }else{
+                hoveringBoundary = false;
+            }
+        }
+
+        if(draggingBoundary){
+            float xChange = (float) (MOUSE_X - previousMouseX);
+            codeWindowController.moveBoundary(xChange);
+            flowchartWindowController.moveBoundary(xChange);
+        }
     }
 
 

@@ -158,7 +158,7 @@ public class CodeWindowController {
 
         //Calculate new max horizontal position
         maxHorizontalPosition = maxHorizontalPosition - codeWindow.getTextNumberFilledBox().getSize().x;
-        maxHorizontalPosition /= aspectRatio.x;
+        maxHorizontalPosition *= aspectRatio.x;
         maxHorizontalPosition += lineNumberWidth;
 
         //Set various sizes to the appropriate values
@@ -192,7 +192,6 @@ public class CodeWindowController {
         this.aspectRatio = new Vector2f(aspectRatio);
 
         //Update related entities
-        float width = 0.02f * aspectRatio.x;
         verticalScrollBar.updateAspectRatio(0.02f*aspectRatio.x, codeWindow.getSize().y, codeWindow.getSize().y-0.03f*aspectRatio.y, maxVerticalPosition + codeWindow.getSize().y);
         float range = codeWindow.getSize().x - codeWindow.getTextNumberFilledBox().getSize().x;
         horizontalScrollBar.updateAspectRatio(new Vector2f(codeWindow.getGuiFilledBox().getPosition()), 0.03f*aspectRatio.y, range, range -0.02f*aspectRatio.x, maxHorizontalPosition-codeWindow.getTextNumberFilledBox().getSize().x);
@@ -213,20 +212,20 @@ public class CodeWindowController {
                 //If the position would be negative change position so it would be 0 instead
                 if (newPosition < 0) {
                     changeContentsVerticalPosition(-contentsVerticalPosition);
-                    cursorController.scroll(-contentsVerticalPosition);
+                    cursorController.scroll();
                     verticalScrollBar.changePosition(-contentsVerticalPosition);
                 }
                 //If the position would be greater than max make it so it will be max instead
                 else if (newPosition > maxVerticalPosition) {
                     changeContentsVerticalPosition(maxVerticalPosition - contentsVerticalPosition);
-                    cursorController.scroll(maxVerticalPosition - contentsVerticalPosition);
+                    cursorController.scroll();
                     verticalScrollBar.changePosition(maxVerticalPosition - contentsVerticalPosition);
 
                 }
                 //Otherwise scroll
                 else {
                     changeContentsVerticalPosition(scrollChange);
-                    cursorController.scroll(scrollChange);
+                    cursorController.scroll();
                     verticalScrollBar.changePosition(scrollChange);
                 }
             }
@@ -246,14 +245,17 @@ public class CodeWindowController {
                 //If the position would be negative change position so it would be 0 instead
                 if (newPosition < 0) {
                     changeContentsHorizontalPosition(contentsHorizontalPosition, factor);
+                    cursorController.scroll();
                 }
                 //If the position would be greater than max make it so it will be max instead
                 else if (newPosition > maxHorizontalPosition - codeWindow.getSize().x) {
                     changeContentsHorizontalPosition(-((maxHorizontalPosition - contentsHorizontalPosition) - codeWindow.getSize().x), factor);
+                    cursorController.scroll();
                 }
                 //Otherwise scroll
                 else {
                     changeContentsHorizontalPosition(-scrollChange, factor);
+                    cursorController.scroll();
                 }
             }
         }
@@ -395,11 +397,11 @@ public class CodeWindowController {
         if(this.mousePosition != null) {
             //If the vertical scroll bar is selected scroll appropriately
             if(scrollingVertical) {
-                scroll(-((mousePosition.y - this.mousePosition.y)) / verticalScrollBar.getFactor());
+                scroll(-((mousePosition.y - this.mousePosition.y)) / verticalScrollBar.getFactor() / aspectRatio.y);
             }
             //If the horizontal scroll bar is selected scroll appropriately
             else if(scrollingHorizontal){
-                scrollHorizontal(((mousePosition.x - this.mousePosition.x)) / horizontalScrollBar.getFactor(), horizontalScrollBar.getFactor());
+                scrollHorizontal(((mousePosition.x - this.mousePosition.x)) / horizontalScrollBar.getFactor() / aspectRatio.x, horizontalScrollBar.getFactor());
             }
         }
         //Save the position
@@ -496,6 +498,22 @@ public class CodeWindowController {
     }
 
     /**
+     * Moves the boundary between the code window and flowchart window
+     * @param change
+     */
+    public void moveBoundary(float change){
+        //Change the size of this window
+        codeWindow.getSize().x += change;
+        codeWindow.getGuiFilledBox().getSize().x += change;
+
+        //Adjust scroll bars
+        //The vertical scroll bar needs to be moved
+        verticalScrollBar.changeXPosition(change);
+        //The horizontal scroll bar needs it's range adjusted
+        horizontalScrollBar.changeWindowWidth(change);
+    }
+
+    /**
      * Clears the text which was included in this code window
      */
     public void clear(){
@@ -545,6 +563,10 @@ public class CodeWindowController {
 
     public HorizontalScrollBar getHorizontalScrollBar() {
         return horizontalScrollBar;
+    }
+
+    public boolean isHoveringScroll(){
+        return verticalHovered || horizontalHovered;
     }
 
 }

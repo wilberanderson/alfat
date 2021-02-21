@@ -118,6 +118,34 @@ public class HorizontalScrollBar {
     }
 
     /**
+     * Changes the window width, used to account for dragging the boundary between the code window and flowchart window
+     * @param change
+     */
+    public void changeWindowWidth(float change){
+        //The width of the window and range of travel are both modified by change
+        windowWidth += change;
+        fullRange += change;
+
+        //Update the scroll bars width
+        if(windowWidth < contentsWidth){
+            factor = windowWidth / contentsWidth;
+        }else{
+            factor = 1;
+        }
+        width = fullRange * factor;
+        //Account for full range vs window width
+        factor *= (fullRange/windowWidth);
+        filledBox.getSize().x = width;
+
+        //If factor is 1 then the scroll bar should not be able to be used, snap it's position to the default position, else adjust it's position by the fraction of change
+        if(factor < 1) {
+            filledBox.getPosition().x = position.x + (-position.x + filledBox.getPosition().x) * (windowWidth) / (windowWidth - change);
+        }else{
+            filledBox.getPosition().x = position.x;
+        }
+    }
+
+    /**
      * Moves the scroll bar appropriately for splitscreen view
      */
     public boolean goSplitScreen(){

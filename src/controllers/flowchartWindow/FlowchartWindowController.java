@@ -22,29 +22,52 @@ public class FlowchartWindowController {
         flowchartTextBoxController = new FlowchartTextBoxController(textLineController,this);
     }
 
+    /**
+     * Updates the zoom level of the flowchart
+     * @param scrollChange
+     */
     public void updateZoom(float scrollChange){
+        //Save the old zoom and modify zoom
         float oldZoom = flowchartWindow.getZoom();
         flowchartWindow.setZoom(flowchartWindow.getZoom()+scrollChange);
+
+        //Ensure that zoom does not fall below MIN_ZOOM
         if (flowchartWindow.getZoom() < GeneralSettings.MIN_ZOOM) {
             flowchartWindow.setZoom(GeneralSettings.MIN_ZOOM);
         }
+
+        //Populate the zoom translate matrix with zoom
         flowchartWindow.getZoomTranslateMatrix().m00 = flowchartWindow.getZoom();
         flowchartWindow.getZoomTranslateMatrix().m11 = flowchartWindow.getZoom();
 
-
+        //Modify the translations saved in the zoom translate matrix by zoom
         flowchartWindow.getZoomTranslateMatrix().m20 = flowchartWindow.getZoomTranslateMatrix().m20 * flowchartWindow.getZoom() / oldZoom;
         flowchartWindow.getZoomTranslateMatrix().m21 = flowchartWindow.getZoomTranslateMatrix().m21 * flowchartWindow.getZoom() / oldZoom;
-        //Logic for a zoom focus point of 0, 1, does not work currently
-//        if(scaleChange > 0){
-//            flowchartWindow.getZoomTranslateMatrix().m21 = flowchartWindow.getZoomTranslateMatrix().m21 - 1*oldZoom + 1/zoom;
-//        }
+
     }
 
+    /**
+     * Moves the boundary between the code window and flowchart window
+     * @param change
+     */
+    public void moveBoundary(float change){
+        flowchartWindow.getPosition().x += change;
+        flowchartWindow.getSize().x -= change;
+    }
+
+    /**
+     * Updates the translation being applied to the flowchart based on mouse movements
+     * @param translation
+     */
     public void updateTranslation(Vector2f translation){
         flowchartWindow.getZoomTranslateMatrix().m20 += translation.x/flowchartWindow.getZoom();
         flowchartWindow.getZoomTranslateMatrix().m21 += translation.y/flowchartWindow.getZoom();
     }
 
+    /**
+     * Sets the translation being applied to the flowchart to a specific value
+     * @param translation
+     */
     public void setTranslation(Vector2f translation){
         flowchartWindow.getZoomTranslateMatrix().m20 = translation.x /flowchartWindow.getZoom();
         flowchartWindow.getZoomTranslateMatrix().m21 = translation.y / flowchartWindow.getZoom();
@@ -56,10 +79,6 @@ public class FlowchartWindowController {
     }
 
     public void clear(){
-//        for(FlowchartTextBox textBox: flowchartWindow.getFlowchartTextBoxList()){
-//            textBox.clear();
-//        }
-//        flowchartWindow.getFlowchartTextBoxList().clear();
         flowchartWindow.getFlowchartLineList().clear();
         flowchartTextBoxController.clear();
     }

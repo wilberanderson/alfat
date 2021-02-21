@@ -14,6 +14,7 @@ public class VerticalScrollBar {
     float windowHeight;
     float contentsHeight;
     GUIFilledBox filledBox;
+    float offset = 0;
 
     //TODO: Gut this method
     public VerticalScrollBar(Vector2f position, float width, float fullRange, float windowHeight, float contentsHeight, float currentPos) {
@@ -49,7 +50,7 @@ public class VerticalScrollBar {
 
         //Update the scroll bars size and position
         filledBox.getSize().x = width;
-        filledBox.getPosition().x = position.x;
+        filledBox.getPosition().x = position.x + offset;
 
         //Update class members
         this.width = width;
@@ -90,6 +91,15 @@ public class VerticalScrollBar {
                 filledBox.getPosition().y = windowHeight - fullRange - 1;
             }
         }
+    }
+
+    /**
+     * Used to change the position when the width of the code window is changed
+     * @param change
+     */
+    public void changeXPosition(float change){
+        filledBox.getPosition().x += change;
+        offset += change;
     }
 
     public GUIFilledBox getFilledBox() {
@@ -145,5 +155,9 @@ public class VerticalScrollBar {
         //The scroll bar should be at the right side of the screen minus the width of the scroll bar
         position.x = 1f-width;
         filledBox.getPosition().x = 1f-width;
+    }
+
+    public float getOffset(){
+        return offset;
     }
 }

@@ -43,16 +43,22 @@ public class ButtonController {
 
         for(int i = buttons.size()-1; i >= 0; i--){
             Button b = buttons.get(i);
+            //If b was clicked
             if (position.x > b.getPosition().x && position.y > b.getPosition().y && position.x < b.getPosition().x + b.getSize().x && position.y < b.getPosition().y + b.getSize().y) {
+                //If b is a header menu then it may have to close
                 if (b instanceof HeaderMenu) {
+                    //If b was a different menu than the currently open one add the open menu to toClose
                     if (openMenu != b && openMenu != null) {
                         toClose.add(openMenu);
                     }
                     openMenu = (HeaderMenu) b;
-                } else if(openMenu != null){
+                }
+                //If a menu is open close it
+                else if(openMenu != null){
                     toClose.add(openMenu);
                     openMenu = null;
                 }
+                //If the button is in the same window as the click was then do it's on press operations
                 if(b.getWindow() == window) {
                     b.onPress();
                     buttonPressed = true;
@@ -60,6 +66,7 @@ public class ButtonController {
                 break;
             }
         }
+        //If no button was pressed close all header menus
         if (!buttonPressed){
             for(Button b : buttons){
                 if(b instanceof HeaderMenu){
@@ -69,21 +76,34 @@ public class ButtonController {
                 }
             }
         }
+        //Close any header menus asked to be closed
         for(HeaderMenu b : toClose){
             b.close();
         }
     }
 
+    /**
+     * Processes each button to determine whether it was hovered
+     * @param window
+     * @param position
+     */
     public static void hover(long window, Vector2f position){
         for(int i = buttons.size()-1; i >= 0; i--){
             Button b = buttons.get(i);
             if(b.getWindow() == window) {
+                //If the cursor is hovering over the button
                 if (position.x > b.getPosition().x && position.y > b.getPosition().y && position.x < b.getPosition().x + b.getSize().x && position.y < b.getPosition().y + b.getSize().y) {
+                    //Set an appropriate cursor icon
+                    //TODO: Consider which cursor icon should be used
                     Mouse.setPointer();
+                    //If the button is highlightable then perform highlight operations if it is not highlighted
                     if (b instanceof HighlightableButton && !((HighlightableButton) b).isHighlighted()) {
                         ((HighlightableButton) b).highlight();
                     }
-                } else {
+                }
+                //If the cursor is not hovering the button
+                else {
+                    //If the button is highlightable then perform unhighlight operations if it is highlighted
                     if (b instanceof HighlightableButton && ((HighlightableButton) b).isHighlighted()) {
                         ((HighlightableButton) b).unhighlight();
                     }
@@ -92,9 +112,6 @@ public class ButtonController {
         }
     }
 
-    public static void init(ApplicationController controller){
-
-    }
 
     public static List<Button> getButtons(){
         return buttons;

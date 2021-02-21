@@ -1,12 +1,7 @@
 package controllers.codeWindow;
 
-import controllers.ApplicationController;
-import controllers.TextLineController;
 import gui.Cursor;
-import gui.texts.CodeWindowText;
 import gui.texts.EditableFormattedTextLine;
-import gui.texts.Text;
-import main.GeneralSettings;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.util.List;
@@ -15,7 +10,7 @@ public class CursorController {
     Cursor cursor;
     CodeWindowController codeWindow;
     List<EditableFormattedTextLine> texts;
-    EditableFormattedTextLine currentGUIText;
+    EditableFormattedTextLine currentText;
     private Vector2f aspectRatio;
     private int lineIndex;
     private int characterIndex;
@@ -27,148 +22,238 @@ public class CursorController {
         this.codeWindow = codeWindow;
     }
 
+    /**
+     * When the user clicks on the screen the cursor should move to the closest boundary between two characters to that position
+     * @param mousePosition
+     * @param codeWindow
+     */
     public void moveCursor(Vector2f mousePosition, CodeWindowController codeWindow){
-        visible = true;
         this.codeWindow = codeWindow;
         texts = codeWindow.getTextLineController().getCodeWindowTextLines();
         this.aspectRatio = new Vector2f(codeWindow.getAspectRatio());
+
+        //Make sure the cursor is visible
+        visible = true;
+
+        //Modify the position by aspect ratio to support screen resizes
         mousePosition.x /= aspectRatio.x;
         mousePosition.y /= aspectRatio.y;
+
+        //Test height will be used to find which text was just selected
         float testHeight = mousePosition.y;
-        currentGUIText = null;
+        currentText = null;
+        //For each text
         for (int i = 0; i < texts.size(); i++){
+            //Find the texts height
             float newHeight = texts.get(i).getPosition().y;
+            //If this is the last text and the cursor is still lower then the cursor should jump up to this position
             if(i+1 == texts.size()){
                 mousePosition.y = newHeight;
-                currentGUIText = texts.get(i);
+                currentText = texts.get(i);
                 continue;
             }
+            //If the height is closest to this texts height set the cursor to have the same height
             if (testHeight < newHeight  && testHeight > texts.get(i+1).getPosition().y){
                 mousePosition.y = newHeight;
-                currentGUIText = texts.get(i);
+                currentText = texts.get(i);
                 break;
             }
         }
-        if (currentGUIText != null) {
-            lineIndex = texts.indexOf(currentGUIText);
-            float[] characterEdges = currentGUIText.getCharacterEdges();
-            float testWidth = mousePosition.x - currentGUIText.getPosition().x;
+        //If a text was found determine the closest character boundary in that text
+        if (currentText != null) {
+            //Save the index of the selected text
+            lineIndex = texts.indexOf(currentText);
+            //character edges defines where boundaries between two characters are
+            float[] characterEdges = currentText.getCharacterEdges();
+            //Character edges is relative to the texts origin, create a test width in this scale
+            float testWidth = mousePosition.x - currentText.getPosition().x;
+
+            //For each edge except the last check to see if the cursor is closer to it than the next one, if so that is the closest character boundary
             int i;
             for (i = 0; i < characterEdges.length-1; i++){
                 if (Math.abs(characterEdges[i+1]*2 - testWidth) > Math.abs(characterEdges[i]*2 - testWidth)){
-                    mousePosition.x = (characterEdges[i]*2 + currentGUIText.getPosition().x);
+                    mousePosition.x = (characterEdges[i]*2 + currentText.getPosition().x);
                     break;
                 }
             }
+
+            //If i is equal to the last index then the last position is the closest
             if(i == characterEdges.length-1){
-                mousePosition.x = (characterEdges[i]*2 + currentGUIText.getPosition().x);
+                mousePosition.x = (characterEdges[i]*2 + currentText.getPosition().x);
             }
+            //Save the index for editing texts
             characterIndex = i;
         }
+        //The mouse position has been found, move the cursor to that position
         cursor.setPosition(mousePosition);
     }
 
+    /**
+     * Moves the cursor one character to the left
+     */
     public void moveLeft(){
+        //Try to move the cursor
         characterIndex -= 1;
+        //If the cursor did not wrap onto a new line then update it's position
         if(characterIndex >= 0) {
             updateXPosition();
-        }else{
+        }
+        //If the cursor wrapped onto a new line
+        else{
+            //If this was not the very first line move to the end of the previous line
             if(lineIndex > 0){
                 lineIndex--;
-                currentGUIText = texts.get(lineIndex);
-                characterIndex = currentGUIText.getCharacterEdges().length-1;
+                currentText = texts.get(lineIndex);
+                characterIndex = currentText.getCharacterEdges().length-1;
                 if(characterIndex < 0){
                     characterIndex = 0;
                 }
                 updatePosition();
-            }else{
+            }
+            //If this is the first line character index should not change and position does not need to be updated
+            else{
                 characterIndex = 0;
             }
         }
     }
 
+
+    /**
+     * Moves the cursor one character to the right
+     */
     public void moveRight(){
+        //Try to move the cursor
         characterIndex += 1;
-        if(characterIndex < currentGUIText.getCharacterEdges().length) {
+        //If the cursor did not wrap onto a new line then update it's position
+        if(characterIndex < currentText.getCharacterEdges().length) {
             updateXPosition();
-        }else{
+        }
+        //If the cursor wrapped onto a new line
+        else{
+            //If this was not the very last line move to the beginning of the next line
             if(lineIndex < texts.size()-1){
                 lineIndex++;
-                currentGUIText = texts.get(lineIndex);
+                currentText = texts.get(lineIndex);
                 characterIndex = 0;
                 updatePosition();
-            }else{
-                characterIndex = currentGUIText.getCharacterEdges().length-1;
+            }
+            //If this is the last line character index should not change and position does not need to be updated
+            else{
+                characterIndex = currentText.getCharacterEdges().length-1;
             }
         }
     }
 
+    /**
+     * Moves the cursor one line down
+     */
     public void moveDown(){
+        //If this is not the very last text
         if(lineIndex < texts.size()-1){
+            //Move down
             lineIndex++;
-            currentGUIText = texts.get(lineIndex);
-            if(characterIndex > currentGUIText.getCharacterEdges().length-1){
-                characterIndex = currentGUIText.getCharacterEdges().length-1;
+            currentText = texts.get(lineIndex);
+
+            //Ensure that character index is within the bounds of the text
+            //TODO: Change operations to allow saving this value
+            if(characterIndex > currentText.getCharacterEdges().length-1){
+                characterIndex = currentText.getCharacterEdges().length-1;
             }
+            //If character index would become less than 0 keep it at 0
+            //TODO: Ensure that this can never happen
             if(characterIndex < 0){
                 characterIndex = 0;
             }
+            //Update the position
             updatePosition();
-        }else{
-            characterIndex = currentGUIText.getCharacterEdges().length-1;
+        }
+        //If this is the last line then the cursor should be moved to the end of the line
+        else{
+            characterIndex = currentText.getCharacterEdges().length-1;
             updateXPosition();
         }
     }
 
+    /**
+     * Moves the cursor one line down
+     */
     public void moveUp(){
+        //If this is not the very first text
         if(lineIndex > 0){
+            //Move up
             lineIndex--;
-            currentGUIText = texts.get(lineIndex);
-            if(characterIndex > currentGUIText.getCharacterEdges().length-1){
-                characterIndex = currentGUIText.getCharacterEdges().length-1;
+            currentText = texts.get(lineIndex);
+
+            //Ensure that character index is within the bounds of the text
+            //TODO: Change operations to allow saving this value
+            if(characterIndex > currentText.getCharacterEdges().length-1){
+                characterIndex = currentText.getCharacterEdges().length-1;
             }
+            //If character index would become less than 0 keep it at 0
+            //TODO: Ensure that this can never happen
             if(characterIndex < 0){
                 characterIndex = 0;
             }
+            //Update the position
             updatePosition();
-        }else{
+        }
+        //If this is the first line then put the cursor at the start of the line instead
+        else{
             characterIndex = 0;
             updateXPosition();
         }
     }
 
+    /**
+     * Deletes the single character preceding the cursor
+     */
     public void backSpace(){
+        //If a character is being removed from a single line
         if (characterIndex > 0){
-            currentGUIText = codeWindow.getTextLineController().backspace(currentGUIText, characterIndex, true);
+            currentText = codeWindow.getTextLineController().backspace(currentText, characterIndex, true);
             characterIndex--;
-        } else if (lineIndex > 0) {
+        }
+        //If a newline character is being removed two lines need to be merged
+        else if (lineIndex > 0) {
             characterIndex = codeWindow.getTextLineController().getCodeWindowTextLines().get(lineIndex - 1).getCharacterEdges().length - 1;
-            currentGUIText = codeWindow.getTextLineController().merge(codeWindow.getTextLineController().getCodeWindowTextLines().get(lineIndex - 1), currentGUIText, codeWindow);
+            currentText = codeWindow.getTextLineController().merge(codeWindow.getTextLineController().getCodeWindowTextLines().get(lineIndex - 1), currentText, codeWindow);
             lineIndex--;
         }
+        //The cursors character or line index changed, update accordingly
         updatePosition();
     }
 
+    /**
+     * Deletes the single character following the cursor
+     */
     public void delete(){
-        if(characterIndex < currentGUIText.getCharacterEdges().length-1) {
-            currentGUIText = codeWindow.getTextLineController().backspace(currentGUIText, characterIndex, false);
-        }else if(lineIndex < texts.size()-1){
-            currentGUIText = codeWindow.getTextLineController().merge(currentGUIText, codeWindow.getTextLineController().getCodeWindowTextLines().get(lineIndex+1), codeWindow);
+        //If a character is being removed from a single line
+        if(characterIndex < currentText.getCharacterEdges().length-1) {
+            currentText = codeWindow.getTextLineController().backspace(currentText, characterIndex, false);
         }
+        //If a newline character is being removed two lines need to be merged
+        else if(lineIndex < texts.size()-1){
+            currentText = codeWindow.getTextLineController().merge(currentText, codeWindow.getTextLineController().getCodeWindowTextLines().get(lineIndex+1), codeWindow);
+        }
+        //The cursors position is unchanged
     }
 
-
+    /**
+     * Types a single character
+     * @param c
+     */
     public void type(char c){
-        if(currentGUIText != null) {
+        //Only type if a text is selected
+        if(currentText != null) {
             //If the character is a newline then a new line should be created and the character and line index's should be updated as appropriate
             if (c == '\n') {
-                currentGUIText = codeWindow.getTextLineController().split(currentGUIText, characterIndex, codeWindow);
+                currentText = codeWindow.getTextLineController().split(currentText, characterIndex, codeWindow);
                 characterIndex = 0;
                 lineIndex++;
             }
             //If the character that was typed is any other character then the line will not be split, update it with the typed character and update the character index
             else {
-                currentGUIText = codeWindow.getTextLineController().update(currentGUIText, characterIndex, c);
+                currentText = codeWindow.getTextLineController().update(currentText, characterIndex, c);
                 characterIndex++;
             }
             //After typing the position of the cursor will be different, update the position
@@ -176,19 +261,21 @@ public class CursorController {
         }
     }
 
-    public void scroll(float scrollChange){
-        cursor.getPosition().y += scrollChange;
+    /**
+     * Moves the cursor based on the scroll
+     */
+    public void scroll(){
+        updatePosition();
     }
 
+    /**
+     * Updates the x position of the mouse
+     */
     private void updateXPosition(){
-        if(characterIndex == currentGUIText.getCharacterEdges().length || characterIndex == 0 && currentGUIText.getCharacterEdges().length == 1){
-            cursor.getPosition().x = -1+EditableFormattedTextLine.getLineNumberOffset()*4;//// +0.000001f;
-        }else {
-            cursor.getPosition().x = currentGUIText.getCharacterEdges()[characterIndex] * 2 + currentGUIText.getPosition().x;
-//            cursor.getPosition().x = currentGUIText.getCharacterEdges()[characterIndex] * 2 + currentGUIText.getWords()[1].getPosition().x;
-        }
-        System.out.println(codeWindow.getCodeWindow().getCodeWindowPosition().x/aspectRatio.x);
-        System.out.println(cursor.getPosition().x);
+        //Move the cursor
+        cursor.getPosition().x = currentText.getCharacterEdges()[characterIndex] * 2 + currentText.getPosition().x;
+
+        //If the cursor is outside the bounds of the code window scroll the code window to correct it
         if ((codeWindow.getCodeWindow().getCodeWindowPosition().x)/aspectRatio.x > cursor.getPosition().x){
             codeWindow.changeContentsHorizontalPosition((codeWindow.getCodeWindow().getCodeWindowPosition().x)/aspectRatio.x - (cursor.getPosition().x), codeWindow.getHorizontalScrollBar().getFactor());
             cursor.getPosition().x = (codeWindow.getCodeWindow().getCodeWindowPosition().x)/aspectRatio.x;
@@ -198,20 +285,31 @@ public class CursorController {
         }
     }
 
+    /**
+     * Updates the y position of the mouse
+     */
     private void updateYPosition(){
-        cursor.getPosition().y = currentGUIText.getPosition().y;
+        //Move the cursor
+        cursor.getPosition().y = currentText.getPosition().y;
+
+        //If the cursor is outside the bounds of the code window scroll the code window to correct it
         if(cursor.getPosition().y* aspectRatio.y > (codeWindow.getCodeWindow().getCodeWindowPosition().y + codeWindow.getCodeWindow().getCodeWindowSize().y)){
-            float change = (codeWindow.getCodeWindow().getCodeWindowPosition().y + codeWindow.getCodeWindow().getCodeWindowSize().y)/aspectRatio.y-currentGUIText.getPosition().y;
+            float change = (codeWindow.getCodeWindow().getCodeWindowPosition().y + codeWindow.getCodeWindow().getCodeWindowSize().y)/aspectRatio.y- currentText.getPosition().y;
             codeWindow.scroll(change);
             cursor.getPosition().y = (codeWindow.getCodeWindow().getCodeWindowPosition().y + codeWindow.getCodeWindow().getCodeWindowSize().y)/aspectRatio.y;
-        }else if(cursor.getPosition().y*aspectRatio.y < codeWindow.getCodeWindow().getCodeWindowPosition().y+0.06*currentGUIText.getFontSize()){
-            float change = (codeWindow.getCodeWindow().getCodeWindowPosition().y)/aspectRatio.y-(currentGUIText.getPosition().y-0.06f*EditableFormattedTextLine.getFontSize());
+        }else if(cursor.getPosition().y*aspectRatio.y < codeWindow.getCodeWindow().getCodeWindowPosition().y+0.06* currentText.getFontSize()){
+            float change = (codeWindow.getCodeWindow().getCodeWindowPosition().y)/aspectRatio.y-(currentText.getPosition().y-0.06f*EditableFormattedTextLine.getFontSize());
             codeWindow.scroll(change);
             cursor.getPosition().y = (codeWindow.getCodeWindow().getCodeWindowPosition().y + 0.06f*EditableFormattedTextLine.getFontSize());
         }
+
+        //TODO: Move this into position calculation
         cursor.getPosition().y /= aspectRatio.y;
     }
 
+    /**
+     * Updates the position of the mouse
+     */
     private void updatePosition(){
         updateXPosition();
         updateYPosition();
@@ -219,7 +317,7 @@ public class CursorController {
 
     public void updateAspectRatio(){
         this.aspectRatio = new Vector2f(codeWindow.getAspectRatio());
-        if(currentGUIText != null) {
+        if(currentText != null) {
             updatePosition();
         }
     }
