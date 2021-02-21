@@ -18,4 +18,5 @@ public class LabelWord extends TextWord{
     public static void setColor(Vector3f color) {
         LabelWord.color = color;
     }
+
 }

@@ -8,7 +8,10 @@ import gui.terminators.Junction;
 import gui.terminators.Terminator;
 import gui.textBoxes.FlowchartTextBox;
 import gui.texts.*;
+import gui.windows.PopupWindow;
+import main.EngineTester;
 import main.GeneralSettings;
+import org.lwjgl.glfw.GLFW;
 import org.lwjgl.util.vector.Matrix3f;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
@@ -22,6 +25,7 @@ public class Parser implements CodeReader {
     // attributes
     String infile;  // file path
     boolean verbose; // final release should have this changed to false
+    private boolean invalidFlag = false; // invalid labels found in parsing? Highlight after flowchart generation
     ArrayList<FlowChartObject> flowchart = new ArrayList<>();
 
     HashMap<String, Integer> labelMap = new HashMap<>(); // map of labels -> line numbers
@@ -48,6 +52,7 @@ public class Parser implements CodeReader {
      */
     @Override
     public void ReadFile(String infile) {
+        invalidFlag = false;
         //prepare to read file:
         this.infile = infile;
         File file = new File(infile);
@@ -65,12 +70,9 @@ public class Parser implements CodeReader {
                 // replaces tabs with spaces
                 //line = line.replace("\t", "    ");
 
-
                 SimpleTokenizer st = new SimpleTokenizer();
 
                 String[] arrLine = st.tokenizeString(line);
-
-
 
                 //temp variables:
                 Optional<String> comm = Optional.empty();
@@ -120,6 +122,7 @@ public class Parser implements CodeReader {
                         //this matches the label or labels pointed to by the command
                         //if the language supports having the label BEFORE the command,
                         //remove the `jump &&` statement as it will cause problems.
+                        // target label for the line.
                         targetLabel = fragment;
                         formattedString.add(new LabelWord(fragment, new Vector2f(0f, 0)));
                         first = false;
@@ -173,7 +176,7 @@ public class Parser implements CodeReader {
             if (verbose) System.out.println("File not found");
             e.printStackTrace();
         } catch (IOException e) {
-            if (verbose) System.out.println("IO error occured");
+            if (verbose) System.out.println("IO error occurred");
             e.printStackTrace();
         }
     }
@@ -358,6 +361,13 @@ public class Parser implements CodeReader {
                 if (box.connection == null) {
                     box.jumps = false;
                     box.alert += "invalid_label";
+                    // popup goes here
+                    if (!invalidFlag) {
+                        // only show a single pop up for invalid labels.
+                        PopupWindow popup = new PopupWindow("Warning", "Invalid label found", "cancel", "continue");
+                        GLFW.glfwMakeContextCurrent(EngineTester.getWindow());
+                        invalidFlag = true;
+                    }
                 }
             }
             i++;
@@ -548,6 +558,8 @@ public class Parser implements CodeReader {
         }
 
         flowchartWindowController.setFlowchartLineList(linesList);
+        if (invalidFlag)
+            flowchartWindowController.locateAlert("invalid_label");
         return flowchartWindowController;
     }
 

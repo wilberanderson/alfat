@@ -119,12 +119,20 @@ public class FlowchartTextBoxController {
     }
 
     public void locateRegisters(String args) {
+        // catch empty argument string
+        if (args.isEmpty())
+            return;
+
         String operation = "and";
         boolean not = false;
         boolean[] candidate = new boolean[textBoxes.size()];
         Arrays.fill(candidate, true);
 
         List<String> argv = new LinkedList<String>(Arrays.asList(args.split(" ")));
+
+
+        // method: create a map of all boxes and whether they match the string.
+        // Then use boolean comparisons to compare to the candidate solution.
 
         while (argv.size() >= 1){
             if (argv.get(0).charAt(0)=='!' && argv.get(0).length() > 1){
