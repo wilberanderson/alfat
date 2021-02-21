@@ -2,6 +2,7 @@ package controllers.codeWindow;
 
 import gui.Cursor;
 import gui.texts.EditableFormattedTextLine;
+import main.GeneralSettings;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.util.List;
@@ -16,6 +17,7 @@ public class CursorController {
     private int characterIndex;
     private boolean visible = false;
     private boolean toggle = true;
+    private int savedCharacterIndex = -1;
 
     public CursorController(Cursor cursor, CodeWindowController codeWindow){
         this.cursor = cursor;
@@ -28,12 +30,16 @@ public class CursorController {
      * @param codeWindow
      */
     public void moveCursor(Vector2f mousePosition, CodeWindowController codeWindow){
+
         this.codeWindow = codeWindow;
         texts = codeWindow.getTextLineController().getCodeWindowTextLines();
         this.aspectRatio = new Vector2f(codeWindow.getAspectRatio());
 
         //Make sure the cursor is visible
         visible = true;
+
+        //The saved character index should no longer be restored
+        savedCharacterIndex = -1;
 
         //Modify the position by aspect ratio to support screen resizes
         mousePosition.x /= aspectRatio.x;
@@ -92,11 +98,14 @@ public class CursorController {
      * Moves the cursor one character to the left
      */
     public void moveLeft(){
+        //The saved character index should no longer be restored
+        savedCharacterIndex = -1;
+
         //Try to move the cursor
         characterIndex -= 1;
         //If the cursor did not wrap onto a new line then update it's position
         if(characterIndex >= 0) {
-            updateXPosition();
+            updateXPosition(true);
         }
         //If the cursor wrapped onto a new line
         else{
@@ -122,11 +131,14 @@ public class CursorController {
      * Moves the cursor one character to the right
      */
     public void moveRight(){
+        //The saved character index should no longer be restored
+        savedCharacterIndex = -1;
+
         //Try to move the cursor
         characterIndex += 1;
         //If the cursor did not wrap onto a new line then update it's position
         if(characterIndex < currentText.getCharacterEdges().length) {
-            updateXPosition();
+            updateXPosition(true);
         }
         //If the cursor wrapped onto a new line
         else{
@@ -154,23 +166,30 @@ public class CursorController {
             lineIndex++;
             currentText = texts.get(lineIndex);
 
+            //Try to use the saved character index as the character index
+            if(savedCharacterIndex != -1){
+                characterIndex = savedCharacterIndex;
+            }
+
             //Ensure that character index is within the bounds of the text
-            //TODO: Change operations to allow saving this value
             if(characterIndex > currentText.getCharacterEdges().length-1){
+                //Save the character index
+                if(characterIndex > savedCharacterIndex){
+                    savedCharacterIndex = characterIndex;
+                }
                 characterIndex = currentText.getCharacterEdges().length-1;
             }
-            //If character index would become less than 0 keep it at 0
-            //TODO: Ensure that this can never happen
-            if(characterIndex < 0){
-                characterIndex = 0;
-            }
+
             //Update the position
             updatePosition();
         }
         //If this is the last line then the cursor should be moved to the end of the line
         else{
+            //The saved character index should no longer be restored
+            savedCharacterIndex = -1;
+
             characterIndex = currentText.getCharacterEdges().length-1;
-            updateXPosition();
+            updateXPosition(true);
         }
     }
 
@@ -184,23 +203,30 @@ public class CursorController {
             lineIndex--;
             currentText = texts.get(lineIndex);
 
+            //Try to use the saved character index as the character index
+            if(savedCharacterIndex != -1){
+                characterIndex = savedCharacterIndex;
+            }
+
             //Ensure that character index is within the bounds of the text
-            //TODO: Change operations to allow saving this value
             if(characterIndex > currentText.getCharacterEdges().length-1){
+                //Save the character index
+                if(characterIndex > savedCharacterIndex){
+                    savedCharacterIndex = characterIndex;
+                }
                 characterIndex = currentText.getCharacterEdges().length-1;
             }
-            //If character index would become less than 0 keep it at 0
-            //TODO: Ensure that this can never happen
-            if(characterIndex < 0){
-                characterIndex = 0;
-            }
+
             //Update the position
             updatePosition();
         }
         //If this is the first line then put the cursor at the start of the line instead
         else{
+            //The saved character index should no longer be restored
+            savedCharacterIndex = -1;
+
             characterIndex = 0;
-            updateXPosition();
+            updateXPosition(true);
         }
     }
 
@@ -208,6 +234,9 @@ public class CursorController {
      * Deletes the single character preceding the cursor
      */
     public void backSpace(){
+        //The saved character index should no longer be restored
+        savedCharacterIndex = -1;
+
         //If a character is being removed from a single line
         if (characterIndex > 0){
             currentText = codeWindow.getTextLineController().backspace(currentText, characterIndex, true);
@@ -227,6 +256,9 @@ public class CursorController {
      * Deletes the single character following the cursor
      */
     public void delete(){
+        //The saved character index should no longer be restored
+        savedCharacterIndex = -1;
+
         //If a character is being removed from a single line
         if(characterIndex < currentText.getCharacterEdges().length-1) {
             currentText = codeWindow.getTextLineController().backspace(currentText, characterIndex, false);
@@ -265,54 +297,54 @@ public class CursorController {
      * Moves the cursor based on the scroll
      */
     public void scroll(){
-        updatePosition();
+        updateXPosition(false);
+        updateYPosition(false);
     }
 
     /**
      * Updates the x position of the mouse
      */
-    private void updateXPosition(){
+    private void updateXPosition(boolean adjustCodeWindow){
         //Move the cursor
         cursor.getPosition().x = currentText.getCharacterEdges()[characterIndex] * 2 + currentText.getPosition().x;
 
-        //If the cursor is outside the bounds of the code window scroll the code window to correct it
-        if ((codeWindow.getCodeWindow().getCodeWindowPosition().x)/aspectRatio.x > cursor.getPosition().x){
-            codeWindow.changeContentsHorizontalPosition((codeWindow.getCodeWindow().getCodeWindowPosition().x)/aspectRatio.x - (cursor.getPosition().x), codeWindow.getHorizontalScrollBar().getFactor());
-            cursor.getPosition().x = (codeWindow.getCodeWindow().getCodeWindowPosition().x)/aspectRatio.x;
-        }else if(cursor.getPosition().x/aspectRatio.x > (codeWindow.getCodeWindow().getCodeWindowPosition().x + codeWindow.getCodeWindow().getCodeWindowSize().x)){
-            codeWindow.changeContentsHorizontalPosition(-(cursor.getPosition().x - (codeWindow.getCodeWindow().getCodeWindowPosition().x + codeWindow.getCodeWindow().getCodeWindowSize().x)/aspectRatio.x), codeWindow.getHorizontalScrollBar().getFactor());
-            cursor.getPosition().x = (codeWindow.getCodeWindow().getCodeWindowPosition().x + codeWindow.getCodeWindow().getCodeWindowSize().x)/aspectRatio.x;
+        if(adjustCodeWindow) {
+            //If the cursor is outside the bounds of the code window scroll the code window to correct it
+            if ((codeWindow.getCodeWindow().getCodeWindowPosition().x) / aspectRatio.x > cursor.getPosition().x) {
+                codeWindow.changeContentsHorizontalPosition((codeWindow.getCodeWindow().getCodeWindowPosition().x) / aspectRatio.x - (cursor.getPosition().x), codeWindow.getHorizontalScrollBar().getFactor());
+                cursor.getPosition().x = (codeWindow.getCodeWindow().getCodeWindowPosition().x) / aspectRatio.x;
+            } else if (cursor.getPosition().x / aspectRatio.x > (codeWindow.getCodeWindow().getCodeWindowPosition().x + codeWindow.getCodeWindow().getCodeWindowSize().x)) {
+                codeWindow.changeContentsHorizontalPosition(-(cursor.getPosition().x - (codeWindow.getCodeWindow().getCodeWindowPosition().x + codeWindow.getCodeWindow().getCodeWindowSize().x) / aspectRatio.x), codeWindow.getHorizontalScrollBar().getFactor());
+                cursor.getPosition().x = (codeWindow.getCodeWindow().getCodeWindowPosition().x + codeWindow.getCodeWindow().getCodeWindowSize().x) / aspectRatio.x;
+            }
         }
     }
 
     /**
      * Updates the y position of the mouse
      */
-    private void updateYPosition(){
+    private void updateYPosition(boolean adjustCodeWindow){
         //Move the cursor
         cursor.getPosition().y = currentText.getPosition().y;
 
-        //If the cursor is outside the bounds of the code window scroll the code window to correct it
-        if(cursor.getPosition().y* aspectRatio.y > (codeWindow.getCodeWindow().getCodeWindowPosition().y + codeWindow.getCodeWindow().getCodeWindowSize().y)){
-            float change = (codeWindow.getCodeWindow().getCodeWindowPosition().y + codeWindow.getCodeWindow().getCodeWindowSize().y)/aspectRatio.y- currentText.getPosition().y;
-            codeWindow.scroll(change);
-            cursor.getPosition().y = (codeWindow.getCodeWindow().getCodeWindowPosition().y + codeWindow.getCodeWindow().getCodeWindowSize().y)/aspectRatio.y;
-        }else if(cursor.getPosition().y*aspectRatio.y < codeWindow.getCodeWindow().getCodeWindowPosition().y+0.06* currentText.getFontSize()){
-            float change = (codeWindow.getCodeWindow().getCodeWindowPosition().y)/aspectRatio.y-(currentText.getPosition().y-0.06f*EditableFormattedTextLine.getFontSize());
-            codeWindow.scroll(change);
-            cursor.getPosition().y = (codeWindow.getCodeWindow().getCodeWindowPosition().y + 0.06f*EditableFormattedTextLine.getFontSize());
+        if(adjustCodeWindow) {
+            //If the cursor is outside the bounds of the code window scroll the code window to correct it
+            if ((codeWindow.getCodeWindow().getCodeWindowPosition().y) / aspectRatio.y > cursor.getPosition().y - GeneralSettings.FONT_HEIGHT) {
+                codeWindow.changeContentsVerticalPosition((codeWindow.getCodeWindow().getCodeWindowPosition().y) / aspectRatio.y - (cursor.getPosition().y - GeneralSettings.FONT_HEIGHT));
+                cursor.getPosition().y = currentText.getPosition().y;
+            } else if (cursor.getPosition().y / aspectRatio.y > (codeWindow.getCodeWindow().getCodeWindowPosition().y + codeWindow.getCodeWindow().getCodeWindowSize().y)) {
+                codeWindow.changeContentsVerticalPosition(-(cursor.getPosition().y - (codeWindow.getCodeWindow().getCodeWindowPosition().y + codeWindow.getCodeWindow().getCodeWindowSize().y) / aspectRatio.y));
+                cursor.getPosition().y = currentText.getPosition().y;
+            }
         }
-
-        //TODO: Move this into position calculation
-        cursor.getPosition().y /= aspectRatio.y;
     }
 
     /**
      * Updates the position of the mouse
      */
     private void updatePosition(){
-        updateXPosition();
-        updateYPosition();
+        updateXPosition(true);
+        updateYPosition(true);
     }
 
     public void updateAspectRatio(){

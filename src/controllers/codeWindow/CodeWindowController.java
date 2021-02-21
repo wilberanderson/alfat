@@ -213,20 +213,17 @@ public class CodeWindowController {
                 if (newPosition < 0) {
                     changeContentsVerticalPosition(-contentsVerticalPosition);
                     cursorController.scroll();
-                    verticalScrollBar.changePosition(-contentsVerticalPosition);
                 }
                 //If the position would be greater than max make it so it will be max instead
                 else if (newPosition > maxVerticalPosition) {
                     changeContentsVerticalPosition(maxVerticalPosition - contentsVerticalPosition);
                     cursorController.scroll();
-                    verticalScrollBar.changePosition(maxVerticalPosition - contentsVerticalPosition);
 
                 }
                 //Otherwise scroll
                 else {
                     changeContentsVerticalPosition(scrollChange);
                     cursorController.scroll();
-                    verticalScrollBar.changePosition(scrollChange);
                 }
             }
         }
@@ -430,6 +427,7 @@ public class CodeWindowController {
         }
         //Update the saved position
         contentsVerticalPosition += change;
+        verticalScrollBar.changePosition(change);
     }
 
     /**
