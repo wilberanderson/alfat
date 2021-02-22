@@ -102,7 +102,7 @@ public class EditableFormattedTextLine extends FormattedTextLine{
             }
         }
         //If the last word had more than one character then the last character edge will be lost, save it
-        if(i > 1) {
+        if(i > 0) {
             newEdges[index] = characterEdges[i - 1];
         }
 

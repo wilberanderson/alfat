@@ -6,6 +6,7 @@ import main.GeneralSettings;
 import org.lwjgl.util.vector.Vector2f;
 import parser.GlobalParser;
 import parser.Parser;
+import utils.Printer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -199,7 +200,6 @@ public class TextLineController {
             addCodeWindowTextLine(newLine, index + 1);
             newLine.changeVerticalPosition(-GeneralSettings.FONT_HEIGHT);
         }
-
 
         //After splitting a line the user expects the cursor to be on the newly created line
         return newLine;
