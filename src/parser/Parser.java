@@ -31,10 +31,11 @@ public class Parser  {
     HashMap<String, Integer> labelMap = new HashMap<>(); // map of labels -> line numbers
     List<CodeLine> lines = new ArrayList<>();
 
+    private SimpleTokenizer simpleTokenizer = new SimpleTokenizer();
 
     //JsonReader jr = new JsonReader(new File("CodeSyntax/LC3.json"));
     //JsonReader jr = new JsonReader(new File("CodeSyntax/x86.json"));
-    CodeSyntax syn = JsonReader.mapJsonToCodeSyntax(new File("CodeSyntax/LC3.json"));
+    private CodeSyntax syn = JsonReader.mapJsonToCodeSyntax(new File("CodeSyntax/LC3.json"));
 
 
     /**
@@ -49,9 +50,13 @@ public class Parser  {
 
     /**
      * Set the code syntax of parser
+     * This also sets the SimpleTokenizer split string regex and comment regex.
+     * Warning: This assumes that codeSyntax is valid and contains these...
      * */
     public void setCodeSyntax(CodeSyntax codeSyntax) {
         this.syn = codeSyntax;
+        simpleTokenizer.setSplitRegex(syn.getKeywordPatterns().getEmptySpace());
+        simpleTokenizer.setCommentRegex(syn.getKeywordPatterns().getComment());
     }
 
     public Parser(boolean verbose) {
@@ -86,9 +91,7 @@ public class Parser  {
                 // replaces tabs with spaces
                 //line = line.replace("\t", "    ");
 
-                SimpleTokenizer st = new SimpleTokenizer();
-
-                String[] arrLine = st.tokenizeString(line);
+                String[] arrLine = simpleTokenizer.tokenizeString(line);
 
                 //temp variables:
                 Optional<String> comm = Optional.empty();
@@ -206,9 +209,8 @@ public class Parser  {
         boolean first = true;
         //parse line:
         line = line.replace("\t", "    ");
-        SimpleTokenizer st = new SimpleTokenizer();
 
-        String[] arrLine = st.tokenizeString(line);
+        String[] arrLine = simpleTokenizer.tokenizeString(line);
 
 
         //temp variables:

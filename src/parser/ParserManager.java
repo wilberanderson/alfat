@@ -31,10 +31,10 @@ public class ParserManager {
         //the settings menu when the syntax path is changed
         if(GeneralSettings.IS_SYNTAX_PATH_CHANGED) {
             setCodeSyntax(new File(GeneralSettings.USERPREF.getSyntaxPath()));
-            GeneralSettings.IS_SYNTAX_PATH_CHANGED = false;
             if(codeSyntax != null) {
                 parser.setCodeSyntax(codeSyntax);
             }
+            GeneralSettings.IS_SYNTAX_PATH_CHANGED = false;
         }
     }
 
