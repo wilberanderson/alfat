@@ -19,7 +19,7 @@ import org.lwjgl.util.vector.Vector3f;
 import java.io.*;
 import java.util.*;
 
-public class Parser implements CodeReader {
+public class Parser  {
     public float x_bound = -10;
     public float y_bound = -10;
     // attributes
@@ -50,7 +50,6 @@ public class Parser implements CodeReader {
      *
      * @param infile The absolute or relative location of the file, as a string.
      */
-    @Override
     public void ReadFile(String infile) {
         invalidFlag = false;
         //prepare to read file:
@@ -290,7 +289,6 @@ public class Parser implements CodeReader {
     /**
      * Create flowchart objects. <b>Only</b> call after the file has been parsed.
      */
-    @Override
     public void generateFlowObjects() {
         //generate naive boxes for flowchart.
         if (verbose) System.out.println("\n\nBeginning flowchart parsing:");
