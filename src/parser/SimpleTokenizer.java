@@ -66,10 +66,10 @@ public class SimpleTokenizer {
         if(verbose)
             verbosePrint(arrayList, "reconstructDoublequotes2 DONE");
 
-        //Reconstruct double quotes [",XXXXX,"] -> ["XXXXX"]
+        //Reconstruct comment line ["something", ";", "something"] -> ["something", ";something"]
         yeetComment(arrayList);
         if(verbose)
-            verbosePrint(arrayList, "yet comment");
+            verbosePrint(arrayList, "yeet comment");
 
         arrLineOut = new String[arrayList.size()];
         arrayList.toArray(arrLineOut);
