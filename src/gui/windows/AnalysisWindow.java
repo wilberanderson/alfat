@@ -58,10 +58,14 @@ public class AnalysisWindow extends GUIWindow{
         close();
     }
 
+    @Override
     public  void onContinue(){
+//        GLFW.glfwMakeContextCurrent(window);
         String text = elementList.get(elementList.size()-1).getGuiText().getTextString();
         GLFW.glfwSetWindowTitle(EngineTester.getWindow(), GeneralSettings.WINDOW_TITLE + " [" + text + "]");
+//        GLFW.glfwMakeContextCurrent(EngineTester.getWindow());
         controller.getFlowchartWindowController().locateRegisters(text);
+        GLFW.glfwMakeContextCurrent(window);
         close();
     }
 }

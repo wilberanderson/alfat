@@ -22,7 +22,7 @@ import java.util.List;
 
 import static org.lwjgl.glfw.GLFW.*;
 
-public class GUIWindow {
+public abstract class GUIWindow {
 
     long window;
 
@@ -166,6 +166,9 @@ public class GUIWindow {
                     else if(key == GLFW_KEY_DELETE && (action == GLFW_PRESS || action == GLFW_REPEAT)){
                         selectedTextField.delete(false);
                     }
+                    else if(key == GLFW_KEY_ENTER && action == GLFW_PRESS){
+                        onContinue();
+                    }
                 }
             }
         });
@@ -246,4 +249,6 @@ public class GUIWindow {
         renderer.cleanUp();
         GUIWindowController.remove(this);
     }
+
+    abstract void onContinue();
 }

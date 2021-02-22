@@ -40,9 +40,7 @@ public abstract class Text {
         this.position.x = (position.x+1)/2;
         this.position.y = -(position.y - 1)/2;
         if(this instanceof GUIText){
-            System.out.println("enter");
             this.textMeshData = TextMaster.loadGuiText((GUIText) this, text, fontType);
-            System.out.println("exit");
         }else{
             this.textMeshData = TextMaster.loadText(this, text);
         }
