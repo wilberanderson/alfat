@@ -10,14 +10,15 @@ import java.util.List;
  * (2) Chars based on single quotes
  * (3) Slash single characters e.g. [\,"] -> [\"]
  * (4) reconstructs a comment into a single line
- * TODO: (1) Pass regex into this class, (2) define the comment used from regex
  * */
 
 public class SimpleTokenizer {
 
     //The default tokenizer regex
     //private String split = "((?<=\\s)|(?=\\s+))|((?<=,))|(?=\\.)|((?<=\\\")|(?=\\\"))|((?<=\\\\)|(?=\\\\))|((?<=')|(?='))";
-    private String split = "((?<=\\s)|(?=\\s+))|((?<=,))|(?=\\.)|((?<=\\\")|(?=\\\"))|((?<=\\\\)|(?=\\\\))|((?<=')|(?='))|((?<=;)|(?=;))";
+    private String splitRegex = "((?<=\\s)|(?=\\s+))|((?<=,))|(?=\\.)|((?<=\\\")|(?=\\\"))|((?<=\\\\)|(?=\\\\))|((?<=')|(?='))|((?<=;)|(?=;))"; //Left to this has default
+    private String commentRegex = ";"; //Left to this has default
+
 
     private boolean verbose = false;
 
@@ -25,7 +26,7 @@ public class SimpleTokenizer {
         //DO NOTHING
     }
     public SimpleTokenizer (String splitRegex) {
-        this.split = splitRegex;
+        this.splitRegex = splitRegex;
     }
 
 
@@ -43,7 +44,7 @@ public class SimpleTokenizer {
     public String[] tokenizeString(String arrLineIn) {
         String arrLineOut[] = null;
 
-        arrLineOut = arrLineIn.split(split);
+        arrLineOut = arrLineIn.split(splitRegex);
 
         List arrayList = new ArrayList<String>(Arrays.asList(arrLineOut));
 
@@ -66,10 +67,10 @@ public class SimpleTokenizer {
         if(verbose)
             verbosePrint(arrayList, "reconstructDoublequotes2 DONE");
 
-        //Reconstruct double quotes [",XXXXX,"] -> ["XXXXX"]
+        //Reconstruct comment line ["something", ";", "something"] -> ["something", ";something"]
         yeetComment(arrayList);
         if(verbose)
-            verbosePrint(arrayList, "yet comment");
+            verbosePrint(arrayList, "yeet comment");
 
         arrLineOut = new String[arrayList.size()];
         arrayList.toArray(arrLineOut);
@@ -181,8 +182,6 @@ public class SimpleTokenizer {
      * (3) [",X,;,Y"][][;,X,Y] -> ["X;Y"][][;,",X,",Y]  | creates string if comment is withing strings but ignores a string at start of comment
      * */
     private void reconstructDoublequotes2(List al) {
-        //TODO: Allow the comment string to be set
-        String commentStr = ";";
         //The end of the double quote index
         int endIndex = 0;
         //Temp string to reconstruct with
@@ -195,7 +194,7 @@ public class SimpleTokenizer {
 
         //i is set to findStartIndex and if the start of a line contains a comment character
         //The whole line is ignored
-        for(int i = findStartIndex(al, true,commentStr, look4Toggle); i < al.size(); i++) {
+        for(int i = findStartIndex(al, true, look4Toggle); i < al.size(); i++) {
 
             //Case implies there is NO double quotes OR a comment exist before any double quotes
             if(i < 0) {
@@ -230,7 +229,7 @@ public class SimpleTokenizer {
                 al.add(i,temp);
 
                 //adjust i index for next spot
-                i = findStartIndex(al,oneFound, commentStr, look4Toggle)-1;
+                i = findStartIndex(al,oneFound, look4Toggle)-1;
                 if(i < -1) {
                     //STOP there is no more single double quotes
                     i = al.size();
@@ -257,11 +256,11 @@ public class SimpleTokenizer {
      * Finds the index of the first double quote
      * Returns -1 if there is not double quote found or a comment character is found.
      * */
-    private int findStartIndex(List al, boolean stopIF, String commentStr, int []look4Toggle) {
+    private int findStartIndex(List al, boolean stopIF, int []look4Toggle) {
         for(int i = 0; i < al.size(); i++) {
             //stop if checking for comment character and it's found
             if(stopIF) {
-                if(al.get(i).equals(commentStr)) {
+                if(isCommentRegexMatch((String) al.get(i))) {
                     return -1; //STOP
                 }
             }
@@ -313,13 +312,13 @@ public class SimpleTokenizer {
     /**
      * Reconstructs everything at the start of a comment to the end of line.
      * i.e. yeets the comment
-     * TODO: Make it so you can define the comment character from regex
      * */
     public void yeetComment(List al) {
         int indexStart = -1;
         String temp = "";
         for(int i = 0; i < al.size(); i++) {
-            if(al.get(i).equals(";") && indexStart == -1) {
+            //if(al.get(i).equals(";") && indexStart == -1) {
+            if(isCommentRegexMatch((String) al.get(i)) && indexStart == -1) {
                 indexStart = i;
                 temp += al.get(i);
             } else if (indexStart > -1) {
@@ -333,6 +332,25 @@ public class SimpleTokenizer {
         }
 
     }
+
+    /**
+     * Returns true if a string matches a comment regex
+     * */
+    private boolean isCommentRegexMatch(String string) {
+        return string.matches(commentRegex);
+    }
+
+
+    /**
+     * Set the comment regex
+     * @see Parser
+     * @see ParserManager
+     **/
+    public void setCommentRegex(String commentRegex) {
+        this.commentRegex = commentRegex;
+    }
+
+
     /**
      * Prints the array list to see how it looks while being split up and reconstructed...
      * */
@@ -352,8 +370,13 @@ public class SimpleTokenizer {
 
     /**
      * Set the split regex...
+     * @see Parser
+     * @see ParserManager
      * */
-    public void setSplit(String split) {
-        this.split = split;
+    public void setSplitRegex(String splitRegex) {
+        this.splitRegex = splitRegex;
     }
+
+
+
 }

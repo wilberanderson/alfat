@@ -17,7 +17,9 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
+import parser.GlobalParser;
 import parser.Parser;
+import parser.ParserManager;
 import rendering.renderEngine.MasterRenderer;
 
 import javax.imageio.ImageIO;
@@ -36,7 +38,7 @@ public class Header {
     private Vector2f position;
     private Vector2f aspectRatio = new Vector2f(1, 1);
     private TempFileManager tfm; //Manages the temp file paths
-    private Parser parser = null;
+    private Parser parser = null; //should NOT need this anymore TODO: REMOVE
     private String windowTitle = null;
     ApplicationController controller;
 
@@ -462,13 +464,22 @@ public class Header {
         if(tfm.getMostRecent() == null) {
             return;
         }
-        parser = new Parser(tfm.getMostRecent(), false);
-        parser.ReadFile(tfm.getMostRecent());
 
-        parser.generateFlowObjects();
-        controller.setFlowchartWindowController(parser.createFlowchart(controller));
 
-        controller.flowchartView();
+
+//        parser = new Parser( false);
+//        parser.ReadFile(tfm.getMostRecent());
+//        parser.generateFlowObjects();
+//        controller.setFlowchartWindowController(parser.createFlowchart(controller));
+//        controller.flowchartView();
+
+        if(GlobalParser.PARSER_MANAGER.attemptFileParse(tfm.getMostRecent())){
+            controller.setFlowchartWindowController(GlobalParser.PARSER_MANAGER.getParser().createFlowchart(controller));
+            controller.flowchartView();
+        }
+
+
+
     }
 
     /**
@@ -488,11 +499,17 @@ public class Header {
         if(tfm.getMostRecent() == null) {
             return;
         }
-        parser  = new Parser(tfm.getMostRecent(), false);
-        parser.ReadFile(tfm.getMostRecent());
+//        parser  = new Parser( false);
+//        parser.ReadFile(tfm.getMostRecent());
+//        parser.generateFlowObjects();
+//        parser.createFlowchart(controller);
+//        controller.setFlowchartWindowController(parser.createFlowchart(controller));
+//        controller.flowchartView();
+        if(GlobalParser.PARSER_MANAGER.attemptFileParse(tfm.getMostRecent())){
+            controller.setFlowchartWindowController(GlobalParser.PARSER_MANAGER.getParser().createFlowchart(controller));
+            controller.flowchartView();
+        }
 
-        parser.generateFlowObjects();
-        parser.createFlowchart(controller);
     }
 
     /**
@@ -503,10 +520,18 @@ public class Header {
             return;
         }
 
-        parser = new Parser(GeneralSettings.FILE_PATH, true);
-        parser.ReadFile(GeneralSettings.FILE_PATH);
-        parser.generateFlowObjects();
-        parser.createFlowchart(controller);
+//        parser = new Parser(true);
+//        parser.ReadFile(GeneralSettings.FILE_PATH);
+//        parser.generateFlowObjects();
+//        parser.createFlowchart(controller);
+//        controller.setFlowchartWindowController(parser.createFlowchart(controller));
+//        controller.flowchartView();
+
+
+        if(GlobalParser.PARSER_MANAGER.attemptFileParse(GeneralSettings.FILE_PATH)){
+            controller.setFlowchartWindowController(GlobalParser.PARSER_MANAGER.getParser().createFlowchart(controller));
+            controller.flowchartView();
+        }
     }
 
     /**

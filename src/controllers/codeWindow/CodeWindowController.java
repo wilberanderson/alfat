@@ -16,6 +16,7 @@ import org.lwjgl.glfw.GLFW;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
+import parser.GlobalParser;
 import parser.Parser;
 
 import java.util.ArrayList;
@@ -73,8 +74,8 @@ public class CodeWindowController {
         float longestLineNumber = 0;
 
         //Create a parser that is used for parsing each line
-        //TODO: Make parser static and remove this
-        Parser parser = new Parser();
+        //TODO: Make parser static and remove this. OK I DO IT :( U LIKE? :)
+        //Parser parser = new Parser();
 
         //List that holds the lines that were added, used to prevent concurrent modification
         List<EditableFormattedTextLine> newLines = new ArrayList<>();
@@ -85,7 +86,9 @@ public class CodeWindowController {
 
             //Create the line
             //Use parsers single line functionality to generate one line
-            EditableFormattedTextLine formattedTextLine = parser.getFormattedLine(line);
+            //EditableFormattedTextLine formattedTextLine = parser.getFormattedLine(line);
+            EditableFormattedTextLine formattedTextLine = GlobalParser.PARSER_MANAGER.getFormattedLine(line);
+
             //And add the line number to it
             LineNumberWord lineNumberWord = new LineNumberWord(Integer.toString(numberOfLines), new Vector2f(-1, position.y-minHeight+size.y));
             formattedTextLine.getWords()[0] = lineNumberWord;

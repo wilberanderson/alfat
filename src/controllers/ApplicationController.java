@@ -286,7 +286,7 @@ public class ApplicationController {
             //Process events for CodeWindow or FlowchartWindow as appropriate
             if(window == EngineTester.getWindow()) {
                 if(activeWindow == ControllerSettings.FLOWCHART_WINDOW && flowchartWindowController != null){
-                    flowchartWindowController.click(button, action);
+                   flowchartWindowController.click(button, action);
                 }
                 if (codeWindowController != null) {
                     //Process the mouse release in code window

@@ -111,6 +111,49 @@ public class SettingsMenu extends Component {
         SettingsMenu gui = new SettingsMenu();
     }
 
+    //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    //                                                                Settings Menu driver / helper functions
+    /**
+     * Triggers the content switch
+     * @see private JPanel buildButtons()
+     * */
+    private void clickButton(Point point) {
+        int index = fakebutton.locationToIndex(point);
+        updateMenucontent(fakeButtonscontent.get(index).content);
+    }
+
+
+    /**
+     * Builds the left pane of the JSplitPane and returns a JPanel
+     * @see public SettingsMenu()
+     * */
+    private JPanel buildButtons() {
+        JPanel leftPanel = new JPanel();
+
+        DefaultListModel<String> l1 = new DefaultListModel<String>();
+
+        for(int i=0; i < fakeButtonscontent.size(); i++) {
+            l1.addElement(fakeButtonscontent.get(i).name);
+        }
+
+        fakebutton = new JList<String>(l1);
+        fakebutton.setFont(new Font("Arial",Font.BOLD,14));
+        fakebutton.setPreferredSize(new Dimension(100,30));
+
+        fakebutton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                clickButton(e.getPoint());
+            }
+        });
+
+        leftPanel.setPreferredSize(new Dimension(100, 100));
+
+        leftPanel.setLayout(new BorderLayout());
+        leftPanel.add(BorderLayout.CENTER,fakebutton);
+
+        return leftPanel;
+    }
 
     /**
      * Sets the content on the right to the first index of the JList (fakebuttons) and selects it
@@ -141,9 +184,13 @@ public class SettingsMenu extends Component {
 
         fakeButtonscontent.add(new SettingsContent("File Settings", fileSettingsContent()));
 
-        fakeButtonscontent.add(new SettingsContent("Color & Font", colorAndfontContent()));
+        fakeButtonscontent.add(new SettingsContent("Color Picker", colorPickerContent()));
+
+        fakeButtonscontent.add(new SettingsContent("Syntax Color", syntaxColorContent()));
     }
 
+    //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    //                                                                          Display Settings
     /**
      * Display settings content pane
      * */
@@ -426,7 +473,8 @@ public class SettingsMenu extends Component {
         return main;
     }
 
-
+    //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    //                                                                          File settings
     /**
      * The file settings content pane
      * */
@@ -447,9 +495,11 @@ public class SettingsMenu extends Component {
         JButton changeSyntxPath = new JButton("Change File");
         changeSyntxPath.addActionListener(e-> {
             OpenFileDialog ofd = new OpenFileDialog();
+            ofd.setFilterList("json;");
             ofd.openFileWindow();
             if(ofd.getFilePath() != null) {
                 GeneralSettings.USERPREF.setSyntaxPath(ofd.getFilePath());
+                GeneralSettings.IS_SYNTAX_PATH_CHANGED = true;
                 syntaxFilePath.setText(GeneralSettings.USERPREF.getSyntaxPath());
                 syntaxFilePathPane.updateUI();
             }
@@ -562,6 +612,9 @@ public class SettingsMenu extends Component {
     }
 
 
+    //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    //                                                                          Color picker
+
 
     //Mock GUI background colors
     private static int mockGUImenuBtncolor = 0;
@@ -573,15 +626,9 @@ public class SettingsMenu extends Component {
     private static int mockGUIheaderColor = 6;
     private static int mockGUImenuBtncolorHL = 7;
     private static int mockGUIFlowchartHLColor = 8;
+    private Color[] mockGUIcolorPointers = new Color[9]; //NOTE: The point of this is to act like globals to set and change the mock gui colors.
 
-    private Color[] mockGUIcolorPointers = new Color[9];
-
-
-
-
-
-
-    private JPanel colorAndfontContent() {
+    private JPanel colorPickerContent() {
         //The main JPanel uses GridBagLayout to position content
         JPanel main = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
@@ -1229,6 +1276,9 @@ public class SettingsMenu extends Component {
         return layeredPane;
     }
 
+    /**
+     * Selection indicator flowchart color and highlight picker
+     * */
     private JLayeredPane selectionIndicatorFlowchartColorAndHL(JButton sourceBtn, JButton sourceBtn2, int colorInt, int colorInt2) {
         JLayeredPane layeredPane = new JLayeredPane();
         layeredPane.setBounds(0,0,300,50);
@@ -1290,14 +1340,6 @@ public class SettingsMenu extends Component {
         return layeredPane;
     }
 
-
-
-    /**
-     * Selection indicator flowchart numberliens
-     * */
-
-
-
     /**
      * Selection Indicator single color
      * */
@@ -1338,11 +1380,9 @@ public class SettingsMenu extends Component {
         return layeredPane;
     }
 
-
-
-
     /**
-     * Returns a customized JButton
+     * Returns a customized JButton:
+     * (x,y) position relative to layered panel. W, H width and height of the button.
      * */
     private JButton contentLayer(Color color, int x, int y, int w, int h) {
         JButton layer = new JButton();
@@ -1354,48 +1394,15 @@ public class SettingsMenu extends Component {
     }
 
 
+    //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    //                                                                          Syntax Color
+    private JPanel syntaxColorContent() {
 
-
-    /**
-     * Triggers the content switch
-     * @see private JPanel buildButtons()
-     * */
-    private void clickButton(Point point) {
-        int index = fakebutton.locationToIndex(point);
-        updateMenucontent(fakeButtonscontent.get(index).content);
+        JPanel main = new JPanel(new GridBagLayout());
+        main.add(new Label("Placeholder"));
+        return main;
     }
 
 
-    /**
-     * Builds the left pane of the JSplitPane and returns a JPanel
-     * @see public SettingsMenu()
-     * */
-    private JPanel buildButtons() {
-        JPanel leftPanel = new JPanel();
-
-        DefaultListModel<String> l1 = new DefaultListModel<String>();
-
-        for(int i=0; i < fakeButtonscontent.size(); i++) {
-            l1.addElement(fakeButtonscontent.get(i).name);
-        }
-
-        fakebutton = new JList<String>(l1);
-        fakebutton.setFont(new Font("Arial",Font.BOLD,14));
-        fakebutton.setPreferredSize(new Dimension(100,30));
-
-        fakebutton.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                clickButton(e.getPoint());
-            }
-        });
-
-        leftPanel.setPreferredSize(new Dimension(100, 100));
-
-        leftPanel.setLayout(new BorderLayout());
-        leftPanel.add(BorderLayout.CENTER,fakebutton);
-
-        return leftPanel;
-    }
 
 }

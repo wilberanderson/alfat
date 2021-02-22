@@ -59,6 +59,7 @@ public class GUIWindow {
 
         // Make the OpenGL context current
         GLFW.glfwMakeContextCurrent(window);
+        GL11.glClearColor(GeneralSettings.USERPREF.getBackgroundColor3f().x, GeneralSettings.USERPREF.getBackgroundColor3f().y, GeneralSettings.USERPREF.getBackgroundColor3f().z, 1);
 
         //Allow rendering as fast as inputs are received
         GLFW.glfwSwapInterval(0);

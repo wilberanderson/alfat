@@ -1,6 +1,6 @@
 package parser;
 
-public class GenericSyntax {
+public class CodeSyntax {
     private KeywordPatterns keywordPatterns;
 
     public KeywordPatterns getKeywordPatterns() {
@@ -21,7 +21,7 @@ public class GenericSyntax {
 
     @Override
     public String toString() {
-        return "GenericSyntax{" +
+        return "CodeSyntax{" +
                 "keywordPatterns=" + keywordPatterns +
                 '}';
     }

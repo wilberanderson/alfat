@@ -8,7 +8,10 @@ import gui.terminators.Junction;
 import gui.terminators.Terminator;
 import gui.textBoxes.FlowchartTextBox;
 import gui.texts.*;
+import gui.windows.PopupWindow;
+import main.EngineTester;
 import main.GeneralSettings;
+import org.lwjgl.glfw.GLFW;
 import org.lwjgl.util.vector.Matrix3f;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
@@ -16,24 +19,47 @@ import org.lwjgl.util.vector.Vector3f;
 import java.io.*;
 import java.util.*;
 
-public class Parser implements CodeReader {
+public class Parser  {
     public float x_bound = -10;
     public float y_bound = -10;
     // attributes
     String infile;  // file path
     boolean verbose; // final release should have this changed to false
+    private boolean invalidFlag = false; // invalid labels found in parsing? Highlight after flowchart generation
     ArrayList<FlowChartObject> flowchart = new ArrayList<>();
 
     HashMap<String, Integer> labelMap = new HashMap<>(); // map of labels -> line numbers
     List<CodeLine> lines = new ArrayList<>();
 
+    private SimpleTokenizer simpleTokenizer = new SimpleTokenizer();
 
-    JsonReader jr = new JsonReader(new File("CodeSyntax/LC3-New.json"));
-    //JsonReader jr = new JsonReader(new File("CodeSyntax/x86-New.json"));
-    GenericSyntax syn = jr.mapJsonToGenericSyntax();
+    //JsonReader jr = new JsonReader(new File("CodeSyntax/LC3.json"));
+    //JsonReader jr = new JsonReader(new File("CodeSyntax/x86.json"));
+    private CodeSyntax syn = JsonReader.mapJsonToCodeSyntax(new File("CodeSyntax/LC3.json"));
 
-    public Parser(String infile, boolean verbose) {
-        this.infile = infile;
+
+    /**
+     * Clears out clears out values of parser.
+     * */
+    public void clear() {
+        invalidFlag = false;
+        flowchart.clear();
+        labelMap.clear();
+        lines.clear();
+    }
+
+    /**
+     * Set the code syntax of parser
+     * This also sets the SimpleTokenizer split string regex and comment regex.
+     * Warning: This assumes that codeSyntax is valid and contains these...
+     * */
+    public void setCodeSyntax(CodeSyntax codeSyntax) {
+        this.syn = codeSyntax;
+        simpleTokenizer.setSplitRegex(syn.getKeywordPatterns().getEmptySpace());
+        simpleTokenizer.setCommentRegex(syn.getKeywordPatterns().getComment());
+    }
+
+    public Parser(boolean verbose) {
         this.verbose = verbose;
     }
 
@@ -46,8 +72,8 @@ public class Parser implements CodeReader {
      *
      * @param infile The absolute or relative location of the file, as a string.
      */
-    @Override
     public void ReadFile(String infile) {
+        invalidFlag = false;
         //prepare to read file:
         this.infile = infile;
         File file = new File(infile);
@@ -65,12 +91,7 @@ public class Parser implements CodeReader {
                 // replaces tabs with spaces
                 //line = line.replace("\t", "    ");
 
-
-                SimpleTokenizer st = new SimpleTokenizer();
-
-                String[] arrLine = st.tokenizeString(line);
-
-
+                String[] arrLine = simpleTokenizer.tokenizeString(line);
 
                 //temp variables:
                 Optional<String> comm = Optional.empty();
@@ -120,6 +141,7 @@ public class Parser implements CodeReader {
                         //this matches the label or labels pointed to by the command
                         //if the language supports having the label BEFORE the command,
                         //remove the `jump &&` statement as it will cause problems.
+                        // target label for the line.
                         targetLabel = fragment;
                         formattedString.add(new LabelWord(fragment, new Vector2f(0f, 0)));
                         first = false;
@@ -173,7 +195,7 @@ public class Parser implements CodeReader {
             if (verbose) System.out.println("File not found");
             e.printStackTrace();
         } catch (IOException e) {
-            if (verbose) System.out.println("IO error occured");
+            if (verbose) System.out.println("IO error occurred");
             e.printStackTrace();
         }
     }
@@ -187,9 +209,8 @@ public class Parser implements CodeReader {
         boolean first = true;
         //parse line:
         line = line.replace("\t", "    ");
-        SimpleTokenizer st = new SimpleTokenizer();
 
-        String[] arrLine = st.tokenizeString(line);
+        String[] arrLine = simpleTokenizer.tokenizeString(line);
 
 
         //temp variables:
@@ -285,9 +306,18 @@ public class Parser implements CodeReader {
     }
 
     /**
+     * Default formatted text line. Used when there is no valid syntax in use.
+     * Defaults to making all text white.
+     * */
+    public EditableFormattedTextLine getFormattedLineDefault(String line) {
+        List<TextWord> formattedString = new ArrayList<>();
+        formattedString.add(new LabelWord(line, new Vector2f(0f, 0)));
+        return new EditableFormattedTextLine(formattedString, line);
+    }
+
+    /**
      * Create flowchart objects. <b>Only</b> call after the file has been parsed.
      */
-    @Override
     public void generateFlowObjects() {
         //generate naive boxes for flowchart.
         if (verbose) System.out.println("\n\nBeginning flowchart parsing:");
@@ -358,6 +388,13 @@ public class Parser implements CodeReader {
                 if (box.connection == null) {
                     box.jumps = false;
                     box.alert += "invalid_label";
+                    // popup goes here
+                    if (!invalidFlag) {
+                        // only show a single pop up for invalid labels.
+                        PopupWindow popup = new PopupWindow("Warning", "Invalid label found", "cancel", "continue");
+                        GLFW.glfwMakeContextCurrent(EngineTester.getWindow());
+                        invalidFlag = true;
+                    }
                 }
             }
             i++;
@@ -548,6 +585,8 @@ public class Parser implements CodeReader {
         }
 
         flowchartWindowController.setFlowchartLineList(linesList);
+        if (invalidFlag)
+            flowchartWindowController.locateAlert("invalid_label");
         return flowchartWindowController;
     }
 
