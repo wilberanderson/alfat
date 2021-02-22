@@ -1,112 +1,18 @@
 {
-    "operation": [{
-            "name": "ADD"
-        },
-        {
-            "name": "AND"
-        },
-        {
-            "name": "NOT"
-        }
-    ],
-    "dataMovement": [{
-            "name": "LD"
-        },
-        {
-            "name": "LDR"
-        },
-        {
-            "name": "LDI"
-        },
-        {
-            "name": "LEA"
-        },
-        {
-            "name": "ST"
-        },
-        {
-            "name": "STR"
-        },
-        {
-            "name": "STI"
-        }
-    ],
-    "control": [{
-            "name": "BR"
-        },
-        {
-            "name": "JMP"
-        },
-        {
-            "name": "JSR"
-        },
-        {
-            "name": "JSRR"
-        }
-    ],
-    "reserved": [{
-            "name": "RET"
-        },
-        {
-            "name": "RTI"
-        },
-        {
-            "name": "TRAP"
-        },
-        {
-            "name": ".ORIG"
-        },
-        {
-            "name": ".FILL"
-        },
-        {
-            "name": ".BLKW"
-        },
-        {
-            "name": ".STRING"
-        },
-        {
-            "name": ".STRINGZ"
-        },
-        {
-            "name": ".END"
-        },
-        {
-            "name": "PUTS"
-        },
-        {
-            "name": "GETC"
-        },
-        {
-            "name": "OUT"
-        },
-        {
-            "name": "HALT"
-        }
-    ],
-    "registers": [{
-            "name": "R0"
-        },
-        {
-            "name": "R1"
-        },
-        {
-            "name": "R2"
-        },
-        {
-            "name": "R3"
-        },
-        {
-            "name": "R4"
-        },
-        {
-            "name": "R5"
-        },
-        {
-            "name": "R6"
-        },
-        {
-            "name": "R7"
-        }
-    ]
+  "keywordPatterns": {
+    "control": "(BR|BRn|BRz|BRp|BRnz|BRnp|BRzp|BRnzp|JMP|RET|JSR|JSRR|RTI|br|brn|brz|brp|brnz|brnp|brzp|brnzp|jmp|ret|jsr|jsrr|rti)\\b",
+    "reserved": "(TRAP|GETC|OUT|PUTS|IN|HALT|trap|getc|out|puts|in|halt|ALIAS|MACRO|IMPORT|EXPORT|alias|macro|import|export|.ORIG|.FILL|.BLKW|.STRINGZ|.END|.orig|.fill|.blkw|.stringz|.end)\\b",
+    "arithmetic": "(NOT|AND|ADD|not|and|add)\\b",
+    "dataMovement": "(LD|LDR|LDI|ST|STR|STI|LEA|ld|ldr|ldi|st|str|sti|lea)\\b",
+    "register": "[rR][0-7](,)?",
+    "commentLine": "(;.+?$)|(;)",
+    "constantHex": "[x][A-Fa-f0-9]{1,4}",
+    "constantNumeric": "^[x#]-?[0-9]+|[0-9]+",
+    "constantBinary": "\\b[01]+\\b",
+    "constantCharacter": "[A-Za-z][A-Za-z0-9_]+",
+    "doubleQuotedString": "^(\".*\")_|^([\\\"\\\\].*[\\\"\\\\])",
+    "emptySpace": "((?<=\\s)|(?=\\s+))|((?<=,))|(?=\\.)",
+    "label": "^[a-zA-Z0-9\\-_]+",
+    "comment": ";"
+  }
 }

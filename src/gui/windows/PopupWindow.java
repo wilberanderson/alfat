@@ -20,7 +20,7 @@ public class PopupWindow extends GUIWindow{
         GLFW.glfwMakeContextCurrent(this.window);
         this.addElement(new GUIElement(new GUIText(contents, 4, new Vector2f(-.9f, 0.9f))));
         this.elementList.get(0).getGuiText().getPosition().x = 0 - (float)(2-this.elementList.get(0).getGuiText().getLength())/2;
-        Button button = new TextButton(new Vector2f(-0.1f, -0.5f), cancelText, new Vector3f(0.2f, 0.2f, 0.2f), new Vector3f(1, 1, 1), null, fontType, 4, 0, 0, window) {
+        Button button = new TextButton(new Vector2f(-0.1f, -0.5f), cancelText, GeneralSettings.USERPREF.getMenuBtnBGColor3f(), GeneralSettings.USERPREF.getMenuBtnHLColor3f(), null, fontType, 4, 0, 0, window) {
             @Override
             public void onPress() {
                 onCancel();
@@ -29,7 +29,7 @@ public class PopupWindow extends GUIWindow{
         ButtonController.add(button);
         this.addElement(button);
         TextMaster.removeGuiText(this.elementList.get(1).getGuiText());
-        button = new TextButton(new Vector2f(0.4f, -0.5f), continueText, new Vector3f(0.2f, 0.2f, 0.2f), new Vector3f(1, 1, 1), null, fontType, 4, 0, 0, window) {
+        button = new TextButton(new Vector2f(0.4f, -0.5f), continueText, GeneralSettings.USERPREF.getMenuBtnBGColor3f(), GeneralSettings.USERPREF.getMenuBtnHLColor3f(), null, fontType, 4, 0, 0, window) {
             @Override
             public void onPress() {
                 onContinue();
@@ -46,7 +46,7 @@ public class PopupWindow extends GUIWindow{
         GLFW.glfwMakeContextCurrent(this.window);
         this.addElement(new GUIElement(new GUIText(contents, 4, new Vector2f(-.9f, 0.9f))));
         this.elementList.get(0).getGuiText().getPosition().x = 0 - (float)(2-this.elementList.get(0).getGuiText().getLength())/2;
-        Button button = new TextButton(new Vector2f(0.4f, -0.5f), continueText, new Vector3f(0.2f, 0.2f, 0.2f), new Vector3f(1, 1, 1), null, fontType, 4, 0, 0, window) {
+        Button button = new TextButton(new Vector2f(0.4f, -0.5f), continueText, GeneralSettings.USERPREF.getMenuBtnBGColor3f(), GeneralSettings.USERPREF.getMenuBtnHLColor3f(), null, fontType, 4, 0, 0, window) {
             @Override
             public void onPress() {
                 onContinue();
