@@ -68,8 +68,7 @@ public class TextMaster {
 		return data;
 	}
 
-	public static TextMeshData loadGuiText(GUIText text, String textString){
-		FontType font = text.getFont();
+	public static TextMeshData loadGuiText(GUIText text, String textString, FontType font){
 		TextMeshData data = font.loadText(text, textString);
 		int vao = Loader.loadToVAO(data.getVertexPositions(), data.getTextureCoords());
 		text.setMeshInfo(vao, data.getVertexCount());

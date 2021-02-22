@@ -2,11 +2,14 @@ package gui.guiElements;
 
 import gui.Cursor;
 import gui.GUIFilledBox;
+import gui.fontMeshCreator.FontType;
 import gui.texts.DarkGUIText;
 import main.GeneralSettings;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 import rendering.text.TextMaster;
+
+import java.awt.*;
 
 public class TextField extends GUIElement{
     Cursor cursor;
@@ -14,15 +17,21 @@ public class TextField extends GUIElement{
     private Vector2f position;
     private static Vector3f filledBoxColor = new Vector3f(1, 1, 1);
     private int characterIndex = 0;
+    private int fontSize;
+    private FontType fontType;
+    private float scalingFactor;
 
-    public TextField(Vector2f position, Vector2f size){
+    public TextField(Vector2f position, Vector2f size, int fontSize, FontType fontType, float scalingFactor){
         this.position = position;
         this.size = size;
         this.setFilledBox(new GUIFilledBox(position, size, filledBoxColor));
-        this.setGuiText(new DarkGUIText("", 4, position));
+        this.setGuiText(new DarkGUIText("", fontSize, position, fontType));
         TextMaster.removeGuiText(this.getGuiText());
         this.cursor = new Cursor(new Vector3f(0.5f, 0.5f, 0.5f));
         this.cursor.setPosition(new Vector2f(position));
+        this.fontSize = fontSize;
+        this.fontType = fontType;
+        this.scalingFactor = scalingFactor;
     }
 
     public void type(char c){
@@ -31,7 +40,7 @@ public class TextField extends GUIElement{
         text += c;
         text += getGuiText().getTextString().substring(characterIndex);
 
-        this.setGuiText(new DarkGUIText(text, 4, new Vector2f(getGuiText().getPosition().x, position.y + 4 * GeneralSettings.FONT_SCALING_FACTOR)));
+        this.setGuiText(new DarkGUIText(text, fontSize, new Vector2f(getGuiText().getPosition().x, position.y + fontSize * scalingFactor), fontType));
         TextMaster.removeGuiText(this.getGuiText());
 //        this.cursor.setPosition(new Vector2f(position.x + (float)this.getGuiText().getLength()*2, position.y));
         characterIndex++;
@@ -46,7 +55,7 @@ public class TextField extends GUIElement{
             if(characterIndex > 0){
                 text += getGuiText().getTextString().substring(0, characterIndex-1);
                 text += getGuiText().getTextString().substring(characterIndex);
-                this.setGuiText(new DarkGUIText(text, 4, new Vector2f(getGuiText().getPosition().x, position.y + 4 * GeneralSettings.FONT_SCALING_FACTOR)));
+                this.setGuiText(new DarkGUIText(text, fontSize, new Vector2f(getGuiText().getPosition().x, position.y + fontSize * scalingFactor), fontType));
                 TextMaster.removeGuiText(this.getGuiText());
                 characterIndex--;
                 updateXPosition();
@@ -55,7 +64,7 @@ public class TextField extends GUIElement{
             if(characterIndex < getGuiText().getCharacterEdges().length - 1) {
                 text += getGuiText().getTextString().substring(0, characterIndex);
                 text += getGuiText().getTextString().substring(characterIndex + 1);
-                this.setGuiText(new DarkGUIText(text, 4, new Vector2f(getGuiText().getPosition().x, position.y + 4 * GeneralSettings.FONT_SCALING_FACTOR)));
+                this.setGuiText(new DarkGUIText(text, fontSize, new Vector2f(getGuiText().getPosition().x, position.y + fontSize * scalingFactor), fontType));
                 TextMaster.removeGuiText(this.getGuiText());
             }
         }

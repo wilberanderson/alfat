@@ -18,7 +18,7 @@ public class FontType {
 	/**
 	 * Creates a new font and loads up the data about each character from the
 	 * font file.
-	 * 
+	 *
 	 * @param textureAtlas
 	 *            - the ID of the font atlas texture.
 	 * @param fontFile
@@ -28,6 +28,21 @@ public class FontType {
 	public FontType(int textureAtlas, MyFile fontFile) {
 		this.textureAtlas = textureAtlas;
 		this.loader = new TextMeshCreator(fontFile);
+	}
+
+	/**
+	 * Creates a new font and loads up the data about each character from the
+	 * font file.
+	 *
+	 * @param textureAtlas
+	 *            - the ID of the font atlas texture.
+	 * @param fontFile
+	 *            - the font file containing information about each character in
+	 *            the texture atlas.
+	 */
+	public FontType(int textureAtlas, MyFile fontFile, int width, int height) {
+		this.textureAtlas = textureAtlas;
+		this.loader = new TextMeshCreator(fontFile, width, height);
 	}
 
 	/**

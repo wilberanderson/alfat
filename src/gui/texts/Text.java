@@ -2,6 +2,7 @@ package gui.texts;
 
 import gui.fontMeshCreator.FontType;
 import gui.fontMeshCreator.TextMeshData;
+import main.GeneralSettings;
 import org.lwjgl.util.vector.Vector2f;
 import rendering.text.TextMaster;
 
@@ -33,13 +34,45 @@ public abstract class Text {
      *            text should be rendered. The top left corner of the screen is
      *            (0, 0) and the bottom right is (1, 1).
      */
+    public Text(String text, float fontSize, Vector2f position, FontType fontType) {
+        this.fontSize = fontSize;
+        this.position = position;
+        this.position.x = (position.x+1)/2;
+        this.position.y = -(position.y - 1)/2;
+        if(this instanceof GUIText){
+            System.out.println("enter");
+            this.textMeshData = TextMaster.loadGuiText((GUIText) this, text, fontType);
+            System.out.println("exit");
+        }else{
+            this.textMeshData = TextMaster.loadText(this, text);
+        }
+        this.position.x = this.position.x*2-1;
+        this.position.y = -this.position.y*2+1;
+    }
+    /**
+     * Creates a new text, loads the text's quads into a VAO, and adds the text
+     * to the screen.
+     *
+     * @param text
+     *            - the text.
+     * @param fontSize
+     *            - the font size of the text, where a font size of 1 is the
+     *            default size.
+
+     * @param position
+     *            - the position on the screen where the top left corner of the
+     *            text should be rendered. The top left corner of the screen is
+     *            (0, 0) and the bottom right is (1, 1).
+     */
     public Text(String text, float fontSize, Vector2f position) {
         this.fontSize = fontSize;
         this.position = position;
         this.position.x = (position.x+1)/2;
         this.position.y = -(position.y - 1)/2;
         if(this instanceof GUIText){
-            this.textMeshData = TextMaster.loadGuiText((GUIText) this, text);
+            System.out.println("enter");
+            this.textMeshData = TextMaster.loadGuiText((GUIText) this, text, GeneralSettings.FONT);
+            System.out.println("exit");
         }else{
             this.textMeshData = TextMaster.loadText(this, text);
         }
@@ -53,7 +86,7 @@ public abstract class Text {
         position.x = (position.x+1)/2;
         position.y = -(position.y - 1)/2;
         if(this instanceof GUIText){
-            this.textMeshData = TextMaster.loadGuiText((GUIText) this, textString);
+            this.textMeshData = TextMaster.loadGuiText((GUIText) this, textString, GeneralSettings.FONT);
         }else{
             this.textMeshData = TextMaster.loadText(this, textString);
         }

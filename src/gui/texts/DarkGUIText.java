@@ -19,6 +19,10 @@ public class DarkGUIText extends GUIText{
         super(text, fontSize, position);
     }
 
+    public DarkGUIText(String text, float fontSize, Vector2f position, FontType fontType) {
+        super(text, fontSize, position, fontType);
+    }
+
     public static Vector3f getColor() {
         return darkColor;
     }

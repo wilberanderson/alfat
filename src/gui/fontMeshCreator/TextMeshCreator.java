@@ -19,6 +19,10 @@ public class TextMeshCreator {
 		metaData = new MetaFile(metaFile);
 	}
 
+	protected TextMeshCreator(MyFile metaFile, int width, int height) {
+		metaData = new MetaFile(metaFile, width, height);
+	}
+
 	protected TextMeshData createTextMesh(Text text, String textString) {
 		Line line = createStructure(text, textString);
 		return createQuadVertices(text, line);

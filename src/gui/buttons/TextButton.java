@@ -26,7 +26,7 @@ public class TextButton extends HighlightableButton{
 
     public TextButton(Vector2f position, String text, Vector3f backgroundColor, Vector3f highlightColor, Vector3f textColor, FontType font, float fontSize, float width, float edge){
         super(EngineTester.getWindow());
-        this.setGuiText(new GUIText(text, fontSize, new Vector2f(position.x + GeneralSettings.TEXT_BUTTON_PADDING, position.y+fontSize*0.06f + GeneralSettings.TEXT_BUTTON_PADDING)));
+        this.setGuiText(new GUIText(text, fontSize, new Vector2f(position.x + GeneralSettings.TEXT_BUTTON_PADDING, position.y+fontSize*0.06f + GeneralSettings.TEXT_BUTTON_PADDING), font));
         Vector2f size = new Vector2f((float)this.getText().getLength()*2 + 2*GeneralSettings.TEXT_BUTTON_PADDING, fontSize*GeneralSettings.FONT_SCALING_FACTOR + 2*GeneralSettings.TEXT_BUTTON_PADDING);
         super.setPosition(position);
         super.setSize(size);
@@ -37,7 +37,7 @@ public class TextButton extends HighlightableButton{
 
     public TextButton(Vector2f position, String text, Vector3f backgroundColor, Vector3f highlightColor, Vector3f textColor, FontType font, float fontSize, float width, float edge, long window){
         super(window);
-        this.setGuiText(new GUIText(text, fontSize, new Vector2f(position.x + GeneralSettings.TEXT_BUTTON_PADDING, position.y+fontSize*0.06f + GeneralSettings.TEXT_BUTTON_PADDING)));
+        this.setGuiText(new GUIText(text, fontSize, new Vector2f(position.x + GeneralSettings.TEXT_BUTTON_PADDING, position.y+fontSize*0.06f + GeneralSettings.TEXT_BUTTON_PADDING), font));
         Vector2f size = new Vector2f((float)this.getText().getLength()*2 + 2*GeneralSettings.TEXT_BUTTON_PADDING, fontSize*GeneralSettings.FONT_SCALING_FACTOR + 2*GeneralSettings.TEXT_BUTTON_PADDING);
         super.setPosition(position);
         super.setSize(size);
@@ -48,7 +48,7 @@ public class TextButton extends HighlightableButton{
 
     public TextButton(Vector2f position, Vector2f size, String text, Vector3f backgroundColor, Vector3f highlightColor, Vector3f textColor, FontType font, float fontSize, float width, float edge){
         super(EngineTester.getWindow());
-        setGuiText(new GUIText(text, fontSize, new Vector2f(position.x + GeneralSettings.TEXT_BUTTON_PADDING, position.y+fontSize*0.06f + GeneralSettings.TEXT_BUTTON_PADDING)));
+        setGuiText(new GUIText(text, fontSize, new Vector2f(position.x + GeneralSettings.TEXT_BUTTON_PADDING, position.y+fontSize*0.06f + GeneralSettings.TEXT_BUTTON_PADDING), font));
         super.setPosition(position);
         super.setSize(size);
         setFilledBox(new GUIFilledBox(position, size, backgroundColor));

@@ -19,10 +19,18 @@ public class GUIText extends Text{
 
     String textString;
     private static Vector3f color = GeneralSettings.TEXT_COLOR;
+    private FontType font;
 
     public GUIText(String text, float fontSize, Vector2f position) {
         super(text, fontSize, position);
         this.textString = text;
+        this.font = GeneralSettings.FONT;
+    }
+
+    public GUIText(String text, float fontSize, Vector2f position, FontType fontType) {
+        super(text, fontSize, position, fontType);
+        this.textString = text;
+        this.font = fontType;
     }
 
     public String getTextString() {
@@ -34,6 +42,6 @@ public class GUIText extends Text{
     }
 
     public FontType getFont(){
-        return GeneralSettings.FONT;
+        return font;
     }
 }
