@@ -299,8 +299,10 @@ public class CursorController {
      * Moves the cursor based on the scroll
      */
     public void scroll(){
-        updateXPosition(false);
-        updateYPosition(false);
+        if(this.currentText != null) {
+            updateXPosition(false);
+            updateYPosition(false);
+        }
     }
 
     /**
