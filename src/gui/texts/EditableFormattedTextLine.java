@@ -25,7 +25,7 @@ public class EditableFormattedTextLine extends FormattedTextLine{
         //Find the number of characters in the content words
         int numberOfEdges = 0;
         for(TextWord word: words){
-            if(!(word instanceof LineNumberWord)) {
+            if(!(word instanceof LineNumberWord) && word != null ) {
                 numberOfEdges += word.getCharacterEdges().length;
             }
         }
@@ -43,7 +43,7 @@ public class EditableFormattedTextLine extends FormattedTextLine{
             //Load the edges for each word
             for (TextWord word : words) {
                 //Skip line number words
-                if (!(word instanceof LineNumberWord)) {
+                if (!(word instanceof LineNumberWord) && word != null) {
                     //Determine space size to be used
                     float spaceSize = word.getFont().getSpaceSize()*2;
                     if(word instanceof SeparatorWord){

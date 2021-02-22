@@ -82,9 +82,11 @@ public class TextLineController {
 
         int numberOfCharacters = 0;
         //For each text word
+        int i =  0;
         for (TextWord word : line.getWords()) {
+            i++;
             //Skip line numbers
-            if(word instanceof LineNumberWord){
+            if(word instanceof LineNumberWord || word == null){
                 continue;
             }
 
@@ -170,24 +172,34 @@ public class TextLineController {
             lastLine = codeWindowFormattedTextLines.get(i);
         }
 
-        //Remove the old line and add the two new lines
-        codeWindowFormattedTextLines.remove(line);
-        addCodeWindowTextLine(originalLine, index);
-        addCodeWindowTextLine(newLine, index + 1);
-
         //Tell the controller how the number of lines changed
         controller.changeNumberOfLines(1);
 
-        //Update the positions of all remaining lines
-        float change = GeneralSettings.FONT_SIZE*GeneralSettings.FONT_SCALING_FACTOR;
-        for(int i = index + 1; i < codeWindowFormattedTextLines.size(); i++){
-            EditableFormattedTextLine thisLine = codeWindowFormattedTextLines.get(i);
-            thisLine.changeContentsVerticalPosition(-change);
+        //Remove the old line and add the two new lines
+        codeWindowFormattedTextLines.remove(line);
+        addCodeWindowTextLine(originalLine, index);
+        if(index < codeWindowFormattedTextLines.size() - 1) {
+            addCodeWindowTextLine(newLine, index + 1);
+
+            //Update the positions of all remaining lines
+            float change = GeneralSettings.FONT_SIZE*GeneralSettings.FONT_SCALING_FACTOR;
+            for(int i = index + 1; i < codeWindowFormattedTextLines.size(); i++){
+                EditableFormattedTextLine thisLine = codeWindowFormattedTextLines.get(i);
+                thisLine.changeContentsVerticalPosition(-change);
+            }
+
+            //The last line needs a new line number
+            LineNumberWord newLineNumber = new LineNumberWord(Integer.toString(controller.getNumberOfLines()), new Vector2f(lastLine.getWords()[0].getPosition().x, lastLine.getPosition().y));
+            lastLine.getWords()[0] = newLineNumber;
+        }else{
+            //The last line needs a new line number
+            LineNumberWord newLineNumber = new LineNumberWord(Integer.toString(controller.getNumberOfLines()), new Vector2f(originalLine.getWords()[0].getPosition().x, originalLine.getPosition().y));
+            newLine.getWords()[0] = newLineNumber;
+
+            addCodeWindowTextLine(newLine, index + 1);
+            newLine.changeVerticalPosition(-GeneralSettings.FONT_HEIGHT);
         }
 
-        //The last line needs a new line number
-        LineNumberWord newLineNumber = new LineNumberWord(Integer.toString(controller.getNumberOfLines()), new Vector2f(lastLine.getWords()[0].getPosition().x, lastLine.getPosition().y));
-        lastLine.getWords()[0] = newLineNumber;
 
         //After splitting a line the user expects the cursor to be on the newly created line
         return newLine;
