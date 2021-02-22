@@ -32,9 +32,9 @@ public class Parser  {
     List<CodeLine> lines = new ArrayList<>();
 
 
-    JsonReader jr = new JsonReader(new File("CodeSyntax/LC3-New.json"));
+    //JsonReader jr = new JsonReader(new File("CodeSyntax/LC3-New.json"));
     //JsonReader jr = new JsonReader(new File("CodeSyntax/x86-New.json"));
-    CodeSyntax syn = jr.mapJsonToCodeSyntax();
+    CodeSyntax syn = JsonReader.mapJsonToCodeSyntax(new File("CodeSyntax/LC3-New.json"));
 
     public Parser(String infile, boolean verbose) {
         this.infile = infile;
