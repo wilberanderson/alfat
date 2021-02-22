@@ -88,7 +88,9 @@ public class ApplicationController {
      */
     public void type(int codepoint){
         //Process the typed character
-        codeWindowController.type((char)codepoint);
+        if(codeWindowController != null) {
+            codeWindowController.type((char) codepoint);
+        }
     }
 
     /**

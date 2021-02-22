@@ -414,7 +414,7 @@ public class CodeWindowController {
             inBounds = false;
         }
         //Change the cursor
-        if(!horizontalHovered && !verticalHovered) {
+        if(inBounds && !horizontalHovered && !verticalHovered) {
             Mouse.setIBeam();
         }
     }
