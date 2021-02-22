@@ -36,6 +36,10 @@ public class Parser  {
     //JsonReader jr = new JsonReader(new File("CodeSyntax/x86.json"));
     CodeSyntax syn = JsonReader.mapJsonToCodeSyntax(new File("CodeSyntax/LC3.json"));
 
+    public void setCodeSyntax(CodeSyntax codeSyntax) {
+        this.syn = codeSyntax;
+    }
+
     public Parser(boolean verbose) {
         this.verbose = verbose;
     }
