@@ -462,7 +462,10 @@ public class Header {
         if(tfm.getMostRecent() == null) {
             return;
         }
-        parser = new Parser(tfm.getMostRecent(), false);
+
+
+
+        parser = new Parser( false);
         parser.ReadFile(tfm.getMostRecent());
 
         parser.generateFlowObjects();
@@ -488,7 +491,7 @@ public class Header {
         if(tfm.getMostRecent() == null) {
             return;
         }
-        parser  = new Parser(tfm.getMostRecent(), false);
+        parser  = new Parser( false);
         parser.ReadFile(tfm.getMostRecent());
 
         parser.generateFlowObjects();
@@ -503,7 +506,7 @@ public class Header {
             return;
         }
 
-        parser = new Parser(GeneralSettings.FILE_PATH, true);
+        parser = new Parser(true);
         parser.ReadFile(GeneralSettings.FILE_PATH);
         parser.generateFlowObjects();
         parser.createFlowchart(controller);
