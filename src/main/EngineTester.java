@@ -13,6 +13,8 @@ import org.lwjgl.system.*;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
+import parser.GlobalParser;
+import parser.ParserManager;
 import rendering.renderEngine.GUIElementRenderer;
 import rendering.renderEngine.MasterRenderer;
 import controllers.GLFWEventController;
@@ -60,6 +62,8 @@ public class EngineTester {
     private void init() {
 
         GeneralSettings.USERPREF = new UserPreferences();
+        GlobalParser.PARSER_MANAGER = new ParserManager();
+
 
         //********************************Create the window************************************
         // Setup an error callback. The default implementation

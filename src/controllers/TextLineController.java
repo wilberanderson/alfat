@@ -4,6 +4,7 @@ import controllers.codeWindow.CodeWindowController;
 import gui.texts.*;
 import main.GeneralSettings;
 import org.lwjgl.util.vector.Vector2f;
+import parser.GlobalParser;
 import parser.Parser;
 
 import java.util.ArrayList;
@@ -15,7 +16,7 @@ import java.util.List;
 public class TextLineController {
     List<FormattedTextLine> flowchartFormattedTextLines = new ArrayList<>();
     List<EditableFormattedTextLine> codeWindowFormattedTextLines = new ArrayList<>();
-    Parser parser = new Parser();
+    //Parser parser = new Parser();
 
     /**
      *
@@ -139,13 +140,20 @@ public class TextLineController {
         //If the line is being split at an index greater than 0
         if(characterIndex > 0) {
             //Create new lines using the appropriate portions of the text string
-            originalLine = parser.getFormattedLine(line.getTextString().substring(0, characterIndex));
-            newLine = parser.getFormattedLine(line.getTextString().substring(characterIndex));
+            //originalLine = parser.getFormattedLine(line.getTextString().substring(0, characterIndex));
+            originalLine = GlobalParser.PARSER_MANAGER.getFormattedLine(line.getTextString().substring(0, characterIndex));
+
+            //newLine = parser.getFormattedLine(line.getTextString().substring(characterIndex));
+            newLine = GlobalParser.PARSER_MANAGER.getFormattedLine(line.getTextString().substring(characterIndex));
+
+
         }
         //If the index is 0 the first line should be generated with an empty string
         else{
-            originalLine = parser.getFormattedLine("");
-            newLine = parser.getFormattedLine(line.getTextString());
+            //originalLine = parser.getFormattedLine("");
+            originalLine = GlobalParser.PARSER_MANAGER.getFormattedLine("");
+            //newLine = parser.getFormattedLine(line.getTextString());
+            newLine = GlobalParser.PARSER_MANAGER.getFormattedLine(line.getTextString());
         }
 
         //Set both lines to be at the original lines position
@@ -197,7 +205,9 @@ public class TextLineController {
         String string = left.getTextString()+right.getTextString();
 
         //Create the new line
-        EditableFormattedTextLine newLine = parser.getFormattedLine(string);
+        //EditableFormattedTextLine newLine = parser.getFormattedLine(string);
+
+        EditableFormattedTextLine newLine = GlobalParser.PARSER_MANAGER.getFormattedLine(string);
         newLine.setPosition(left.getPosition());
 
         //Adjust the line numbers
@@ -291,7 +301,9 @@ public class TextLineController {
         string += line.getTextString().substring(index);
 
         //Create the new line
-        EditableFormattedTextLine newLine = parser.getFormattedLine(string);
+        //EditableFormattedTextLine newLine = parser.getFormattedLine(string);
+
+        EditableFormattedTextLine newLine = GlobalParser.PARSER_MANAGER.getFormattedLine(string);
         //Set it's position
         newLine.setPosition(line.getPosition());
         //Set it to use the old lines line number
@@ -310,7 +322,9 @@ public class TextLineController {
             string += line.getTextString().substring(characterIndex);
 
             //Create a new line with this string and the
-            EditableFormattedTextLine newLine = parser.getFormattedLine(string);
+            //EditableFormattedTextLine newLine = parser.getFormattedLine(string);
+            EditableFormattedTextLine newLine = GlobalParser.PARSER_MANAGER.getFormattedLine(string);
+
             newLine.setPosition(line.getPosition());
             newLine.getWords()[0] = line.getWords()[0];
 
@@ -327,7 +341,9 @@ public class TextLineController {
             string += line.getTextString().substring(characterIndex+1);
 
             //Create a new line with this string and the
-            EditableFormattedTextLine newLine = parser.getFormattedLine(string);
+            //EditableFormattedTextLine newLine = parser.getFormattedLine(string);
+            EditableFormattedTextLine newLine = GlobalParser.PARSER_MANAGER.getFormattedLine(string);
+
             newLine.setPosition(line.getPosition());
             newLine.getWords()[0] = line.getWords()[0];
 

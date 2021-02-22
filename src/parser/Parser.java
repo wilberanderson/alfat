@@ -36,6 +36,20 @@ public class Parser  {
     //JsonReader jr = new JsonReader(new File("CodeSyntax/x86.json"));
     CodeSyntax syn = JsonReader.mapJsonToCodeSyntax(new File("CodeSyntax/LC3.json"));
 
+
+    /**
+     * Clears out clears out values of parser.
+     * */
+    public void clear() {
+        invalidFlag = false;
+        flowchart.clear();
+        labelMap.clear();
+        lines.clear();
+    }
+
+    /**
+     * Set the code syntax of parser
+     * */
     public void setCodeSyntax(CodeSyntax codeSyntax) {
         this.syn = codeSyntax;
     }
@@ -287,6 +301,16 @@ public class Parser  {
         }
 
         return FormLine;
+    }
+
+    /**
+     * Default formatted text line. Used when there is no valid syntax in use.
+     * Defaults to making all text white.
+     * */
+    public EditableFormattedTextLine getFormattedLineDefault(String line) {
+        List<TextWord> formattedString = new ArrayList<>();
+        formattedString.add(new LabelWord(line, new Vector2f(0f, 0)));
+        return new EditableFormattedTextLine(formattedString, line);
     }
 
     /**

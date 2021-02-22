@@ -450,6 +450,7 @@ public class SettingsMenu extends Component {
             ofd.openFileWindow();
             if(ofd.getFilePath() != null) {
                 GeneralSettings.USERPREF.setSyntaxPath(ofd.getFilePath());
+                GeneralSettings.IS_SYNTAX_PATH_CHANGED = true;
                 syntaxFilePath.setText(GeneralSettings.USERPREF.getSyntaxPath());
                 syntaxFilePathPane.updateUI();
             }
