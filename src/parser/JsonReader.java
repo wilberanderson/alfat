@@ -18,11 +18,11 @@ public class JsonReader {
         this.input = input;
     }
 
-    public GenericSyntax mapJsonToGenericSyntax() {
+    public CodeSyntax mapJsonToCodeSyntax() {
         ObjectMapper objectMapper = new ObjectMapper();
-        GenericSyntax outputClass = null;
+        CodeSyntax outputClass = null;
         try {
-            outputClass = objectMapper.readValue(input, GenericSyntax.class);
+            outputClass = objectMapper.readValue(input, CodeSyntax.class);
         } catch (Exception e) {
             e.printStackTrace();
             outputClass = null;

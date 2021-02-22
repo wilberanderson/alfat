@@ -34,7 +34,7 @@ public class Parser  {
 
     JsonReader jr = new JsonReader(new File("CodeSyntax/LC3-New.json"));
     //JsonReader jr = new JsonReader(new File("CodeSyntax/x86-New.json"));
-    GenericSyntax syn = jr.mapJsonToGenericSyntax();
+    CodeSyntax syn = jr.mapJsonToCodeSyntax();
 
     public Parser(String infile, boolean verbose) {
         this.infile = infile;
