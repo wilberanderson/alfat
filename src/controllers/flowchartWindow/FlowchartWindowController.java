@@ -157,7 +157,7 @@ public class FlowchartWindowController {
     }
 
     public void moveMouse(double xPos, double yPos){
-        flowchartTextBoxController.moveMouse((xPos - flowchartWindow.getZoomTranslateMatrix().m20), (yPos - flowchartWindow.getZoomTranslateMatrix().m21));
+        flowchartTextBoxController.moveMouse(((xPos/flowchartWindow.getAspectRatio().m00 - flowchartWindow.getZoomTranslateMatrix().m20)/flowchartWindow.getZoomTranslateMatrix().m00), (yPos/flowchartWindow.getAspectRatio().m11 - flowchartWindow.getZoomTranslateMatrix().m21)/flowchartWindow.getZoomTranslateMatrix().m11);
         if(xPos > getPosition().x && yPos > getPosition().y && xPos < getPosition().x + getSize().x && yPos < getPosition().y + getSize().y){
             Mouse.setHand();
         }
