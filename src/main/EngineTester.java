@@ -39,9 +39,9 @@ public class EngineTester {
      *  - Enters the main loop
      *  - If an exception occurs in the main loop the crash method is called
      */
-    public void run() {
+    public void run(String[] args) {
 
-        init();
+        init(args);
         try {
             loop();
         }catch(Exception e){
@@ -59,7 +59,7 @@ public class EngineTester {
      *  - Updates the icon on taskbar and the window
      *
      */
-    private void init() {
+    private void init(String[] args) {
 
         GeneralSettings.USERPREF = new UserPreferences();
         GlobalParser.PARSER_MANAGER = new ParserManager();
@@ -159,6 +159,10 @@ public class EngineTester {
         //************************************Initialize the aspect ratio********************************
         GeneralSettings.updateAspectRatio(GeneralSettings.DEFAULT_WIDTH, GeneralSettings.DEFAULT_HEIGHT);
 
+        //************************************Open file**************************************************
+        if(args.length == 1) {
+            applicationController.getHeader().openFile(args[0]);
+        }
 
         //****************************************Perform temporary initializations****************************
         tempInit();
@@ -273,7 +277,7 @@ public class EngineTester {
      * Runs the program, if the program completes running without any errors then the exit code 0 will be used
      */
     public static void main(String[] args) {
-        new EngineTester().run();
+        new EngineTester().run(args);
         System.exit(0);
     }
 

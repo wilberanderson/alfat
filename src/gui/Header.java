@@ -326,6 +326,69 @@ public class Header {
             }
         }
     }
+    /**
+     * Opens a file from a given string
+     */
+    public void openFile(String path){
+        GeneralSettings.FILE_PATH = path;
+
+
+        // If the file exists, load it into the text editor.
+        if (GeneralSettings.FILE_PATH != null){
+
+            if (GeneralSettings.FILE_PATH.contains("/")){
+                windowTitle = "ALFAT – " + GeneralSettings.FILE_PATH.substring(GeneralSettings.FILE_PATH.lastIndexOf('/')+1);
+                GLFW.glfwSetWindowTitle(EngineTester.getWindow(), "ALFAT – " + GeneralSettings.FILE_PATH.substring(GeneralSettings.FILE_PATH.lastIndexOf('/')+1));
+            } else {
+                windowTitle = "ALFAT " + GeneralSettings.FILE_PATH;
+                GLFW.glfwSetWindowTitle(EngineTester.getWindow(), "ALFAT " + GeneralSettings.FILE_PATH);
+            }
+
+            String content = "";
+            // Load the text file:
+            try {
+                File file = new File(GeneralSettings.FILE_PATH);
+                BufferedReader reader = new BufferedReader(new FileReader(file));
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    // content += line.replace("\t", "    ")
+                    content += line + '\n';
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                //TODO: Provide proper warnings
+                return;
+            }
+
+
+            if (controller.getCodeWindowController() != null) {
+                controller.getCodeWindowController().clear();
+            }
+            //create code window
+            controller.setCodeWindowController(new CodeWindowController(new Vector2f(-1f, -1f), new Vector2f(1f, 2 - GeneralSettings.FONT_HEIGHT), GeneralSettings.USERPREF.getTexteditorBGColor3f(), GeneralSettings.TEXT_COLOR, new Vector3f(0, 0, 0), content, GeneralSettings.FONT, GeneralSettings.FONT_SIZE, GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE, GeneralSettings.TEXT_BOX_BORDER_WIDTH, guiFilledBox.getSize().y, controller.getTextLineController()));
+
+            if (controller.getFlowchartWindowController() != null) {
+                controller.getFlowchartWindowController().goSplitScreen();
+            }
+
+            //User Settings logic for file open
+
+            //Auto gen flowchart
+            if(GeneralSettings.USERPREF.getAutoGenFlowchart()) {
+                generate();
+                if(GeneralSettings.USERPREF.getFullscreen() < 0) {
+                    //full flowchart
+                    flowchartView();
+                }
+            }
+            if(GeneralSettings.USERPREF.getSplitScreen()){
+                splitScreenView();
+            }
+            if(GeneralSettings.USERPREF.getFullscreen() > 0) {
+                textEditorView();
+            }
+        }
+    }
 
     /**
      * Saves the file to the currently selected location
