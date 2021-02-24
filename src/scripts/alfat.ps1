@@ -10,7 +10,7 @@ if (-not(Test-Path $AppPath)) {
   write-output "Check if file path exist or include file "
   write-output "the path in AppPath of this script."
 } else {
-  if($OpenFile) {
+  if(-not($OpenFile)) {
     Start-Process -FilePath java.exe -ArgumentList "-jar $AppPath"
   } else {
     Start-Process -FilePath java.exe -ArgumentList "-jar $AppPath $OpenFile"
