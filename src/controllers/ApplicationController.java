@@ -10,6 +10,7 @@ import gui.Header;
 import gui.Mouse;
 import gui.UserPreferences;
 import gui.buttons.HeaderMenu;
+import gui.texts.*;
 import main.EngineTester;
 import main.GeneralSettings;
 import org.lwjgl.glfw.GLFW;
@@ -65,6 +66,17 @@ public class ApplicationController {
             codeWindowController.changeCodewindowBGcolor3f(GeneralSettings.USERPREF.getTexteditorBGColor3f());
             codeWindowController.changeCodewindowLinenumberBGColor3f(GeneralSettings.USERPREF.getTexteditorLinenumberBGColor3f());
             codeWindowController.changeScrollBarsColor3f(GeneralSettings.USERPREF.getScrollBarColor3f());
+
+            //Colors For Keywords
+//            BranchWord.setColor();
+//            CommandWord.setColor();
+//            CommentWord.setColor();
+//            ErrorWord.setColor();
+//            ImmediateWord.setColor();
+//            LabelWord.setColor();
+//            LineNumberWord.setColor();
+//            RegisterWord.setColor();
+//            SeparatorWord.setColor();
 
         }
 
