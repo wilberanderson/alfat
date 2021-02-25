@@ -41,9 +41,9 @@ public class ParserManager {
     /**
      * Map the code syntax from the JsonReader. Needs a file path.
      * */
-    private void setCodeSyntax(File filePathtoJson) {
+    private void setCodeSyntax(File filePathToJson) {
         this.codeSyntax = null;
-        this.codeSyntax = JsonReader.mapJsonToCodeSyntax(filePathtoJson);
+        this.codeSyntax = JsonReader.mapJsonToCodeSyntax(filePathToJson);
     }
 
     /**
@@ -57,7 +57,19 @@ public class ParserManager {
         if(codeSyntax != null) {
             result = true;
             parser.clear();
-            parser.ReadFile(filePath);
+            parser.ReadFile(filePath,false,"");
+            parser.generateFlowObjects();
+        }
+        return result;
+    }
+
+    public boolean attemptPartialFileParse(String filePath, String targetFileTag) {
+        boolean result = false;
+        updateSyntaxIfNeeded();
+        if(codeSyntax != null) {
+            result = true;
+            parser.clear();
+            parser.ReadFile(filePath,true, targetFileTag);
             parser.generateFlowObjects();
         }
         return result;

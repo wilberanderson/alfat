@@ -8,6 +8,7 @@ import gui.Settings.SettingsMenu;
 import gui.buttons.HeaderMenu;
 import gui.buttons.TextButton;
 import gui.windows.AnalysisWindow;
+import gui.windows.PartialWindow;
 import gui.windows.PopupWindow;
 import main.EngineTester;
 import main.GeneralSettings;
@@ -111,7 +112,7 @@ public class Header {
         button = new TextButton("Generate Flowchart") {
             @Override
             public void onPress() {
-                generate();
+                generate(GeneralSettings.OPEN_PARTIAL_FILE);
             }
         };
         flowchartButtonList.add(button);
@@ -179,6 +180,14 @@ public class Header {
         //*****************Analysis*******************
         //Create the buttons
         List<TextButton> analyticsMenuButtonList = new ArrayList<>();
+
+        button = new TextButton("Partial Tag") {
+            @Override
+            public void onPress() {
+                setPartialTag();
+            }
+        };
+        analyticsMenuButtonList.add(button);
 
         button = new TextButton("Registers") {
             @Override
@@ -312,7 +321,7 @@ public class Header {
 
             //Auto gen flowchart
             if(GeneralSettings.USERPREF.getAutoGenFlowchart()) {
-                generate();
+                generate(GeneralSettings.OPEN_PARTIAL_FILE);
                 if(GeneralSettings.USERPREF.getFullscreen() < 0) {
                     //full flowchart
                     flowchartView();
@@ -375,7 +384,7 @@ public class Header {
 
             //Auto gen flowchart
             if(GeneralSettings.USERPREF.getAutoGenFlowchart()) {
-                generate();
+                generate(GeneralSettings.OPEN_PARTIAL_FILE);
                 if(GeneralSettings.USERPREF.getFullscreen() < 0) {
                     //full flowchart
                     flowchartView();
@@ -509,7 +518,7 @@ public class Header {
     /**
      * Generates the flowchart
      */
-    public void generate(){
+    public void generate(boolean partial){
         //Create temp file
 
         //Ensure that a file is open
@@ -528,21 +537,27 @@ public class Header {
             return;
         }
 
-
-
 //        parser = new Parser( false);
 //        parser.ReadFile(tfm.getMostRecent());
 //        parser.generateFlowObjects();
 //        controller.setFlowchartWindowController(parser.createFlowchart(controller));
 //        controller.flowchartView();
 
-        if(GlobalParser.PARSER_MANAGER.attemptFileParse(tfm.getMostRecent())){
-            controller.setFlowchartWindowController(GlobalParser.PARSER_MANAGER.getParser().createFlowchart(controller));
-            controller.flowchartView();
+        if (!partial) {
+            if (GlobalParser.PARSER_MANAGER.attemptFileParse(tfm.getMostRecent())) {
+                controller.setFlowchartWindowController(GlobalParser.PARSER_MANAGER.getParser().createFlowchart(controller));
+                controller.flowchartView();
+            }
+        } else {
+            // This is opening a partial file.
+            // prompt user to input tag:
+            String tag = "LOOP";
+            // attempt to parse to tag:
+            if(GlobalParser.PARSER_MANAGER.attemptPartialFileParse(tfm.getMostRecent(),tag)){
+                controller.setFlowchartWindowController(GlobalParser.PARSER_MANAGER.getParser().createFlowchart(controller));
+                controller.flowchartView();
+            }
         }
-
-
-
     }
 
     /**
@@ -663,6 +678,16 @@ public class Header {
         if (controller.getFlowchartWindowController() != null) {
             controller.getFlowchartWindowController().locateAlert("invalid_label");
             GLFW.glfwSetWindowTitle(EngineTester.getWindow(), windowTitle + " [Invalid labels]");
+        }
+    }
+
+    /**
+     * Sets the target tag for opening a partial file.
+     *
+     */
+    public void setPartialTag(){
+        if(controller.getFlowchartWindowController() != null) {
+            PartialWindow partialDialogueWindow = new PartialWindow(controller);
         }
     }
 }
