@@ -22,6 +22,7 @@ public class GUIWindowController {
                 GLFW.glfwDestroyWindow(window.getWindow());
                 guiWindows.remove(window);
             }
+            toRemove.clear();
         }
         for(GUIWindow window : guiWindows){
             window.render();
