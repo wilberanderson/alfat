@@ -645,14 +645,90 @@ public class UserPreferences {
 
     //*********************************************************************************************************************************************
     //Branch text color
+    public final String keyBranchTextColor_Red = "branchtextcolorred";
+    public final float fbValueBranchTextColor_Red = GeneralSettings.branchColor.x;
+    public final String getKeyBranchTextColor_Green = "branchtextcolorgreen";
+    public final float fbValueBranchTextColor_Green = GeneralSettings.branchColor.y;
+    public final String keyBranchTextColor_Blue = "branchtextcolorblue";
+    public final float fbValueBranchTextColor_Blue = GeneralSettings.branchColor.z;
 
+
+    /**Sets the text color of branch syntax*/
+    public void setBranchTextColor(Color bgColor) {
+        userPref.putFloat(keyBranchTextColor_Red, bgColor.getRed()/255f);
+        userPref.putFloat(getKeyBranchTextColor_Green, bgColor.getGreen()/255f);
+        userPref.putFloat(keyBranchTextColor_Blue, bgColor.getBlue()/255f);
+    }
+    /**Sets the text color of branch syntax*/
+    public void setBranchTextColor3f(Vector3f bgColor) {
+        userPref.putFloat(keyBranchTextColor_Red, bgColor.x);
+        userPref.putFloat(getKeyBranchTextColor_Green, bgColor.y);
+        userPref.putFloat(keyBranchTextColor_Blue, bgColor.z);
+    }
+    /**Gets the text color of branch syntax*/
+    public Vector3f getBranchTextColor3f() {
+        Vector3f bgColor = new Vector3f();
+        bgColor.setX(userPref.getFloat(keyBranchTextColor_Red, fbValueBranchTextColor_Red));
+        bgColor.setY(userPref.getFloat(getKeyBranchTextColor_Green, fbValueBranchTextColor_Green));
+        bgColor.setZ(userPref.getFloat(keyBranchTextColor_Blue, fbValueBranchTextColor_Blue));
+        return bgColor;
+    }
+
+    /**Gets the text color of branch syntax*/
+    public Color getBranchTextColor() {
+        Color bgColor = new Color(
+                userPref.getFloat(keyBranchTextColor_Red, fbValueBranchTextColor_Red),
+                userPref.getFloat(getKeyBranchTextColor_Green, fbValueBranchTextColor_Green),
+                userPref.getFloat(keyBranchTextColor_Blue, fbValueBranchTextColor_Blue)
+        );
+        return bgColor;
+    }
 
     //*********************************************************************************************************************************************
     //Command text color
 
+    public final String keyCommandTextColor_Red = "Commandtextcolorred";
+    public final float fbValueCommandTextColor_Red = GeneralSettings.commandColor.x;
+    public final String getKeyCommandTextColor_Green = "Commandtextcolorgreen";
+    public final float fbValueCommandTextColor_Green = GeneralSettings.commandColor.y;
+    public final String keyCommandTextColor_Blue = "Commandtextcolorblue";
+    public final float fbValueCommandTextColor_Blue = GeneralSettings.commandColor.z;
+
+
+    /**Sets the text color of command syntax*/
+    public void setCommandTextColor(Color bgColor) {
+        userPref.putFloat(keyCommandTextColor_Red, bgColor.getRed()/255f);
+        userPref.putFloat(getKeyCommandTextColor_Green, bgColor.getGreen()/255f);
+        userPref.putFloat(keyCommandTextColor_Blue, bgColor.getBlue()/255f);
+    }
+    /**Sets the text color of command  syntax*/
+    public void setCommandTextColor3f(Vector3f bgColor) {
+        userPref.putFloat(keyCommandTextColor_Red, bgColor.x);
+        userPref.putFloat(getKeyCommandTextColor_Green, bgColor.y);
+        userPref.putFloat(keyCommandTextColor_Blue, bgColor.z);
+    }
+    /**Gets the text color of command  syntax*/
+    public Vector3f getCommandTextColor3f() {
+        Vector3f bgColor = new Vector3f();
+        bgColor.setX(userPref.getFloat(keyCommandTextColor_Red, fbValueCommandTextColor_Red));
+        bgColor.setY(userPref.getFloat(getKeyCommandTextColor_Green, fbValueCommandTextColor_Green));
+        bgColor.setZ(userPref.getFloat(keyCommandTextColor_Blue, fbValueCommandTextColor_Blue));
+        return bgColor;
+    }
+
+    /**Gets the text color of command  syntax*/
+    public Color getCommandTextColor() {
+        Color bgColor = new Color(
+                userPref.getFloat(keyCommandTextColor_Red, fbValueCommandTextColor_Red),
+                userPref.getFloat(getKeyCommandTextColor_Green, fbValueCommandTextColor_Green),
+                userPref.getFloat(keyCommandTextColor_Blue, fbValueCommandTextColor_Blue)
+        );
+        return bgColor;
+    }
 
     //*********************************************************************************************************************************************
     //Comment text color
+
 
 
 
@@ -677,7 +753,7 @@ public class UserPreferences {
     //*********************************************************************************************************************************************
     //Separator text color
 
-    
+
 
     //*********************************************************************************************************************************************
     //OS Settings calls TODO: Consider removing if we have no need for this
