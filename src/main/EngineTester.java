@@ -160,6 +160,7 @@ public class EngineTester {
         GeneralSettings.updateAspectRatio(GeneralSettings.DEFAULT_WIDTH, GeneralSettings.DEFAULT_HEIGHT);
 
         //************************************Open file**************************************************
+
         if(args.length == 1) {
             applicationController.getHeader().openFile(args[0]);
         }

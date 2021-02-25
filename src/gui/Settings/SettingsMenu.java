@@ -6,10 +6,9 @@ import org.lwjgl.util.vector.Vector3f;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 
 /**
@@ -186,7 +185,7 @@ public class SettingsMenu extends Component {
 
         fakeButtonscontent.add(new SettingsContent("Color Picker", colorPickerContent()));
 
-        fakeButtonscontent.add(new SettingsContent("Syntax Color", syntaxColorContent()));
+        fakeButtonscontent.add(new SettingsContent("Text Color", textColorContent()));
     }
 
     //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -626,7 +625,48 @@ public class SettingsMenu extends Component {
     private static int mockGUIheaderColor = 6;
     private static int mockGUImenuBtncolorHL = 7;
     private static int mockGUIFlowchartHLColor = 8;
-    private Color[] mockGUIcolorPointers = new Color[9]; //NOTE: The point of this is to act like globals to set and change the mock gui colors.
+    private static int mockGUIScrollBarColor = 9;
+    private Color[] mockGUIcolorPointers = new Color[10]; //NOTE: The point of this is to act like globals to set and change the mock gui colors.
+
+    //******************** The text color content buttons ********************************
+    //DON'T Ask me to refactor the order....
+    private JButton branchTextColorBtn;
+    private JButton commandTextColorBtn;
+    private JButton commentTextColorBtn;
+    private JButton ErrorTextColorBtn;
+    private JButton immediateTextColorBtn;
+    private JButton labelTextColorBtn;
+    private JButton lineNumberTextColorBtn;
+    private JButton registerTextColorBtn;
+    private JButton separatorTextColorBtn;
+
+
+
+    /**
+     * This is a property change listener used to match the background color of the buttons form text color / color syntax
+     * */
+    class BackgroundColorListener implements PropertyChangeListener {
+        private JButton btn1, btn2,btn3,btn4,btn5,btn6, btn7, btn8, btn9; private int colorIndex;
+        public BackgroundColorListener(JButton btn1,JButton btn2,JButton btn3,JButton btn4,JButton
+                btn5,JButton btn6,JButton btn7,JButton btn8,JButton btn9, int colorIndex) {
+            this.colorIndex = colorIndex;
+            this.btn1 = btn1; this.btn2 = btn2; this.btn3 = btn3; this.btn4 = btn4;
+            this.btn5 = btn5; this.btn6 = btn6; this.btn7 = btn7; this.btn8 = btn8;
+            this.btn9 = btn9;
+        }
+        public void propertyChange(PropertyChangeEvent evt) {
+            Color newColor = mockGUIcolorPointers[colorIndex];
+            btn1.setBackground(newColor);
+            btn2.setBackground(newColor);
+            btn3.setBackground(newColor);
+            btn4.setBackground(newColor);
+            btn5.setBackground(newColor);
+            btn6.setBackground(newColor);
+            btn7.setBackground(newColor);
+            btn8.setBackground(newColor);
+            btn9.setBackground(newColor);
+        }
+    }
 
     private JPanel colorPickerContent() {
         //The main JPanel uses GridBagLayout to position content
@@ -673,10 +713,26 @@ public class SettingsMenu extends Component {
         mockGUIcolorPointers[mockGUImenuBtncolor] = GeneralSettings.USERPREF.getMenuBtnBGColor();
         mockGUIcolorPointers[mockGUImenuBtncolorHL] = GeneralSettings.USERPREF.getMenuBtnHLColor();
         mockGUIcolorPointers[mockGUIFlowchartHLColor] = GeneralSettings.USERPREF.getFlowchartBoxHighlightColor();
+        mockGUIcolorPointers[mockGUIScrollBarColor] = GeneralSettings.USERPREF.getScrollBarColor();
+
+        //Set the listener for background color
+
 
 
         //Background
         JButton backgroundBtn = contentLayer(mockGUIcolorPointers[mockGUIbackgroundColor],0,0, mockGUI_Width,mockGUI_Height);
+        //*************************** Set The Text Color Buttons **********************************
+        //TODO: Add color for text from general settings
+        branchTextColorBtn  = makeColorbtn(Color.black,mockGUIcolorPointers[mockGUIbackgroundColor], mockGUIbackgroundColor,"Branch");
+        commandTextColorBtn  = makeColorbtn(Color.black,mockGUIcolorPointers[mockGUIbackgroundColor], mockGUIbackgroundColor,"Command");
+        commentTextColorBtn  = makeColorbtn(Color.black,mockGUIcolorPointers[mockGUIbackgroundColor], mockGUIbackgroundColor,"Command");
+        ErrorTextColorBtn  = makeColorbtn(Color.black,mockGUIcolorPointers[mockGUIbackgroundColor], mockGUIbackgroundColor,"Error");
+        immediateTextColorBtn  = makeColorbtn(Color.black,mockGUIcolorPointers[mockGUIbackgroundColor], mockGUIbackgroundColor,"Immediate");
+        labelTextColorBtn  = makeColorbtn(Color.black,mockGUIcolorPointers[mockGUIbackgroundColor], mockGUIbackgroundColor,"Label");
+        lineNumberTextColorBtn  = makeColorbtn(Color.black,mockGUIcolorPointers[mockGUIbackgroundColor], mockGUIbackgroundColor,"Line Number");
+        registerTextColorBtn  = makeColorbtn(Color.black,mockGUIcolorPointers[mockGUIbackgroundColor], mockGUIbackgroundColor,"Line Number");
+        separatorTextColorBtn  = makeColorbtn(Color.black,mockGUIcolorPointers[mockGUIbackgroundColor], mockGUIbackgroundColor,"Separator");
+
 
         //Menu
         JButton headerBtn = contentLayer(mockGUIcolorPointers[mockGUIheaderColor], 0,0, mockGUI_Width,barPadding);
@@ -686,6 +742,9 @@ public class SettingsMenu extends Component {
         //Text editor
         JButton textEditorBtn = contentLayer(mockGUIcolorPointers[mockGUItexteditorColor], barPadding,barPadding, barPadding*12,mockGUI_Height-barPadding);
         JButton lineNumberBtn = contentLayer(mockGUIcolorPointers[mockGUItexteditorLinenumberBGColor], 0,barPadding, barPadding,mockGUI_Height-barPadding);
+        JButton scrollBtnVert = contentLayer(mockGUIcolorPointers[mockGUIScrollBarColor], (barPadding*12)+5,barPadding, barPadding-5, (mockGUI_Height-barPadding)-(barPadding-5));
+        JButton scrollBtnHoriz = contentLayer(mockGUIcolorPointers[mockGUIScrollBarColor], barPadding,(mockGUI_Height-barPadding)+5,(barPadding*11)+5, barPadding-5);
+
 
         //Flowchart box 1
         JButton flowchartBox1Bar = contentLayer(mockGUIcolorPointers[mockGUIfloatchartNumberlineBGcolor], mockGUI_Width/2,barPadding*2, barPadding,mockGUI_Height-(barPadding*11));
@@ -697,7 +756,7 @@ public class SettingsMenu extends Component {
 
         //Lines And Arrows
         LineJButton flowchartLine1 = new LineJButton(Color.WHITE, 0,0,0,30,6);
-        flowchartLine1.setBounds((mockGUI_Width/2)+barPadding,(barPadding*2)+ mockGUI_Height-(barPadding*11),6,35);
+        flowchartLine1.setBounds((mockGUI_Width/2)+barPadding,(barPadding*2)+ mockGUI_Height-(barPadding*11),12,35);
 
         ArrowJButton arrowJButton = new ArrowJButton(Color.WHITE,ArrowJButton.DOWN);
         arrowJButton.setBounds((mockGUI_Width/2)+barPadding-4,(barPadding*2)+ mockGUI_Height-(barPadding*11)+32,50,50);
@@ -740,6 +799,15 @@ public class SettingsMenu extends Component {
             main.revalidate();
 
         });
+
+        //TODO: Account for the fact that there is two types of line number text color. For flowchart and code editor
+        backgroundBtn.addPropertyChangeListener("background",new BackgroundColorListener(
+                branchTextColorBtn, commandTextColorBtn, commentTextColorBtn,
+                ErrorTextColorBtn, immediateTextColorBtn, labelTextColorBtn,
+                lineNumberTextColorBtn, registerTextColorBtn,separatorTextColorBtn,
+                mockGUIbackgroundColor) );
+
+
 
         headerBtn.addActionListener(e-> {
             Color newColor = JColorChooser.showDialog(this,"Select a color",GeneralSettings.USERPREF.getBackgroundColor());
@@ -803,6 +871,43 @@ public class SettingsMenu extends Component {
 
         });
 
+        scrollBtnVert.addActionListener(e-> {
+            Color newColor = JColorChooser.showDialog(this,"Select a color",GeneralSettings.USERPREF.getBackgroundColor());
+            if(newColor != null) {
+                mockGUIcolorPointers[mockGUIScrollBarColor] = newColor;
+                scrollBtnVert.setBackground(mockGUIcolorPointers[mockGUIScrollBarColor]);
+                scrollBtnHoriz.setBackground(mockGUIcolorPointers[mockGUIScrollBarColor]);
+            }
+            //Reset GBC
+            gbc.ipadx = 0;
+            gbc.ipady = 0;
+            gbc.gridx = 2;
+            gbc.gridy = 2;
+            //Add remove and add new content
+            main.remove(2);
+            main.add(slectionIndicatiorSingleColor(scrollBtnVert,scrollBtnHoriz,mockGUIScrollBarColor), gbc,2);
+            main.revalidate();
+        });
+
+        scrollBtnHoriz.addActionListener(e-> {
+            Color newColor = JColorChooser.showDialog(this,"Select a color",GeneralSettings.USERPREF.getBackgroundColor());
+            if(newColor != null) {
+                mockGUIcolorPointers[mockGUIScrollBarColor] = newColor;
+                scrollBtnVert.setBackground(mockGUIcolorPointers[mockGUIScrollBarColor]);
+                scrollBtnHoriz.setBackground(mockGUIcolorPointers[mockGUIScrollBarColor]);
+            }
+            //Reset GBC
+            gbc.ipadx = 0;
+            gbc.ipady = 0;
+            gbc.gridx = 2;
+            gbc.gridy = 2;
+            //Add remove and add new content
+            main.remove(2);
+            main.add(slectionIndicatiorSingleColor(scrollBtnVert,scrollBtnHoriz,mockGUIScrollBarColor), gbc,2);
+            main.revalidate();
+        });
+
+
         flowchartBox1Text.addActionListener(e->{
             Color newColor = JColorChooser.showDialog(this,"Select a color",GeneralSettings.USERPREF.getBackgroundColor());
             if(newColor != null) {
@@ -844,7 +949,6 @@ public class SettingsMenu extends Component {
 
 
         });
-
 
         flowchartBox1Bar.addActionListener(e->{
             Color newColor = JColorChooser.showDialog(this,"Select a color",GeneralSettings.USERPREF.getBackgroundColor());
@@ -892,6 +996,8 @@ public class SettingsMenu extends Component {
         // Add the buttons
         layeredPane.add(backgroundBtn,  Integer.valueOf(0));
         layeredPane.add(lineNumberBtn, Integer.valueOf(1));
+        layeredPane.add(scrollBtnVert, Integer.valueOf(7));
+        layeredPane.add(scrollBtnHoriz, Integer.valueOf(8));
         layeredPane.add(headerBtn,  Integer.valueOf(1));
         layeredPane.add(menuBtn,  Integer.valueOf(2));
         layeredPane.add(textEditorBtn, Integer.valueOf(2));
@@ -934,7 +1040,6 @@ public class SettingsMenu extends Component {
         JPanel driverButtons = new JPanel(new FlowLayout());
 
         JButton dark = new JButton("Dark Theme");
-
         dark.addActionListener(e->{
             //Menu Button background color
             mockGUIcolorPointers[mockGUImenuBtncolor] = new Color(
@@ -955,6 +1060,13 @@ public class SettingsMenu extends Component {
             //BackGround
             mockGUIcolorPointers[mockGUIbackgroundColor] = new Color(GeneralSettings.base02.x, GeneralSettings.base02.y,GeneralSettings.base02.z);
             backgroundBtn.setBackground(mockGUIcolorPointers[mockGUIbackgroundColor]);
+
+            //scroll bars
+            mockGUIcolorPointers[mockGUIScrollBarColor] = new Color(GeneralSettings.SCROLL_BAR_COLOR.x,GeneralSettings.SCROLL_BAR_COLOR.y,GeneralSettings.SCROLL_BAR_COLOR.z);
+            scrollBtnHoriz.setBackground(mockGUIcolorPointers[mockGUIScrollBarColor]);
+            scrollBtnVert.setBackground(mockGUIcolorPointers[mockGUIScrollBarColor]);
+
+
 
             //Header color
             mockGUIcolorPointers[mockGUIheaderColor] = new Color(
@@ -990,8 +1102,6 @@ public class SettingsMenu extends Component {
             flowchartBox2Bar.setBackground(mockGUIcolorPointers[mockGUIfloatchartNumberlineBGcolor]);
 
 
-
-
             //Clear selection indicator
             //Reset GBC
             gbc.ipadx = 0;
@@ -1004,7 +1114,6 @@ public class SettingsMenu extends Component {
             main.revalidate();
 
         });
-
 
         JButton light = new JButton("Light Theme");
         light.addActionListener(e-> {
@@ -1035,6 +1144,10 @@ public class SettingsMenu extends Component {
 
             backgroundBtn.setBackground(mockGUIcolorPointers[mockGUIbackgroundColor]);
 
+            //scroll bars
+            mockGUIcolorPointers[mockGUIScrollBarColor] = new Color(GeneralSettings.SCROLL_BAR_COLOR.x,GeneralSettings.SCROLL_BAR_COLOR.y,GeneralSettings.SCROLL_BAR_COLOR.z);
+            scrollBtnHoriz.setBackground(mockGUIcolorPointers[mockGUIScrollBarColor]);
+            scrollBtnVert.setBackground(mockGUIcolorPointers[mockGUIScrollBarColor]);
 
             //Header color
             mockGUIcolorPointers[mockGUIheaderColor] = new Color(
@@ -1101,10 +1214,7 @@ public class SettingsMenu extends Component {
 
         });
 
-
         JButton apply = new JButton("Apply Color");
-
-
         apply.addActionListener(e->{
 
             //Menu Button Background Color
@@ -1120,10 +1230,13 @@ public class SettingsMenu extends Component {
             GeneralSettings.USERPREF.setHeaderColor(mockGUIcolorPointers[mockGUIheaderColor]);
 
             //Text editor color
-            GeneralSettings.USERPREF.setTexteditorBGColor(mockGUIcolorPointers[mockGUItexteditorColor]);
+            GeneralSettings.USERPREF.setTextEditorBGColor(mockGUIcolorPointers[mockGUItexteditorColor]);
 
             //Text editor line number BG color
             GeneralSettings.USERPREF.setTexteditorLinenumberBGColor(mockGUIcolorPointers[mockGUItexteditorLinenumberBGColor]);
+
+            //Text editor scroll bar color
+            GeneralSettings.USERPREF.setScrollBarColor(mockGUIcolorPointers[mockGUIScrollBarColor]);
 
             //Flowchart box BG colors
             GeneralSettings.USERPREF.setFlowchartBoxbackgroundColor(mockGUIcolorPointers[mockGUIflowchartBoxBGcolor]);
@@ -1152,8 +1265,66 @@ public class SettingsMenu extends Component {
 
         });
 
+        JButton cancel = new JButton("Cancel");
+
+        cancel.addActionListener(e-> {
+            mockGUIcolorPointers[mockGUImenuBtncolor] = GeneralSettings.USERPREF.getMenuBtnBGColor();
+
+            menuBtn.setBackground(mockGUIcolorPointers[mockGUImenuBtncolor]);
+
+
+            //Menu Button background hl color
+            mockGUIcolorPointers[mockGUImenuBtncolorHL] = GeneralSettings.USERPREF.getMenuBtnHLColor();
+
+            //BackGround
+            mockGUIcolorPointers[mockGUIbackgroundColor] = GeneralSettings.USERPREF.getBackgroundColor();
+            backgroundBtn.setBackground(mockGUIcolorPointers[mockGUIbackgroundColor]);
+
+            //scroll bars
+            mockGUIcolorPointers[mockGUIScrollBarColor] = GeneralSettings.USERPREF.getScrollBarColor();
+            scrollBtnHoriz.setBackground(mockGUIcolorPointers[mockGUIScrollBarColor]);
+            scrollBtnVert.setBackground(mockGUIcolorPointers[mockGUIScrollBarColor]);
+
+            //Header color
+            mockGUIcolorPointers[mockGUIheaderColor] = GeneralSettings.USERPREF.getHeaderColor();
+            headerBtn.setBackground(mockGUIcolorPointers[mockGUIheaderColor]);
+
+            //Text editor
+            mockGUIcolorPointers[mockGUItexteditorColor] = GeneralSettings.USERPREF.getTexteditorBGColor();
+            textEditorBtn.setBackground(mockGUIcolorPointers[mockGUItexteditorColor]);
+
+            //Text editor line number
+            mockGUIcolorPointers[mockGUItexteditorLinenumberBGColor] = GeneralSettings.USERPREF.getTexteditorLinenumberBGColor();
+            lineNumberBtn.setBackground(mockGUIcolorPointers[mockGUItexteditorLinenumberBGColor]);
+
+            //Flowchart color background
+            mockGUIcolorPointers[mockGUIflowchartBoxBGcolor] = GeneralSettings.USERPREF.getFlowchartBoxackgroundColor();
+            flowchartBox1Text.setBackground(mockGUIcolorPointers[mockGUIflowchartBoxBGcolor]);
+            flowchartBox2Text.setBackground(mockGUIcolorPointers[mockGUIflowchartBoxBGcolor]);
+
+            //Flowchart color background highlight
+            mockGUIcolorPointers[mockGUIFlowchartHLColor] = GeneralSettings.USERPREF.getFlowchartBoxHighlightColor();
+
+            //Flowchart line number color background
+            mockGUIcolorPointers[mockGUIfloatchartNumberlineBGcolor] = GeneralSettings.USERPREF.getTexteditorLinenumberBGColor();
+            flowchartBox1Bar.setBackground(mockGUIcolorPointers[mockGUIfloatchartNumberlineBGcolor]);
+            flowchartBox2Bar.setBackground(mockGUIcolorPointers[mockGUIfloatchartNumberlineBGcolor]);
+
+            //Clear selection indicator
+            //Reset GBC
+            gbc.ipadx = 0;
+            gbc.ipady = 0;
+            gbc.gridx = 2;
+            gbc.gridy = 2;
+            //Add remove and add new content
+            main.remove(2);
+            main.add(new JLabel(""), gbc,2);
+            main.revalidate();
+        });
+
         driverButtons.add(dark);
         driverButtons.add(light);
+        driverButtons.add(cancel);
         driverButtons.add(apply);
 
         gbc.fill = GridBagConstraints.CENTER;
@@ -1380,6 +1551,49 @@ public class SettingsMenu extends Component {
         return layeredPane;
     }
 
+    private JLayeredPane slectionIndicatiorSingleColor(JButton sourceBtn,JButton sourceBtn2, int colorInt) {
+
+        JLayeredPane layeredPane = new JLayeredPane();
+        layeredPane.setBounds(0,0,300,50);
+        layeredPane.setPreferredSize(new Dimension(300,50));
+
+        JButton currentColorBtn = contentLayer(mockGUIcolorPointers[colorInt], 0,0, 300,50);
+
+        currentColorBtn.addActionListener(e-> {
+            Color newColor = JColorChooser.showDialog(this,"Select a color",GeneralSettings.USERPREF.getBackgroundColor());
+            if(newColor != null) {
+                mockGUIcolorPointers[colorInt] = newColor;
+                sourceBtn.setBackground(mockGUIcolorPointers[colorInt]);
+                sourceBtn2.setBackground(mockGUIcolorPointers[colorInt]);
+                currentColorBtn.setBackground(mockGUIcolorPointers[colorInt]);
+            }
+        });
+
+        JLabel textInBack = new JLabel("<html>Color<br/>Selected</html>");
+        textInBack.setFont(new Font("Arial",Font.BOLD,18));
+        textInBack.setForeground(Color.BLACK);
+        textInBack.setBounds(2,1,300,50);
+
+
+        JLabel textInFront = new JLabel("<html>Color<br/>Selected</html>");
+        textInFront.setFont(new Font("Arial",Font.BOLD,18));
+        textInFront.setForeground(Color.WHITE);
+        textInFront.setBounds(0,0,300,50);
+
+        //Add components
+        layeredPane.add(currentColorBtn, Integer.valueOf(0));
+        layeredPane.add(textInBack, Integer.valueOf(1));
+        layeredPane.add(textInFront, Integer.valueOf(2));
+
+
+        return layeredPane;
+    }
+
+
+
+
+
+
     /**
      * Returns a customized JButton:
      * (x,y) position relative to layered panel. W, H width and height of the button.
@@ -1396,11 +1610,130 @@ public class SettingsMenu extends Component {
 
     //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     //                                                                          Syntax Color
-    private JPanel syntaxColorContent() {
+    private JPanel textColorContent() {
 
-        JPanel main = new JPanel(new GridBagLayout());
-        main.add(new Label("Placeholder"));
+        JPanel mainPane = new JPanel();
+
+        //Syntax Color Options
+        JPanel syntaxColorOptionsContainerPane = new JPanel();
+        JPanel syntaxColorOptionsPane = new JPanel(new GridBagLayout());
+        GridBagConstraints scopGBC = new GridBagConstraints();
+
+        //Add the title Syntax color options
+        JLabel sycoLabel = new JLabel("Syntax Color Options:");
+        sycoLabel.setFont(labelFont);
+        scopGBC.gridx = 0; scopGBC.gridy = 0; scopGBC.fill = GridBagConstraints.CENTER; scopGBC.gridwidth = 4;
+        syntaxColorOptionsPane.add(sycoLabel, scopGBC);
+        syntaxColorOptionsContainerPane.add(BorderLayout.CENTER, syntaxColorOptionsPane);
+
+        //Make labels and buttons
+        //SEE Top of Background Color Listener class ...
+
+        //Add listeners TODO: Add the action listeners for the buttons make a function to do this
+
+
+        //Add labels and buttons to panel
+        //Row 1
+        scopGBC.gridwidth = 1; //Reset to single cell
+        scopGBC.gridx = 0; scopGBC.gridy = 1; scopGBC.insets = new Insets(5,5,5,5); //Set padding
+        syntaxColorOptionsPane.add(branchTextColorBtn, scopGBC);
+        scopGBC.gridx = 1; scopGBC.gridy = 1;
+        syntaxColorOptionsPane.add(commandTextColorBtn, scopGBC);
+        scopGBC.gridx = 2; scopGBC.gridy = 1;
+        syntaxColorOptionsPane.add(commentTextColorBtn, scopGBC);
+        scopGBC.gridx = 3; scopGBC.gridy = 1;
+        syntaxColorOptionsPane.add(ErrorTextColorBtn, scopGBC);
+        //Row 2
+        scopGBC.gridx = 0; scopGBC.gridy = 2;
+        syntaxColorOptionsPane.add(immediateTextColorBtn, scopGBC);
+        scopGBC.gridx = 1; scopGBC.gridy = 2;
+        syntaxColorOptionsPane.add(labelTextColorBtn, scopGBC);
+        scopGBC.gridx = 2; scopGBC.gridy = 2;
+        syntaxColorOptionsPane.add(lineNumberTextColorBtn, scopGBC);
+        //Row 3
+        scopGBC.gridx = 0; scopGBC.gridy = 3;
+        syntaxColorOptionsPane.add(registerTextColorBtn, scopGBC);
+        scopGBC.gridx = 1; scopGBC.gridy = 3;
+        syntaxColorOptionsPane.add(separatorTextColorBtn, scopGBC);
+        //Row 4
+
+        //Row 5
+        //Driver buttons
+        //Default, Set All, Cancel, Apply
+        JPanel driverButtons = new JPanel(new FlowLayout());
+
+        JButton defaultBtn = new JButton("Default");
+        JButton setALLBtn = new JButton("Set All");
+        JButton cancelBtn = new JButton("Cancel");
+        JButton applyBtn = new JButton("Apply");
+
+        driverButtons.add(defaultBtn); driverButtons.add(setALLBtn);
+        driverButtons.add(cancelBtn); driverButtons.add(applyBtn);
+
+
+        defaultBtn.addActionListener(e-> {
+            
+        });
+
+        setALLBtn.addActionListener(e-> {
+            Color newColor = JColorChooser.showDialog(this,"Select a color",GeneralSettings.USERPREF.getBackgroundColor());
+            if(newColor != null) {
+                branchTextColorBtn.setForeground(newColor);
+                commandTextColorBtn.setForeground(newColor);
+                commentTextColorBtn.setForeground(newColor);
+                ErrorTextColorBtn.setForeground(newColor);
+                immediateTextColorBtn.setForeground(newColor);
+                labelTextColorBtn.setForeground(newColor);
+                lineNumberTextColorBtn.setForeground(newColor);
+                registerTextColorBtn.setForeground(newColor);
+                separatorTextColorBtn.setForeground(newColor);
+            }
+        });
+
+
+
+
+        scopGBC.gridx = 0; scopGBC.gridy = 4; scopGBC.gridwidth = 4;
+        syntaxColorOptionsPane.add(driverButtons, scopGBC);
+
+        mainPane.add(syntaxColorOptionsContainerPane);
+
+        return mainPane;
+    }
+
+
+    /**
+     * Returns a vbox of a label and a JButton
+     * */
+    private JPanel vbox2(JLabel label, JButton btn) {
+        JPanel main = new JPanel();
+        BoxLayout boxLayout = new BoxLayout(main, BoxLayout.Y_AXIS);
+        main.setLayout(boxLayout);
+        main.add(label);
+        main.add(btn);
         return main;
+    }
+
+
+    /**
+     * Returns a customized JButton:
+     * (x,y) position relative to layered panel. W, H width and height of the button.
+     * */
+    private JButton makeColorbtn(Color textColor,  Color backgroundColor, int colorIndex, String text) {
+        JButton btn = new JButton(text);
+        btn.setForeground(textColor);
+        btn.setBorderPainted(false);
+        btn.setBackground(backgroundColor);
+        btn.setOpaque(true);
+
+        btn.addActionListener(e-> {
+            Color newColor = JColorChooser.showDialog(this,"Select a color",GeneralSettings.USERPREF.getBackgroundColor());
+            if(newColor != null) {
+                mockGUIcolorPointers[colorIndex] = newColor;
+                btn.setForeground(mockGUIcolorPointers[colorIndex]);
+            }
+        });
+        return btn;
     }
 
 

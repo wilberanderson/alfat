@@ -25,6 +25,8 @@ public class Parser  {
     // attributes
     String infile;  // file path
     boolean verbose; // final release should have this changed to false
+    boolean openToTag = false;
+    String targetFileTag = "";
     private boolean invalidFlag = false; // invalid labels found in parsing? Highlight after flowchart generation
     ArrayList<FlowChartObject> flowchart = new ArrayList<>();
 
@@ -59,8 +61,9 @@ public class Parser  {
         simpleTokenizer.setCommentRegex(syn.getKeywordPatterns().getComment());
     }
 
-    public Parser(boolean verbose) {
+    public Parser(boolean verbose, boolean openToTag) {
         this.verbose = verbose;
+        this.openToTag = openToTag;
     }
 
     public Parser(){
@@ -72,8 +75,13 @@ public class Parser  {
      *
      * @param infile The absolute or relative location of the file, as a string.
      */
-    public void ReadFile(String infile) {
+    public void ReadFile(String infile, boolean openToTag, String targetFileTag) {
         invalidFlag = false;
+        this.openToTag = openToTag;
+        boolean ready = !openToTag; // flag to start saving parsed info
+        if (openToTag){
+            this.targetFileTag = "[ \t]*"+ targetFileTag + "\\b.*";
+        }
         //prepare to read file:
         this.infile = infile;
         File file = new File(infile);
@@ -83,114 +91,121 @@ public class Parser  {
             int i = 0;
             String line;
             while ((line = br.readLine()) != null) {
-                // HERE
-                boolean first = true;
-                //parse line:
                 i++;    //line numbers start at 1
-                if (verbose) System.out.println("\nparsing line #" + i + "`" + line + "`");
-                // replaces tabs with spaces
-                //line = line.replace("\t", "    ");
+                if (!ready){
+                    ready = line.matches(this.targetFileTag);
+                }
+                if (ready) {
+                    // HERE
+                    boolean first = true;
+                    //parse line:
+                    if (verbose) System.out.println("\nparsing line #" + i + "`" + line + "`");
+                    // replaces tabs with spaces
+                    //line = line.replace("\t", "    ");
 
-                String[] arrLine = simpleTokenizer.tokenizeString(line);
+                    String[] arrLine = simpleTokenizer.tokenizeString(line);
 
-                //temp variables:
-                Optional<String> comm = Optional.empty();
-                String label = "";
-                String targetLabel = "";
-                List<String> registers = new ArrayList<>();
-                List<TextWord> formattedString = new ArrayList<>();
-                boolean jump = false;
+                    //temp variables:
+                    Optional<String> comm = Optional.empty();
+                    String label = "";
+                    String targetLabel = "";
+                    List<String> registers = new ArrayList<>();
+                    List<TextWord> formattedString = new ArrayList<>();
+                    boolean jump = false;
 
-                //  arrLine = {"LABEL:", "JGZ", "R1", "R2", "FINISH"}
-                for (String fragment : arrLine) {
-                    if (verbose) System.out.print("[" + fragment + "]");
+                    //  arrLine = {"LABEL:", "JGZ", "R1", "R2", "FINISH"}
+                    for (String fragment : arrLine) {
+                        if (verbose) System.out.print("[" + fragment + "]");
 
-                    //grab each command in the line, if they exist:
-                    if (fragment.matches(syn.getCommands())) {
-                        comm = Optional.of(fragment);
-                        formattedString.add(new CommandWord(comm.get(), new Vector2f(0f, 0)));
-                        first = false;
-                    } else if (fragment.matches(syn.getKeywordPatterns().getControl())) { //Control
-                        comm = Optional.of(fragment);
-                        formattedString.add(new CommandWord(comm.get(), new Vector2f(0f, 0)));
-                        jump = true;
-                        first = false;
-                    } else if (fragment.matches(syn.getKeywordPatterns().getRegister())) {  //register
-                        if (fragment.contains(",")){
-                            if (!registers.contains(fragment.substring(0, fragment.length() - 1))) {
-                                registers.add(fragment.substring(0, fragment.length() - 1));
+                        //grab each command in the line, if they exist:
+                        if (fragment.matches(syn.getCommands())) {
+                            comm = Optional.of(fragment);
+                            formattedString.add(new CommandWord(comm.get(), new Vector2f(0f, 0)));
+                            first = false;
+                        } else if (fragment.matches(syn.getKeywordPatterns().getControl())) { //Control
+                            comm = Optional.of(fragment);
+                            formattedString.add(new CommandWord(comm.get(), new Vector2f(0f, 0)));
+                            jump = true;
+                            first = false;
+                        } else if (fragment.matches(syn.getKeywordPatterns().getRegister())) {  //register
+                            if (fragment.contains(",")) {
+                                if (!registers.contains(fragment.substring(0, fragment.length() - 1))) {
+                                    registers.add(fragment.substring(0, fragment.length() - 1));
+                                }
+                                formattedString.add(new RegisterWord(fragment.substring(0, fragment.length() - 1), new Vector2f(0f, 0)));
+                                formattedString.add(new LabelWord(",", new Vector2f(0f, 0)));
+                            } else {
+                                if (!registers.contains(fragment)) {
+                                    registers.add(fragment);
+                                }
+                                formattedString.add(new RegisterWord(fragment, new Vector2f(0f, 0)));
                             }
-                            formattedString.add(new RegisterWord(fragment.substring(0, fragment.length()-1), new Vector2f(0f, 0)));
-                            formattedString.add(new LabelWord(",", new Vector2f(0f, 0)));
+                            first = false;
+                        } else if (fragment.matches(syn.getKeywordPatterns().getConstantNumeric())
+                                || fragment.matches(syn.getKeywordPatterns().getConstantHex())
+                                || fragment.matches(syn.getKeywordPatterns().getConstantNumeric())) {
+                            //immediate value, literal or trap
+                            //just skip this for now
+                            first = false;
+                            formattedString.add(new ImmediateWord(fragment, new Vector2f(0f, 0)));
+                        } else if (jump && fragment.matches(syn.getKeywordPatterns().getLabel())) {   //jump statement, this matches a label
+                            //if the line is a jump statement,
+                            //this matches the label or labels pointed to by the command
+                            //if the language supports having the label BEFORE the command,
+                            //remove the `jump &&` statement as it will cause problems.
+                            // target label for the line.
+                            targetLabel = fragment;
+                            formattedString.add(new LabelWord(fragment, new Vector2f(0f, 0)));
+                            first = false;
+                        } else if (first && fragment.matches(syn.getKeywordPatterns().getLabel())) {
+                            //this is the (optional) label for the line
+                            label = fragment;
+                            labelMap.put(label, i);
+                            formattedString.add(new LabelWord(fragment, new Vector2f(0f, 0)));
+                            first = false;
+                            //} else if (!jump && fragment.matches("^[a-zA-Z0-9\\-_\"\\\\\\[\\]\\!<>]+")) {
+                        } else if (!jump && fragment.matches(syn.getKeywordPatterns().getLabel())
+                                || !jump && fragment.matches(syn.getKeywordPatterns().getDoubleQuotedString())
+
+                        ) {
+                            //the command isn't a jump statement, so the label must be a variable i.e. string, etc.
+                            formattedString.add(new LabelWord(fragment, new Vector2f(0f, 0)));
+                        } else if (fragment.matches(syn.getKeywordPatterns().getCommentLine())) {
+                            formattedString.add(new CommentWord(fragment, new Vector2f(0f, 0)));
+                        } else if (fragment.matches("[ ,\t]")) {
+                            formattedString.add(new SeparatorWord(fragment, new Vector2f(0f, 0f)));
                         } else {
-                            if (!registers.contains(fragment)) {
-                                registers.add(fragment);
-                            }
-                            formattedString.add(new RegisterWord(fragment, new Vector2f(0f, 0)));
+                            formattedString.add(new ErrorWord(fragment, new Vector2f(0f, 0f)));
                         }
-                        first = false;
-                    } else if (fragment.matches(syn.getKeywordPatterns().getConstantNumeric())
-                            ||fragment.matches(syn.getKeywordPatterns().getConstantHex())
-                            ||fragment.matches(syn.getKeywordPatterns().getConstantNumeric())) {
-                        //immediate value, literal or trap
-                        //just skip this for now
-                        first = false;
-                        formattedString.add(new ImmediateWord(fragment, new Vector2f(0f, 0)));
-                    } else if (jump && fragment.matches(syn.getKeywordPatterns().getLabel())) {   //jump statement, this matches a label
-                        //if the line is a jump statement,
-                        //this matches the label or labels pointed to by the command
-                        //if the language supports having the label BEFORE the command,
-                        //remove the `jump &&` statement as it will cause problems.
-                        // target label for the line.
-                        targetLabel = fragment;
-                        formattedString.add(new LabelWord(fragment, new Vector2f(0f, 0)));
-                        first = false;
-                    } else if (first && fragment.matches(syn.getKeywordPatterns().getLabel())) {
-                        //this is the (optional) label for the line
-                        label = fragment;
-                        labelMap.put(label, i);
-                        formattedString.add(new LabelWord(fragment, new Vector2f(0f, 0)));
-                        first = false;
-                    //} else if (!jump && fragment.matches("^[a-zA-Z0-9\\-_\"\\\\\\[\\]\\!<>]+")) {
-                    } else if (!jump && fragment.matches(syn.getKeywordPatterns().getLabel())
-                            || !jump && fragment.matches(syn.getKeywordPatterns().getDoubleQuotedString())
 
-                    ) {
-                        //the command isn't a jump statement, so the label must be a variable i.e. string, etc.
-                        formattedString.add(new LabelWord(fragment, new Vector2f(0f, 0)));
-                    } else if (fragment.matches(syn.getKeywordPatterns().getCommentLine())) {
-                        formattedString.add(new CommentWord(fragment, new Vector2f(0f, 0)));
-                    }
-                    else if (fragment.matches("[ ,\t]")){
-                        formattedString.add(new SeparatorWord(fragment, new Vector2f(0f,0f)));
-                    } else {
-                        formattedString.add(new ErrorWord(fragment, new Vector2f(0f,0f)));
                     }
 
+
+                    //Put formatted text into an object
+                    FormattedTextLine FormLine = new FormattedTextLine(formattedString);
+
+                    //log testing data, if verbose parsing is on:
+                    if (verbose) {
+                        System.out.println("\nParsed line " + i);
+                        comm.ifPresent(s -> System.out.println(" command: \"" + s + "\""));
+                        if (!label.isEmpty()) System.out.println(" line label: \"" + label + "\"");
+                        if (jump) System.out.println(" Line is a jump line (break, jump, etc.)");
+                        if (jump) System.out.println(" jump targets: \"" + targetLabel + "\"");
+                        System.out.println(" registers used: " + registers);
+                    }
+
+                    //call constructor for TLine, then add the new object to the arraylist for the file
+                    lines.add(new CodeLine(line, comm, label, targetLabel, jump, registers, i));
+                    // Assign formatted text object to the new LC3Tline class
+                    lines.get(lines.size() - 1).setTextLine(FormLine);
                 }
-
-
-
-                //Put formatted text into an object
-                FormattedTextLine FormLine = new FormattedTextLine(formattedString);
-
-                //log testing data, if verbose parsing is on:
-                if (verbose) {
-                    System.out.println("\nParsed line " + i);
-                    comm.ifPresent(s -> System.out.println(" command: \"" + s + "\""));
-                    if (!label.isEmpty()) System.out.println(" line label: \"" + label + "\"");
-                    if (jump) System.out.println(" Line is a jump line (break, jump, etc.)");
-                    if (jump) System.out.println(" jump targets: \"" + targetLabel + "\"");
-                    System.out.println(" registers used: " + registers);
-                }
-
-                //call constructor for TLine, then add the new object to the arraylist for the file
-                lines.add(new CodeLine(line, comm, label, targetLabel, jump, registers, i));
-                // Assign formatted text object to the new LC3Tline class
-                lines.get(lines.size() - 1).setTextLine(FormLine);
-
             }
             br.close();
+            if (!ready){
+                // Tag was never found
+                System.out.println("Invalid tag provided. Check the source file or the tag and try again.");
+                // TODO: throw popup here, probably.
+            }
         } catch (FileNotFoundException e) {
             if (verbose) System.out.println("File not found");
             e.printStackTrace();

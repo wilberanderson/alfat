@@ -1,3 +1,4 @@
+![Icon](src/res/icon/alfatlogo2.png)
 # ALFAT
 Assembly Language Flowchart and Analysis Tool, developed by students at the University of Massachusetts Dartmouth.
 
