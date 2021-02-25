@@ -1,6 +1,7 @@
 package gui.buttons;
 
 import gui.GUIFilledBox;
+import main.GeneralSettings;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 
@@ -40,7 +41,8 @@ public class HorizontalScrollBar {
 
         //Create the filled box which is used for the visible scroll bar
         //TODO: Create color in general settings and user pref
-        filledBox = new GUIFilledBox(new Vector2f(position.x, position.y), new Vector2f(width, height), new Vector3f(0.3f, 0.3f, 0.3f));
+        //filledBox = new GUIFilledBox(new Vector2f(position.x, position.y), new Vector2f(width, height), new Vector3f(0.3f, 0.3f, 0.3f));
+        filledBox = new GUIFilledBox(new Vector2f(position.x, position.y), new Vector2f(width, height), GeneralSettings.USERPREF.getScrollBarColor3f());
     }
 
     /**
@@ -225,4 +227,18 @@ public class HorizontalScrollBar {
         //Code window uses this return to determine whether the scroll bar should be rendered and properly adjust window contents
         return factor == 1;
     }
+
+    /**
+     * Change the background color
+     * @param color Vector3f
+     * */
+    public void setBackgroundColor(Vector3f color) {
+        this.filledBox.setColor(color);
+    }
+
+
+
+
+
+
 }

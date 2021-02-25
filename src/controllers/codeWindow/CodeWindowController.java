@@ -544,12 +544,30 @@ public class CodeWindowController {
     public int getNumberOfLines() {
         return numberOfLines;
     }
+
+    /**
+     * Change the background color the code window
+     * @param newColor Vector3f
+     * */
     public void changeCodewindowBGcolor3f(Vector3f newColor) {
         codeWindow.setBackgroundColor(newColor);
     }
 
+    /**
+     * Change the background color of the linenumber bar
+     * @param newColor Vector3f
+     * */
     public void changeCodewindowLinenumberBGColor3f(Vector3f newColor) {
         codeWindow.setTextNumberFilledBoxBackgroundColor(newColor);
+    }
+
+    /**
+     * Change the background color of the scroll bars
+     * @param newColor Vector3f
+     * */
+    public void changeScrollBarsColor3f(Vector3f newColor) {
+        this.horizontalScrollBar.setBackgroundColor(newColor);
+        this.verticalScrollBar.setBackgroundColor(newColor);
     }
 
     public TextLineController getTextLineController() {

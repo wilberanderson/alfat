@@ -64,6 +64,7 @@ public class ApplicationController {
         if(codeWindowController != null && codeWindowController.getCodeWindow() != null) {
             codeWindowController.changeCodewindowBGcolor3f(GeneralSettings.USERPREF.getTexteditorBGColor3f());
             codeWindowController.changeCodewindowLinenumberBGColor3f(GeneralSettings.USERPREF.getTexteditorLinenumberBGColor3f());
+
         }
 
         if(header != null) {

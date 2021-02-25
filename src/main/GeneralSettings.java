@@ -137,21 +137,23 @@ public class GeneralSettings {
 	public static String DEFAULT_FONT_LOCATION = "/res/fonts/consolas/consolas";
 
 	//*****************************GUI settings**************************************************
-	public static final Vector3f HIGHLIGHT_COLOR = base01;                                          //The color which a standard TextButton will turn it's background when the mouse is hovering over it
-	public static final Vector3f HEADER_COLOR = base03;                                             //The color of the header at the top of the screen
-	public static final float TEXT_BUTTON_PADDING = 0.005f;                                         //The space between the text on a TextButton and the edge of the button
+	public static final Vector3f HIGHLIGHT_COLOR = base01;                                          		//The color which a standard TextButton will turn it's background when the mouse is hovering over it
+	public static final Vector3f HEADER_COLOR = base03;                                             		//The color of the header at the top of the screen
+	public static final float TEXT_BUTTON_PADDING = 0.005f;                                         		//The space between the text on a TextButton and the edge of the button
 	public static final Vector3f TEXT_BUTTON_BACKGROUND_COLOR = new Vector3f(.05f, .05f, .05f);     //The starting background color of a TextButton
+	public static final Vector3f SCROLL_BAR_COLOR = new Vector3f(0.3f, 0.3f, 0.3f);				//The color of the scroll bars for the code window
 
 	//*****************************Image saving parameters*************************************
 	public static Matrix3f IMAGE_TRANSLATION;                              //The required translation to save the currently open flowchart centered in the screen
 	public static Vector2f IMAGE_SIZE;                                     //The size of the screenshot using the OpenGL coordinate system
 
 	//******************************File input/output fields**********************************
-	public static String FILE_PATH;                                             //A string used for holding the current file path of the file open in the text editor
-	public static String SYNTAX_PATH = "CodeSyntax/LC3.json";                   //The location of the default syntax at compile time
+	public static String FILE_PATH;                                              //A string used for holding the current file path of the file open in the text editor
+	public static String SYNTAX_PATH = "CodeSyntax/LC3.json";                    //The location of the default syntax at compile time
 	public static boolean IS_SYNTAX_PATH_CHANGED = true;                         //Toggle to tell whether the syntax file path has been changed and needs to be updated.
-	public static String TEMP_DIR = "temp";                                     //The directory where temporary files are saved
-
+	public static String TEMP_DIR = "temp";                                      //The directory where temporary files are saved
+	public static final int TEMP_FILE_LIMIT = 5;								 //The number of temporary files to be saved at any time
+	public static final String PREF_FILE_TYPE = "asm;txt;asm,txt"; 				 //The default file extensions that the file dialog opens for
 
 	//****************************Syntax highlighting colors************************
 	public static final Vector3f labelColor = new Vector3f(0.8f, 0.8f, 0.8f);   //The color of a label either at the start of the line or as a destination for a jump statement
