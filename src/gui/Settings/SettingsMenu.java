@@ -701,7 +701,7 @@ public class SettingsMenu extends Component {
 
         //Lines And Arrows
         LineJButton flowchartLine1 = new LineJButton(Color.WHITE, 0,0,0,30,6);
-        flowchartLine1.setBounds((mockGUI_Width/2)+barPadding,(barPadding*2)+ mockGUI_Height-(barPadding*11),6,35);
+        flowchartLine1.setBounds((mockGUI_Width/2)+barPadding,(barPadding*2)+ mockGUI_Height-(barPadding*11),12,35);
 
         ArrowJButton arrowJButton = new ArrowJButton(Color.WHITE,ArrowJButton.DOWN);
         arrowJButton.setBounds((mockGUI_Width/2)+barPadding-4,(barPadding*2)+ mockGUI_Height-(barPadding*11)+32,50,50);
@@ -806,6 +806,43 @@ public class SettingsMenu extends Component {
 
 
         });
+
+        scrollBtnVert.addActionListener(e-> {
+            Color newColor = JColorChooser.showDialog(this,"Select a color",GeneralSettings.USERPREF.getBackgroundColor());
+            if(newColor != null) {
+                mockGUIcolorPointers[mockGUIScrollBarColor] = newColor;
+                scrollBtnVert.setBackground(mockGUIcolorPointers[mockGUIScrollBarColor]);
+                scrollBtnHoriz.setBackground(mockGUIcolorPointers[mockGUIScrollBarColor]);
+            }
+            //Reset GBC
+            gbc.ipadx = 0;
+            gbc.ipady = 0;
+            gbc.gridx = 2;
+            gbc.gridy = 2;
+            //Add remove and add new content
+            main.remove(2);
+            main.add(slectionIndicatiorSingleColor(scrollBtnVert,scrollBtnHoriz,mockGUIScrollBarColor), gbc,2);
+            main.revalidate();
+        });
+
+        scrollBtnHoriz.addActionListener(e-> {
+            Color newColor = JColorChooser.showDialog(this,"Select a color",GeneralSettings.USERPREF.getBackgroundColor());
+            if(newColor != null) {
+                mockGUIcolorPointers[mockGUIScrollBarColor] = newColor;
+                scrollBtnVert.setBackground(mockGUIcolorPointers[mockGUIScrollBarColor]);
+                scrollBtnHoriz.setBackground(mockGUIcolorPointers[mockGUIScrollBarColor]);
+            }
+            //Reset GBC
+            gbc.ipadx = 0;
+            gbc.ipady = 0;
+            gbc.gridx = 2;
+            gbc.gridy = 2;
+            //Add remove and add new content
+            main.remove(2);
+            main.add(slectionIndicatiorSingleColor(scrollBtnVert,scrollBtnHoriz,mockGUIScrollBarColor), gbc,2);
+            main.revalidate();
+        });
+
 
         flowchartBox1Text.addActionListener(e->{
             Color newColor = JColorChooser.showDialog(this,"Select a color",GeneralSettings.USERPREF.getBackgroundColor());
@@ -962,6 +999,13 @@ public class SettingsMenu extends Component {
             mockGUIcolorPointers[mockGUIbackgroundColor] = new Color(GeneralSettings.base02.x, GeneralSettings.base02.y,GeneralSettings.base02.z);
             backgroundBtn.setBackground(mockGUIcolorPointers[mockGUIbackgroundColor]);
 
+            //scroll bars
+            mockGUIcolorPointers[mockGUIScrollBarColor] = new Color(GeneralSettings.SCROLL_BAR_COLOR.x,GeneralSettings.SCROLL_BAR_COLOR.y,GeneralSettings.SCROLL_BAR_COLOR.z);
+            scrollBtnHoriz.setBackground(mockGUIcolorPointers[mockGUIScrollBarColor]);
+            scrollBtnVert.setBackground(mockGUIcolorPointers[mockGUIScrollBarColor]);
+
+
+
             //Header color
             mockGUIcolorPointers[mockGUIheaderColor] = new Color(
                     GeneralSettings.HEADER_COLOR.x,
@@ -1041,6 +1085,10 @@ public class SettingsMenu extends Component {
 
             backgroundBtn.setBackground(mockGUIcolorPointers[mockGUIbackgroundColor]);
 
+            //scroll bars
+            mockGUIcolorPointers[mockGUIScrollBarColor] = new Color(GeneralSettings.SCROLL_BAR_COLOR.x,GeneralSettings.SCROLL_BAR_COLOR.y,GeneralSettings.SCROLL_BAR_COLOR.z);
+            scrollBtnHoriz.setBackground(mockGUIcolorPointers[mockGUIScrollBarColor]);
+            scrollBtnVert.setBackground(mockGUIcolorPointers[mockGUIScrollBarColor]);
 
             //Header color
             mockGUIcolorPointers[mockGUIheaderColor] = new Color(
@@ -1130,6 +1178,9 @@ public class SettingsMenu extends Component {
 
             //Text editor line number BG color
             GeneralSettings.USERPREF.setTexteditorLinenumberBGColor(mockGUIcolorPointers[mockGUItexteditorLinenumberBGColor]);
+
+            //Text editor scroll bar color
+            GeneralSettings.USERPREF.setScrollBarColor(mockGUIcolorPointers[mockGUIScrollBarColor]);
 
             //Flowchart box BG colors
             GeneralSettings.USERPREF.setFlowchartBoxbackgroundColor(mockGUIcolorPointers[mockGUIflowchartBoxBGcolor]);
@@ -1385,6 +1436,49 @@ public class SettingsMenu extends Component {
 
         return layeredPane;
     }
+
+    private JLayeredPane slectionIndicatiorSingleColor(JButton sourceBtn,JButton sourceBtn2, int colorInt) {
+
+        JLayeredPane layeredPane = new JLayeredPane();
+        layeredPane.setBounds(0,0,300,50);
+        layeredPane.setPreferredSize(new Dimension(300,50));
+
+        JButton currentColorBtn = contentLayer(mockGUIcolorPointers[colorInt], 0,0, 300,50);
+
+        currentColorBtn.addActionListener(e-> {
+            Color newColor = JColorChooser.showDialog(this,"Select a color",GeneralSettings.USERPREF.getBackgroundColor());
+            if(newColor != null) {
+                mockGUIcolorPointers[colorInt] = newColor;
+                sourceBtn.setBackground(mockGUIcolorPointers[colorInt]);
+                sourceBtn2.setBackground(mockGUIcolorPointers[colorInt]);
+                currentColorBtn.setBackground(mockGUIcolorPointers[colorInt]);
+            }
+        });
+
+        JLabel textInBack = new JLabel("<html>Color<br/>Selected</html>");
+        textInBack.setFont(new Font("Arial",Font.BOLD,18));
+        textInBack.setForeground(Color.BLACK);
+        textInBack.setBounds(2,1,300,50);
+
+
+        JLabel textInFront = new JLabel("<html>Color<br/>Selected</html>");
+        textInFront.setFont(new Font("Arial",Font.BOLD,18));
+        textInFront.setForeground(Color.WHITE);
+        textInFront.setBounds(0,0,300,50);
+
+        //Add components
+        layeredPane.add(currentColorBtn, Integer.valueOf(0));
+        layeredPane.add(textInBack, Integer.valueOf(1));
+        layeredPane.add(textInFront, Integer.valueOf(2));
+
+
+        return layeredPane;
+    }
+
+
+
+
+
 
     /**
      * Returns a customized JButton:
