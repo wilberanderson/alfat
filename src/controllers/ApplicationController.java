@@ -196,16 +196,16 @@ public class ApplicationController {
         //****************Flowchart shortcuts*******************
         //Initial generation
         if(key == GLFW_KEY_G){
-            header.generate(false);
+            header.generate(GeneralSettings.OPEN_PARTIAL_FILE);
             return;
         }
         //Regeneration
         if(key == GLFW_KEY_R){
             if(shift){
-                header.regenerateFromSource();
+                header.regenerateFromSource(GeneralSettings.OPEN_PARTIAL_FILE);
                 return;
             }
-            header.regenerateFromEditor();
+            header.regenerateFromEditor(GeneralSettings.OPEN_PARTIAL_FILE);
             return;
         }
         //*******************View shortcuts***************
