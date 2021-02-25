@@ -208,7 +208,7 @@ public class ApplicationController {
         //****************Flowchart shortcuts*******************
         //Initial generation
         if(key == GLFW_KEY_G){
-            header.generate();
+            header.generate(false);
             return;
         }
         //Regeneration
@@ -238,6 +238,10 @@ public class ApplicationController {
             return;
         }
         //**********************Analysis shortcuts**********
+        if(key == GLFW_KEY_I){
+            header.setPartialTag();
+        }
+
         if(key == GLFW_KEY_L){
             if(alt){
                 header.invalidLabels();

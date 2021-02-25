@@ -126,6 +126,9 @@ public class GeneralSettings {
 	public static final float DEFAULT_LINE_WIDTH = 1f;
 	public static final float HIGHLIGHTED_LINE_WIDTH = 3f;
 
+	public static boolean OPEN_PARTIAL_FILE = false;
+	public static String PARTIAL_FILE_TAG_TARGET = "";
+
 	//************************************************Text settings***********************************
 	public static final float FONT_SIZE = 1f;                                           //The default size for rendered text, individual texts may override this value
 	public static final float FONT_SCALING_FACTOR = 0.06f;                              //The amount that texts increase in size based on, cannot be modified
