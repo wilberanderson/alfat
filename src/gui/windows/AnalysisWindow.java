@@ -55,6 +55,7 @@ public class AnalysisWindow extends GUIWindow{
     }
 
     public void onCancel(){
+        controller.getFlowchartWindowController().locateRegisters("");
         close();
     }
 
