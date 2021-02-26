@@ -141,12 +141,9 @@ public class Parser  {
                                 formattedString.add(new RegisterWord(fragment, new Vector2f(0f, 0)));
                             }
                             first = false;
-                        } else if (
-                                fragment.matches(syn.getKeywordPatterns().getConstantNumeric())
-                                        ||fragment.matches(syn.getKeywordPatterns().getConstantHex())
-                                        ||fragment.matches(syn.getKeywordPatterns().getConstantBinary())
-                                        || fragment.matches(syn.getKeywordPatterns().getConstantCharacter())
-                        ) {
+                        } else if (fragment.matches(syn.getKeywordPatterns().getConstantNumeric())
+                                || fragment.matches(syn.getKeywordPatterns().getConstantHex())
+                                || fragment.matches(syn.getKeywordPatterns().getConstantNumeric())) {
                             //immediate value, literal or trap
                             //just skip this for now
                             first = false;
@@ -268,11 +265,9 @@ public class Parser  {
                     formattedString.add(new RegisterWord(fragment, new Vector2f(0f, 0)));
                 }
                 first = false;
-            } else if (
-                    fragment.matches(syn.getKeywordPatterns().getConstantNumeric())
+            } else if (fragment.matches(syn.getKeywordPatterns().getConstantNumeric())
                        ||fragment.matches(syn.getKeywordPatterns().getConstantHex())
-                       ||fragment.matches(syn.getKeywordPatterns().getConstantBinary())
-                       || fragment.matches(syn.getKeywordPatterns().getConstantCharacter())
+                       ||fragment.matches(syn.getKeywordPatterns().getConstantNumeric())
             ) {
                 //immediate value, literal or trap
                 //just skip this for now

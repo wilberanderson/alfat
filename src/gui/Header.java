@@ -120,7 +120,7 @@ public class Header {
         button = new TextButton("Regenerate Flowchart From Editor") {
             @Override
             public void onPress() {
-                regenerateFromEditor();
+                regenerateFromEditor(GeneralSettings.OPEN_PARTIAL_FILE);
             }
         };
         flowchartButtonList.add(button);
@@ -128,7 +128,7 @@ public class Header {
         button = new TextButton("Regenerate Flowchart From Source") {
             @Override
             public void onPress() {
-                regenerateFromSource();
+                regenerateFromSource(GeneralSettings.OPEN_PARTIAL_FILE);
             }
         };
         flowchartButtonList.add(button);
@@ -551,9 +551,8 @@ public class Header {
         } else {
             // This is opening a partial file.
             // prompt user to input tag:
-            String tag = "LOOP";
             // attempt to parse to tag:
-            if(GlobalParser.PARSER_MANAGER.attemptPartialFileParse(tfm.getMostRecent(),tag)){
+            if(GlobalParser.PARSER_MANAGER.attemptPartialFileParse(tfm.getMostRecent(), GeneralSettings.PARTIAL_FILE_TAG_TARGET)){
                 controller.setFlowchartWindowController(GlobalParser.PARSER_MANAGER.getParser().createFlowchart(controller));
                 controller.flowchartView();
             }
@@ -563,7 +562,7 @@ public class Header {
     /**
      * Regenerates the flowchart from the modified code in the code window
      */
-    public void regenerateFromEditor(){
+    public void regenerateFromEditor(boolean partial){
         //TODO: Need way to keep track whether changes have been made in editor to know if we need to save or not...
 
         //Save what is in codeWindow
@@ -583,9 +582,19 @@ public class Header {
 //        parser.createFlowchart(controller);
 //        controller.setFlowchartWindowController(parser.createFlowchart(controller));
 //        controller.flowchartView();
-        if(GlobalParser.PARSER_MANAGER.attemptFileParse(tfm.getMostRecent())){
-            controller.setFlowchartWindowController(GlobalParser.PARSER_MANAGER.getParser().createFlowchart(controller));
-            controller.flowchartView();
+        if (!partial) {
+            if(GlobalParser.PARSER_MANAGER.attemptFileParse(tfm.getMostRecent())){
+                controller.setFlowchartWindowController(GlobalParser.PARSER_MANAGER.getParser().createFlowchart(controller));
+                controller.flowchartView();
+            }
+        } else {
+            // This is opening a partial file.
+            // prompt user to input tag:
+            // attempt to parse to tag:
+            if(GlobalParser.PARSER_MANAGER.attemptPartialFileParse(tfm.getMostRecent(), GeneralSettings.PARTIAL_FILE_TAG_TARGET)){
+                controller.setFlowchartWindowController(GlobalParser.PARSER_MANAGER.getParser().createFlowchart(controller));
+                controller.flowchartView();
+            }
         }
 
     }
@@ -593,7 +602,7 @@ public class Header {
     /**
      * Regenerates the flowchart from the original file
      */
-    public void regenerateFromSource(){
+    public void regenerateFromSource(boolean partial){
         if(GeneralSettings.FILE_PATH == null) {
             return;
         }
@@ -606,9 +615,19 @@ public class Header {
 //        controller.flowchartView();
 
 
-        if(GlobalParser.PARSER_MANAGER.attemptFileParse(GeneralSettings.FILE_PATH)){
-            controller.setFlowchartWindowController(GlobalParser.PARSER_MANAGER.getParser().createFlowchart(controller));
-            controller.flowchartView();
+        if (!partial) {
+            if(GlobalParser.PARSER_MANAGER.attemptFileParse(GeneralSettings.FILE_PATH)){
+                controller.setFlowchartWindowController(GlobalParser.PARSER_MANAGER.getParser().createFlowchart(controller));
+                controller.flowchartView();
+            }
+        } else {
+            // This is opening a partial file.
+            // prompt user to input tag:
+            // attempt to parse to tag:
+            if(GlobalParser.PARSER_MANAGER.attemptPartialFileParse(GeneralSettings.FILE_PATH, GeneralSettings.PARTIAL_FILE_TAG_TARGET)){
+                controller.setFlowchartWindowController(GlobalParser.PARSER_MANAGER.getParser().createFlowchart(controller));
+                controller.flowchartView();
+            }
         }
     }
 
@@ -686,8 +705,6 @@ public class Header {
      *
      */
     public void setPartialTag(){
-        if(controller.getFlowchartWindowController() != null) {
-            PartialWindow partialDialogueWindow = new PartialWindow(controller);
-        }
+        PartialWindow partialDialogueWindow = new PartialWindow(controller);
     }
 }
