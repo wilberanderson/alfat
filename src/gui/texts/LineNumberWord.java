@@ -5,7 +5,8 @@ import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 
 public class LineNumberWord extends TextWord{
-    private static Vector3f color = GeneralSettings.TEXT_COLOR;
+   // private static Vector3f color = GeneralSettings.TEXT_COLOR;
+    private static Vector3f color = GeneralSettings.USERPREF.getLineNumberColor3f();
 
     public LineNumberWord(String text, Vector2f position) {
         super(text, position);
