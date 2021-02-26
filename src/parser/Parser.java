@@ -124,7 +124,7 @@ public class Parser  {
                             first = false;
                         } else if (fragment.matches(syn.getKeywordPatterns().getControl())) { //Control
                             comm = Optional.of(fragment);
-                            formattedString.add(new CommandWord(comm.get(), new Vector2f(0f, 0)));
+                            formattedString.add(new BranchWord(comm.get(), new Vector2f(0f, 0)));
                             jump = true;
                             first = false;
                         } else if (fragment.matches(syn.getKeywordPatterns().getRegister())) {  //register
@@ -246,7 +246,7 @@ public class Parser  {
                 first = false;
             } else if (fragment.matches(syn.getKeywordPatterns().getControl())) {
                 comm = Optional.of(fragment);
-                formattedString.add(new CommandWord(comm.get(), new Vector2f(0f, 0)));
+                formattedString.add(new BranchWord(comm.get(), new Vector2f(0f, 0)));
                 jump = true;
                 first = false;
             } else if (fragment.matches(syn.getKeywordPatterns().getRegister())) {  //register

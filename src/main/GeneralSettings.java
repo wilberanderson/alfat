@@ -167,7 +167,7 @@ public class GeneralSettings {
 	public static final Vector3f registerColor = green;                                 //The color for a register such as R0 or R1
 	public static final Vector3f immediateColor = yellow;                               //The color for an immediate value such as #14 or 0xE
 	public static final Vector3f commentColor = base01;                                 //The color for any comments
-	public static final Vector3f defaultColor = new Vector3f(1, 1, 1);          //The color for any unparsed portions of a line such as the ',' between arguments
+	public static final Vector3f separatorColor = new Vector3f(1, 1, 1);          //The color for any unparsed portions of a line such as the ',' between arguments
 
 	//**************************Resizing parameters******************************
 	public static int DISPLAY_WIDTH = DEFAULT_WIDTH;                            //The current width of the display in pixels
