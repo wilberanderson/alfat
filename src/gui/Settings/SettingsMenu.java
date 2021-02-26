@@ -723,7 +723,7 @@ public class SettingsMenu extends Component {
         JButton backgroundBtn = contentLayer(mockGUIcolorPointers[mockGUIbackgroundColor],0,0, mockGUI_Width,mockGUI_Height);
         //*************************** Set The Text Color Buttons **********************************
         //TODO: Add color for text from general settings
-        branchTextColorBtn  = makeColorbtn(Color.black,mockGUIcolorPointers[mockGUIbackgroundColor], mockGUIbackgroundColor,"Branch");
+        branchTextColorBtn  = makeColorbtn(GeneralSettings.USERPREF.getBranchTextColor(), mockGUIcolorPointers[mockGUIbackgroundColor], mockGUIbackgroundColor,"Branch");
         commandTextColorBtn  = makeColorbtn(Color.black,mockGUIcolorPointers[mockGUIbackgroundColor], mockGUIbackgroundColor,"Command");
         commentTextColorBtn  = makeColorbtn(Color.black,mockGUIcolorPointers[mockGUIbackgroundColor], mockGUIbackgroundColor,"Command");
         ErrorTextColorBtn  = makeColorbtn(Color.black,mockGUIcolorPointers[mockGUIbackgroundColor], mockGUIbackgroundColor,"Error");
