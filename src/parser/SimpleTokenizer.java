@@ -20,7 +20,7 @@ public class SimpleTokenizer {
     private String commentRegex = ";"; //Left to this has default
 
 
-    private boolean verbose = false;
+    private boolean verbose = true;
 
     public SimpleTokenizer () {
         //DO NOTHING
