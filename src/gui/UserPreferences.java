@@ -729,31 +729,302 @@ public class UserPreferences {
 
     //*********************************************************************************************************************************************
     //Comment text color
+    private final String keyCommentColor_RED = "commentcolorred";
+    private final float fbValueCommentColor_RED = GeneralSettings.commentColor.x;
+
+    private final String keyCommentColor_GREEN = "commentcolorgreen";
+    private final float fbValueCommentColor_GREEN = GeneralSettings.commentColor.y;
+
+    private final String keyCommentColor_BLUE = "commentcolorblue";
+    private final float fbValueCommentColor_BLUE = GeneralSettings.commentColor.z;
 
 
+
+    public void setCommentColor(Color bgColor) {
+        userPref.putFloat(keyCommentColor_RED, bgColor.getRed()/255f);
+        userPref.putFloat(keyCommentColor_GREEN, bgColor.getGreen()/255f);
+        userPref.putFloat(keyCommentColor_BLUE, bgColor.getBlue()/255f);
+    }
+
+    public void setCommentColor3f(Vector3f bgColor) {
+        userPref.putFloat(keyCommentColor_RED, bgColor.x);
+        userPref.putFloat(keyCommentColor_GREEN, bgColor.y);
+        userPref.putFloat(keyCommentColor_BLUE, bgColor.z);
+    }
+
+    public Vector3f getCommentColor3f() {
+        Vector3f bgColor = new Vector3f();
+        bgColor.setX(userPref.getFloat(keyCommentColor_RED, fbValueCommentColor_RED));
+        bgColor.setY(userPref.getFloat(keyCommentColor_GREEN, fbValueCommentColor_GREEN));
+        bgColor.setZ(userPref.getFloat(keyCommentColor_BLUE, fbValueCommentColor_BLUE));
+        return bgColor;
+    }
+
+    public Color getCommentColor() {
+        Color bgColor = new Color(
+                userPref.getFloat(keyCommentColor_RED, fbValueCommentColor_RED),
+                userPref.getFloat(keyCommentColor_GREEN, fbValueCommentColor_GREEN),
+                userPref.getFloat(keyCommentColor_BLUE, fbValueCommentColor_BLUE)
+        );
+        return bgColor;
+    }
 
 
     //*********************************************************************************************************************************************
     //Error text color
+    private final String keyErrorColor_RED = "errorcolorred";
+    private final float fbValueErrorColor_RED = GeneralSettings.errorColor.x;
+
+
+    private final String keyErrorColor_GREEN = "errorcolorgreen";
+    private final float fbValueErrorColor_GREEN = GeneralSettings.errorColor.y;
+
+
+    private final String keyErrorColor_BLUE = "errorcolorblue";
+    private final float fbValueErrorColor_BLUE = GeneralSettings.errorColor.z;
+
+
+    public void setErrorColor(Color bgColor) {
+        userPref.putFloat(keyErrorColor_RED, bgColor.getRed()/255f);
+        userPref.putFloat(keyErrorColor_GREEN, bgColor.getGreen()/255f);
+        userPref.putFloat(keyErrorColor_BLUE, bgColor.getBlue()/255f);
+    }
+
+    public void setErrorColor3f(Vector3f bgColor) {
+        userPref.putFloat(keyErrorColor_RED, bgColor.x);
+        userPref.putFloat(keyErrorColor_GREEN, bgColor.y);
+        userPref.putFloat(keyErrorColor_BLUE, bgColor.z);
+    }
+
+    public Vector3f getErrorColor3f() {
+        Vector3f bgColor = new Vector3f();
+        bgColor.setX(userPref.getFloat(keyErrorColor_RED, fbValueErrorColor_RED));
+        bgColor.setY(userPref.getFloat(keyErrorColor_GREEN, fbValueErrorColor_GREEN));
+        bgColor.setZ(userPref.getFloat(keyErrorColor_BLUE, fbValueErrorColor_BLUE));
+        return bgColor;
+    }
+
+    public Color getErrorColor() {
+        Color bgColor = new Color(
+                userPref.getFloat(keyErrorColor_RED, fbValueErrorColor_RED),
+                userPref.getFloat(keyErrorColor_GREEN, fbValueErrorColor_GREEN),
+                userPref.getFloat(keyErrorColor_BLUE, fbValueErrorColor_BLUE)
+        );
+        return bgColor;
+    }
 
 
     //*********************************************************************************************************************************************
     //Immediate text color
+    private final String keyImmediateColor_RED = "immediatecolorred";
+    private final float fbValueImmediateColor_RED = GeneralSettings.immediateColor.x;
+
+    private final String keyImmediateColor_GREEN = "immediatecolorgreen";
+    private final float fbValueImmediateColor_GREEN = GeneralSettings.immediateColor.y;
+
+    private final String keyImmediateColor_BLUE = "immediatecolorblue";
+    private final float fbValueImmediateColor_BLUE = GeneralSettings.immediateColor.z;
+
+    public void setImmediateColor(Color bgColor) {
+        userPref.putFloat(keyImmediateColor_RED, bgColor.getRed()/255f);
+        userPref.putFloat(keyImmediateColor_GREEN, bgColor.getGreen()/255f);
+        userPref.putFloat(keyImmediateColor_BLUE, bgColor.getBlue()/255f);
+    }
+
+    public void setImmediateColor3f(Vector3f bgColor) {
+        userPref.putFloat(keyImmediateColor_RED, bgColor.x);
+        userPref.putFloat(keyImmediateColor_GREEN, bgColor.y);
+        userPref.putFloat(keyImmediateColor_BLUE, bgColor.z);
+    }
+
+    public Vector3f getImmediateColor3f() {
+        Vector3f bgColor = new Vector3f();
+        bgColor.setX(userPref.getFloat(keyImmediateColor_RED, fbValueImmediateColor_RED));
+        bgColor.setY(userPref.getFloat(keyImmediateColor_GREEN, fbValueImmediateColor_GREEN));
+        bgColor.setZ(userPref.getFloat(keyImmediateColor_BLUE, fbValueImmediateColor_BLUE));
+        return bgColor;
+    }
+
+    public Color getImmediateColor() {
+        Color bgColor = new Color(
+                userPref.getFloat(keyImmediateColor_RED, fbValueImmediateColor_RED),
+                userPref.getFloat(keyImmediateColor_GREEN, fbValueImmediateColor_GREEN),
+                userPref.getFloat(keyImmediateColor_BLUE, fbValueImmediateColor_BLUE)
+        );
+        return bgColor;
+    }
 
 
     //*********************************************************************************************************************************************
     //Label text color
+    private final String keyLabelColor_RED = "labelcolorred";
+    private final float fbValueLabelColor_RED = GeneralSettings.labelColor.x;
 
+    private final String keyLabelColor_GREEN = "labelcolorgreen";
+    private final float fbValueLabelColor_GREEN = GeneralSettings.labelColor.y;
+
+    private final String keyLabelColor_BLUE = "labelcolorblue";
+    private final float fbValueLabelColor_BLUE = GeneralSettings.labelColor.z;
+
+
+    public void setLabelColor(Color bgColor) {
+        userPref.putFloat(keyLabelColor_RED, bgColor.getRed()/255f);
+        userPref.putFloat(keyLabelColor_GREEN, bgColor.getGreen()/255f);
+        userPref.putFloat(keyLabelColor_BLUE, bgColor.getBlue()/255f);
+    }
+
+    public void setLabelColor3f(Vector3f bgColor) {
+        userPref.putFloat(keyLabelColor_RED, bgColor.x);
+        userPref.putFloat(keyLabelColor_GREEN, bgColor.y);
+        userPref.putFloat(keyLabelColor_BLUE, bgColor.z);
+    }
+
+    public Vector3f getLabelColor3f() {
+        Vector3f bgColor = new Vector3f();
+        bgColor.setX(userPref.getFloat(keyLabelColor_RED, fbValueLabelColor_RED));
+        bgColor.setY(userPref.getFloat(keyLabelColor_GREEN, fbValueLabelColor_GREEN));
+        bgColor.setZ(userPref.getFloat(keyLabelColor_BLUE, fbValueLabelColor_BLUE));
+        return bgColor;
+    }
+
+    public Color getLabelColor() {
+        Color bgColor = new Color(
+                userPref.getFloat(keyLabelColor_RED, fbValueLabelColor_RED),
+                userPref.getFloat(keyLabelColor_GREEN, fbValueLabelColor_GREEN),
+                userPref.getFloat(keyLabelColor_BLUE, fbValueLabelColor_BLUE)
+        );
+        return bgColor;
+    }
+
+    //*********************************************************************************************************************************************
+    //LineNumber text color
+
+    private final String keyLineNumberColor_RED = "linenumbercolorred";
+    private final float fbValueLineNumberColor_RED = GeneralSettings.TEXT_COLOR.x;
+
+    private final String keyLineNumberColor_GREEN = "linenumbercolorgreen";
+    private final float fbValueLineNumberColor_GREEN = GeneralSettings.TEXT_COLOR.y;
+
+    private final String keyLineNumberColor_BLUE = "linenumbercolorblue";
+    private final float fbValueLineNumberColor_BLUE = GeneralSettings.TEXT_COLOR.z;
+
+
+
+    public void setLineNumberColor(Color bgColor) {
+        userPref.putFloat(keyLineNumberColor_RED, bgColor.getRed()/255f);
+        userPref.putFloat(keyLineNumberColor_GREEN, bgColor.getGreen()/255f);
+        userPref.putFloat(keyLineNumberColor_BLUE, bgColor.getBlue()/255f);
+    }
+
+    public void setLineNumberColor3f(Vector3f bgColor) {
+        userPref.putFloat(keyLineNumberColor_RED, bgColor.x);
+        userPref.putFloat(keyLineNumberColor_GREEN, bgColor.y);
+        userPref.putFloat(keyLineNumberColor_BLUE, bgColor.z);
+    }
+
+    public Vector3f getLineNumberColor3f() {
+        Vector3f bgColor = new Vector3f();
+        bgColor.setX(userPref.getFloat(keyLineNumberColor_RED, fbValueLineNumberColor_RED));
+        bgColor.setY(userPref.getFloat(keyLineNumberColor_GREEN, fbValueLineNumberColor_GREEN));
+        bgColor.setZ(userPref.getFloat(keyLineNumberColor_BLUE, fbValueLineNumberColor_BLUE));
+        return bgColor;
+    }
+
+    public Color getLineNumberColor() {
+        Color bgColor = new Color(
+                userPref.getFloat(keyLineNumberColor_RED, fbValueLineNumberColor_RED),
+                userPref.getFloat(keyLineNumberColor_GREEN, fbValueLineNumberColor_GREEN),
+                userPref.getFloat(keyLineNumberColor_BLUE, fbValueLineNumberColor_BLUE)
+        );
+        return bgColor;
+    }
 
 
     //*********************************************************************************************************************************************
     //Register text color
 
+    private final String keyRegisterColor_RED = "registercolorred";
+    private final float fbValueRegisterColor_RED = GeneralSettings.registerColor.x;
+
+    private final String keyRegisterColor_GREEN = "registercolorgreen";
+    private final float fbValueRegisterColor_GREEN = GeneralSettings.registerColor.y;
+
+    private final String keyRegisterColor_BLUE = "registercolorblue";
+    private final float fbValueRegisterColor_BLUE = GeneralSettings.registerColor.z;
+
+
+
+    public void setRegisterColor(Color bgColor) {
+        userPref.putFloat(keyRegisterColor_RED, bgColor.getRed()/255f);
+        userPref.putFloat(keyRegisterColor_GREEN, bgColor.getGreen()/255f);
+        userPref.putFloat(keyRegisterColor_BLUE, bgColor.getBlue()/255f);
+    }
+
+    public void setRegisterColor3f(Vector3f bgColor) {
+        userPref.putFloat(keyRegisterColor_RED, bgColor.x);
+        userPref.putFloat(keyRegisterColor_GREEN, bgColor.y);
+        userPref.putFloat(keyRegisterColor_BLUE, bgColor.z);
+    }
+
+    public Vector3f getRegisterColor3f() {
+        Vector3f bgColor = new Vector3f();
+        bgColor.setX(userPref.getFloat(keyRegisterColor_RED, fbValueRegisterColor_RED));
+        bgColor.setY(userPref.getFloat(keyRegisterColor_GREEN, fbValueRegisterColor_GREEN));
+        bgColor.setZ(userPref.getFloat(keyRegisterColor_BLUE, fbValueRegisterColor_BLUE));
+        return bgColor;
+    }
+
+    public Color getRegisterColor() {
+        Color bgColor = new Color(
+                userPref.getFloat(keyRegisterColor_RED, fbValueRegisterColor_RED),
+                userPref.getFloat(keyRegisterColor_GREEN, fbValueRegisterColor_GREEN),
+                userPref.getFloat(keyRegisterColor_BLUE, fbValueRegisterColor_BLUE)
+        );
+        return bgColor;
+    }
 
 
     //*********************************************************************************************************************************************
     //Separator text color
+    private final String keySeparatorColor_RED = "separatorcolorred";
+    private final float fbValueSeparatorColor_RED = GeneralSettings.separatorColor.x;
 
+
+
+    private final String keySeparatorColor_GREEN = "separatorcolorgreen";
+    private final float fbValueSeparatorColor_GREEN = GeneralSettings.separatorColor.y;
+
+    private final String keySeparatorColor_BLUE = "separatorcolorblue";
+    private final float fbValueSeparatorColor_BLUE = GeneralSettings.separatorColor.z;
+
+    public void setSeparatorColor(Color bgColor) {
+        userPref.putFloat(keySeparatorColor_RED, bgColor.getRed()/255f);
+        userPref.putFloat(keySeparatorColor_GREEN, bgColor.getGreen()/255f);
+        userPref.putFloat(keySeparatorColor_BLUE, bgColor.getBlue()/255f);
+    }
+
+    public void setSeparatorColor3f(Vector3f bgColor) {
+        userPref.putFloat(keySeparatorColor_RED, bgColor.x);
+        userPref.putFloat(keySeparatorColor_GREEN, bgColor.y);
+        userPref.putFloat(keySeparatorColor_BLUE, bgColor.z);
+    }
+
+    public Vector3f getSeparatorColor3f() {
+        Vector3f bgColor = new Vector3f();
+        bgColor.setX(userPref.getFloat(keySeparatorColor_RED, fbValueSeparatorColor_RED));
+        bgColor.setY(userPref.getFloat(keySeparatorColor_GREEN, fbValueSeparatorColor_GREEN));
+        bgColor.setZ(userPref.getFloat(keySeparatorColor_BLUE, fbValueSeparatorColor_BLUE));
+        return bgColor;
+    }
+
+    public Color getSeparatorColor() {
+        Color bgColor = new Color(
+                userPref.getFloat(keySeparatorColor_RED, fbValueSeparatorColor_RED),
+                userPref.getFloat(keySeparatorColor_GREEN, fbValueSeparatorColor_GREEN),
+                userPref.getFloat(keySeparatorColor_BLUE, fbValueSeparatorColor_BLUE)
+        );
+        return bgColor;
+    }
 
 
     //*********************************************************************************************************************************************

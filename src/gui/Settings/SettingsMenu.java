@@ -633,7 +633,7 @@ public class SettingsMenu extends Component {
     private JButton branchTextColorBtn;
     private JButton commandTextColorBtn;
     private JButton commentTextColorBtn;
-    private JButton ErrorTextColorBtn;
+    private JButton errorTextColorBtn;
     private JButton immediateTextColorBtn;
     private JButton labelTextColorBtn;
     private JButton lineNumberTextColorBtn;
@@ -724,14 +724,14 @@ public class SettingsMenu extends Component {
         //*************************** Set The Text Color Buttons **********************************
         //TODO: Add color for text from general settings
         branchTextColorBtn  = makeColorbtn(GeneralSettings.USERPREF.getBranchTextColor(), mockGUIcolorPointers[mockGUIbackgroundColor], mockGUIbackgroundColor,"Branch");
-        commandTextColorBtn  = makeColorbtn(Color.black,mockGUIcolorPointers[mockGUIbackgroundColor], mockGUIbackgroundColor,"Command");
-        commentTextColorBtn  = makeColorbtn(Color.black,mockGUIcolorPointers[mockGUIbackgroundColor], mockGUIbackgroundColor,"Command");
-        ErrorTextColorBtn  = makeColorbtn(Color.black,mockGUIcolorPointers[mockGUIbackgroundColor], mockGUIbackgroundColor,"Error");
-        immediateTextColorBtn  = makeColorbtn(Color.black,mockGUIcolorPointers[mockGUIbackgroundColor], mockGUIbackgroundColor,"Immediate");
-        labelTextColorBtn  = makeColorbtn(Color.black,mockGUIcolorPointers[mockGUIbackgroundColor], mockGUIbackgroundColor,"Label");
-        lineNumberTextColorBtn  = makeColorbtn(Color.black,mockGUIcolorPointers[mockGUIbackgroundColor], mockGUIbackgroundColor,"Line Number");
-        registerTextColorBtn  = makeColorbtn(Color.black,mockGUIcolorPointers[mockGUIbackgroundColor], mockGUIbackgroundColor,"Line Number");
-        separatorTextColorBtn  = makeColorbtn(Color.black,mockGUIcolorPointers[mockGUIbackgroundColor], mockGUIbackgroundColor,"Separator");
+        commandTextColorBtn  = makeColorbtn(GeneralSettings.USERPREF.getCommandTextColor(), mockGUIcolorPointers[mockGUIbackgroundColor], mockGUIbackgroundColor,"Command");
+        commentTextColorBtn  = makeColorbtn(GeneralSettings.USERPREF.getCommentColor(), mockGUIcolorPointers[mockGUIbackgroundColor], mockGUIbackgroundColor,"Comment");
+        errorTextColorBtn  = makeColorbtn(GeneralSettings.USERPREF.getErrorColor(),mockGUIcolorPointers[mockGUIbackgroundColor], mockGUIbackgroundColor,"Error");
+        immediateTextColorBtn  = makeColorbtn(GeneralSettings.USERPREF.getImmediateColor(), mockGUIcolorPointers[mockGUIbackgroundColor], mockGUIbackgroundColor,"Immediate");
+        labelTextColorBtn  = makeColorbtn(GeneralSettings.USERPREF.getLabelColor(), mockGUIcolorPointers[mockGUIbackgroundColor], mockGUIbackgroundColor,"Label");
+        lineNumberTextColorBtn  = makeColorbtn(GeneralSettings.USERPREF.getLineNumberColor(), mockGUIcolorPointers[mockGUIbackgroundColor], mockGUIbackgroundColor,"Line Number");
+        registerTextColorBtn  = makeColorbtn(GeneralSettings.USERPREF.getRegisterColor(), mockGUIcolorPointers[mockGUIbackgroundColor], mockGUIbackgroundColor,"Register");
+        separatorTextColorBtn  = makeColorbtn(GeneralSettings.USERPREF.getSeparatorColor(), mockGUIcolorPointers[mockGUIbackgroundColor], mockGUIbackgroundColor,"Separator");
 
 
         //Menu
@@ -803,7 +803,7 @@ public class SettingsMenu extends Component {
         //TODO: Account for the fact that there is two types of line number text color. For flowchart and code editor
         backgroundBtn.addPropertyChangeListener("background",new BackgroundColorListener(
                 branchTextColorBtn, commandTextColorBtn, commentTextColorBtn,
-                ErrorTextColorBtn, immediateTextColorBtn, labelTextColorBtn,
+                errorTextColorBtn, immediateTextColorBtn, labelTextColorBtn,
                 lineNumberTextColorBtn, registerTextColorBtn,separatorTextColorBtn,
                 mockGUIbackgroundColor) );
 
@@ -1642,7 +1642,7 @@ public class SettingsMenu extends Component {
         scopGBC.gridx = 2; scopGBC.gridy = 1;
         syntaxColorOptionsPane.add(commentTextColorBtn, scopGBC);
         scopGBC.gridx = 3; scopGBC.gridy = 1;
-        syntaxColorOptionsPane.add(ErrorTextColorBtn, scopGBC);
+        syntaxColorOptionsPane.add(errorTextColorBtn, scopGBC);
         //Row 2
         scopGBC.gridx = 0; scopGBC.gridy = 2;
         syntaxColorOptionsPane.add(immediateTextColorBtn, scopGBC);
@@ -1672,7 +1672,18 @@ public class SettingsMenu extends Component {
 
 
         defaultBtn.addActionListener(e-> {
-            
+
+            branchTextColorBtn.setForeground(new Color(GeneralSettings.branchColor.x,GeneralSettings.branchColor.y,GeneralSettings.branchColor.z));
+            commandTextColorBtn.setForeground(new Color(GeneralSettings.commandColor.x,GeneralSettings.commandColor.y,GeneralSettings.commandColor.z));
+            commentTextColorBtn.setForeground(new Color(GeneralSettings.commentColor.x,GeneralSettings.commentColor.y,GeneralSettings.commentColor.z));
+            errorTextColorBtn.setForeground(new Color(GeneralSettings.errorColor.x,GeneralSettings.errorColor.y,GeneralSettings.errorColor.z));
+            immediateTextColorBtn.setForeground(new Color(GeneralSettings.immediateColor.x,GeneralSettings.immediateColor.y,GeneralSettings.immediateColor.z));
+
+
+            labelTextColorBtn.setForeground(new Color(GeneralSettings.labelColor.x, GeneralSettings.labelColor.y, GeneralSettings.labelColor.z));
+            lineNumberTextColorBtn.setForeground(new Color(GeneralSettings.TEXT_COLOR.x, GeneralSettings.TEXT_COLOR.y, GeneralSettings.TEXT_COLOR.z));
+            registerTextColorBtn.setForeground(new Color(GeneralSettings.registerColor.x, GeneralSettings.registerColor.y, GeneralSettings.registerColor.z));
+            separatorTextColorBtn.setForeground(new Color(GeneralSettings.separatorColor.x, GeneralSettings.separatorColor.y, GeneralSettings.separatorColor.z));
         });
 
         setALLBtn.addActionListener(e-> {
@@ -1681,7 +1692,7 @@ public class SettingsMenu extends Component {
                 branchTextColorBtn.setForeground(newColor);
                 commandTextColorBtn.setForeground(newColor);
                 commentTextColorBtn.setForeground(newColor);
-                ErrorTextColorBtn.setForeground(newColor);
+                errorTextColorBtn.setForeground(newColor);
                 immediateTextColorBtn.setForeground(newColor);
                 labelTextColorBtn.setForeground(newColor);
                 lineNumberTextColorBtn.setForeground(newColor);
@@ -1690,12 +1701,33 @@ public class SettingsMenu extends Component {
             }
         });
 
+        cancelBtn.addActionListener(e->{
+            branchTextColorBtn.setForeground(GeneralSettings.USERPREF.getBranchTextColor());
+            commandTextColorBtn.setForeground(GeneralSettings.USERPREF.getCommandTextColor());
+            commentTextColorBtn.setForeground(GeneralSettings.USERPREF.getCommentColor());
+            errorTextColorBtn.setForeground(GeneralSettings.USERPREF.getErrorColor());
+            immediateTextColorBtn.setForeground(GeneralSettings.USERPREF.getImmediateColor());
+            labelTextColorBtn.setForeground(GeneralSettings.USERPREF.getLabelColor());
+            lineNumberTextColorBtn.setForeground(GeneralSettings.USERPREF.getLineNumberColor());
+            registerTextColorBtn.setForeground(GeneralSettings.USERPREF.getRegisterColor());
+            separatorTextColorBtn.setForeground(GeneralSettings.USERPREF.getSeparatorColor());
+        });
 
-
+        applyBtn.addActionListener(e-> {
+            GeneralSettings.USERPREF.setBranchTextColor(branchTextColorBtn.getForeground());
+            GeneralSettings.USERPREF.setCommandTextColor(commandTextColorBtn.getForeground());
+            GeneralSettings.USERPREF.setCommentColor(commentTextColorBtn.getForeground());
+            GeneralSettings.USERPREF.setErrorColor(errorTextColorBtn.getForeground());
+            GeneralSettings.USERPREF.setImmediateColor(immediateTextColorBtn.getForeground());
+            GeneralSettings.USERPREF.setLabelColor(labelTextColorBtn.getForeground());
+            GeneralSettings.USERPREF.setLineNumberColor(lineNumberTextColorBtn.getForeground());
+            GeneralSettings.USERPREF.setRegisterColor(registerTextColorBtn.getForeground());
+            GeneralSettings.USERPREF.setSeparatorColor(separatorTextColorBtn.getForeground());
+            GeneralSettings.MasterRendererUserPrefToggle = true;
+        });
 
         scopGBC.gridx = 0; scopGBC.gridy = 4; scopGBC.gridwidth = 4;
         syntaxColorOptionsPane.add(driverButtons, scopGBC);
-
         mainPane.add(syntaxColorOptionsContainerPane);
 
         return mainPane;

@@ -68,16 +68,15 @@ public class ApplicationController {
             codeWindowController.changeScrollBarsColor3f(GeneralSettings.USERPREF.getScrollBarColor3f());
 
             //Colors For Keywords
-//            BranchWord.setColor();
-//            CommandWord.setColor();
-//            CommentWord.setColor();
-//            ErrorWord.setColor();
-//            ImmediateWord.setColor();
-//            LabelWord.setColor();
-//            LineNumberWord.setColor();
-//            RegisterWord.setColor();
-//            SeparatorWord.setColor();
-
+            BranchWord.setColor(GeneralSettings.USERPREF.getBranchTextColor3f());
+            CommandWord.setColor(GeneralSettings.USERPREF.getCommandTextColor3f());
+            CommentWord.setColor(GeneralSettings.USERPREF.getCommentColor3f());
+            ErrorWord.setColor(GeneralSettings.USERPREF.getErrorColor3f());
+            ImmediateWord.setColor(GeneralSettings.USERPREF.getImmediateColor3f());
+            LabelWord.setColor(GeneralSettings.USERPREF.getLabelColor3f());
+            LineNumberWord.setColor(GeneralSettings.USERPREF.getLineNumberColor3f());
+            RegisterWord.setColor(GeneralSettings.USERPREF.getRegisterColor3f());
+            SeparatorWord.setColor(GeneralSettings.USERPREF.getSeparatorColor3f());
         }
 
         if(header != null) {
