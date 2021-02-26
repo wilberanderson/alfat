@@ -705,8 +705,6 @@ public class Header {
      *
      */
     public void setPartialTag(){
-        if(controller.getFlowchartWindowController() != null) {
-            PartialWindow partialDialogueWindow = new PartialWindow(controller);
-        }
+        PartialWindow partialDialogueWindow = new PartialWindow(controller);
     }
 }

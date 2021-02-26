@@ -120,8 +120,13 @@ public class FlowchartTextBoxController {
 
     public void locateRegisters(String args) {
         // catch empty argument string
-        if (args.isEmpty())
+        if (args.isEmpty()) {
+            //highlight nothing
+            for (FlowchartTextBox box : textBoxes){
+                box.setHighlighted(false);
+            }
             return;
+        }
 
         String operation = "and";
         boolean not = false;

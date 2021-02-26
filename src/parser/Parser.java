@@ -142,8 +142,7 @@ public class Parser  {
                             }
                             first = false;
                         } else if (fragment.matches(syn.getKeywordPatterns().getConstantNumeric())
-                                || fragment.matches(syn.getKeywordPatterns().getConstantHex())
-                                || fragment.matches(syn.getKeywordPatterns().getConstantNumeric())) {
+                                || fragment.matches(syn.getKeywordPatterns().getConstantHex())) {
                             //immediate value, literal or trap
                             //just skip this for now
                             first = false;
