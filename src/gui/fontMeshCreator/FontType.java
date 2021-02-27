@@ -1,7 +1,9 @@
 package gui.fontMeshCreator;
 
+import gui.texts.GUIText;
 import gui.texts.Text;
 import utils.MyFile;
+import utils.Printer;
 
 /**
  * Represents a font. It holds the font's texture atlas as well as having the
@@ -62,9 +64,25 @@ public class FontType {
 	 * @return Information about the vertices of all the quads.
 	 */
 	public TextMeshData loadText(Text text, String textString) {
+		if(text instanceof GUIText) {
+			Printer.print(((GUIText) text).getMaxLineSize());
+		}
+		if(text instanceof GUIText && ((GUIText) text).getMaxLineSize() == -1){
+			return loader.createMultilineTextMesh((GUIText) text, textString, -1);
+		}
 		return loader.createTextMesh(text, textString);
 	}
 
+	public TextMeshData loadText(Text text, String textString, float maxSize) {
+		if(text instanceof GUIText) {
+			Printer.print(((GUIText) text).getMaxLineSize());
+		}
+		Printer.print("Making a multiline text with length " + maxSize);
+		if(text instanceof GUIText && maxSize != -1){
+			return loader.createMultilineTextMesh((GUIText) text, textString, maxSize);
+		}
+		return loader.createTextMesh(text, textString);
+	}
 
 	public float getSpaceSize(){
 		return loader.getSpaceSize();

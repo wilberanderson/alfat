@@ -40,7 +40,7 @@ public abstract class Text {
         this.position.x = (position.x+1)/2;
         this.position.y = -(position.y - 1)/2;
         if(this instanceof GUIText){
-            this.textMeshData = TextMaster.loadGuiText((GUIText) this, text, fontType);
+            this.textMeshData = TextMaster.loadGuiText((GUIText) this, text, fontType, -1);
         }else{
             this.textMeshData = TextMaster.loadText(this, text);
         }
@@ -68,7 +68,21 @@ public abstract class Text {
         this.position.x = (position.x+1)/2;
         this.position.y = -(position.y - 1)/2;
         if(this instanceof GUIText){
-            this.textMeshData = TextMaster.loadGuiText((GUIText) this, text, GeneralSettings.FONT);
+            this.textMeshData = TextMaster.loadGuiText((GUIText) this, text, GeneralSettings.FONT, -1);
+        }else{
+            this.textMeshData = TextMaster.loadText(this, text);
+        }
+        this.position.x = this.position.x*2-1;
+        this.position.y = -this.position.y*2+1;
+    }
+
+    public Text(String text, float fontSize, Vector2f position, float maxSize) {
+        this.fontSize = fontSize;
+        this.position = position;
+        this.position.x = (position.x+1)/2;
+        this.position.y = -(position.y - 1)/2;
+        if(this instanceof GUIText){
+            this.textMeshData = TextMaster.loadGuiText((GUIText) this, text, GeneralSettings.FONT, maxSize);
         }else{
             this.textMeshData = TextMaster.loadText(this, text);
         }
@@ -82,7 +96,7 @@ public abstract class Text {
         position.x = (position.x+1)/2;
         position.y = -(position.y - 1)/2;
         if(this instanceof GUIText){
-            this.textMeshData = TextMaster.loadGuiText((GUIText) this, textString, GeneralSettings.FONT);
+            this.textMeshData = TextMaster.loadGuiText((GUIText) this, textString, GeneralSettings.FONT, -1);
         }else{
             this.textMeshData = TextMaster.loadText(this, textString);
         }

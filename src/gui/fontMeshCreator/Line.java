@@ -19,7 +19,7 @@ public class Line {
 
 	/**
 	 * Creates an empty line.
-	 * 
+	 *
 	 * @param spaceWidth
 	 *            - the screen-space width of a space character.
 	 * @param fontSize
@@ -27,6 +27,18 @@ public class Line {
 	 */
 	protected Line(double spaceWidth, double fontSize) {
 		this.spaceSize = spaceWidth * fontSize;
+	}
+	/**
+	 * Creates an empty line.
+	 *
+	 * @param spaceWidth
+	 *            - the screen-space width of a space character.
+	 * @param fontSize
+	 *            - the size of font being used.
+	 */
+	protected Line(double spaceWidth, double fontSize, double maxLength) {
+		this.spaceSize = spaceWidth * fontSize;
+		this.maxLength = maxLength;
 	}
 
 	/**
@@ -41,6 +53,18 @@ public class Line {
 		currentLineLength += word.getWordWidth();
 		currentLineLength += !words.isEmpty() ? spaceSize : 0;
 		words.add(word);
+	}
+
+	protected boolean attemptToAddWord(Word word, float maxLength) {
+		double additionalLength = word.getWordWidth();
+		additionalLength += !words.isEmpty() ? spaceSize : 0;
+		if (currentLineLength + additionalLength <= maxLength/2) {
+			words.add(word);
+			currentLineLength += additionalLength;
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	protected void addSpaces(int numberOfSpaces){

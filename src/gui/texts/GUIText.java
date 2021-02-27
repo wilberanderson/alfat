@@ -8,6 +8,7 @@ import org.lwjgl.util.vector.Vector3f;
 
 import org.lwjgl.util.vector.Vector4f;
 import rendering.text.TextMaster;
+import utils.Printer;
 
 /**
  * Represents a piece of text in the game.
@@ -20,11 +21,21 @@ public class GUIText extends Text{
     String textString;
     private static Vector3f color = GeneralSettings.TEXT_COLOR;
     private FontType font;
+    private float maxLineSize = -1;
+    int numberOfLines;
 
     public GUIText(String text, float fontSize, Vector2f position) {
-        super(text, fontSize, position);
+        super(text, fontSize, position, -1);
         this.textString = text;
         this.font = GeneralSettings.FONT;
+    }
+
+    public GUIText(String text, float fontSize, Vector2f position, float maxLineSize) {
+        super(text, fontSize, position, maxLineSize);
+        this.textString = text;
+        this.font = GeneralSettings.FONT;
+        this.maxLineSize = maxLineSize;
+        Printer.print("Max size " + this.maxLineSize);
     }
 
     public GUIText(String text, float fontSize, Vector2f position, FontType fontType) {
@@ -43,5 +54,13 @@ public class GUIText extends Text{
 
     public FontType getFont(){
         return font;
+    }
+
+    public float getMaxLineSize() {
+        return maxLineSize;
+    }
+
+    public void setNumberOfLines(int number){
+        numberOfLines = number;
     }
 }

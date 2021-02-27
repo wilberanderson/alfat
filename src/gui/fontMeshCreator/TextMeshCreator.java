@@ -1,8 +1,10 @@
 package gui.fontMeshCreator;
 
+import gui.texts.GUIText;
 import gui.texts.Text;
 import main.GeneralSettings;
 import utils.MyFile;
+import utils.Printer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +30,12 @@ public class TextMeshCreator {
 		return createQuadVertices(text, line);
 	}
 
+	protected TextMeshData createMultilineTextMesh(GUIText text, String textString, float maxLength){
+		Printer.print("Creating multiline mesh");
+		List<Line> lines = createStructureMultiline(text, textString, maxLength);
+		return createQuadVerticesMultiline(text, lines);
+	}
+
 	private Line createStructure(Text text, String textString) {
 		char[] chars = textString.toCharArray();
 		Line line = new Line(metaData.getSpaceWidth(), text.getFontSize());
@@ -47,6 +55,52 @@ public class TextMeshCreator {
 		line.addWord(currentWord);
 		text.setLength(line.getLineLength());
 		return line;
+	}
+
+	private List<Line> createStructureMultiline(GUIText text, String textString, float maxLength) {
+		char[] chars = textString.toCharArray();
+		List<Line> lines = new ArrayList<>();
+		Line currentLine = new Line(metaData.getSpaceWidth(), text.getFontSize());
+		Word currentWord = new Word(text.getFontSize());
+		for (char c : chars) {
+			if (c == SPACE_ASCII) {
+				boolean added = currentLine.attemptToAddWord(currentWord, maxLength);
+				if(!added){
+					lines.add(currentLine);
+					currentLine = new Line(metaData.getSpaceWidth(), text.getFontSize(), text.getMaxLineSize());
+					Printer.print(currentLine.attemptToAddWord(currentWord, maxLength));
+				}
+				currentWord = new Word(text.getFontSize());
+				Printer.print("New word");
+				continue;
+			}else if(c == '\t'){
+				boolean added = currentLine.attemptToAddWord(currentWord, maxLength);
+				if(!added){
+					lines.add(currentLine);
+					currentLine = new Line(metaData.getSpaceWidth(), text.getFontSize(), text.getMaxLineSize());
+					currentLine.attemptToAddWord(currentWord, maxLength);
+				}
+				currentWord = new Word(text.getFontSize());
+				Printer.print("New word");
+				currentLine.addSpaces(GeneralSettings.DEFAULT_TAB_WIDTH);
+				continue;
+			}else {
+				Character character = metaData.getCharacter(c);
+				currentWord.addCharacter(character);
+			}
+		}
+		completeStructure(lines, currentLine, currentWord, text, maxLength);
+		return lines;
+	}
+
+	private void completeStructure(List<Line> lines, Line currentLine, Word currentWord, GUIText text, float maxLength) {
+		boolean added = currentLine.attemptToAddWord(currentWord, maxLength);
+		if (!added) {
+			lines.add(currentLine);
+			currentLine = new Line(metaData.getSpaceWidth(), text.getFontSize(), text.getMaxLineSize());
+			currentLine.attemptToAddWord(currentWord, maxLength);
+		}
+		lines.add(currentLine);
 	}
 
 
@@ -70,6 +124,37 @@ public class TextMeshCreator {
 			characterEdges.add((float) curserX);
 		}
 		characterEdges.remove(characterEdges.size()-1);
+		return new TextMeshData(listToArray(vertices), listToArray(textureCoords), listToArray(characterEdges));
+	}
+
+	private TextMeshData createQuadVerticesMultiline(GUIText text, List<Line> lines){
+		text.setNumberOfLines(lines.size());
+		double curserX = 0f;
+		double curserY = 0f;
+		List<Float> vertices = new ArrayList<Float>();
+		List<Float> textureCoords = new ArrayList<Float>();
+		List<Float> characterEdges = new ArrayList<Float>();
+		for (Line line : lines) {
+//			if (text.isCentered()) {
+//				curserX = (line.getMaxLength() - line.getLineLength()) / 2;
+//			}
+			for (Word word : line.getWords()) {
+				for (Character letter : word.getCharacters()) {
+					addVerticesForCharacter(curserX, curserY, letter, text.getFontSize(), vertices);
+					addTexCoords(textureCoords, letter.getxTextureCoord(), letter.getyTextureCoord(),
+							letter.getXMaxTextureCoord(), letter.getYMaxTextureCoord());
+					curserX += letter.getxAdvance() * text.getFontSize();
+					characterEdges.add((float)curserX);
+				}
+				curserX += metaData.getSpaceWidth() * text.getFontSize();
+				characterEdges.add((float) curserX);
+			}
+			curserX = 0;
+			curserY += LINE_HEIGHT * text.getFontSize();
+		}
+		if(characterEdges.size() > 0) {
+			characterEdges.remove(characterEdges.size() - 1);
+		}
 		return new TextMeshData(listToArray(vertices), listToArray(textureCoords), listToArray(characterEdges));
 	}
 

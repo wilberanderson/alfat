@@ -23,6 +23,7 @@ import parser.ParserManager;
 import rendering.renderEngine.MasterRenderer;
 
 import javax.imageio.ImageIO;
+import javax.swing.*;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
@@ -96,6 +97,16 @@ public class Header {
             @Override
             public void onPress() {
                 settings();
+            }
+        };
+        fileMenuButtonList.add(button);
+
+        //TODO: Delete this temp button
+        button = new TextButton("Popup test") {
+            @Override
+            public void onPress() {
+                PopupWindow popupWindow = new PopupWindow("Popup","Have you heard the tragedy of darth plagueis the wise? It's not a story the jedi would tell you.", "cancel", "continue");
+                popupWindow.setDeleteOnLostFocus(false);
             }
         };
         fileMenuButtonList.add(button);
@@ -348,6 +359,9 @@ public class Header {
             // Load the text file:
             try {
                 File file = new File(GeneralSettings.FILE_PATH);
+                if(file == null){
+                    return;
+                }
                 BufferedReader reader = new BufferedReader(new FileReader(file));
                 String line;
                 while ((line = reader.readLine()) != null) {
