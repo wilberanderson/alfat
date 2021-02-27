@@ -5,7 +5,8 @@ import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 
 public class BranchWord extends TextWord{
-    private static Vector3f color = GeneralSettings.branchColor;
+    //private static Vector3f color = GeneralSettings.branchColor;
+    private static Vector3f color = GeneralSettings.USERPREF.getBranchTextColor3f();
 
     public BranchWord(String text, Vector2f position) {
         super(text, position);

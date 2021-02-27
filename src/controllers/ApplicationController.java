@@ -10,6 +10,7 @@ import gui.Header;
 import gui.Mouse;
 import gui.UserPreferences;
 import gui.buttons.HeaderMenu;
+import gui.texts.*;
 import main.EngineTester;
 import main.GeneralSettings;
 import org.lwjgl.glfw.GLFW;
@@ -66,6 +67,16 @@ public class ApplicationController {
             codeWindowController.changeCodewindowLinenumberBGColor3f(GeneralSettings.USERPREF.getTexteditorLinenumberBGColor3f());
             codeWindowController.changeScrollBarsColor3f(GeneralSettings.USERPREF.getScrollBarColor3f());
 
+            //Colors For Keywords
+            BranchWord.setColor(GeneralSettings.USERPREF.getBranchTextColor3f());
+            CommandWord.setColor(GeneralSettings.USERPREF.getCommandTextColor3f());
+            CommentWord.setColor(GeneralSettings.USERPREF.getCommentColor3f());
+            ErrorWord.setColor(GeneralSettings.USERPREF.getErrorColor3f());
+            ImmediateWord.setColor(GeneralSettings.USERPREF.getImmediateColor3f());
+            LabelWord.setColor(GeneralSettings.USERPREF.getLabelColor3f());
+            LineNumberWord.setColor(GeneralSettings.USERPREF.getLineNumberColor3f());
+            RegisterWord.setColor(GeneralSettings.USERPREF.getRegisterColor3f());
+            SeparatorWord.setColor(GeneralSettings.USERPREF.getSeparatorColor3f());
         }
 
         if(header != null) {
@@ -196,16 +207,16 @@ public class ApplicationController {
         //****************Flowchart shortcuts*******************
         //Initial generation
         if(key == GLFW_KEY_G){
-            header.generate();
+            header.generate(GeneralSettings.OPEN_PARTIAL_FILE);
             return;
         }
         //Regeneration
         if(key == GLFW_KEY_R){
             if(shift){
-                header.regenerateFromSource();
+                header.regenerateFromSource(GeneralSettings.OPEN_PARTIAL_FILE);
                 return;
             }
-            header.regenerateFromEditor();
+            header.regenerateFromEditor(GeneralSettings.OPEN_PARTIAL_FILE);
             return;
         }
         //*******************View shortcuts***************
@@ -226,6 +237,10 @@ public class ApplicationController {
             return;
         }
         //**********************Analysis shortcuts**********
+        if(key == GLFW_KEY_I){
+            header.setPartialTag();
+        }
+
         if(key == GLFW_KEY_L){
             if(alt){
                 header.invalidLabels();

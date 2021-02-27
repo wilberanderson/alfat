@@ -17,18 +17,18 @@ import org.lwjgl.util.vector.Vector3f;
 import rendering.text.TextMaster;
 import utils.MyFile;
 
-public class AnalysisWindow extends GUIWindow{
+public class PartialWindow extends GUIWindow{
     ApplicationController controller;
     private FontType analysisFont;
 
-    public AnalysisWindow(ApplicationController controller){
+    public PartialWindow(ApplicationController controller){
         super(400, 100);
         int fontSize = 8;
         analysisFont = new FontType(Loader.loadTexture(new MyFile(GeneralSettings.DEFAULT_FONT_LOCATION + ".png")), new MyFile(GeneralSettings.DEFAULT_FONT_LOCATION + ".fnt"), 400, 100);
 
-        this.title("Register search");
+        this.title("Set partial file target (empty/cancel for none)");
         GLFW.glfwMakeContextCurrent(this.window);
-        this.addElement(new GUIElement(new GUIText("Search: ", fontSize, new Vector2f(-.95f, 0.8f), analysisFont)));
+        this.addElement(new GUIElement(new GUIText("Tag: ", fontSize, new Vector2f(-.95f, 0.8f), analysisFont)));
 //        this.elementList.get(0).g
         this.elementList.get(0).getGuiText().getPosition().x = 0 - (float)(2-this.elementList.get(0).getGuiText().getLength())/2;
         Button button = new TextButton(new Vector2f(-0.1f, -0.5f), "cancel", new Vector3f(0.2f, 0.2f, 0.2f), new Vector3f(1, 1, 1), null, analysisFont, fontSize, 0, 0, window) {
@@ -40,7 +40,7 @@ public class AnalysisWindow extends GUIWindow{
         ButtonController.add(button);
         this.addElement(button);
         TextMaster.removeGuiText(this.elementList.get(1).getGuiText());
-        button = new TextButton(new Vector2f(0.4f, -0.5f), "run", new Vector3f(0.2f, 0.2f, 0.2f), new Vector3f(1, 1, 1), null, analysisFont, fontSize, 0, 0, window) {
+        button = new TextButton(new Vector2f(0.4f, -0.5f), "commit", new Vector3f(0.2f, 0.2f, 0.2f), new Vector3f(1, 1, 1), null, analysisFont, fontSize, 0, 0, window) {
             @Override
             public void onPress() {
                 onContinue();
@@ -55,22 +55,18 @@ public class AnalysisWindow extends GUIWindow{
     }
 
     public void onCancel(){
-        controller.getFlowchartWindowController().locateRegisters("");
+        GeneralSettings.PARTIAL_FILE_TAG_TARGET = "";
+        GeneralSettings.OPEN_PARTIAL_FILE = false;
         close();
     }
 
     @Override
-    public  void onContinue(){
+    public void onContinue(){
 //        GLFW.glfwMakeContextCurrent(window);
         String text = elementList.get(elementList.size()-1).getGuiText().getTextString();
-        if (text.isEmpty()){
-            GLFW.glfwSetWindowTitle(EngineTester.getWindow(), GeneralSettings.WINDOW_TITLE);
-        } else {
-            GLFW.glfwSetWindowTitle(EngineTester.getWindow(), GeneralSettings.WINDOW_TITLE + " [" + text + "]");
-        }
 //        GLFW.glfwMakeContextCurrent(EngineTester.getWindow());
-        controller.getFlowchartWindowController().locateRegisters(text);
-        GLFW.glfwMakeContextCurrent(window);
+        GeneralSettings.PARTIAL_FILE_TAG_TARGET = text;
+        GeneralSettings.OPEN_PARTIAL_FILE = !text.isEmpty();
         close();
     }
 }
