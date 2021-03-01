@@ -118,7 +118,10 @@ public class Parser  {
                         if (verbose) System.out.print("[" + fragment + "]");
 
                         //grab each command in the line, if they exist:
-                        if (fragment.matches(syn.getCommands())) {
+                        if (fragment.matches(syn.getKeywordPatterns().getReserved()) ||
+                                fragment.matches(syn.getKeywordPatterns().getArithmetic()) ||
+                                fragment.matches(syn.getKeywordPatterns().getDataMovement())
+                        ) {
                             comm = Optional.of(fragment);
                             formattedString.add(new CommandWord(comm.get(), new Vector2f(0f, 0)));
                             first = false;
@@ -241,7 +244,9 @@ public class Parser  {
             if (verbose) System.out.print("[" + fragment + "]");
 
             //grab each command in the line, if they exist:
-            if (fragment.matches(syn.getCommands())) {
+            if (fragment.matches(syn.getKeywordPatterns().getReserved()) ||
+                    fragment.matches(syn.getKeywordPatterns().getArithmetic()) ||
+                    fragment.matches(syn.getKeywordPatterns().getDataMovement())) {
                 comm = Optional.of(fragment);
                 formattedString.add(new CommandWord(comm.get(), new Vector2f(0f, 0)));
                 first = false;
