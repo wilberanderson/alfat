@@ -15,6 +15,7 @@ import org.lwjgl.glfw.GLFW;
 import org.lwjgl.util.vector.Matrix3f;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
+import utils.Printer;
 
 import java.io.*;
 import java.util.*;
@@ -226,7 +227,7 @@ public class Parser  {
     public EditableFormattedTextLine getFormattedLine(String line){
         boolean first = true;
         //parse line:
-        line = line.replace("\t", "    ");
+//        line = line.replace("\t", "    ");
 
         String[] arrLine = simpleTokenizer.tokenizeString(line);
 

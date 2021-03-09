@@ -2,6 +2,7 @@ package gui.texts;
 
 import main.GeneralSettings;
 import org.lwjgl.util.vector.Vector2f;
+import utils.Printer;
 
 import java.util.List;
 
@@ -31,30 +32,33 @@ public class EditableFormattedTextLine extends FormattedTextLine{
         }
 
         //Create an array to hold them
-        characterEdges = new float[numberOfEdges];
+        characterEdges = new float[numberOfEdges + 1];
 
         //Populate the array
         int numberOfCharacters = 0;
         int index = 0;
         if(characterEdges.length > 0) {
             //Load the first edge
-            characterEdges[0] = words[0].getCharacterEdges()[0] + lineNumberOffset;
+            characterEdges[0] = lineNumberOffset;
+//            characterEdges[1] = words[0].getCharacterEdges()[0] + lineNumberOffset;
+            index = 1;
             float last = lineNumberOffset;
             //Load the edges for each word
             for (TextWord word : words) {
                 //Skip line number words
                 if (!(word instanceof LineNumberWord) && word != null) {
                     //Determine space size to be used
-                    float spaceSize = word.getFont().getSpaceSize()*2;
+                    float spaceSize = word.getFont().getSpaceSize();
                     if(word instanceof SeparatorWord){
                         if(((SeparatorWord) word).getText().length() > 0) {
                             //If the seperator is a space add one space size
                             if (((SeparatorWord) word).getText().charAt(0) == ' ') {
-                                length += spaceSize;
+                                last += spaceSize;
+                                numberOfCharacters++;
                             }
                             //Tabs align text, add space size appropriate to the number of tabs needed for alignment
                             else if (((SeparatorWord) word).getText().charAt(0) == '\t') {
-                                length += spaceSize * (GeneralSettings.DEFAULT_TAB_WIDTH - numberOfCharacters % 4);//((numberOfCharacters % GeneralSettings.DEFAULT_TAB_WIDTH) == 0 ? GeneralSettings.DEFAULT_TAB_WIDTH : numberOfCharacters % GeneralSettings.DEFAULT_TAB_WIDTH);
+                                last += spaceSize * (GeneralSettings.DEFAULT_TAB_WIDTH - numberOfCharacters % 4);//((numberOfCharacters % GeneralSettings.DEFAULT_TAB_WIDTH) == 0 ? GeneralSettings.DEFAULT_TAB_WIDTH : numberOfCharacters % GeneralSettings.DEFAULT_TAB_WIDTH);
                                 numberOfCharacters = 0;
                             }
                         }
@@ -72,8 +76,10 @@ public class EditableFormattedTextLine extends FormattedTextLine{
                 }
             }
         }
+        Printer.print("Edge" + characterEdges[0]);
         //This may produce duplicate entries, remove any duplicate entries
         removeDuplicateCharacterEdges();
+        Printer.print(characterEdges[0]);
     }
 
     /**

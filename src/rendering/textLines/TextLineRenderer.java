@@ -32,7 +32,6 @@ public class TextLineRenderer {
 	 * Renders the formatted text lines used for lines of code
 	 * @param textLineController
 	 * @param flowChartWindowController
-	 * @param codeWindow
 	 */
 	public void renderToScreen(TextLineController textLineController, FlowchartWindowController flowChartWindowController, CodeWindowController codeWindowController) {
 		prepare();
@@ -41,28 +40,50 @@ public class TextLineRenderer {
 
 
 
-		for (FormattedTextLine formattedTextLine : textLineController.getCodeWindowTextLines()) {
-			if (formattedTextLine.getWords().length > 0) {
-				GL13.glActiveTexture(GL13.GL_TEXTURE0);
-				GL11.glBindTexture(GL11.GL_TEXTURE_2D, formattedTextLine.getWords()[0].getFont().getTextureAtlas());
-				for (TextWord text : formattedTextLine.getWords()) {
-					if(text instanceof LineNumberWord){
-						renderText(text, codeWindowController.getCodeWindow().getPosition(), codeWindowController.getCodeWindow().getSize(), GeneralSettings.IDENTITY3);
-					}else{
-						renderText(text, codeWindowController.getCodeWindow().getCodeWindowPosition(), codeWindowController.getCodeWindow().getCodeWindowSize(), GeneralSettings.IDENTITY3);
+		for(FormattedTextLine line : textLineController.getLoadedTexts()){
+			if(line.getWords().length > 0) {
+				if (line instanceof EditableFormattedTextLine) {
+					GL13.glActiveTexture(GL13.GL_TEXTURE0);
+					GL11.glBindTexture(GL11.GL_TEXTURE_2D, line.getWords()[0].getFont().getTextureAtlas());
+					for (TextWord text : line.getWords()) {
+						if (text instanceof LineNumberWord) {
+							renderText(text, codeWindowController.getCodeWindow().getPosition(), codeWindowController.getCodeWindow().getSize(), GeneralSettings.IDENTITY3);
+						} else {
+							renderText(text, codeWindowController.getCodeWindow().getCodeWindowPosition(), codeWindowController.getCodeWindow().getCodeWindowSize(), GeneralSettings.IDENTITY3);
+						}
+					}
+				} else {
+					GL13.glActiveTexture(GL13.GL_TEXTURE0);
+					GL11.glBindTexture(GL11.GL_TEXTURE_2D, line.getWords()[0].getFont().getTextureAtlas());
+					for (TextWord text : line.getWords()) {
+						renderText(text, flowChartWindowController.getPosition(), flowChartWindowController.getSize(), flowChartWindowController.getZoomTranslateMatrix());
 					}
 				}
 			}
 		}
-		for (FormattedTextLine formattedTextLine : textLineController.getFlowchartTextLines()) {
-			if (formattedTextLine.getWords().length > 0) {
-				GL13.glActiveTexture(GL13.GL_TEXTURE0);
-				GL11.glBindTexture(GL11.GL_TEXTURE_2D, formattedTextLine.getWords()[0].getFont().getTextureAtlas());
-				for (TextWord text : formattedTextLine.getWords()) {
-					renderText(text, flowChartWindowController.getPosition(), flowChartWindowController.getSize(), flowChartWindowController.getZoomTranslateMatrix());
-				}
-			}
-		}
+
+//		for (FormattedTextLine formattedTextLine : textLineController.getCodeWindowTextLines()) {
+//			if (formattedTextLine.getWords().length > 0) {
+//				GL13.glActiveTexture(GL13.GL_TEXTURE0);
+//				GL11.glBindTexture(GL11.GL_TEXTURE_2D, formattedTextLine.getWords()[0].getFont().getTextureAtlas());
+//				for (TextWord text : formattedTextLine.getWords()) {
+//					if(text instanceof LineNumberWord){
+//						renderText(text, codeWindowController.getCodeWindow().getPosition(), codeWindowController.getCodeWindow().getSize(), GeneralSettings.IDENTITY3);
+//					}else{
+//						renderText(text, codeWindowController.getCodeWindow().getCodeWindowPosition(), codeWindowController.getCodeWindow().getCodeWindowSize(), GeneralSettings.IDENTITY3);
+//					}
+//				}
+//			}
+//		}
+//		for (FormattedTextLine formattedTextLine : textLineController.getFlowchartTextLines()) {
+//			if (formattedTextLine.getWords().length > 0) {
+//				GL13.glActiveTexture(GL13.GL_TEXTURE0);
+//				GL11.glBindTexture(GL11.GL_TEXTURE_2D, formattedTextLine.getWords()[0].getFont().getTextureAtlas());
+//				for (TextWord text : formattedTextLine.getWords()) {
+//					renderText(text, flowChartWindowController.getPosition(), flowChartWindowController.getSize(), flowChartWindowController.getZoomTranslateMatrix());
+//				}
+//			}
+//		}
 		endRendering();
 	}
 
