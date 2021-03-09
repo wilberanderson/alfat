@@ -142,6 +142,9 @@ public class TextLineController {
         EditableFormattedTextLine originalLine;
         EditableFormattedTextLine newLine;
 
+        //Unload the old text
+        unloadText(line);
+
         //If the line is being split at an index greater than 0
         if(characterIndex > 0) {
             //Create new lines using the appropriate portions of the text string

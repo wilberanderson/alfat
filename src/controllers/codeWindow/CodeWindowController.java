@@ -143,9 +143,9 @@ public class CodeWindowController {
 
         //Update the aspect ratio in case aspect ratio was changed before opening this file
         aspectRatio = new Vector2f(GeneralSettings.ASPECT_RATIO.m00, GeneralSettings.ASPECT_RATIO.m11);
+        endIndex = numberOfLines - 1;
         updateAspectRatio(aspectRatio, headerHeight);
 
-        endIndex = numberOfLines - 1;
 
 //        scroll(maxVerticalPosition);
 //        scrollHorizontal(maxHorizontalPosition, horizontalScrollBar.getFactor());
@@ -307,8 +307,10 @@ public class CodeWindowController {
         }
         maxVerticalPosition += change * GeneralSettings.FONT_HEIGHT;
         verticalScrollBar.changeContentsHeight(change*GeneralSettings.FONT_HEIGHT);
+        if(endIndex == numberOfLines - 1){
+            endIndex = newNumberOfLines - 1;
+        }
         numberOfLines = newNumberOfLines;
-        endIndex = newNumberOfLines;
     }
 
     /**
