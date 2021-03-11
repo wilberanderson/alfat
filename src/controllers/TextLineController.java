@@ -143,7 +143,7 @@ public class TextLineController {
         EditableFormattedTextLine newLine;
 
         //Unload the old text
-        unloadText(line);
+        unloadText(line, 0);
 
         //If the line is being split at an index greater than 0
         if(characterIndex > 0) {
@@ -280,8 +280,6 @@ public class TextLineController {
                     //Tabs are used for alignment, add enough tabs to meet the currently used tab count
                     else if (((SeparatorWord) word).getText().charAt(0) == '\t') {
                         offset += spaceSize * 128*(GeneralSettings.DEFAULT_TAB_WIDTH - numberOfCharacters % 4);//((numberOfCharacters % GeneralSettings.DEFAULT_TAB_WIDTH) == 0 ? GeneralSettings.DEFAULT_TAB_WIDTH : numberOfCharacters % GeneralSettings.DEFAULT_TAB_WIDTH);
-
-                        Printer.print(spaceSize*128*(GeneralSettings.DEFAULT_TAB_WIDTH - numberOfCharacters%4));
                         numberOfCharacters = 0;
                     }
                 }
@@ -406,14 +404,16 @@ public class TextLineController {
         flowchartFormattedTextLines.clear();
     }
 
-    public void unloadText(FormattedTextLine textLine){
+    public void unloadText(EditableFormattedTextLine textLine, float position){
         loadedTexts.remove(textLine);
+//        textLine.setLastPosition(position -( textLine.getPosition().y - 1.1f));
     }
 
-    public void loadText(FormattedTextLine textLine){
+    public void loadText(EditableFormattedTextLine textLine, float position){
         //Duplicates may be added, ensure that the text is only added if it is not in the list currently
         if(loadedTexts.indexOf(textLine) == -1){
             loadedTexts.add(textLine);
+//            textLine.getPosition().y += textLine.getLastPosition()-position;
         }
     }
 

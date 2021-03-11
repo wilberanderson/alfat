@@ -31,7 +31,6 @@ public class TextMeshCreator {
 	}
 
 	protected TextMeshData createMultilineTextMesh(GUIText text, String textString, float maxLength){
-		Printer.print("Creating multiline mesh");
 		List<Line> lines = createStructureMultiline(text, textString, maxLength);
 		return createQuadVerticesMultiline(text, lines);
 	}
@@ -68,10 +67,8 @@ public class TextMeshCreator {
 				if(!added){
 					lines.add(currentLine);
 					currentLine = new Line(metaData.getSpaceWidth(), text.getFontSize(), text.getMaxLineSize());
-					Printer.print(currentLine.attemptToAddWord(currentWord, maxLength));
 				}
 				currentWord = new Word(text.getFontSize());
-				Printer.print("New word");
 				continue;
 			}else if(c == '\t'){
 				boolean added = currentLine.attemptToAddWord(currentWord, maxLength);
@@ -81,7 +78,6 @@ public class TextMeshCreator {
 					currentLine.attemptToAddWord(currentWord, maxLength);
 				}
 				currentWord = new Word(text.getFontSize());
-				Printer.print("New word");
 				currentLine.addSpaces(GeneralSettings.DEFAULT_TAB_WIDTH);
 				continue;
 			}else {

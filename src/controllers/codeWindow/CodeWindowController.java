@@ -437,6 +437,17 @@ public class CodeWindowController {
      * Changes the position of each text line vertically
      * @param change the amount to change
      */
+//    public void changeContentsVerticalPosition(float change){
+//        //Update each line
+//        for(FormattedTextLine text : textLineController.getLoadedTexts()){
+//            if(text instanceof EditableFormattedTextLine) {
+//                text.changeVerticalPosition(change);
+//            }
+//        }
+//        //Update the saved position
+//        contentsVerticalPosition += change;
+//        verticalScrollBar.changePosition(change);
+//    }
     public void changeContentsVerticalPosition(float change){
         //Update each line
         for(FormattedTextLine text : textLineController.getCodeWindowTextLines()){
@@ -533,7 +544,7 @@ public class CodeWindowController {
      */
     public void clear(){
         for(EditableFormattedTextLine line : textLineController.getCodeWindowTextLines()){
-            textLineController.unloadText(line);
+            textLineController.unloadText(line, 0);
         }
         textLineController.getCodeWindowTextLines().clear();
     }
@@ -606,21 +617,19 @@ public class CodeWindowController {
     }
 
     public void unloadTexts(){
-        Printer.print(startIndex);
-        Printer.print(endIndex);
         //If the first line is above the screen then lines need to be unloaded at the top and loaded at the bottom
         if(textLineController.getCodeWindowTextLines().get(startIndex).getPosition().y > 1.1f){
 //            //Unload the lines at the top
-            EditableFormattedTextLine line = textLineController.getCodeWindowTextLines().get(endIndex);
+            EditableFormattedTextLine line = textLineController.getCodeWindowTextLines().get(startIndex);
             while(line.getPosition().y > 1.1f){
-                textLineController.unloadText(line);
+                textLineController.unloadText(line, contentsVerticalPosition);
                 startIndex++;
                 line = textLineController.getCodeWindowTextLines().get(startIndex);
             }
             //Load lines at the bottom
             line = textLineController.getCodeWindowTextLines().get(endIndex);
-            while(line.getPosition().y > -1.1f && endIndex < textLineController.getCodeWindowTextLines().size()){
-                textLineController.loadText(line);
+            while(line.getPosition().y > -1.1f && endIndex < textLineController.getCodeWindowTextLines().size() - 1){
+                textLineController.loadText(line, contentsVerticalPosition);
                 endIndex++;
                 line = textLineController.getCodeWindowTextLines().get(endIndex);
             }
@@ -631,22 +640,21 @@ public class CodeWindowController {
         }
         //Otherwise load lines at the top and unload them at the bottom
         else{
-            Printer.print(2);
-            //Unload the lines at the top
+            //Load the lines at the top
             EditableFormattedTextLine line = textLineController.getCodeWindowTextLines().get(startIndex);
             while(line.getPosition().y < 1.1f && startIndex >= 0){
                 line = textLineController.getCodeWindowTextLines().get(startIndex);
-                textLineController.loadText(line);
+                textLineController.loadText(line, contentsVerticalPosition);
                 startIndex--;
             }
             //Ensure that array underflow does not occur if text one is loaded
             if(startIndex < 0){
                 startIndex = 0;
             }
-            //Load lines at the bottom
+            //Unload lines at the bottom
             line = textLineController.getCodeWindowTextLines().get(endIndex);
             while(line.getPosition().y < -1.1f){
-                textLineController.unloadText(line);
+                textLineController.unloadText(line, contentsVerticalPosition);
                 endIndex--;
                 line = textLineController.getCodeWindowTextLines().get(endIndex);
             }

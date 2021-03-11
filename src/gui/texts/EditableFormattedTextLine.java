@@ -11,6 +11,7 @@ public class EditableFormattedTextLine extends FormattedTextLine{
     float[] characterEdges;
     static float fontSize = GeneralSettings.FONT_SIZE;
     private static float lineNumberOffset = 0;
+    private float lastPosition;
 
     public EditableFormattedTextLine(List<TextWord> words, String textString){
         super(words);
@@ -76,10 +77,8 @@ public class EditableFormattedTextLine extends FormattedTextLine{
                 }
             }
         }
-        Printer.print("Edge" + characterEdges[0]);
         //This may produce duplicate entries, remove any duplicate entries
         removeDuplicateCharacterEdges();
-        Printer.print(characterEdges[0]);
     }
 
     /**
@@ -161,5 +160,13 @@ public class EditableFormattedTextLine extends FormattedTextLine{
         }
         //Update position
         this.position = position;
+    }
+
+    public float getLastPosition(){
+        return lastPosition;
+    }
+
+    public void setLastPosition(float position){
+        this.lastPosition = position;
     }
 }

@@ -13,6 +13,7 @@ import org.lwjgl.opengl.GL30;
 import org.lwjgl.util.vector.Matrix2f;
 import org.lwjgl.util.vector.Matrix3f;
 import org.lwjgl.util.vector.Vector2f;
+import utils.Printer;
 
 /**
  * Controls rendering lines of {@link FormattedTextLine "formatted text"}, such as inside {@link gui.textBoxes.FlowchartTextBox flowchart text boxes} and the {@link CodeWindow}'s TextBox.
@@ -38,8 +39,6 @@ public class TextLineRenderer {
 
 		shader.aspectRatio.loadMatrix(GeneralSettings.ASPECT_RATIO);
 
-
-
 		for(FormattedTextLine line : textLineController.getLoadedTexts()){
 			if(line.getWords().length > 0) {
 				if (line instanceof EditableFormattedTextLine) {
@@ -61,7 +60,6 @@ public class TextLineRenderer {
 				}
 			}
 		}
-
 //		for (FormattedTextLine formattedTextLine : textLineController.getCodeWindowTextLines()) {
 //			if (formattedTextLine.getWords().length > 0) {
 //				GL13.glActiveTexture(GL13.GL_TEXTURE0);
