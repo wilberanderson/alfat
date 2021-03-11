@@ -193,7 +193,7 @@ public class EngineTester {
 
             // Poll for window events. The event callbacks will be called when an event is received
             long startTime = System.currentTimeMillis();
-            GLFW.glfwWaitEvents();
+            GLFW.glfwPollEvents();
             //GLFW.glfwWaitEventsTimeout(0.5);
 //            if(System.currentTimeMillis()-startTime < 500){
 ////                System.out.println("Event received");
@@ -212,9 +212,9 @@ public class EngineTester {
             long renderTime = System.currentTimeMillis();
 
 //            Print per frame timing info
-            if((eventTime-startTime) > 0){
+//            if((eventTime-startTime) > 0){
                 System.out.println("Time to process events: " + (eventTime-startTime));
-            }
+//            }
 //            if((renderTime-eventTime) > 0){
                 System.out.println("Time to render: " + (renderTime - eventTime));
 //            }

@@ -98,7 +98,7 @@ public class FilledBoxRenderer {
                 shader.aspectRatio.loadMatrix(GeneralSettings.ASPECT_RATIO);
 
                 //For each text box in the flowchart text box controller
-                for (TextBox textBox : flowchartWindowController.getFlowchartTextBoxController().getTextBoxes()) {
+                for (TextBox textBox : flowchartWindowController.getFlowchartTextBoxController().getLoadedTextBoxes()) {
                     //If the text box is a flowchart text box render it's text boxes
                     if (textBox instanceof FlowchartTextBox) {
                         //Determine the color of the text boxes filled box

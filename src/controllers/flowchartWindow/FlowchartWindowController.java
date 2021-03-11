@@ -4,6 +4,7 @@ import controllers.TextLineController;
 import gui.FlowchartLine;
 import gui.Mouse;
 import gui.textBoxes.FlowchartTextBox;
+import gui.texts.FormattedTextLine;
 import main.GeneralSettings;
 import org.lwjgl.util.vector.Matrix2f;
 import org.lwjgl.util.vector.Matrix3f;
@@ -44,6 +45,7 @@ public class FlowchartWindowController {
         flowchartWindow.getZoomTranslateMatrix().m20 = flowchartWindow.getZoomTranslateMatrix().m20 * flowchartWindow.getZoom() / oldZoom;
         flowchartWindow.getZoomTranslateMatrix().m21 = flowchartWindow.getZoomTranslateMatrix().m21 * flowchartWindow.getZoom() / oldZoom;
 
+        unloadFlowchartBoxes();
     }
 
     /**
@@ -62,6 +64,8 @@ public class FlowchartWindowController {
     public void updateTranslation(Vector2f translation){
         flowchartWindow.getZoomTranslateMatrix().m20 += translation.x/flowchartWindow.getZoom();
         flowchartWindow.getZoomTranslateMatrix().m21 += translation.y/flowchartWindow.getZoom();
+
+        unloadFlowchartBoxes();
     }
 
     /**
@@ -72,10 +76,14 @@ public class FlowchartWindowController {
         flowchartWindow.getZoomTranslateMatrix().m20 = translation.x /flowchartWindow.getZoom();
         flowchartWindow.getZoomTranslateMatrix().m21 = translation.y / flowchartWindow.getZoom();
         flowchartWindow.setTranslation(translation);
+
+        unloadFlowchartBoxes();
     }
 
     public void updateAspectRatio(Matrix2f aspectRatio){
         flowchartWindow.setAspectRatio(aspectRatio);
+
+        unloadFlowchartBoxes();
     }
 
     public void clear(){
@@ -160,6 +168,16 @@ public class FlowchartWindowController {
         flowchartTextBoxController.moveMouse(((xPos/flowchartWindow.getAspectRatio().m00 - flowchartWindow.getZoomTranslateMatrix().m20)/flowchartWindow.getZoomTranslateMatrix().m00), (yPos/flowchartWindow.getAspectRatio().m11 - flowchartWindow.getZoomTranslateMatrix().m21)/flowchartWindow.getZoomTranslateMatrix().m11);
         if(xPos > getPosition().x && yPos > getPosition().y && xPos < getPosition().x + getSize().x && yPos < getPosition().y + getSize().y){
             Mouse.setHand();
+        }
+    }
+
+    private void unloadFlowchartBoxes(){
+        for(FlowchartTextBox textBox : flowchartTextBoxController.getTextBoxes()){
+            if(((textBox.getPosition().y)*getZoomTranslateMatrix().m11 + getZoomTranslateMatrix().m21)* getAspectRatio().m11 > 1f || ((textBox.getPosition().y + textBox.getSize().y)*getZoomTranslateMatrix().m11 + getZoomTranslateMatrix().m21)* getAspectRatio().m11 < -1f){
+                flowchartTextBoxController.unload(textBox);
+            }else{
+                flowchartTextBoxController.load(textBox);
+            }
         }
     }
 }

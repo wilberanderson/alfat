@@ -10,6 +10,7 @@ import org.lwjgl.system.CallbackI;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
+import utils.Printer;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,6 +20,7 @@ import java.util.List;
 public class FlowchartTextBoxController {
 
     private List<FlowchartTextBox> textBoxes = new ArrayList<>();
+    private List<FlowchartTextBox> loadedTextBoxes = new ArrayList<>();
     private TextLineController textLineController;
     boolean verbose = false;
     private FlowchartTextBox selectedTextBox;
@@ -38,7 +40,7 @@ public class FlowchartTextBoxController {
     }
 
     public void add(Vector2f position, List<FormattedTextLine> formattedTextLines, int lineNumber, List<String> registers, String alert){
-        FlowchartTextBox textBox = new FlowchartTextBox(position, registers, alert);
+        FlowchartTextBox textBox = new FlowchartTextBox(position, registers, alert, formattedTextLines);
         //background color unhighlighted
         textBox.setBackgroundColor(GeneralSettings.TEXT_BOX_BACKGROUND_COLOR);
         textBox.setBorderColor(GeneralSettings.TEXT_BOX_BORDER_COLOR);
@@ -300,5 +302,27 @@ public class FlowchartTextBoxController {
 
     public FlowchartTextBox getSelectedTextBox(){
         return selectedTextBox;
+    }
+
+    public void unload(FlowchartTextBox textBox){
+        if(loadedTextBoxes.contains(textBox)){
+            loadedTextBoxes.remove(textBox);
+            for(FormattedTextLine line : textBox.getTextLines()){
+                textLineController.unloadText(line, 0);
+            }
+        }
+    }
+
+    public void load(FlowchartTextBox textBox){
+        if(!loadedTextBoxes.contains(textBox)){
+            loadedTextBoxes.add(textBox);
+            for(FormattedTextLine line : textBox.getTextLines()){
+                textLineController.loadText(line, 0);
+            }
+        }
+    }
+
+    public List<FlowchartTextBox> getLoadedTextBoxes(){
+        return loadedTextBoxes;
     }
 }

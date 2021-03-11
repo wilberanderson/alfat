@@ -404,12 +404,12 @@ public class TextLineController {
         flowchartFormattedTextLines.clear();
     }
 
-    public void unloadText(EditableFormattedTextLine textLine, float position){
+    public void unloadText(FormattedTextLine textLine, float position){
         loadedTexts.remove(textLine);
 //        textLine.setLastPosition(position -( textLine.getPosition().y - 1.1f));
     }
 
-    public void loadText(EditableFormattedTextLine textLine, float position){
+    public void loadText(FormattedTextLine textLine, float position){
         //Duplicates may be added, ensure that the text is only added if it is not in the list currently
         if(loadedTexts.indexOf(textLine) == -1){
             loadedTexts.add(textLine);
