@@ -92,13 +92,8 @@ public class MasterRenderer {
 			TextMaster.render(controller.getFlowchartWindowController(), controller.getCodeWindowController().getCodeWindow(), true, false);
 		}
 
-		long time = System.currentTimeMillis();
 		//Render formatted text
 		textLineRenderer.renderToScreen(controller.getTextLineController(), controller.getFlowchartWindowController(), controller.getCodeWindowController());
-		long endTime = System.currentTimeMillis();
-		if(endTime - time > 0){
-			Printer.print(endTime-time);
-		}
 
 		//If the cursor controller is not null then the cursor is present. Render the cursor
 		if (controller.getCodeWindowController() != null && controller.getCodeWindowController().getCursorController() != null) {

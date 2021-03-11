@@ -90,6 +90,7 @@ public class FlowchartTextBoxController {
 //        }
         setPosition(new Vector2f(textBox.getPosition().x, textBox.getPosition().y - textBox.getSize().y), textBox);
         textBoxes.add(textBox);
+        load(textBox);
     }
 
     public void clear(){

@@ -125,6 +125,7 @@ public class GeneralSettings {
 	public static final int ARROWHEAD_DOWN = 2;
 	public static final float DEFAULT_LINE_WIDTH = 1f;
 	public static final float HIGHLIGHTED_LINE_WIDTH = 3f;
+	public static final int TEXT_LINE_INSTANCED_DATA_LENGTH = 7;			//The number of floats making up the per instance data for a flowchart line
 
 	public static boolean OPEN_PARTIAL_FILE = false;
 	public static String PARTIAL_FILE_TAG_TARGET = "";
@@ -137,7 +138,7 @@ public class GeneralSettings {
 	public static final float FONT_EDGE = 0.1f;                                         //The alpha value greater than FONT_WIDTH where a text will finish falling off
 	public static final Vector3f TEXT_COLOR = base2;                                    //The default text color
 	public static FontType FONT;                                                        //The default font which is used by the majority of the text in the application
-	public static String DEFAULT_FONT_LOCATION = "/res/fonts/courierNew/courierNew";
+	public static String DEFAULT_FONT_LOCATION = "/res/fonts/consolas/consolas";
 
 	//*****************************GUI settings**************************************************
 	public static final Vector3f HIGHLIGHT_COLOR = base01;                                          		//The color which a standard TextButton will turn it's background when the mouse is hovering over it

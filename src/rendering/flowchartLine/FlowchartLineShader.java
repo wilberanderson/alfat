@@ -10,9 +10,10 @@ import rendering.shaders.uniforms.*;
 public class FlowchartLineShader extends ShaderProgram{
 
 
-    protected UniformVec3 color = new UniformVec3("color");
-    protected UniformVec2 startPosition = new UniformVec2("startPosition");
-    protected UniformVec2 endPosition = new UniformVec2("endPosition");
+//    protected UniformVec3 color = new UniformVec3("color");
+//    protected UniformVec4 endPositions = new UniformVec4("endPositions");
+//    protected UniformVec2 startPosition = new UniformVec2("startPosition");
+//    protected UniformVec2 endPosition = new UniformVec2("endPosition");
     protected UniformVec2 windowPosition = new UniformVec2("windowPosition");
     protected UniformVec2 windowSize = new UniformVec2("windowSize");
     protected UniformMat3 zoomTranslateMatrix = new UniformMat3("zoomTranslateMatrix");
@@ -26,8 +27,8 @@ public class FlowchartLineShader extends ShaderProgram{
      *  - Stores the locations for the color, mousePosition, and fontHeight for the {@link gui.Cursor}
      */
     public FlowchartLineShader() {
-        super(GeneralSettings.FLOWCHART_VERTEX, GeneralSettings.FLOWCHART_FRAGMENT, "position");
-        super.storeAllUniformLocations(color, startPosition, endPosition, windowPosition, windowSize, zoomTranslateMatrix, aspectRatio, doClipping);
+        super(GeneralSettings.FLOWCHART_VERTEX, GeneralSettings.FLOWCHART_FRAGMENT, "position", "endPositions", "color");
+        super.storeAllUniformLocations(windowPosition, windowSize, zoomTranslateMatrix, aspectRatio, doClipping);
     }
 
 

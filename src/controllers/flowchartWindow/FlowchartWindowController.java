@@ -1,15 +1,20 @@
 package controllers.flowchartWindow;
 
 import controllers.TextLineController;
+import dataStructures.RawModel;
 import gui.FlowchartLine;
 import gui.Mouse;
 import gui.textBoxes.FlowchartTextBox;
 import gui.texts.FormattedTextLine;
+import loaders.Loader;
 import main.GeneralSettings;
+import org.lwjgl.BufferUtils;
 import org.lwjgl.util.vector.Matrix2f;
 import org.lwjgl.util.vector.Matrix3f;
 import org.lwjgl.util.vector.Vector2f;
+import utils.Printer;
 
+import java.nio.FloatBuffer;
 import java.util.List;
 
 public class FlowchartWindowController {
@@ -17,10 +22,17 @@ public class FlowchartWindowController {
     FlowchartWindow flowchartWindow;
     boolean verbose = false;
     private FlowchartTextBoxController flowchartTextBoxController;
+    public RawModel lines;
+    public int numberOfSegments;
+    private static final float[] VERTICES = {
+            0, 0,
+            0, -1
+    };
     
     public FlowchartWindowController(TextLineController textLineController){
         flowchartWindow = new FlowchartWindow();
         flowchartTextBoxController = new FlowchartTextBoxController(textLineController,this);
+        lines = Loader.loadToVAO(VERTICES, 2);
     }
 
     /**
@@ -120,7 +132,44 @@ public class FlowchartWindowController {
     }
 
     public void setFlowchartLineList(List<FlowchartLine> lines){
+        Printer.print("Flowchart line list set");
         flowchartWindow.getFlowchartLineList().addAll(lines);
+        int instanceCount = 0;
+        for(FlowchartLine line : lines){
+            int i = line.getPositions().size();
+            if(i > 1){
+                instanceCount += i-1;
+            }else{
+                System.err.println("Line added without a full line segment");
+            }
+        }
+        int vbo = Loader.createEmptyVbo(instanceCount*GeneralSettings.TEXT_LINE_INSTANCED_DATA_LENGTH);
+        Loader.addInstanceAttribute(this.lines.getVaoID(), vbo, 1, 4, GeneralSettings.TEXT_LINE_INSTANCED_DATA_LENGTH, 0);
+        Loader.addInstanceAttribute(this.lines.getVaoID(), vbo, 2, 3, GeneralSettings.TEXT_LINE_INSTANCED_DATA_LENGTH, 4);
+        FloatBuffer buffer = BufferUtils.createFloatBuffer(instanceCount*GeneralSettings.TEXT_LINE_INSTANCED_DATA_LENGTH);
+        float data[] = new float[instanceCount*GeneralSettings.TEXT_LINE_INSTANCED_DATA_LENGTH];
+        int i = 0;
+        for(FlowchartLine line : lines){
+            for(int j = 0; j < line.getPositions().size()-1;){
+                data[i] = line.getPositions().get(j).x;
+                i++;
+                data[i] = line.getPositions().get(j).y;
+                i++;
+                j++;
+                data[i] = line.getPositions().get(j).x;
+                i++;
+                data[i] = line.getPositions().get(j).y;
+                i++;
+                data[i] = line.getColor().x;
+                i++;
+                data[i] = line.getColor().y;
+                i++;
+                data[i] = line.getColor().z;
+                i++;
+            }
+        }
+        Loader.updateVbo(vbo, data, buffer);
+        numberOfSegments = instanceCount;
     }
 
     public List<FlowchartLine> getFlowchartLineList(){
@@ -171,7 +220,7 @@ public class FlowchartWindowController {
         }
     }
 
-    private void unloadFlowchartBoxes(){
+    public void unloadFlowchartBoxes(){
         for(FlowchartTextBox textBox : flowchartTextBoxController.getTextBoxes()){
             if(((textBox.getPosition().y)*getZoomTranslateMatrix().m11 + getZoomTranslateMatrix().m21)* getAspectRatio().m11 > 1f || ((textBox.getPosition().y + textBox.getSize().y)*getZoomTranslateMatrix().m11 + getZoomTranslateMatrix().m21)* getAspectRatio().m11 < -1f){
                 flowchartTextBoxController.unload(textBox);
