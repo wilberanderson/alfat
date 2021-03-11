@@ -1,5 +1,7 @@
 package gui;
 
+import dataStructures.Color3f;
+import dataStructures.ColorSettings;
 import main.GeneralSettings;
 import org.lwjgl.util.vector.Vector3f;
 
@@ -193,6 +195,9 @@ public class UserPreferences {
         userPref.putFloat(keyBGColor_RED, bgColor.getRed()/255f);
         userPref.putFloat(keyBGColor_GREEN, bgColor.getGreen()/255f);
         userPref.putFloat(keyBGColor_BLUE, bgColor.getBlue()/255f);
+
+        System.out.println("userPref set:" + bgColor.getRed()/255f + " " + bgColor.getGreen()/255f + " " + bgColor.getBlue()/255f);
+
     }
 
     /**Sets the background color*/

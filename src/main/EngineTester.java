@@ -1,21 +1,14 @@
 package main;
 import controllers.ApplicationController;
-import controllers.flowchartWindow.FlowchartWindow;
 import controllers.gui.GUIWindowController;
 import gui.*;
-import gui.textBoxes.TextBox;
 import gui.windows.GUIWindow;
-import gui.windows.PopupWindow;
 import loaders.*;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
 import org.lwjgl.system.*;
-import org.lwjgl.util.vector.Vector2f;
-import org.lwjgl.util.vector.Vector3f;
-import org.lwjgl.util.vector.Vector4f;
 import parser.GlobalParser;
 import parser.ParserManager;
-import rendering.renderEngine.GUIElementRenderer;
 import rendering.renderEngine.MasterRenderer;
 import controllers.GLFWEventController;
 
@@ -63,6 +56,7 @@ public class EngineTester {
 
         GeneralSettings.USERPREF = new UserPreferences();
         GlobalParser.PARSER_MANAGER = new ParserManager();
+
 
 
         //********************************Create the window************************************

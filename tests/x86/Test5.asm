@@ -308,7 +308,7 @@ quitInputCheck PROC
  dec NumOfStudents
 nope:
  pop eax
-ret
+ ret
 quitInputCheck ENDP
 ; +---------------------------------------------------------------------------------------------------------- +
 

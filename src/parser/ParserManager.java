@@ -44,6 +44,7 @@ public class ParserManager {
     private void setCodeSyntax(File filePathToJson) {
         this.codeSyntax = null;
         this.codeSyntax = JsonReader.mapJsonToCodeSyntax(filePathToJson);
+        //System.out.println(this.codeSyntax); //To see to string of current syntax
     }
 
     /**
