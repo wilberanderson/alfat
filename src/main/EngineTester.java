@@ -186,7 +186,7 @@ public class EngineTester {
             //GLFW.glfwRequestWindowAttention(window);
 
             // Poll for window events. The event callbacks will be called when an event is received
-            long startTime = System.currentTimeMillis();
+//            long startTime = System.currentTimeMillis();
             GLFW.glfwPollEvents();
             //GLFW.glfwWaitEventsTimeout(0.5);
 //            if(System.currentTimeMillis()-startTime < 500){
@@ -194,7 +194,7 @@ public class EngineTester {
 //            }else{
 ////                System.out.println("Timed out");
 //            }
-            long eventTime = System.currentTimeMillis();
+//            long eventTime = System.currentTimeMillis();
 
             //Render main window
             GLFW.glfwMakeContextCurrent(window);
@@ -206,12 +206,12 @@ public class EngineTester {
             long renderTime = System.currentTimeMillis();
 
 //            Print per frame timing info
-            if((eventTime-startTime) > 0){
-                System.out.println("Time to process events: " + (eventTime-startTime));
-            }
-            if((renderTime-eventTime) > 0){
-                System.out.println("Time to render: " + (renderTime - eventTime));
-            }
+//            if((eventTime-startTime) > 0){
+//                System.out.println("Time to process events: " + (eventTime-startTime));
+//            }
+//            if((renderTime-eventTime) > 0){
+//                System.out.println("Time to render: " + (renderTime - eventTime));
+//            }
 //            System.out.println("Ratio: " + ((eventTime-startTime)/(renderTime-startTime)*100) + ":" + ((renderTime-eventTime)/(renderTime/startTime)*100));
 
             // Memory usage:

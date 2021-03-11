@@ -132,7 +132,6 @@ public class FlowchartWindowController {
     }
 
     public void setFlowchartLineList(List<FlowchartLine> lines){
-        Printer.print("Flowchart line list set");
         flowchartWindow.getFlowchartLineList().addAll(lines);
         int instanceCount = 0;
         for(FlowchartLine line : lines){
