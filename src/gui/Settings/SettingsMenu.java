@@ -513,20 +513,20 @@ public class SettingsMenu extends Component {
         JRadioButton freeFormModeJRadioBtn = new JRadioButton("Free Form");
         freeFormModeJRadioBtn.setFont(labelFont);
         //general settings mode for free form
-        if(true) {
+        if(GeneralSettings.USERPREF.getFixedOrFreeFromMode()) {
             fixedFormModeJRadioBtn.setSelected(true);
         } else {
-            freeFormModeJRadioBtn.setSelected(false);
+            freeFormModeJRadioBtn.setSelected(true);
         }
         fixedFormModeJRadioBtn.addActionListener(e-> {
             fixedFormModeJRadioBtn.setSelected(true);
             freeFormModeJRadioBtn.setSelected(false);
-            //general settings set mode
+            GeneralSettings.USERPREF.setFixedOrFreeFromMode(true);
         });
         freeFormModeJRadioBtn.addActionListener(e-> {
             fixedFormModeJRadioBtn.setSelected(false);
             freeFormModeJRadioBtn.setSelected(true);
-            //general settings set mode
+            GeneralSettings.USERPREF.setFixedOrFreeFromMode(false);
         });
         fixedorFreeFromPane.add(fixedOrFreefromJLabel);
         fixedorFreeFromPane.add(fixedFormModeJRadioBtn);

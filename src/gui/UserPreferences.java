@@ -73,6 +73,9 @@ public class UserPreferences {
     private final String keyTempFileLimit = "tempfilelimit";
     private final int fbValue = GeneralSettings.TEMP_FILE_LIMIT;
 
+    private final String keyFixedOrFreeFromMode = "fixedorfreeformmode";
+    private final boolean fbValueFixedOrFreeFromMode = GeneralSettings.FIXED_OR_FREE_FORM_MODE;
+
     /** Set the temp file directory path */
     public void setUserTempFileDirPath(String dir) {
         userPref.put(keyTempFilePath, dir);
@@ -94,6 +97,14 @@ public class UserPreferences {
     /** Removes temp file directory path attribute */
     public void RemoveUserTempFileDirPath() {
         removeID(keyTempFilePath);
+    }
+    /**Set the mode for the parser to either be in fixed form (true) or free form (false) mode*/
+    public void setFixedOrFreeFromMode(boolean tof) {
+        userPref.putBoolean(keyFixedOrFreeFromMode, tof);
+    }
+    /**Get the mode for the parser to either be in fixed form (true) or free form (false) mode*/
+    public boolean getFixedOrFreeFromMode() {
+        return userPref.getBoolean(keyFixedOrFreeFromMode, fbValueFixedOrFreeFromMode);
     }
 
     //*********************************************************************************************************************************************
