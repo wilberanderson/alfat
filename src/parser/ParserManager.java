@@ -13,6 +13,7 @@ public class ParserManager {
     private  CodeSyntax codeSyntax;
 
 
+
     public ParserManager() {
         this.codeSyntax = null;
         parser = new Parser();
@@ -33,6 +34,10 @@ public class ParserManager {
             setCodeSyntax(new File(GeneralSettings.USERPREF.getSyntaxPath()));
             if(codeSyntax != null) {
                 parser.setCodeSyntax(codeSyntax);
+                //Kill codeSyntax if any of the keyword patterns are invalid (are null)
+                if(codeSyntax.isKeywordsPatternsValid()) {
+                    codeSyntax = null;
+                }
             }
             GeneralSettings.IS_SYNTAX_PATH_CHANGED = false;
         }
@@ -44,6 +49,7 @@ public class ParserManager {
     private void setCodeSyntax(File filePathToJson) {
         this.codeSyntax = null;
         this.codeSyntax = JsonReader.mapJsonToCodeSyntax(filePathToJson);
+        System.out.println(this.codeSyntax); //To see to string of current syntax
     }
 
     /**

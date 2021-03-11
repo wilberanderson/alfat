@@ -155,6 +155,7 @@ public class GeneralSettings {
 	public static String FILE_PATH;                                              //A string used for holding the current file path of the file open in the text editor
 	public static String SYNTAX_PATH = "CodeSyntax/LC3.json";                    //The location of the default syntax at compile time
 	public static boolean IS_SYNTAX_PATH_CHANGED = true;                         //Toggle to tell whether the syntax file path has been changed and needs to be updated.
+	public static boolean FIXED_OR_FREE_FORM_MODE = false; 					     //Boolean to start program in free form mode if on first launch until the mode is set in the settings menu
 	public static String TEMP_DIR = "temp";                                      //The directory where temporary files are saved
 	public static final int TEMP_FILE_LIMIT = 5;								 //The number of temporary files to be saved at any time
 	public static final String PREF_FILE_TYPE = "asm;txt;asm,txt"; 				 //The default file extensions that the file dialog opens for

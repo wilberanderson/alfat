@@ -4,16 +4,12 @@ import controllers.codeWindow.CodeWindowController;
 import controllers.flowchartWindow.FlowchartTextBoxController;
 import controllers.flowchartWindow.FlowchartWindowController;
 import controllers.gui.ButtonController;
-import controllers.gui.GUIController;
-import controllers.gui.GUIWindowController;
 import gui.Header;
 import gui.Mouse;
-import gui.UserPreferences;
 import gui.buttons.HeaderMenu;
 import gui.texts.*;
 import main.EngineTester;
 import main.GeneralSettings;
-import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector2f;
 
@@ -87,6 +83,8 @@ public class ApplicationController {
 
         //Background color
         GL11.glClearColor(GeneralSettings.USERPREF.getBackgroundColor3f().getX(), GeneralSettings.USERPREF.getBackgroundColor3f().getY(), GeneralSettings.USERPREF.getBackgroundColor3f().getZ(), 1);
+
+
     }
 
 
