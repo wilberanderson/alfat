@@ -1,9 +1,11 @@
 package parser;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-@JsonIgnoreProperties(ignoreUnknown=true)
+
 public class CodeSyntax {
+
     private KeywordPatterns keywordPatterns;
 
     public InnerIntArray columnLengths;
@@ -41,6 +43,29 @@ public class CodeSyntax {
         combined += keywordPatterns.getArithmetic().substring(1,keywordPatterns.getArithmetic().length()-3)+"|";
         combined += keywordPatterns.getDataMovement().substring(1,keywordPatterns.getDataMovement().length());
         return combined;
+   }
+
+   public boolean isKeywordsPatternsValid() {
+        boolean result = false;
+        result = checkNotNull(keywordPatterns.getControl());
+        result = checkNotNull(keywordPatterns.getRegister());
+        result = checkNotNull(keywordPatterns.getArithmetic());
+        result = checkNotNull(keywordPatterns.getDataMovement());
+        result = checkNotNull(keywordPatterns.getRegister());
+        result = checkNotNull(keywordPatterns.getCommentLine());
+        result = checkNotNull(keywordPatterns.getConstantHex());
+        result = checkNotNull(keywordPatterns.getConstantNumeric());
+        result = checkNotNull(keywordPatterns.getConstantBinary());
+        result = checkNotNull(keywordPatterns.getConstantCharacter());
+        result = checkNotNull(keywordPatterns.getDoubleQuotedString());
+        result = checkNotNull(keywordPatterns.getEmptySpace());
+        result = checkNotNull(keywordPatterns.getLabel());
+        result = checkNotNull(keywordPatterns.getComment());
+        return result;
+   }
+
+   private boolean checkNotNull(String in) {
+        return in == null;
    }
 
    //Function to tell whether code has columns

@@ -1,8 +1,16 @@
 package parser;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+@JsonInclude(JsonInclude.Include.NON_ABSENT)
 public class KeywordPatterns {
+    @JsonInclude
     private String control;
+    @JsonInclude
     private String reserved;
+    @JsonInclude
     private String arithmetic;
     private String dataMovement;
     private String register;
@@ -14,6 +22,7 @@ public class KeywordPatterns {
     private String doubleQuotedString;
     private String emptySpace;
     private String label;
+    @JsonInclude
     private String comment;
 
 
