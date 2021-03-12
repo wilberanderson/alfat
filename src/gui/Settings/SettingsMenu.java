@@ -1801,6 +1801,8 @@ public class SettingsMenu extends Component {
 
     private JPanel helpContent(){
         JPanel mainPane = new JPanel();
+        BoxLayout boxLayout = new BoxLayout(mainPane, BoxLayout.Y_AXIS);
+        mainPane.setLayout(boxLayout);
 
         JEditorPane editorPane = new JEditorPane();
         editorPane.setEditable(false);
@@ -1818,11 +1820,13 @@ public class SettingsMenu extends Component {
 
         JScrollPane editorScrollPane = new JScrollPane(editorPane);
         editorScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        editorScrollPane.setPreferredSize(new Dimension(500, 500));
-        editorScrollPane.setMinimumSize(new Dimension(50, 50));
+        /*editorScrollPane.setPreferredSize(new Dimension(500, 500));
+        editorScrollPane.setMinimumSize(new Dimension(50, 50));*/
 
 
-        mainPane.add(editorScrollPane);
+
+
+        mainPane.add(BorderLayout.CENTER, editorScrollPane);
         return mainPane;
     }
 
