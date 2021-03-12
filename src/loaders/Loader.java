@@ -93,11 +93,11 @@ public class Loader {
 		GL30.glBindVertexArray(0);
 	}
 
-	public static int createEmptyVbo(int floatCount){
+	public static int createEmptyVbo(int floatCount, int mode){
 		int vbo = GL15.glGenBuffers();
 		vbos.add(vbo);
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vbo);
-		GL15.glBufferData(GL15.GL_ARRAY_BUFFER, floatCount*4, GL15.GL_STATIC_DRAW);
+		GL15.glBufferData(GL15.GL_ARRAY_BUFFER, floatCount*4, mode);
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
 		return vbo;
 	}

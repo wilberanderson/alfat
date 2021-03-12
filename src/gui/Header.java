@@ -283,6 +283,7 @@ public class Header {
         }
         guiFilledBox.setPosition(new Vector2f(-1, 1 - (1 - guiFilledBox.getPosition().y) / this.aspectRatio.y * aspectRatio.y));
         getPosition().y = guiFilledBox.getPosition().y;
+
         //Update the position of any notifications that still exist
         if(notificationText != null) {
             notificationText.getPosition().x = 1 / aspectRatio.x - (float) notificationText.getLength() * 2;

@@ -9,6 +9,7 @@ import gui.texts.FormattedTextLine;
 import loaders.Loader;
 import main.GeneralSettings;
 import org.lwjgl.BufferUtils;
+import org.lwjgl.opengl.GL15;
 import org.lwjgl.util.vector.Matrix2f;
 import org.lwjgl.util.vector.Matrix3f;
 import org.lwjgl.util.vector.Vector2f;
@@ -133,6 +134,10 @@ public class FlowchartWindowController {
 
     public void setFlowchartLineList(List<FlowchartLine> lines){
         flowchartWindow.getFlowchartLineList().addAll(lines);
+        numberOfSegments = populateVbo(lines, this.lines.getVaoID());
+    }
+
+    public int populateVbo(List<FlowchartLine> lines, int vao){
         int instanceCount = 0;
         for(FlowchartLine line : lines){
             int i = line.getPositions().size();
@@ -142,9 +147,9 @@ public class FlowchartWindowController {
                 System.err.println("Line added without a full line segment");
             }
         }
-        int vbo = Loader.createEmptyVbo(instanceCount*GeneralSettings.TEXT_LINE_INSTANCED_DATA_LENGTH);
-        Loader.addInstanceAttribute(this.lines.getVaoID(), vbo, 1, 4, GeneralSettings.TEXT_LINE_INSTANCED_DATA_LENGTH, 0);
-        Loader.addInstanceAttribute(this.lines.getVaoID(), vbo, 2, 3, GeneralSettings.TEXT_LINE_INSTANCED_DATA_LENGTH, 4);
+        int vbo = Loader.createEmptyVbo(instanceCount*GeneralSettings.TEXT_LINE_INSTANCED_DATA_LENGTH, GL15.GL_STATIC_DRAW);
+        Loader.addInstanceAttribute(vao, vbo, 1, 4, GeneralSettings.TEXT_LINE_INSTANCED_DATA_LENGTH, 0);
+        Loader.addInstanceAttribute(vao, vbo, 2, 3, GeneralSettings.TEXT_LINE_INSTANCED_DATA_LENGTH, 4);
         FloatBuffer buffer = BufferUtils.createFloatBuffer(instanceCount*GeneralSettings.TEXT_LINE_INSTANCED_DATA_LENGTH);
         float data[] = new float[instanceCount*GeneralSettings.TEXT_LINE_INSTANCED_DATA_LENGTH];
         int i = 0;
@@ -168,7 +173,7 @@ public class FlowchartWindowController {
             }
         }
         Loader.updateVbo(vbo, data, buffer);
-        numberOfSegments = instanceCount;
+        return instanceCount;
     }
 
     public List<FlowchartLine> getFlowchartLineList(){

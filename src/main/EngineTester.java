@@ -194,7 +194,7 @@ public class EngineTester {
 //            }else{
 ////                System.out.println("Timed out");
 //            }
-//            long eventTime = System.currentTimeMillis();
+            long eventTime = System.currentTimeMillis();
 
             //Render main window
             GLFW.glfwMakeContextCurrent(window);

@@ -1,17 +1,23 @@
 package controllers.flowchartWindow;
 
 import controllers.TextLineController;
+import dataStructures.RawModel;
 import gui.FlowchartLine;
 import gui.GUIFilledBox;
 import gui.texts.*;
 import gui.textBoxes.FlowchartTextBox;
+import loaders.Loader;
 import main.GeneralSettings;
+import org.lwjgl.BufferUtils;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL15;
 import org.lwjgl.system.CallbackI;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 import utils.Printer;
 
+import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -30,6 +36,15 @@ public class FlowchartTextBoxController {
     private static Vector3f textNumberBackgroundColor;
     private Vector2f mousePosition = new Vector2f();
     private FlowchartWindowController parent;
+    public int instanceCount;
+
+    private static final float[] VERTICES = {
+            0, 0,
+            0, -1
+    };
+    public RawModel highlightedLines;
+    int vbo;
+    FloatBuffer buffer;
 
     public FlowchartTextBoxController(TextLineController textLineController, FlowchartWindowController parent){
         this.textLineController = textLineController;
@@ -37,6 +52,9 @@ public class FlowchartTextBoxController {
         backgroundColor = GeneralSettings.USERPREF.getFlowchartBoxbackgroundColor3f();
         highlightedColor = GeneralSettings.USERPREF.getFlowchartBoxHighlightColor3f();
         textNumberBackgroundColor = GeneralSettings.USERPREF.getFlowchartBoxlinenumberBGColor3f();
+        highlightedLines = Loader.loadToVAO(VERTICES, 2);
+        buffer = BufferUtils.createFloatBuffer(GeneralSettings.MAX_LINES*GeneralSettings.TEXT_LINE_INSTANCED_DATA_LENGTH);
+        populateVbo(highlightedLines.getVaoID());
     }
 
     public void add(Vector2f position, List<FormattedTextLine> formattedTextLines, int lineNumber, List<String> registers, String alert){
@@ -224,6 +242,7 @@ public class FlowchartTextBoxController {
             line.setHighlight(false);
             line.getTerminator().setHighlighted(false);
         }
+//        parent.populateVbo(highlightedLinesList, highlightedLines.getVaoID());
     }
 
     public TextLineController getTextLineController(){
@@ -286,6 +305,7 @@ public class FlowchartTextBoxController {
                             line.getTerminator().setHighlighted(false);
                         }
                     }
+                    updateVbo(highlightedLinesList, highlightedLines.getVaoID());
                     return;
                 }
             }
@@ -294,6 +314,39 @@ public class FlowchartTextBoxController {
                 line.getTerminator().setHighlighted(false);
             }*/
         }
+    }
+
+    public void updateVbo(List<FlowchartLine> lines, int vao){
+        float data[] = new float[GeneralSettings.MAX_LINES*GeneralSettings.TEXT_LINE_INSTANCED_DATA_LENGTH];
+        int i = 0;
+        instanceCount = 0;
+        for(FlowchartLine line : lines){
+            for(int j = 0; j < line.getPositions().size()-1;){
+                data[i] = line.getPositions().get(j).x;
+                i++;
+                data[i] = line.getPositions().get(j).y;
+                i++;
+                j++;
+                data[i] = line.getPositions().get(j).x;
+                i++;
+                data[i] = line.getPositions().get(j).y;
+                i++;
+                data[i] = line.getColor().x;
+                i++;
+                data[i] = line.getColor().y;
+                i++;
+                data[i] = line.getColor().z;
+                i++;
+                instanceCount++;
+            }
+        }
+        Loader.updateVbo(vbo, data, buffer);
+    }
+
+    public void populateVbo(int vao){
+        vbo = Loader.createEmptyVbo(GeneralSettings.MAX_LINES*GeneralSettings.TEXT_LINE_INSTANCED_DATA_LENGTH, GL15.GL_STREAM_DRAW);
+        Loader.addInstanceAttribute(vao, vbo, 1, 4, GeneralSettings.TEXT_LINE_INSTANCED_DATA_LENGTH, 0);
+        Loader.addInstanceAttribute(vao, vbo, 2, 3, GeneralSettings.TEXT_LINE_INSTANCED_DATA_LENGTH, 4);
     }
 
     public void moveMouse(double xPos, double yPos){
@@ -326,4 +379,10 @@ public class FlowchartTextBoxController {
     public List<FlowchartTextBox> getLoadedTextBoxes(){
         return loadedTextBoxes;
     }
+
+    public List<FlowchartLine> getHighlightedLinesList(){
+        return highlightedLinesList;
+    }
+
+
 }

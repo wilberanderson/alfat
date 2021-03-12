@@ -47,9 +47,17 @@ public class FlowchartLineRenderer {
             shader.windowSize.loadVec2(flowchartWindowController.getSize());
             shader.doClipping.loadBoolean(true);
 
-            for (FlowchartLine line : flowchartWindowController.getFlowchartLineList()) {
+//            for (FlowchartLine line : flowchartWindowController.getFlowchartLineList()) {
                 GL31.glDrawArraysInstanced(GL11.GL_LINES, 0, flowchartWindowController.lines.getVertexCount(), flowchartWindowController.numberOfSegments);//renderLine(line);
-            }
+//            }
+            endRendering();
+            prepare(flowchartWindowController.getFlowchartTextBoxController().highlightedLines.getVaoID());
+
+            GL30.glBindVertexArray(flowchartWindowController.getFlowchartTextBoxController().highlightedLines.getVaoID());
+            GL11.glLineWidth(GeneralSettings.USERPREF.getHighlightedLineWidth());
+            GL31.glDrawArraysInstanced(GL11.GL_LINES, 0, flowchartWindowController.lines.getVertexCount(), flowchartWindowController.getFlowchartTextBoxController().instanceCount);//renderLine(line);
+            GL11.glLineWidth(GeneralSettings.USERPREF.getDefaultLineWidth());
+
             endRendering();
         }
     }
