@@ -20,8 +20,7 @@ public class Junction extends Terminator{
         }
     }
 
-    @Override
-    public RawModel getModel() {
+    public static RawModel getModel() {
         return model;
     }
 }

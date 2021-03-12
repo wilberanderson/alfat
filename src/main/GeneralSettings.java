@@ -126,6 +126,9 @@ public class GeneralSettings {
 	public static final float DEFAULT_LINE_WIDTH = 1f;
 	public static final float HIGHLIGHTED_LINE_WIDTH = 3f;
 	public static final int TEXT_LINE_INSTANCED_DATA_LENGTH = 7;			//The number of floats making up the per instance data for a flowchart line
+	public static final int JUNCTION_INSTANCED_DATA_LENGTH = 5;
+	public static final int ARROW_HEAD_INSTANCED_DATA_LENGTH = 5;
+
 	public static final int MAX_LINES = 1000;
 	public static boolean OPEN_PARTIAL_FILE = false;
 	public static String PARTIAL_FILE_TAG_TARGET = "";

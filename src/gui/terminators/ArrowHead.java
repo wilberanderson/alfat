@@ -11,8 +11,8 @@ public class ArrowHead extends Terminator{
     private static RawModel model;
     private static final int renderMode = GL11.GL_TRIANGLES;
     private static final float[] VERTICES = {
-            -0.01f, -0.02f,
-            0.01f, -0.02f,
+            -0.01f, 0.02f,
+            0.01f, 0.02f,
             0f, 0f
     };
 
@@ -28,8 +28,7 @@ public class ArrowHead extends Terminator{
         return direction;
     }
 
-    @Override
-    public RawModel getModel() {
+    public static RawModel getModel() {
         return model;
     }
 }

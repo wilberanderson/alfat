@@ -4,6 +4,8 @@ import controllers.TextLineController;
 import dataStructures.RawModel;
 import gui.FlowchartLine;
 import gui.Mouse;
+import gui.terminators.ArrowHead;
+import gui.terminators.Junction;
 import gui.textBoxes.FlowchartTextBox;
 import gui.texts.FormattedTextLine;
 import loaders.Loader;
@@ -25,6 +27,8 @@ public class FlowchartWindowController {
     private FlowchartTextBoxController flowchartTextBoxController;
     public RawModel lines;
     public int numberOfSegments;
+    public int numberOfArrowHeads;
+    public int numberOfJunctions;
     private static final float[] VERTICES = {
             0, 0,
             0, -1
@@ -134,10 +138,12 @@ public class FlowchartWindowController {
 
     public void setFlowchartLineList(List<FlowchartLine> lines){
         flowchartWindow.getFlowchartLineList().addAll(lines);
-        numberOfSegments = populateVbo(lines, this.lines.getVaoID());
+        numberOfSegments = populateLineVbo(lines, this.lines.getVaoID());
+        populateArrowHeadVbo(lines, ArrowHead.getModel().getVaoID());
+        populateJunctionVbo(lines, Junction.getModel().getVaoID());
     }
 
-    public int populateVbo(List<FlowchartLine> lines, int vao){
+    public int populateLineVbo(List<FlowchartLine> lines, int vao){
         int instanceCount = 0;
         for(FlowchartLine line : lines){
             int i = line.getPositions().size();
@@ -174,6 +180,66 @@ public class FlowchartWindowController {
         }
         Loader.updateVbo(vbo, data, buffer);
         return instanceCount;
+    }
+
+    public void populateArrowHeadVbo(List<FlowchartLine> lines, int vao){
+        numberOfArrowHeads = 0;
+        for(FlowchartLine line : lines){
+            if(line.getTerminator() instanceof ArrowHead){
+                numberOfArrowHeads++;
+            }
+        }
+        int vbo = Loader.createEmptyVbo(numberOfArrowHeads*GeneralSettings.ARROW_HEAD_INSTANCED_DATA_LENGTH, GL15.GL_STATIC_DRAW);
+        Loader.addInstanceAttribute(vao, vbo, 1, 2, GeneralSettings.ARROW_HEAD_INSTANCED_DATA_LENGTH, 0);
+        Loader.addInstanceAttribute(vao, vbo, 2, 3, GeneralSettings.ARROW_HEAD_INSTANCED_DATA_LENGTH, 2);
+        FloatBuffer buffer = BufferUtils.createFloatBuffer(numberOfArrowHeads*GeneralSettings.ARROW_HEAD_INSTANCED_DATA_LENGTH);
+        float data[] = new float[numberOfArrowHeads*GeneralSettings.ARROW_HEAD_INSTANCED_DATA_LENGTH];
+        int i = 0;
+        for(FlowchartLine line : lines){
+            if(line.getTerminator() instanceof ArrowHead) {
+                data[i] = line.getTerminator().getPosition().x;
+                i++;
+                data[i] = line.getTerminator().getPosition().y;
+                i++;
+                data[i] = line.getColor().x;
+                i++;
+                data[i] = line.getColor().y;
+                i++;
+                data[i] = line.getColor().z;
+                i++;
+            }
+        }
+        Loader.updateVbo(vbo, data, buffer);
+    }
+
+    public void populateJunctionVbo(List<FlowchartLine> lines, int vao){
+        numberOfJunctions = 0;
+        for(FlowchartLine line : lines){
+            if(line.getTerminator() instanceof Junction){
+                numberOfJunctions++;
+            }
+        }
+        int vbo = Loader.createEmptyVbo(numberOfJunctions*GeneralSettings.JUNCTION_INSTANCED_DATA_LENGTH, GL15.GL_STATIC_DRAW);
+        Loader.addInstanceAttribute(vao, vbo, 1, 2, GeneralSettings.JUNCTION_INSTANCED_DATA_LENGTH, 0);
+        Loader.addInstanceAttribute(vao, vbo, 2, 3, GeneralSettings.JUNCTION_INSTANCED_DATA_LENGTH, 2);
+        FloatBuffer buffer = BufferUtils.createFloatBuffer(numberOfJunctions*GeneralSettings.JUNCTION_INSTANCED_DATA_LENGTH);
+        float data[] = new float[numberOfJunctions*GeneralSettings.JUNCTION_INSTANCED_DATA_LENGTH];
+        int i = 0;
+        for(FlowchartLine line : lines){
+            if(line.getTerminator() instanceof Junction) {
+                data[i] = line.getTerminator().getPosition().x;
+                i++;
+                data[i] = line.getTerminator().getPosition().y;
+                i++;
+                data[i] = line.getColor().x;
+                i++;
+                data[i] = line.getColor().y;
+                i++;
+                data[i] = line.getColor().z;
+                i++;
+            }
+        }
+        Loader.updateVbo(vbo, data, buffer);
     }
 
     public List<FlowchartLine> getFlowchartLineList(){

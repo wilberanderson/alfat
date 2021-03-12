@@ -19,7 +19,9 @@ public abstract class Terminator{
         this.position = position;
     }
 
-    public abstract RawModel getModel();
+    public static RawModel getModel(){
+        return null;
+    }
 
     public void setHighlighted(boolean highlighted) {
         this.highlighted = highlighted;

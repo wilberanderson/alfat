@@ -10,12 +10,10 @@ import rendering.shaders.uniforms.*;
 public class TerminatorShader extends ShaderProgram{
 
 
-    protected UniformVec3 color = new UniformVec3("color");
     protected UniformVec2 windowPosition = new UniformVec2("windowPosition");
     protected UniformVec2 windowSize = new UniformVec2("windowSize");
     protected UniformMat3 zoomTranslateMatrix = new UniformMat3("zoomTranslateMatrix");
     protected UniformMat2 aspectRatio = new UniformMat2("aspectRatio");
-    protected UniformMat3 transformationMatrix = new UniformMat3("transformationMatrix");
     protected UniformBoolean doClipping = new UniformBoolean("doClipping");
 
     /**
@@ -26,7 +24,7 @@ public class TerminatorShader extends ShaderProgram{
      */
     public TerminatorShader() {
         super(GeneralSettings.TERMINATOR_VERTEX, GeneralSettings.TERMINATOR_FRAGMENT, "position");
-        super.storeAllUniformLocations(color, windowPosition, windowSize, zoomTranslateMatrix, aspectRatio, transformationMatrix, doClipping);
+        super.storeAllUniformLocations(windowPosition, windowSize, zoomTranslateMatrix, aspectRatio, doClipping);
     }
 
 
