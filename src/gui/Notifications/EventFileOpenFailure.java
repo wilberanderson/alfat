@@ -13,7 +13,7 @@ public class EventFileOpenFailure extends Observer {
     public void update() {
         if (subject.getEvent() == AppEvents.OPEN_FILE_FAIL) {
 
-            ApplicationController.getHeader().setNotificationText("No file opened!");
+            ApplicationController.getHeader().setNotificationText("No file opened.");
 
             if (!subject.isClearTimerRunning()) {
                 subject.setClearTimer(true);

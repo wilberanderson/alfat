@@ -11,7 +11,7 @@ public class EventSyntaxFileFailure extends Observer{
     @Override
     public void update() {
         if (subject.getEvent() == AppEvents.INVALID_SYNTAX_FILE) {
-            ApplicationController.getHeader().setNotificationText("Syntax File Error: Check file...");
+            ApplicationController.getHeader().setNotificationText("Syntax File Error: Check file.");
             if (!subject.isClearTimerRunning()) {
                 subject.setClearTimer(true);
                 Runnable myRunnable =

@@ -11,7 +11,7 @@ public class EventFileOpenSuccess extends Observer{
     @Override
     public void update() {
         if (subject.getEvent() == AppEvents.OPEN_FILE) {
-            ApplicationController.getHeader().setNotificationText("File open successfully!");
+            ApplicationController.getHeader().setNotificationText("File opened successfully!");
 
             if (!subject.isClearTimerRunning()) {
                 subject.setClearTimer(true);
