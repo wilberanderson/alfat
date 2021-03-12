@@ -15,6 +15,7 @@ import rendering.flowchartLine.FlowchartLineRenderer;
 import rendering.terminators.TerminatorRenderer;
 import rendering.text.TextMaster;
 import rendering.textLines.TextLineRenderer;
+import utils.Printer;
 
 import java.util.List;
 
@@ -86,10 +87,7 @@ public class MasterRenderer {
 //				filledBoxRenderer.renderToScreen(controller.getFlowchartWindowController(), controller.getCodeWindowController());
 //			}
 //		}
-		if(controller.getFlowchartWindowController() != null) {
-			flowchartLineRenderer.renderToScreen(controller.getFlowchartWindowController());
-			terminatorRenderer.renderToScreen(controller.getFlowchartWindowController());
-		}
+
 		if(controller.getCodeWindowController() != null){
 			TextMaster.render(controller.getFlowchartWindowController(), controller.getCodeWindowController().getCodeWindow(), true, false);
 		}

@@ -7,6 +7,7 @@ import gui.Settings.ReturnString;
 import gui.Settings.SettingsMenu;
 import gui.buttons.HeaderMenu;
 import gui.buttons.TextButton;
+import gui.texts.GUIText;
 import gui.windows.AnalysisWindow;
 import gui.windows.PartialWindow;
 import gui.windows.PopupWindow;
@@ -22,6 +23,7 @@ import parser.GlobalParser;
 import parser.Parser;
 import parser.ParserManager;
 import rendering.renderEngine.MasterRenderer;
+import rendering.text.TextMaster;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -43,6 +45,7 @@ public class Header {
     private Parser parser = null; //should NOT need this anymore TODO: REMOVE
     private String windowTitle = null;
     ApplicationController controller;
+    GUIText notificationText;
 
     public Header(Vector2f position, Vector2f size, ApplicationController controller){
         menuList = new ArrayList<>();
@@ -279,6 +282,12 @@ public class Header {
             menuList.get(i).setPosition(new Vector2f(lastMenu.getPosition().x + lastMenu.getSize().x, lastMenu.getPosition().y));
         }
         guiFilledBox.setPosition(new Vector2f(-1, 1 - (1 - guiFilledBox.getPosition().y) / this.aspectRatio.y * aspectRatio.y));
+        getPosition().y = guiFilledBox.getPosition().y;
+        //Update the position of any notifications that still exist
+        if(notificationText != null) {
+            notificationText.getPosition().x = 1 / aspectRatio.x - (float) notificationText.getLength() * 2;
+            notificationText.getPosition().y = guiFilledBox.getPosition().y / aspectRatio.y + GeneralSettings.FONT_HEIGHT;
+        }
         this.aspectRatio = aspectRatio;
     }
 
@@ -712,6 +721,7 @@ public class Header {
             controller.getFlowchartWindowController().locateAlert("invalid_label");
             GLFW.glfwSetWindowTitle(EngineTester.getWindow(), windowTitle + " [Invalid labels]");
         }
+        setNotificationText("Invalid labels");
     }
 
     /**
@@ -720,5 +730,22 @@ public class Header {
      */
     public void setPartialTag(){
         PartialWindow partialDialogueWindow = new PartialWindow(controller);
+    }
+
+    public GUIText getNotificationText(){
+        return notificationText;
+    }
+
+    public void setNotificationText(String textString){
+        if(notificationText != null){
+            TextMaster.removeGuiText(notificationText);
+        }
+        notificationText = new GUIText(textString, GeneralSettings.FONT_SIZE, new Vector2f(0, 0), GeneralSettings.FONT);
+        notificationText.setPosition(new Vector2f((float) (1/aspectRatio.x-notificationText.getLength()*2), this.getPosition().y/aspectRatio.y + GeneralSettings.FONT_HEIGHT));
+    }
+
+    public void clearNotificationText(){
+        TextMaster.removeGuiText(notificationText);
+        notificationText = null;
     }
 }

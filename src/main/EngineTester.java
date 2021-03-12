@@ -203,12 +203,16 @@ public class EngineTester {
             //Render any open popups
             GUIWindowController.render();
 
-//            long renderTime = System.currentTimeMillis();
+            long renderTime = System.currentTimeMillis();
 
-            //Print per frame timing info
-//            System.out.println("Time to process events: " + (eventTime-startTime));
-//            System.out.println("Time to render: " + (renderTime - eventTime));
-            //System.out.println("Ratio: " + ((eventTime-startTime)/(renderTime-startTime)*100) + ":" + ((renderTime-eventTime)/(renderTime/startTime)*100));
+//            Print per frame timing info
+//            if((eventTime-startTime) > 0){
+//                System.out.println("Time to process events: " + (eventTime-startTime));
+//            }
+//            if((renderTime-eventTime) > 0){
+//                System.out.println("Time to render: " + (renderTime - eventTime));
+//            }
+//            System.out.println("Ratio: " + ((eventTime-startTime)/(renderTime-startTime)*100) + ":" + ((renderTime-eventTime)/(renderTime/startTime)*100));
 
             // Memory usage:
 //            Runtime runtime = Runtime.getRuntime();

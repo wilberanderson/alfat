@@ -17,6 +17,7 @@ import java.util.List;
 public class TextLineController {
     List<FormattedTextLine> flowchartFormattedTextLines = new ArrayList<>();
     List<EditableFormattedTextLine> codeWindowFormattedTextLines = new ArrayList<>();
+    List<FormattedTextLine> loadedTexts = new ArrayList<>();
     //Parser parser = new Parser();
 
     /**
@@ -101,7 +102,7 @@ public class TextLineController {
                     }
                     //Tabs are used for alignment, add enough tabs to meet the currently used tab count
                     else if (((SeparatorWord) word).getText().charAt(0) == '\t') {
-                        offset += spaceSize * (GeneralSettings.DEFAULT_TAB_WIDTH - numberOfCharacters % 4);//((numberOfCharacters % GeneralSettings.DEFAULT_TAB_WIDTH) == 0 ? GeneralSettings.DEFAULT_TAB_WIDTH : numberOfCharacters % GeneralSettings.DEFAULT_TAB_WIDTH);
+                        offset += spaceSize * 128 * (GeneralSettings.DEFAULT_TAB_WIDTH - numberOfCharacters % 4);//((numberOfCharacters % GeneralSettings.DEFAULT_TAB_WIDTH) == 0 ? GeneralSettings.DEFAULT_TAB_WIDTH : numberOfCharacters % GeneralSettings.DEFAULT_TAB_WIDTH);
                         numberOfCharacters = 0;
                     }
                 }
@@ -124,6 +125,7 @@ public class TextLineController {
         }else {
             codeWindowFormattedTextLines.add(index, line);
         }
+        loadedTexts.add(line);
     }
 
     /**
@@ -139,6 +141,9 @@ public class TextLineController {
         //Create two new lines
         EditableFormattedTextLine originalLine;
         EditableFormattedTextLine newLine;
+
+        //Unload the old text
+        unloadText(line, 0);
 
         //If the line is being split at an index greater than 0
         if(characterIndex > 0) {
@@ -274,7 +279,7 @@ public class TextLineController {
                     }
                     //Tabs are used for alignment, add enough tabs to meet the currently used tab count
                     else if (((SeparatorWord) word).getText().charAt(0) == '\t') {
-                        offset += spaceSize * (GeneralSettings.DEFAULT_TAB_WIDTH - numberOfCharacters % 4);//((numberOfCharacters % GeneralSettings.DEFAULT_TAB_WIDTH) == 0 ? GeneralSettings.DEFAULT_TAB_WIDTH : numberOfCharacters % GeneralSettings.DEFAULT_TAB_WIDTH);
+                        offset += spaceSize * 128*(GeneralSettings.DEFAULT_TAB_WIDTH - numberOfCharacters % 4);//((numberOfCharacters % GeneralSettings.DEFAULT_TAB_WIDTH) == 0 ? GeneralSettings.DEFAULT_TAB_WIDTH : numberOfCharacters % GeneralSettings.DEFAULT_TAB_WIDTH);
                         numberOfCharacters = 0;
                     }
                 }
@@ -291,6 +296,11 @@ public class TextLineController {
         }
         //The edges of characters are needed to be known for editing, generate them
         line.generateCharacterEdges();
+
+        //The old text should no longer be rendered and the new text should now be rendered
+        loadedTexts.remove(codeWindowFormattedTextLines.get(index));
+        loadedTexts.add(line);
+
         //Replace the line at this index with the new line
         codeWindowFormattedTextLines.set(index, line);
     }
@@ -383,11 +393,28 @@ public class TextLineController {
         return codeWindowFormattedTextLines;
     }
 
+    public List<FormattedTextLine> getLoadedTexts(){
+        return loadedTexts;
+    }
+
     /**
      *
      */
     public void clear() {
         flowchartFormattedTextLines.clear();
+    }
+
+    public void unloadText(FormattedTextLine textLine, float position){
+        loadedTexts.remove(textLine);
+//        textLine.setLastPosition(position -( textLine.getPosition().y - 1.1f));
+    }
+
+    public void loadText(FormattedTextLine textLine, float position){
+        //Duplicates may be added, ensure that the text is only added if it is not in the list currently
+        if(loadedTexts.indexOf(textLine) == -1){
+            loadedTexts.add(textLine);
+//            textLine.getPosition().y += textLine.getLastPosition()-position;
+        }
     }
 
 

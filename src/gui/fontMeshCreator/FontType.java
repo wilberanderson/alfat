@@ -64,9 +64,6 @@ public class FontType {
 	 * @return Information about the vertices of all the quads.
 	 */
 	public TextMeshData loadText(Text text, String textString) {
-		if(text instanceof GUIText) {
-			Printer.print(((GUIText) text).getMaxLineSize());
-		}
 		if(text instanceof GUIText && ((GUIText) text).getMaxLineSize() == -1){
 			return loader.createMultilineTextMesh((GUIText) text, textString, -1);
 		}
@@ -74,10 +71,6 @@ public class FontType {
 	}
 
 	public TextMeshData loadText(Text text, String textString, float maxSize) {
-		if(text instanceof GUIText) {
-			Printer.print(((GUIText) text).getMaxLineSize());
-		}
-		Printer.print("Making a multiline text with length " + maxSize);
 		if(text instanceof GUIText && maxSize != -1){
 			return loader.createMultilineTextMesh((GUIText) text, textString, maxSize);
 		}

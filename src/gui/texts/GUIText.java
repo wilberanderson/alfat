@@ -35,7 +35,6 @@ public class GUIText extends Text{
         this.textString = text;
         this.font = GeneralSettings.FONT;
         this.maxLineSize = maxLineSize;
-        Printer.print("Max size " + this.maxLineSize);
     }
 
     public GUIText(String text, float fontSize, Vector2f position, FontType fontType) {

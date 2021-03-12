@@ -147,6 +147,9 @@ public class ApplicationController {
         }else if(key == GLFW_KEY_ENTER && action == GLFW_PRESS) {
             codeWindowController.type('\n');
         }
+        else if(key == GLFW_KEY_TAB && action == GLFW_PRESS) {
+            codeWindowController.type('\t');
+        }
         //Process shortcut keys
         else if((key == GLFW_KEY_LEFT_CONTROL || key == GLFW_KEY_RIGHT_CONTROL) && action == GLFW_PRESS) {
             CTRL_PRESSED = true;

@@ -73,10 +73,6 @@ public abstract class GUIWindow {
         int[] ysize = new int[1];
         GLFW.glfwGetWindowPos(EngineTester.getWindow(), xpos, ypos);
         GLFW.glfwGetWindowSize(EngineTester.getWindow(), xsize, ysize);
-        System.out.println(xpos[0]);
-        System.out.println(ypos[0]);
-        System.out.println(xsize[0]);
-        System.out.println(ysize[0]);
         GLFW.glfwSetWindowPos(window, (xpos[0] + xpos[0] + xsize[0]) / 2 - width/2, (ypos[0] + ypos[0] + ysize[0]) / 2 - height/2);
 
         //Create callbacks
