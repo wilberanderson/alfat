@@ -4,16 +4,13 @@ import controllers.codeWindow.CodeWindowController;
 import controllers.flowchartWindow.FlowchartTextBoxController;
 import controllers.flowchartWindow.FlowchartWindowController;
 import controllers.gui.ButtonController;
-import controllers.gui.GUIController;
-import controllers.gui.GUIWindowController;
 import gui.Header;
 import gui.Mouse;
-import gui.UserPreferences;
+import gui.Notifications.Notifications;
 import gui.buttons.HeaderMenu;
 import gui.texts.*;
 import main.EngineTester;
 import main.GeneralSettings;
-import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector2f;
 
@@ -36,12 +33,15 @@ public class ApplicationController {
     private static HeaderMenu openMenu = null;
     private static Header header;
     private static Vector2f aspectRatio = new Vector2f(1, 1);
+
     private boolean hoveringBoundary = false;
     private boolean draggingBoundary = false;
+
 
     //Permanent variables
     CodeWindowController codeWindowController;
     FlowchartWindowController flowchartWindowController;
+    public static Notifications notification = new Notifications();
 
     public TextLineController getTextLineController() {
         return textLineController;
@@ -87,6 +87,8 @@ public class ApplicationController {
 
         //Background color
         GL11.glClearColor(GeneralSettings.USERPREF.getBackgroundColor3f().getX(), GeneralSettings.USERPREF.getBackgroundColor3f().getY(), GeneralSettings.USERPREF.getBackgroundColor3f().getZ(), 1);
+
+
     }
 
 
@@ -148,6 +150,9 @@ public class ApplicationController {
             codeWindowController.keyPress(ControllerSettings.CURSOR_DELETE);
         }else if(key == GLFW_KEY_ENTER && action == GLFW_PRESS) {
             codeWindowController.type('\n');
+        }
+        else if(key == GLFW_KEY_TAB && action == GLFW_PRESS) {
+            codeWindowController.type('\t');
         }
         //Process shortcut keys
         else if((key == GLFW_KEY_LEFT_CONTROL || key == GLFW_KEY_RIGHT_CONTROL) && action == GLFW_PRESS) {
@@ -385,8 +390,8 @@ public class ApplicationController {
         }
     }
 
-
-    public Header getHeader(){
+    //TODO: Make sure it's ok to make this static...
+    public static Header getHeader(){
         return header;
     }
 

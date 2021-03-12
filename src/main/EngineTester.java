@@ -1,21 +1,14 @@
 package main;
 import controllers.ApplicationController;
-import controllers.flowchartWindow.FlowchartWindow;
 import controllers.gui.GUIWindowController;
 import gui.*;
-import gui.textBoxes.TextBox;
 import gui.windows.GUIWindow;
-import gui.windows.PopupWindow;
 import loaders.*;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
 import org.lwjgl.system.*;
-import org.lwjgl.util.vector.Vector2f;
-import org.lwjgl.util.vector.Vector3f;
-import org.lwjgl.util.vector.Vector4f;
 import parser.GlobalParser;
 import parser.ParserManager;
-import rendering.renderEngine.GUIElementRenderer;
 import rendering.renderEngine.MasterRenderer;
 import controllers.GLFWEventController;
 
@@ -62,7 +55,8 @@ public class EngineTester {
     private void init(String[] args) {
 
         GeneralSettings.USERPREF = new UserPreferences();
-        GlobalParser.PARSER_MANAGER = new ParserManager();
+        //GlobalParser.PARSER_MANAGER = new ParserManager();
+
 
 
         //********************************Create the window************************************
@@ -149,7 +143,7 @@ public class EngineTester {
         //************************************Initialize input*************************************
         applicationController = new ApplicationController();
         GLFWEventController.init(window, applicationController);
-
+        GlobalParser.PARSER_MANAGER = new ParserManager();
 
         // Set the clear color
         //GL11.glClearColor(GeneralSettings.base02.x, GeneralSettings.base02.y, GeneralSettings.base02.z, 1);
@@ -209,12 +203,16 @@ public class EngineTester {
             //Render any open popups
             GUIWindowController.render();
 
-//            long renderTime = System.currentTimeMillis();
+            long renderTime = System.currentTimeMillis();
 
-            //Print per frame timing info
-//            System.out.println("Time to process events: " + (eventTime-startTime));
-//            System.out.println("Time to render: " + (renderTime - eventTime));
-            //System.out.println("Ratio: " + ((eventTime-startTime)/(renderTime-startTime)*100) + ":" + ((renderTime-eventTime)/(renderTime/startTime)*100));
+//            Print per frame timing info
+//            if((eventTime-startTime) > 0){
+//                System.out.println("Time to process events: " + (eventTime-startTime));
+//            }
+//            if((renderTime-eventTime) > 0){
+//                System.out.println("Time to render: " + (renderTime - eventTime));
+//            }
+//            System.out.println("Ratio: " + ((eventTime-startTime)/(renderTime-startTime)*100) + ":" + ((renderTime-eventTime)/(renderTime/startTime)*100));
 
             // Memory usage:
 //            Runtime runtime = Runtime.getRuntime();

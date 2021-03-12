@@ -1,5 +1,7 @@
 package parser;
 
+import controllers.ApplicationController;
+import gui.Notifications.AppEvents;
 import gui.texts.EditableFormattedTextLine;
 import main.GeneralSettings;
 
@@ -11,6 +13,7 @@ public class ParserManager {
     private  Parser parser;
 
     private  CodeSyntax codeSyntax;
+
 
 
     public ParserManager() {
@@ -33,6 +36,13 @@ public class ParserManager {
             setCodeSyntax(new File(GeneralSettings.USERPREF.getSyntaxPath()));
             if(codeSyntax != null) {
                 parser.setCodeSyntax(codeSyntax);
+                //Kill codeSyntax if any of the keyword patterns are invalid (are null)
+                if(codeSyntax.isKeywordsPatternsValid()) {
+                    codeSyntax = null;
+                    ApplicationController.notification.setEvent(AppEvents.INVALID_SYNTAX_FILE);
+                }
+            } else {
+                ApplicationController.notification.setEvent(AppEvents.INVALID_SYNTAX_FILE);
             }
             GeneralSettings.IS_SYNTAX_PATH_CHANGED = false;
         }
@@ -44,6 +54,7 @@ public class ParserManager {
     private void setCodeSyntax(File filePathToJson) {
         this.codeSyntax = null;
         this.codeSyntax = JsonReader.mapJsonToCodeSyntax(filePathToJson);
+        //System.out.println(this.codeSyntax); //To see to string of current syntax
     }
 
     /**
@@ -59,6 +70,7 @@ public class ParserManager {
             parser.clear();
             parser.ReadFile(filePath,false);
             parser.generateFlowObjects();
+            //parse fixed
         }
         return result;
     }
@@ -97,5 +109,10 @@ public class ParserManager {
         } else {
             return parser.getFormattedLineDefault(line);
         }
+    }
+
+    /**Returns true if syntax is valid, returns false if syntax is invalid*/
+    public boolean isSyntaxValid() {
+        return !(codeSyntax != null);
     }
 }

@@ -1,6 +1,8 @@
 package parser;
 
 public class KeywordPatterns {
+    private String procedurestart;
+    private String procedureend;
     private String control;
     private String reserved;
     private String arithmetic;
@@ -129,10 +131,28 @@ public class KeywordPatterns {
         this.comment = comment;
     }
 
+    public String getProcedurestart() {
+        return procedurestart;
+    }
+
+    public void setProcedurestart(String procedurestart) {
+        this.procedurestart = procedurestart;
+    }
+
+    public String getProcedureend() {
+        return procedureend;
+    }
+
+    public void setProcedureend(String procedureend) {
+        this.procedureend = procedureend;
+    }
+
     @Override
     public String toString() {
         return "KeywordPatterns{" +
-                "control='" + control + '\'' +
+                "procedurestart='" + procedurestart + '\'' +
+                ", procedurecend='" + procedureend + '\'' +
+                ", control='" + control + '\'' +
                 ", reserved='" + reserved + '\'' +
                 ", arithmetic='" + arithmetic + '\'' +
                 ", dataMovement='" + dataMovement + '\'' +

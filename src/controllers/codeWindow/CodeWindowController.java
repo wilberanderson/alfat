@@ -13,12 +13,16 @@ import gui.textBoxes.CodeWindow;
 import main.EngineTester;
 import main.GeneralSettings;
 import org.lwjgl.glfw.GLFW;
+import org.lwjgl.system.CallbackI;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
 import parser.GlobalParser;
 import parser.Parser;
+import parser.ParserManager;
+import utils.Printer;
 
+import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,6 +57,9 @@ public class CodeWindowController {
 
     float longestLine = 0;
 
+    int startIndex = 0;
+    int endIndex;
+
     public CodeWindowController(Vector2f position, Vector2f size, Vector3f backgroundColor, Vector3f textColor, Vector3f borderColor, String content, FontType font, float fontSize, float thickness, float borderWidth, float border, float headerHeight, TextLineController textLineController){
         this.textLineController = textLineController;
         this.codeWindow = new CodeWindow();
@@ -76,6 +83,7 @@ public class CodeWindowController {
         //Create a parser that is used for parsing each line
         //TODO: Make parser static and remove this. OK I DO IT :( U LIKE? :)
         //Parser parser = new Parser();
+
 
         //List that holds the lines that were added, used to prevent concurrent modification
         List<EditableFormattedTextLine> newLines = new ArrayList<>();
@@ -137,7 +145,9 @@ public class CodeWindowController {
 
         //Update the aspect ratio in case aspect ratio was changed before opening this file
         aspectRatio = new Vector2f(GeneralSettings.ASPECT_RATIO.m00, GeneralSettings.ASPECT_RATIO.m11);
+        endIndex = numberOfLines - 1;
         updateAspectRatio(aspectRatio, headerHeight);
+
 
 //        scroll(maxVerticalPosition);
 //        scrollHorizontal(maxHorizontalPosition, horizontalScrollBar.getFactor());
@@ -200,6 +210,8 @@ public class CodeWindowController {
         horizontalScrollBar.updateAspectRatio(new Vector2f(codeWindow.getGuiFilledBox().getPosition()), 0.03f*aspectRatio.y, range, range -0.02f*aspectRatio.x, maxHorizontalPosition-codeWindow.getTextNumberFilledBox().getSize().x);
         cursorController.updateAspectRatio();
         textLineController.update(textLineController.getCodeWindowTextLines().get(0), 0, '\0');
+
+        unloadTexts();
     }
 
     /**
@@ -229,6 +241,7 @@ public class CodeWindowController {
                     cursorController.scroll();
                 }
             }
+            unloadTexts();
         }
     }
 
@@ -296,6 +309,9 @@ public class CodeWindowController {
         }
         maxVerticalPosition += change * GeneralSettings.FONT_HEIGHT;
         verticalScrollBar.changeContentsHeight(change*GeneralSettings.FONT_HEIGHT);
+        if(endIndex == numberOfLines - 1){
+            endIndex = newNumberOfLines - 1;
+        }
         numberOfLines = newNumberOfLines;
     }
 
@@ -423,6 +439,17 @@ public class CodeWindowController {
      * Changes the position of each text line vertically
      * @param change the amount to change
      */
+//    public void changeContentsVerticalPosition(float change){
+//        //Update each line
+//        for(FormattedTextLine text : textLineController.getLoadedTexts()){
+//            if(text instanceof EditableFormattedTextLine) {
+//                text.changeVerticalPosition(change);
+//            }
+//        }
+//        //Update the saved position
+//        contentsVerticalPosition += change;
+//        verticalScrollBar.changePosition(change);
+//    }
     public void changeContentsVerticalPosition(float change){
         //Update each line
         for(FormattedTextLine text : textLineController.getCodeWindowTextLines()){
@@ -518,6 +545,9 @@ public class CodeWindowController {
      * Clears the text which was included in this code window
      */
     public void clear(){
+        for(EditableFormattedTextLine line : textLineController.getCodeWindowTextLines()){
+            textLineController.unloadText(line, 0);
+        }
         textLineController.getCodeWindowTextLines().clear();
     }
 
@@ -586,6 +616,59 @@ public class CodeWindowController {
 
     public boolean isHoveringScroll(){
         return verticalHovered || horizontalHovered;
+    }
+
+    public void unloadTexts(){
+        //If the first line is above the screen then lines need to be unloaded at the top and loaded at the bottom
+        if(textLineController.getCodeWindowTextLines().get(startIndex).getPosition().y > 1.1f){
+//            //Unload the lines at the top
+            EditableFormattedTextLine line = textLineController.getCodeWindowTextLines().get(startIndex);
+            while(line.getPosition().y > 1.1f){
+                textLineController.unloadText(line, contentsVerticalPosition);
+                startIndex++;
+                line = textLineController.getCodeWindowTextLines().get(startIndex);
+            }
+            //Load lines at the bottom
+            line = textLineController.getCodeWindowTextLines().get(endIndex);
+            while(line.getPosition().y > -1.1f && endIndex < textLineController.getCodeWindowTextLines().size() - 1){
+                textLineController.loadText(line, contentsVerticalPosition);
+                endIndex++;
+                line = textLineController.getCodeWindowTextLines().get(endIndex);
+            }
+            //Ensure that array overflow does not occur if the last text is loaded
+            if(endIndex == textLineController.getCodeWindowTextLines().size()){
+                endIndex--;
+            }
+        }
+        //Otherwise load lines at the top and unload them at the bottom
+        else{
+            //Load the lines at the top
+            EditableFormattedTextLine line = textLineController.getCodeWindowTextLines().get(startIndex);
+            while(line.getPosition().y < 1.1f && startIndex >= 0){
+                line = textLineController.getCodeWindowTextLines().get(startIndex);
+                textLineController.loadText(line, contentsVerticalPosition);
+                startIndex--;
+            }
+            //Ensure that array underflow does not occur if text one is loaded
+            if(startIndex < 0){
+                startIndex = 0;
+            }
+            //Unload lines at the bottom
+            line = textLineController.getCodeWindowTextLines().get(endIndex);
+            while(line.getPosition().y < -1.1f){
+                textLineController.unloadText(line, contentsVerticalPosition);
+                endIndex--;
+                line = textLineController.getCodeWindowTextLines().get(endIndex);
+            }
+        }
+
+//        for(FormattedTextLine textLine : textLineController.getCodeWindowTextLines()){
+//            if(textLine.getPosition().y < -1.5 || textLine.getPosition().y > 1.5){
+//                textLineController.unloadText(textLine);
+//            }else{
+//                textLineController.loadText(textLine);
+//            }
+//        }
     }
 
 }
