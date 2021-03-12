@@ -245,8 +245,9 @@ public class ApplicationController {
         if(key == GLFW_KEY_I){
             if (shift){
                 header.setPartialTagClosing();
+            } else {
+                header.setPartialTag();
             }
-            header.setPartialTag();
         }
 
 

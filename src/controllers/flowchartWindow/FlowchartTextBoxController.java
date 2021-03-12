@@ -118,6 +118,8 @@ public class FlowchartTextBoxController {
         }
         textBoxes.clear();
         textLineController.clear();
+        highlightedLinesList = new ArrayList<>();
+        updateVbo(highlightedLinesList, highlightedLines.getVaoID());
     }
 
     public void setPosition(Vector2f position, FlowchartTextBox textBox){
@@ -137,6 +139,8 @@ public class FlowchartTextBoxController {
             line.setHighlight(false);
             line.getTerminator().setHighlighted(false);
         }
+        highlightedLinesList = new ArrayList<>();
+        updateVbo(highlightedLinesList, highlightedLines.getVaoID());
     }
 
     public void locateRegisters(String args) {
@@ -243,6 +247,7 @@ public class FlowchartTextBoxController {
             line.setHighlight(false);
             line.getTerminator().setHighlighted(false);
         }
+        updateVbo(highlightedLinesList, highlightedLines.getVaoID());
 //        parent.populateVbo(highlightedLinesList, highlightedLines.getVaoID());
     }
 
