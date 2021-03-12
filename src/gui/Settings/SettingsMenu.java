@@ -9,6 +9,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.IOException;
 import java.util.ArrayList;
 
 /**
@@ -186,6 +187,8 @@ public class SettingsMenu extends Component {
         fakeButtonscontent.add(new SettingsContent("Color Picker", colorPickerContent()));
 
         fakeButtonscontent.add(new SettingsContent("Text Color", textColorContent()));
+
+        fakeButtonscontent.add(new SettingsContent("Help", helpContent()));
     }
 
     //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -1796,6 +1799,31 @@ public class SettingsMenu extends Component {
         return btn;
     }
 
+    private JPanel helpContent(){
+        JPanel mainPane = new JPanel();
 
+        JEditorPane editorPane = new JEditorPane();
+        editorPane.setEditable(false);
+        String url = "/alfat_help_page.html";
+        java.net.URL helpURL = SettingsMenu.class.getResource(url);
+        if (helpURL != null) {
+            try {
+                editorPane.setPage(helpURL);
+            } catch (IOException e) {
+                System.err.println("Attempted to read a bad URL: " + url);
+            }
+        } else {
+            System.err.println("Couldn't find file: " + url);
+        }
+
+        JScrollPane editorScrollPane = new JScrollPane(editorPane);
+        editorScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        editorScrollPane.setPreferredSize(new Dimension(500, 500));
+        editorScrollPane.setMinimumSize(new Dimension(50, 50));
+
+
+        mainPane.add(editorScrollPane);
+        return mainPane;
+    }
 
 }
