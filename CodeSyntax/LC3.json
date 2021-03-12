@@ -1,6 +1,8 @@
 {
   "keywordPatterns": {
-    "control": "(?i)(BR|BRn|BRz|BRp|BRnz|BRnp|BRzp|BRnzp|JMP|RET|JSR|JSRR|RTI|br|brn|brz|brp|brnz|brnp|brzp|brnzp|jmp|ret|jsr|jsrr|rti)\\b",
+    "procedurestart": "",
+    "procedureend": "(?i)(ret)\\b",
+    "control": "(?i)(BR|BRn|BRz|BRp|BRnz|BRnp|BRzp|BRnzp|JMP|JSR|JSRR|RTI|br|brn|brz|brp|brnz|brnp|brzp|brnzp|jmp|jsr|jsrr|rti)\\b",
     "reserved": "(?i)(TRAP|GETC|OUT|PUTS|IN|HALT|trap|getc|out|puts|in|halt|ALIAS|MACRO|IMPORT|EXPORT|alias|macro|import|export|.ORIG|.FILL|.BLKW|.STRINGZ|.END|.orig|.fill|.blkw|.stringz|.end)\\b",
     "arithmetic": "(?i)(NOT|AND|ADD|not|and|add)\\b",
     "dataMovement": "(?i)(LD|LDR|LDI|ST|STR|STI|LEA|ld|ldr|ldi|st|str|sti|lea)\\b",

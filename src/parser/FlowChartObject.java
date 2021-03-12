@@ -15,6 +15,7 @@ public class FlowChartObject {
     public int boxNumber;
 
     public boolean jumps = false;
+    public boolean returns = false;
     public FlowChartObject connection = null;
 
     private List<FormattedTextLine> formattedTextLines = new ArrayList<>();
@@ -85,5 +86,13 @@ public class FlowChartObject {
 
     public List<FormattedTextLine> getTextLines(){
         return formattedTextLines;
+    }
+
+    public boolean isReturns() {
+        return returns;
+    }
+
+    public void setReturns(boolean ret){
+        this.returns = ret;
     }
 }

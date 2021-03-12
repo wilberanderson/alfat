@@ -112,6 +112,7 @@ public class Parser  {
                     List<String> registers = new ArrayList<>();
                     List<TextWord> formattedString = new ArrayList<>();
                     boolean jump = false;
+                    boolean ret = false;
 
                     //  arrLine = {"LABEL:", "JGZ", "R1", "R2", "FINISH"}
                     for (String fragment : arrLine) {
@@ -159,6 +160,11 @@ public class Parser  {
                             // target label for the line.
                             targetLabel = fragment;
                             formattedString.add(new LabelWord(fragment, new Vector2f(0f, 0)));
+                            first = false;
+                        } else if (fragment.matches(syn.getKeywordPatterns().getProcedureend())) {
+                            ret = true;
+                            jump = true;
+                            formattedString.add(new BranchWord(fragment, new Vector2f(0f, 0)));
                             first = false;
                         } else if (first && fragment.matches(syn.getKeywordPatterns().getLabel())) {
                             //this is the (optional) label for the line
@@ -379,7 +385,13 @@ public class Parser  {
             if (line.isJumps()) {
                 if (verbose) System.out.println("Line jumps, box ended.");
                 flowchart.get(flowchart.size() - 1).jumps = true;
-                flowchart.get(flowchart.size() - 1).target = line.getTarget();
+                if (line.isReturns()) {
+                    // line returns
+                    flowchart.get(flowchart.size() - 1).setReturns(true);
+                } else {
+                    // line doesn't return; i.e. has a target label:
+                    flowchart.get(flowchart.size() - 1).target = line.getTarget();
+                }
 
                 flowchart.add(new FlowChartObject());
                 flowchart.get(flowchart.size() - 1).setStartLine(line.getLineNumber());
@@ -395,7 +407,7 @@ public class Parser  {
         for (FlowChartObject box : flowchart) {
             box.setBoxNumber(i);
             // If the box jumps, find where it targets and link them.
-            if (box.isJumps()) {
+            if (box.isJumps() && !box.isReturns()) {
                 if (verbose) System.out.println("Creating linkage for box " + box.label + " targeting " + box.target);
                 for (FlowChartObject candidate : flowchart) {
                     if (verbose) System.out.println(" -> Checking against box " + box.label);
@@ -426,7 +438,7 @@ public class Parser  {
                 n++;
                 System.out.println("─ " + box.getBoxNumber() + "\t──────────────────────────────────────────────────────────────────────────");
                 System.out.println(box.getFullText(true));
-                if (box.isJumps())
+                if (box.isJumps() && !box.isReturns())
                     System.out.println(" Target label: " + box.connection.label + " @ box " + box.connection.getBoxNumber());
                 else if (!box.alert.isEmpty()) System.out.println("┌╼ " + box.alert);
                 System.out.println("────────────────────────────────────────────────────────────────────────────────");
@@ -511,7 +523,7 @@ public class Parser  {
             // If jump, draw line to target box:
 
             if (index < flowchart.size()) {
-                if (flowchart.get(index).isJumps()) {
+                if (flowchart.get(index).isJumps() && !flowchart.get(index).isReturns()) {
                     if (verbose) {
                         System.out.println("Adding jumping line from box " + index + " to box " + (flowchart.get(index).connection.getBoxNumber()));
                         System.out.println(Math.min(index, flowchart.get(index).connection.getBoxNumber()) + " -> " + Math.max(index, flowchart.get(index).connection.getBoxNumber()));
