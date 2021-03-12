@@ -28,6 +28,7 @@ public class Parser  {
     boolean verbose; // final release should have this changed to false
     boolean openToTag = false;
     String targetFileTag = "";
+    String closingFileTag = "";
     private boolean invalidFlag = false; // invalid labels found in parsing? Highlight after flowchart generation
     ArrayList<FlowChartObject> flowchart = new ArrayList<>();
 
@@ -76,12 +77,16 @@ public class Parser  {
      *
      * @param infile The absolute or relative location of the file, as a string.
      */
-    public void ReadFile(String infile, boolean openToTag, String targetFileTag) {
+    public void ReadFile(String infile, boolean openToTag) {
         invalidFlag = false;
         this.openToTag = openToTag;
         boolean ready = !openToTag; // flag to start saving parsed info
+        boolean done = false;
         if (openToTag){
-            this.targetFileTag = "[ \t]*"+ targetFileTag + "\\b.*";
+            this.targetFileTag = "[ \t]*"+ GeneralSettings.PARTIAL_FILE_TAG_TARGET + "\\b.*";
+            if (!GeneralSettings.PARTIAL_FILE_TAG_ENDING.isBlank()) {
+                this.closingFileTag = "[ \t]*" + GeneralSettings.PARTIAL_FILE_TAG_ENDING + "\\b.*";
+            }
         }
         //prepare to read file:
         this.infile = infile;
@@ -96,7 +101,7 @@ public class Parser  {
                 if (!ready){
                     ready = line.matches(this.targetFileTag);
                 }
-                if (ready) {
+                if (ready && !done) {
                     // HERE
                     boolean first = true;
                     //parse line:
@@ -113,6 +118,7 @@ public class Parser  {
                     List<String> registers = new ArrayList<>();
                     List<TextWord> formattedString = new ArrayList<>();
                     boolean jump = false;
+                    boolean ret = false;
 
                     //  arrLine = {"LABEL:", "JGZ", "R1", "R2", "FINISH"}
                     for (String fragment : arrLine) {
@@ -161,6 +167,11 @@ public class Parser  {
                             targetLabel = fragment;
                             formattedString.add(new LabelWord(fragment, new Vector2f(0f, 0)));
                             first = false;
+                        } else if (fragment.matches(syn.getKeywordPatterns().getProcedureend())) {
+                            ret = true;
+                            jump = true;
+                            formattedString.add(new BranchWord(fragment, new Vector2f(0f, 0)));
+                            first = false;
                         } else if (first && fragment.matches(syn.getKeywordPatterns().getLabel())) {
                             //this is the (optional) label for the line
                             label = fragment;
@@ -199,9 +210,13 @@ public class Parser  {
                     }
 
                     //call constructor for TLine, then add the new object to the arraylist for the file
-                    lines.add(new CodeLine(line, comm, label, targetLabel, jump, registers, i));
-                    // Assign formatted text object to the new LC3Tline class
+                    lines.add(new CodeLine(line, comm, label, targetLabel, jump, registers, i, ret));
+                    // Assign formatted text object to the new Tline class
                     lines.get(lines.size() - 1).setTextLine(FormLine);
+                }
+                if (ready && !done && !closingFileTag.isBlank()) {
+                    // check if closing tag reached
+                    done = line.matches(this.closingFileTag);
                 }
             }
             br.close();
@@ -380,7 +395,13 @@ public class Parser  {
             if (line.isJumps()) {
                 if (verbose) System.out.println("Line jumps, box ended.");
                 flowchart.get(flowchart.size() - 1).jumps = true;
-                flowchart.get(flowchart.size() - 1).target = line.getTarget();
+                if (line.isReturns()) {
+                    // line returns
+                    flowchart.get(flowchart.size() - 1).setReturns(true);
+                } else {
+                    // line doesn't return; i.e. has a target label:
+                    flowchart.get(flowchart.size() - 1).target = line.getTarget();
+                }
 
                 flowchart.add(new FlowChartObject());
                 flowchart.get(flowchart.size() - 1).setStartLine(line.getLineNumber());
@@ -396,7 +417,7 @@ public class Parser  {
         for (FlowChartObject box : flowchart) {
             box.setBoxNumber(i);
             // If the box jumps, find where it targets and link them.
-            if (box.isJumps()) {
+            if (box.isJumps() && !box.isReturns()) {
                 if (verbose) System.out.println("Creating linkage for box " + box.label + " targeting " + box.target);
                 for (FlowChartObject candidate : flowchart) {
                     if (verbose) System.out.println(" -> Checking against box " + box.label);
@@ -427,7 +448,7 @@ public class Parser  {
                 n++;
                 System.out.println("─ " + box.getBoxNumber() + "\t──────────────────────────────────────────────────────────────────────────");
                 System.out.println(box.getFullText(true));
-                if (box.isJumps())
+                if (box.isJumps() && !box.isReturns())
                     System.out.println(" Target label: " + box.connection.label + " @ box " + box.connection.getBoxNumber());
                 else if (!box.alert.isEmpty()) System.out.println("┌╼ " + box.alert);
                 System.out.println("────────────────────────────────────────────────────────────────────────────────");
@@ -512,7 +533,7 @@ public class Parser  {
             // If jump, draw line to target box:
 
             if (index < flowchart.size()) {
-                if (flowchart.get(index).isJumps()) {
+                if (flowchart.get(index).isJumps() && !flowchart.get(index).isReturns()) {
                     if (verbose) {
                         System.out.println("Adding jumping line from box " + index + " to box " + (flowchart.get(index).connection.getBoxNumber()));
                         System.out.println(Math.min(index, flowchart.get(index).connection.getBoxNumber()) + " -> " + Math.max(index, flowchart.get(index).connection.getBoxNumber()));

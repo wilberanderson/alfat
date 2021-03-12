@@ -1,5 +1,7 @@
 package parser;
 
+import controllers.ApplicationController;
+import gui.Notifications.AppEvents;
 import gui.texts.EditableFormattedTextLine;
 import main.GeneralSettings;
 
@@ -37,7 +39,10 @@ public class ParserManager {
                 //Kill codeSyntax if any of the keyword patterns are invalid (are null)
                 if(codeSyntax.isKeywordsPatternsValid()) {
                     codeSyntax = null;
+                    ApplicationController.notification.setEvent(AppEvents.INVALID_SYNTAX_FILE);
                 }
+            } else {
+                ApplicationController.notification.setEvent(AppEvents.INVALID_SYNTAX_FILE);
             }
             GeneralSettings.IS_SYNTAX_PATH_CHANGED = false;
         }
@@ -49,7 +54,7 @@ public class ParserManager {
     private void setCodeSyntax(File filePathToJson) {
         this.codeSyntax = null;
         this.codeSyntax = JsonReader.mapJsonToCodeSyntax(filePathToJson);
-        System.out.println(this.codeSyntax); //To see to string of current syntax
+        //System.out.println(this.codeSyntax); //To see to string of current syntax
     }
 
     /**
@@ -63,8 +68,9 @@ public class ParserManager {
         if(codeSyntax != null) {
             result = true;
             parser.clear();
-            parser.ReadFile(filePath,false,"");
+            parser.ReadFile(filePath,false);
             parser.generateFlowObjects();
+            //parse fixed
         }
         return result;
     }
@@ -74,8 +80,9 @@ public class ParserManager {
         updateSyntaxIfNeeded();
         if(codeSyntax != null) {
             result = true;
+            GeneralSettings.PARTIAL_FILE_TAG_TARGET = targetFileTag;
             parser.clear();
-            parser.ReadFile(filePath,true, targetFileTag);
+            parser.ReadFile(filePath,true);
             parser.generateFlowObjects();
         }
         return result;
@@ -102,5 +109,10 @@ public class ParserManager {
         } else {
             return parser.getFormattedLineDefault(line);
         }
+    }
+
+    /**Returns true if syntax is valid, returns false if syntax is invalid*/
+    public boolean isSyntaxValid() {
+        return !(codeSyntax != null);
     }
 }

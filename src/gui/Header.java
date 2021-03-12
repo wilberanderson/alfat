@@ -3,7 +3,10 @@ package gui;
 import controllers.ApplicationController;
 import controllers.codeWindow.CodeWindowController;
 import controllers.gui.ButtonController;
-import gui.Settings.ReturnString;
+import gui.Notifications.AppEvents;
+import gui.Notifications.EventFileOpenFailure;
+import gui.Notifications.Notifications;
+import gui.Notifications.EventFileOpenSuccess;
 import gui.Settings.SettingsMenu;
 import gui.buttons.HeaderMenu;
 import gui.buttons.TextButton;
@@ -21,12 +24,10 @@ import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 import parser.GlobalParser;
 import parser.Parser;
-import parser.ParserManager;
 import rendering.renderEngine.MasterRenderer;
 import rendering.text.TextMaster;
 
 import javax.imageio.ImageIO;
-import javax.swing.*;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
@@ -47,12 +48,14 @@ public class Header {
     ApplicationController controller;
     GUIText notificationText;
 
+
     public Header(Vector2f position, Vector2f size, ApplicationController controller){
+        //Register Events
+
         menuList = new ArrayList<>();
         guiFilledBox = new GUIFilledBox(position, size, GeneralSettings.USERPREF.getHeaderColor3f());
         this.position = position;
         this.controller = controller;
-
         //Set up temp file manager
         //tfm = new TempFileManager(GeneralSettings.TEMP_DIR);
         tfm = new TempFileManager(GeneralSettings.USERPREF.getUserTempFileDirPath()); // Set to the last set user file path
@@ -195,10 +198,18 @@ public class Header {
         //Create the buttons
         List<TextButton> analyticsMenuButtonList = new ArrayList<>();
 
-        button = new TextButton("Partial Tag") {
+        button = new TextButton("Partial Tag Start") {
             @Override
             public void onPress() {
                 setPartialTag();
+            }
+        };
+        analyticsMenuButtonList.add(button);
+
+        button = new TextButton("Partial Tag End") {
+            @Override
+            public void onPress() {
+                setPartialTagClosing();
             }
         };
         analyticsMenuButtonList.add(button);
@@ -304,7 +315,6 @@ public class Header {
 
         // If the file exists, load it into the text editor.
         if (GeneralSettings.FILE_PATH != null){
-
             if (GeneralSettings.FILE_PATH.contains("/")){
                 windowTitle = "ALFAT – " + GeneralSettings.FILE_PATH.substring(GeneralSettings.FILE_PATH.lastIndexOf('/')+1);
                 GLFW.glfwSetWindowTitle(EngineTester.getWindow(), "ALFAT – " + GeneralSettings.FILE_PATH.substring(GeneralSettings.FILE_PATH.lastIndexOf('/')+1));
@@ -354,6 +364,13 @@ public class Header {
             if(GeneralSettings.USERPREF.getFullscreen() > 0) {
                 textEditorView();
             }
+            if(GlobalParser.PARSER_MANAGER.isSyntaxValid()) {
+                controller.notification.setEvent(AppEvents.INVALID_SYNTAX_FILE);
+            } else {
+                controller.notification.setEvent(AppEvents.OPEN_FILE);
+            }
+        }else {
+            controller.notification.setEvent(AppEvents.OPEN_FILE_FAIL);
         }
     }
     /**
@@ -730,7 +747,11 @@ public class Header {
      *
      */
     public void setPartialTag(){
-        PartialWindow partialDialogueWindow = new PartialWindow(controller);
+        PartialWindow partialDialogueWindow = new PartialWindow(controller, true);
+    }
+
+    public void setPartialTagClosing(){
+        PartialWindow partialDialogueWindow = new PartialWindow(controller, false);
     }
 
     public GUIText getNotificationText(){
@@ -741,6 +762,7 @@ public class Header {
         if(notificationText != null){
             TextMaster.removeGuiText(notificationText);
         }
+        //TODO let me change the color of the text for this!!!!
         notificationText = new GUIText(textString, GeneralSettings.FONT_SIZE, new Vector2f(0, 0), GeneralSettings.FONT);
         notificationText.setPosition(new Vector2f((float) (1/aspectRatio.x-notificationText.getLength()*2), this.getPosition().y/aspectRatio.y + GeneralSettings.FONT_HEIGHT));
     }

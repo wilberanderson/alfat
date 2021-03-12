@@ -132,6 +132,7 @@ public class GeneralSettings {
 	public static final int MAX_LINES = 1000;
 	public static boolean OPEN_PARTIAL_FILE = false;
 	public static String PARTIAL_FILE_TAG_TARGET = "";
+	public static String PARTIAL_FILE_TAG_ENDING = "";
 
 	//************************************************Text settings***********************************
 	public static final float FONT_SIZE = 1f;                                           //The default size for rendered text, individual texts may override this value

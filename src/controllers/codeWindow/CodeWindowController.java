@@ -19,6 +19,7 @@ import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
 import parser.GlobalParser;
 import parser.Parser;
+import parser.ParserManager;
 import utils.Printer;
 
 import java.text.Normalizer;
@@ -82,6 +83,7 @@ public class CodeWindowController {
         //Create a parser that is used for parsing each line
         //TODO: Make parser static and remove this. OK I DO IT :( U LIKE? :)
         //Parser parser = new Parser();
+
 
         //List that holds the lines that were added, used to prevent concurrent modification
         List<EditableFormattedTextLine> newLines = new ArrayList<>();

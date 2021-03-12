@@ -55,7 +55,7 @@ public class EngineTester {
     private void init(String[] args) {
 
         GeneralSettings.USERPREF = new UserPreferences();
-        GlobalParser.PARSER_MANAGER = new ParserManager();
+        //GlobalParser.PARSER_MANAGER = new ParserManager();
 
 
 
@@ -143,7 +143,7 @@ public class EngineTester {
         //************************************Initialize input*************************************
         applicationController = new ApplicationController();
         GLFWEventController.init(window, applicationController);
-
+        GlobalParser.PARSER_MANAGER = new ParserManager();
 
         // Set the clear color
         //GL11.glClearColor(GeneralSettings.base02.x, GeneralSettings.base02.y, GeneralSettings.base02.z, 1);

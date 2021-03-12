@@ -8,10 +8,18 @@
  LAB00CALL  ADD1
       IF    EAX    <    100                    LAB00
       DISPLYMSG_0
+
+      CALL  ADD1
       END   .MAIN
+
       
  ADD1 STPROC
       ADD   EAX   1
+      CALL  FOO
+      ENPROC
+
+ FOO  STPROC
+* DO SOMETHING
       ENPROC
 
  MSG_0STR   "Program done"
