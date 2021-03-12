@@ -501,6 +501,10 @@ public class Parser  {
             locations.add(textBox.getPosition());
             sizes.add(textBox.getSize());
         }
+        //All boxes have been added to the flowchart window, unload boxes which are initially off of the screen
+
+        flowchartWindowController.unloadFlowchartBoxes();
+
         // Pass flowchart boxes out:
 //        flowchartWindowController.setFlowChartTextBoxList(textBoxes);
 
