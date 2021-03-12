@@ -20,13 +20,20 @@ import utils.MyFile;
 public class PartialWindow extends GUIWindow{
     ApplicationController controller;
     private FontType analysisFont;
+    private boolean startingTag = true;
 
-    public PartialWindow(ApplicationController controller){
+    public PartialWindow(ApplicationController controller, boolean startingTag){
         super(400, 100);
+        this.startingTag = startingTag;
         int fontSize = 8;
         analysisFont = new FontType(Loader.loadTexture(new MyFile(GeneralSettings.DEFAULT_FONT_LOCATION + ".png")), new MyFile(GeneralSettings.DEFAULT_FONT_LOCATION + ".fnt"), 400, 100);
 
-        this.title("Set partial file target (empty/cancel for none)");
+        System.out.println(startingTag);
+        if (startingTag) {
+            this.title("Set starting tag (empty/cancel for none)");
+        } else {
+            this.title("Set closing tag (empty/cancel for none)");
+        }
         GLFW.glfwMakeContextCurrent(this.window);
         this.addElement(new GUIElement(new GUIText("Tag: ", fontSize, new Vector2f(-.95f, 0.8f), analysisFont)));
 //        this.elementList.get(0).g
@@ -65,8 +72,13 @@ public class PartialWindow extends GUIWindow{
 //        GLFW.glfwMakeContextCurrent(window);
         String text = elementList.get(elementList.size()-1).getGuiText().getTextString();
 //        GLFW.glfwMakeContextCurrent(EngineTester.getWindow());
-        GeneralSettings.PARTIAL_FILE_TAG_TARGET = text;
-        GeneralSettings.OPEN_PARTIAL_FILE = !text.isEmpty();
+        if (!startingTag){
+            GeneralSettings.PARTIAL_FILE_TAG_ENDING = text;
+        } else {
+            GeneralSettings.PARTIAL_FILE_TAG_TARGET = text;
+            // only toggle partial parsing if an opening tag is set:
+            GeneralSettings.OPEN_PARTIAL_FILE = !text.isEmpty();
+        }
         close();
     }
 }

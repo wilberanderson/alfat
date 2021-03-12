@@ -27,6 +27,7 @@ public class Parser  {
     boolean verbose; // final release should have this changed to false
     boolean openToTag = false;
     String targetFileTag = "";
+    String closingFileTag = "";
     private boolean invalidFlag = false; // invalid labels found in parsing? Highlight after flowchart generation
     ArrayList<FlowChartObject> flowchart = new ArrayList<>();
 
@@ -75,12 +76,16 @@ public class Parser  {
      *
      * @param infile The absolute or relative location of the file, as a string.
      */
-    public void ReadFile(String infile, boolean openToTag, String targetFileTag) {
+    public void ReadFile(String infile, boolean openToTag) {
         invalidFlag = false;
         this.openToTag = openToTag;
         boolean ready = !openToTag; // flag to start saving parsed info
+        boolean done = false;
         if (openToTag){
-            this.targetFileTag = "[ \t]*"+ targetFileTag + "\\b.*";
+            this.targetFileTag = "[ \t]*"+ GeneralSettings.PARTIAL_FILE_TAG_TARGET + "\\b.*";
+            if (!GeneralSettings.PARTIAL_FILE_TAG_ENDING.isBlank()) {
+                this.closingFileTag = "[ \t]*" + GeneralSettings.PARTIAL_FILE_TAG_ENDING + "\\b.*";
+            }
         }
         //prepare to read file:
         this.infile = infile;
@@ -95,7 +100,7 @@ public class Parser  {
                 if (!ready){
                     ready = line.matches(this.targetFileTag);
                 }
-                if (ready) {
+                if (ready && !done) {
                     // HERE
                     boolean first = true;
                     //parse line:
@@ -201,6 +206,10 @@ public class Parser  {
                     lines.add(new CodeLine(line, comm, label, targetLabel, jump, registers, i));
                     // Assign formatted text object to the new LC3Tline class
                     lines.get(lines.size() - 1).setTextLine(FormLine);
+                }
+                if (ready && !done && !closingFileTag.isBlank()) {
+                    // check if closing tag reached
+                    done = line.matches(this.closingFileTag);
                 }
             }
             br.close();

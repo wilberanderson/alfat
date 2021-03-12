@@ -238,8 +238,12 @@ public class ApplicationController {
         }
         //**********************Analysis shortcuts**********
         if(key == GLFW_KEY_I){
+            if (shift){
+                header.setPartialTagClosing();
+            }
             header.setPartialTag();
         }
+
 
         if(key == GLFW_KEY_L){
             if(alt){

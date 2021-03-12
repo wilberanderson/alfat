@@ -57,7 +57,7 @@ public class ParserManager {
         if(codeSyntax != null) {
             result = true;
             parser.clear();
-            parser.ReadFile(filePath,false,"");
+            parser.ReadFile(filePath,false);
             parser.generateFlowObjects();
         }
         return result;
@@ -68,8 +68,9 @@ public class ParserManager {
         updateSyntaxIfNeeded();
         if(codeSyntax != null) {
             result = true;
+            GeneralSettings.PARTIAL_FILE_TAG_TARGET = targetFileTag;
             parser.clear();
-            parser.ReadFile(filePath,true, targetFileTag);
+            parser.ReadFile(filePath,true);
             parser.generateFlowObjects();
         }
         return result;

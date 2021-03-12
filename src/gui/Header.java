@@ -192,10 +192,18 @@ public class Header {
         //Create the buttons
         List<TextButton> analyticsMenuButtonList = new ArrayList<>();
 
-        button = new TextButton("Partial Tag") {
+        button = new TextButton("Partial Tag Start") {
             @Override
             public void onPress() {
                 setPartialTag();
+            }
+        };
+        analyticsMenuButtonList.add(button);
+
+        button = new TextButton("Partial Tag End") {
+            @Override
+            public void onPress() {
+                setPartialTagClosing();
             }
         };
         analyticsMenuButtonList.add(button);
@@ -719,6 +727,10 @@ public class Header {
      *
      */
     public void setPartialTag(){
-        PartialWindow partialDialogueWindow = new PartialWindow(controller);
+        PartialWindow partialDialogueWindow = new PartialWindow(controller, true);
+    }
+
+    public void setPartialTagClosing(){
+        PartialWindow partialDialogueWindow = new PartialWindow(controller, false);
     }
 }
