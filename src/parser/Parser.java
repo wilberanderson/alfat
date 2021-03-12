@@ -62,13 +62,13 @@ public class Parser  {
     }
 
     public Parser(boolean verbose, boolean openToTag) {
-        this.verbose = verbose;
+        this.verbose = true;
         this.openToTag = openToTag;
     }
 
     public Parser(){
         //default constructor, only use for helper functions.
-        this.verbose = false;
+        this.verbose = true;
     }
 
     /**Read an input file. Parse the input file line by line, and store them in the arrayList of CodeLine objects.
@@ -198,8 +198,8 @@ public class Parser  {
                     }
 
                     //call constructor for TLine, then add the new object to the arraylist for the file
-                    lines.add(new CodeLine(line, comm, label, targetLabel, jump, registers, i));
-                    // Assign formatted text object to the new LC3Tline class
+                    lines.add(new CodeLine(line, comm, label, targetLabel, jump, registers, i, ret));
+                    // Assign formatted text object to the new Tline class
                     lines.get(lines.size() - 1).setTextLine(FormLine);
                 }
             }

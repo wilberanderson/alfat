@@ -1,16 +1,10 @@
 package parser;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-@JsonInclude(JsonInclude.Include.NON_ABSENT)
 public class KeywordPatterns {
-    @JsonInclude
+    private String procedurestart;
+    private String procedureend;
     private String control;
-    @JsonInclude
     private String reserved;
-    @JsonInclude
     private String arithmetic;
     private String dataMovement;
     private String register;
@@ -22,7 +16,6 @@ public class KeywordPatterns {
     private String doubleQuotedString;
     private String emptySpace;
     private String label;
-    @JsonInclude
     private String comment;
 
 
@@ -138,10 +131,28 @@ public class KeywordPatterns {
         this.comment = comment;
     }
 
+    public String getProcedurestart() {
+        return procedurestart;
+    }
+
+    public void setProcedurestart(String procedurestart) {
+        this.procedurestart = procedurestart;
+    }
+
+    public String getProcedureend() {
+        return procedureend;
+    }
+
+    public void setProcedureend(String procedureend) {
+        this.procedureend = procedureend;
+    }
+
     @Override
     public String toString() {
         return "KeywordPatterns{" +
-                "control='" + control + '\'' +
+                "procedurestart='" + procedurestart + '\'' +
+                ", procedurecend='" + procedureend + '\'' +
+                ", control='" + control + '\'' +
                 ", reserved='" + reserved + '\'' +
                 ", arithmetic='" + arithmetic + '\'' +
                 ", dataMovement='" + dataMovement + '\'' +

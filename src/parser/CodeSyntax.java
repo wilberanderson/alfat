@@ -47,6 +47,8 @@ public class CodeSyntax {
 
    public boolean isKeywordsPatternsValid() {
         boolean result = false;
+        result = checkNotNull(keywordPatterns.getProcedurestart());
+        result = checkNotNull(keywordPatterns.getProcedureend());
         result = checkNotNull(keywordPatterns.getControl());
         result = checkNotNull(keywordPatterns.getRegister());
         result = checkNotNull(keywordPatterns.getArithmetic());
