@@ -63,13 +63,13 @@ public class Parser  {
     }
 
     public Parser(boolean verbose, boolean openToTag) {
-        this.verbose = true;
+        this.verbose = verbose;
         this.openToTag = openToTag;
     }
 
     public Parser(){
         //default constructor, only use for helper functions.
-        this.verbose = true;
+        this.verbose = false;
     }
 
     /**Read an input file. Parse the input file line by line, and store them in the arrayList of CodeLine objects.

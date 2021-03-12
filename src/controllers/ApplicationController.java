@@ -6,6 +6,7 @@ import controllers.flowchartWindow.FlowchartWindowController;
 import controllers.gui.ButtonController;
 import gui.Header;
 import gui.Mouse;
+import gui.Notifications.Notifications;
 import gui.buttons.HeaderMenu;
 import gui.texts.*;
 import main.EngineTester;
@@ -32,12 +33,15 @@ public class ApplicationController {
     private static HeaderMenu openMenu = null;
     private static Header header;
     private static Vector2f aspectRatio = new Vector2f(1, 1);
+
     private boolean hoveringBoundary = false;
     private boolean draggingBoundary = false;
+
 
     //Permanent variables
     CodeWindowController codeWindowController;
     FlowchartWindowController flowchartWindowController;
+    public static Notifications notification = new Notifications();
 
     public TextLineController getTextLineController() {
         return textLineController;
@@ -382,8 +386,8 @@ public class ApplicationController {
         }
     }
 
-
-    public Header getHeader(){
+    //TODO: Make sure it's ok to make this static...
+    public static Header getHeader(){
         return header;
     }
 

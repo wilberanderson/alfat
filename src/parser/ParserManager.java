@@ -1,5 +1,7 @@
 package parser;
 
+import controllers.ApplicationController;
+import gui.Notifications.AppEvents;
 import gui.texts.EditableFormattedTextLine;
 import main.GeneralSettings;
 
@@ -37,7 +39,10 @@ public class ParserManager {
                 //Kill codeSyntax if any of the keyword patterns are invalid (are null)
                 if(codeSyntax.isKeywordsPatternsValid()) {
                     codeSyntax = null;
+                    ApplicationController.notification.setEvent(AppEvents.INVALID_SYNTAX_FILE);
                 }
+            } else {
+                ApplicationController.notification.setEvent(AppEvents.INVALID_SYNTAX_FILE);
             }
             GeneralSettings.IS_SYNTAX_PATH_CHANGED = false;
         }
@@ -104,5 +109,10 @@ public class ParserManager {
         } else {
             return parser.getFormattedLineDefault(line);
         }
+    }
+
+    /**Returns true if syntax is valid, returns false if syntax is invalid*/
+    public boolean isSyntaxValid() {
+        return !(codeSyntax != null);
     }
 }

@@ -51,6 +51,10 @@ public class GUIText extends Text{
         return color;
     }
 
+    public void setColor(Vector3f color) {
+        this.color = color;
+    }
+
     public FontType getFont(){
         return font;
     }
