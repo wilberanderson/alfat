@@ -33,6 +33,7 @@ public class FlowchartWindowController {
             0, 0,
             0, -1
     };
+    Vector2f mousePosition;
     
     public FlowchartWindowController(TextLineController textLineController){
         flowchartWindow = new FlowchartWindow();
@@ -59,9 +60,41 @@ public class FlowchartWindowController {
         flowchartWindow.getZoomTranslateMatrix().m11 = flowchartWindow.getZoom();
 
         //Modify the translations saved in the zoom translate matrix by zoom
-        flowchartWindow.getZoomTranslateMatrix().m20 = flowchartWindow.getZoomTranslateMatrix().m20 * flowchartWindow.getZoom() / oldZoom;
-        flowchartWindow.getZoomTranslateMatrix().m21 = flowchartWindow.getZoomTranslateMatrix().m21 * flowchartWindow.getZoom() / oldZoom;
+//        flowchartWindow.getZoomTranslateMatrix().m20 = flowchartWindow.getZoomTranslateMatrix().m20 * flowchartWindow.getZoom() / oldZoom;
+//        flowchartWindow.getZoomTranslateMatrix().m21 = flowchartWindow.getZoomTranslateMatrix().m21 * flowchartWindow.getZoom() / oldZoom;
 
+        Printer.print(oldZoom);
+//        flowchartWindow.getZoomTranslateMatrix().m20 = flowchartWindow.getZoomTranslateMatrix().m20 + (mousePosition.x*oldZoom - (mousePosition.x * flowchartWindow.getZoom()));
+//        flowchartWindow.getZoomTranslateMatrix().m20 = flowchartWindow.getZoomTranslateMatrix().m20 - (mousePosition.x / oldZoom);
+//        flowchartWindow.getZoomTranslateMatrix().m20 = flowchartWindow.getZoomTranslateMatrix().m20 + mousePosition.x
+//        flowchartWindow.getZoomTranslateMatrix().m20 = flowchartWindow.getZoomTranslateMatrix().m20 * flowchartWindow.getZoom() / flowchartWindow.getZoom();
+//        flowchartWindow.getZoomTranslateMatrix().m20 = flowchartWindow.getZoomTranslateMatrix().m20 - (mousePosition.x / oldZoom);
+
+//        flowchartWindow.getZoomTranslateMatrix().m21 = flowchartWindow.getZoomTranslateMatrix().m21 - (mousePosition.y / oldZoom);
+//        flowchartWindow.getZoomTranslateMatrix().m21 = flowchartWindow.getZoomTranslateMatrix().m21 * flowchartWindow.getZoom() / oldZoom;
+//        flowchartWindow.getZoomTranslateMatrix().m21 = flowchartWindow.getZoomTranslateMatrix().m21 - (mousePosition.y / flowchartWindow.getZoom());
+//        Printer.print(mousePosition);
+//        Printer.print(getZoomTranslateMatrix());
+//        Vector2f relativeMousePosition = new Vector2f();
+//        relativeMousePosition.x = (mousePosition.x+1) * oldZoom;
+//        relativeMousePosition.y = (mousePosition.y+1) * oldZoom;
+//        Printer.print(relativeMousePosition);
+//        Vector2f absoluteMousePosition = new Vector2f();
+//        absoluteMousePosition.x = relativeMousePosition.x - flowchartWindow.getZoomTranslateMatrix().m20;// + relativeMousePosition.x;
+//        absoluteMousePosition.y = relativeMousePosition.y - flowchartWindow.getZoomTranslateMatrix().m21;// + relativeMousePosition.y;
+        Vector2f absoluteMousePosition = new Vector2f(((mousePosition.x/flowchartWindow.getAspectRatio().m00 - flowchartWindow.getZoomTranslateMatrix().m20)/flowchartWindow.getZoomTranslateMatrix().m00), (mousePosition.y/flowchartWindow.getAspectRatio().m11 - flowchartWindow.getZoomTranslateMatrix().m21)/flowchartWindow.getZoomTranslateMatrix().m11);
+        Printer.print(absoluteMousePosition);
+//        flowchartWindow.getZoomTranslateMatrix().m20 = absoluteMousePosition.x - relativeMousePosition.x / oldZoom * flowchartWindow.getZoom();
+//        flowchartWindow.getZoomTranslateMatrix().m21 = absoluteMousePosition.y - relativeMousePosition.y / oldZoom * flowchartWindow.getZoom();
+        Printer.print(flowchartWindow.getZoomTranslateMatrix());
+//        flowchartWindow.getZoomTranslateMatrix().m21 = flowchartWindow.getZoomTranslateMatrix().m21 + (mousePosition.y*oldZoom - (mousePosition.y * flowchartWindow.getZoom()));
+
+//        flowchartWindow.getZoomTranslateMatrix().m20 = flowchartWindow.getZoomTranslateMatrix().m20 * flowchartWindow.getZoom() / oldZoom;
+//        flowchartWindow.getZoomTranslateMatrix().m20 = (flowchartWindow.getZoomTranslateMatrix().m20 - mousePosition.x);
+//        flowchartWindow.getZoomTranslateMatrix().m21 = (flowchartWindow.getZoomTranslateMatrix().m21 - mousePosition.y);
+//        flowchartWindow.getZoomTranslateMatrix().m21 = flowchartWindow.getZoomTranslateMatrix().m21 * flowchartWindow.getZoom() / oldZoom;
+//        flowchartWindow.getZoomTranslateMatrix().m20 = (flowchartWindow.getZoomTranslateMatrix().m20 + mousePosition.x/flowchartWindow.getZoom());
+//        flowchartWindow.getZoomTranslateMatrix().m21 = (flowchartWindow.getZoomTranslateMatrix().m21 + mousePosition.y/flowchartWindow.getZoom());
         unloadFlowchartBoxes();
     }
 
@@ -288,6 +321,7 @@ public class FlowchartWindowController {
         if(xPos > getPosition().x && yPos > getPosition().y && xPos < getPosition().x + getSize().x && yPos < getPosition().y + getSize().y){
             Mouse.setHand();
         }
+        mousePosition = new Vector2f((float)xPos, (float)yPos);
     }
 
     public void unloadFlowchartBoxes(){

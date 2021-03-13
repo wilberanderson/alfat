@@ -623,14 +623,14 @@ public class CodeWindowController {
         if(textLineController.getCodeWindowTextLines().get(startIndex).getPosition().y > 1.1f){
 //            //Unload the lines at the top
             EditableFormattedTextLine line = textLineController.getCodeWindowTextLines().get(startIndex);
-            while(line.getPosition().y > 1.1f){
+            while(line.getPosition().y*aspectRatio.y > 1.1f){
                 textLineController.unloadText(line, contentsVerticalPosition);
                 startIndex++;
                 line = textLineController.getCodeWindowTextLines().get(startIndex);
             }
             //Load lines at the bottom
             line = textLineController.getCodeWindowTextLines().get(endIndex);
-            while(line.getPosition().y > -1.1f && endIndex < textLineController.getCodeWindowTextLines().size() - 1){
+            while(line.getPosition().y*aspectRatio.y > -1.1f && endIndex < textLineController.getCodeWindowTextLines().size() - 1){
                 textLineController.loadText(line, contentsVerticalPosition);
                 endIndex++;
                 line = textLineController.getCodeWindowTextLines().get(endIndex);
@@ -644,7 +644,7 @@ public class CodeWindowController {
         else{
             //Load the lines at the top
             EditableFormattedTextLine line = textLineController.getCodeWindowTextLines().get(startIndex);
-            while(line.getPosition().y < 1.1f && startIndex >= 0){
+            while(line.getPosition().y*aspectRatio.y < 1.1f && startIndex >= 0){
                 line = textLineController.getCodeWindowTextLines().get(startIndex);
                 textLineController.loadText(line, contentsVerticalPosition);
                 startIndex--;
@@ -655,7 +655,7 @@ public class CodeWindowController {
             }
             //Unload lines at the bottom
             line = textLineController.getCodeWindowTextLines().get(endIndex);
-            while(line.getPosition().y < -1.1f){
+            while(line.getPosition().y*aspectRatio.y < -1.1f){
                 textLineController.unloadText(line, contentsVerticalPosition);
                 endIndex--;
                 line = textLineController.getCodeWindowTextLines().get(endIndex);
