@@ -17,6 +17,7 @@ public class KeywordPatterns {
     private String emptySpace;
     private String label;
     private String comment;
+    private String separator;
 
 
     public String getControl() {
@@ -147,11 +148,19 @@ public class KeywordPatterns {
         this.procedureend = procedureend;
     }
 
+    public String getSeparator() {
+        return separator;
+    }
+
+    public void setSeparator(String separator) {
+        this.separator = separator;
+    }
+
     @Override
     public String toString() {
         return "KeywordPatterns{" +
                 "procedurestart='" + procedurestart + '\'' +
-                ", procedurecend='" + procedureend + '\'' +
+                ", procedureend='" + procedureend + '\'' +
                 ", control='" + control + '\'' +
                 ", reserved='" + reserved + '\'' +
                 ", arithmetic='" + arithmetic + '\'' +
@@ -166,6 +175,7 @@ public class KeywordPatterns {
                 ", emptySpace='" + emptySpace + '\'' +
                 ", label='" + label + '\'' +
                 ", comment='" + comment + '\'' +
+                ", separator='" + separator + '\'' +
                 '}';
     }
 }
