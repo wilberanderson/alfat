@@ -37,6 +37,7 @@ public class SettingsMenu extends Component {
     //GUI Height Defaults
     private int GUI_WIDTH = 800;
     private int GUI_HEIGHT = 500;
+
     private int GUI_JSP_PADDING = 150;
 
 

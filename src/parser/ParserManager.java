@@ -12,6 +12,7 @@ public class ParserManager {
 
     private  Parser parser;
 
+
     private  CodeSyntax codeSyntax;
 
 
@@ -37,7 +38,7 @@ public class ParserManager {
             if(codeSyntax != null) {
                 parser.setCodeSyntax(codeSyntax);
                 //Kill codeSyntax if any of the keyword patterns are invalid (are null)
-                if(codeSyntax.isKeywordsPatternsValid()) {
+                if(codeSyntax.isKeywordsPatternsValid() == false) {
                     codeSyntax = null;
                     ApplicationController.notification.setEvent(AppEvents.INVALID_SYNTAX_FILE);
                 }
