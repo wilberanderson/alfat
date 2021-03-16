@@ -60,6 +60,7 @@ public class CodeWindowController {
     int startIndex = 0;
     int endIndex;
 
+
     public CodeWindowController(Vector2f position, Vector2f size, Vector3f backgroundColor, Vector3f textColor, Vector3f borderColor, String content, FontType font, float fontSize, float thickness, float borderWidth, float border, float headerHeight, TextLineController textLineController){
         this.textLineController = textLineController;
         this.codeWindow = new CodeWindow();
@@ -452,8 +453,8 @@ public class CodeWindowController {
 //    }
     public void changeContentsVerticalPosition(float change){
         //Update each line
-        for(FormattedTextLine text : textLineController.getCodeWindowTextLines()){
-            text.changeVerticalPosition(change);
+        for(FormattedTextLine text : textLineController.getCodeWindowTextLines()) {
+//            text.changeVerticalPosition(change);
         }
         //Update the saved position
         contentsVerticalPosition += change;
@@ -468,7 +469,7 @@ public class CodeWindowController {
     public void changeContentsHorizontalPosition(float change, float factor){
         //Update each line
         for(EditableFormattedTextLine text : textLineController.getCodeWindowTextLines()){
-            text.changeContentsHorizontalPosition(change, true);
+//            text.changeContentsHorizontalPosition(change, true);
         }
         //Update the horizontal scroll bar
         horizontalScrollBar.changePosition(change*factor);
@@ -620,17 +621,17 @@ public class CodeWindowController {
 
     public void unloadTexts(){
         //If the first line is above the screen then lines need to be unloaded at the top and loaded at the bottom
-        if(textLineController.getCodeWindowTextLines().get(startIndex).getPosition().y > 1.1f){
+        if(textLineController.getCodeWindowTextLines().get(startIndex).getPosition().y*aspectRatio.y + contentsVerticalPosition > 1.1f){
 //            //Unload the lines at the top
             EditableFormattedTextLine line = textLineController.getCodeWindowTextLines().get(startIndex);
-            while(line.getPosition().y*aspectRatio.y > 1.1f){
+            while(line.getPosition().y*aspectRatio.y + contentsVerticalPosition > 1.1f){
                 textLineController.unloadText(line, contentsVerticalPosition);
                 startIndex++;
                 line = textLineController.getCodeWindowTextLines().get(startIndex);
             }
             //Load lines at the bottom
             line = textLineController.getCodeWindowTextLines().get(endIndex);
-            while(line.getPosition().y*aspectRatio.y > -1.1f && endIndex < textLineController.getCodeWindowTextLines().size() - 1){
+            while(line.getPosition().y*aspectRatio.y + contentsVerticalPosition > -1.1f && endIndex < textLineController.getCodeWindowTextLines().size() - 1){
                 textLineController.loadText(line, contentsVerticalPosition);
                 endIndex++;
                 line = textLineController.getCodeWindowTextLines().get(endIndex);
@@ -644,7 +645,7 @@ public class CodeWindowController {
         else{
             //Load the lines at the top
             EditableFormattedTextLine line = textLineController.getCodeWindowTextLines().get(startIndex);
-            while(line.getPosition().y*aspectRatio.y < 1.1f && startIndex >= 0){
+            while(line.getPosition().y*aspectRatio.y + contentsVerticalPosition < 1.1f && startIndex >= 0){
                 line = textLineController.getCodeWindowTextLines().get(startIndex);
                 textLineController.loadText(line, contentsVerticalPosition);
                 startIndex--;
@@ -655,7 +656,7 @@ public class CodeWindowController {
             }
             //Unload lines at the bottom
             line = textLineController.getCodeWindowTextLines().get(endIndex);
-            while(line.getPosition().y*aspectRatio.y < -1.1f){
+            while(line.getPosition().y*aspectRatio.y + contentsVerticalPosition < -1.1f){
                 textLineController.unloadText(line, contentsVerticalPosition);
                 endIndex--;
                 line = textLineController.getCodeWindowTextLines().get(endIndex);
@@ -669,6 +670,14 @@ public class CodeWindowController {
 //                textLineController.loadText(textLine);
 //            }
 //        }
+    }
+
+    public float getContentsVerticalPosition(){
+        return contentsVerticalPosition;
+    }
+
+    public float getContentsHorizontalPosition(){
+        return contentsHorizontalPosition;
     }
 
 }
