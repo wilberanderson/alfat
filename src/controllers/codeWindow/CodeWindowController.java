@@ -60,12 +60,15 @@ public class CodeWindowController {
     int startIndex = 0;
     int endIndex;
 
+    private float defaultHeight;
+
 
     public CodeWindowController(Vector2f position, Vector2f size, Vector3f backgroundColor, Vector3f textColor, Vector3f borderColor, String content, FontType font, float fontSize, float thickness, float borderWidth, float border, float headerHeight, TextLineController textLineController){
         this.textLineController = textLineController;
         this.codeWindow = new CodeWindow();
         this.codeWindow.setPosition(position);
         this.codeWindow.setSize(size);
+        defaultHeight = size.y;
         this.codeWindow.setBackgroundColor(backgroundColor);
         this.codeWindow.setBorderColor(borderColor);
         this.padding = border;
@@ -180,27 +183,28 @@ public class CodeWindowController {
         codeWindow.getGuiFilledBox().setPosition(new Vector2f(lineNumberWidth-1, -1));
         codeWindow.getGuiFilledBox().setSize(new Vector2f(codeWindow.getSize().x-lineNumberWidth, height));
 
-        //TODO: Fix this to actually change the position to appear the same
-        contentsVerticalPosition = 0;
-        contentsHorizontalPosition = 0;
+        //Set the vertical and horizontal contents with the position adjustment needed for position to appear properly
+        //TODO: Fix this to change the position to appear the same as it was before resizing(the 0 term)
+        contentsVerticalPosition = 0+(height/aspectRatio.y-height)/2;
+        contentsHorizontalPosition = 0+((1)/aspectRatio.x - (1));
 
         //The texts start at the top of the window
-        float startingHeight = codeWindow.getSize().y - 1;
-        startingHeight /= aspectRatio.y;
+//        float startingHeight = codeWindow.getSize().y - 1;
+//        startingHeight /= aspectRatio.y;
 
         //For each text
-        for(EditableFormattedTextLine line:textLineController.getCodeWindowTextLines()){
-            //Change the horizontal position based on the change to the line number size
-            line.changeContentsHorizontalPosition(-EditableFormattedTextLine.getLineNumberOffset(), true);
-
-            //Set the position
-            line.setPosition(new Vector2f((codeWindow.getPosition().x+padding*4f)/aspectRatio.x, startingHeight), true);//+contentsVerticalPosition));
-            line.getWords()[0].getPosition().x =(-1 + padding)/aspectRatio.x;
-
-            //Reset contents horizontal position
-            line.changeContentsHorizontalPosition(EditableFormattedTextLine.getLineNumberOffset(), true);
-            startingHeight -= GeneralSettings.FONT_HEIGHT;
-        }
+//        for(EditableFormattedTextLine line:textLineController.getCodeWindowTextLines()){
+//            //Change the horizontal position based on the change to the line number size
+//            line.changeContentsHorizontalPosition(-EditableFormattedTextLine.getLineNumberOffset(), true);
+//
+//            //Set the position
+//            line.setPosition(new Vector2f((codeWindow.getPosition().x+padding*4f)/aspectRatio.x, startingHeight), true);//+contentsVerticalPosition));
+//            line.getWords()[0].getPosition().x =(-1 + padding)/aspectRatio.x;
+//
+//            //Reset contents horizontal position
+//            line.changeContentsHorizontalPosition(EditableFormattedTextLine.getLineNumberOffset(), true);
+//            startingHeight -= GeneralSettings.FONT_HEIGHT;
+//        }
 
         //Save the aspect ratio for future changes
         this.aspectRatio = new Vector2f(aspectRatio);
@@ -621,17 +625,17 @@ public class CodeWindowController {
 
     public void unloadTexts(){
         //If the first line is above the screen then lines need to be unloaded at the top and loaded at the bottom
-        if(textLineController.getCodeWindowTextLines().get(startIndex).getPosition().y*aspectRatio.y + contentsVerticalPosition > 1.1f){
+        if(textLineController.getCodeWindowTextLines().get(startIndex).getPosition().y + contentsVerticalPosition > 1.1f/aspectRatio.y){
 //            //Unload the lines at the top
             EditableFormattedTextLine line = textLineController.getCodeWindowTextLines().get(startIndex);
-            while(line.getPosition().y*aspectRatio.y + contentsVerticalPosition > 1.1f){
+            while(line.getPosition().y + contentsVerticalPosition > 1.1f/aspectRatio.y){
                 textLineController.unloadText(line, contentsVerticalPosition);
                 startIndex++;
                 line = textLineController.getCodeWindowTextLines().get(startIndex);
             }
             //Load lines at the bottom
             line = textLineController.getCodeWindowTextLines().get(endIndex);
-            while(line.getPosition().y*aspectRatio.y + contentsVerticalPosition > -1.1f && endIndex < textLineController.getCodeWindowTextLines().size() - 1){
+            while(line.getPosition().y + contentsVerticalPosition > -1.1f/aspectRatio.y && endIndex < textLineController.getCodeWindowTextLines().size() - 1){
                 textLineController.loadText(line, contentsVerticalPosition);
                 endIndex++;
                 line = textLineController.getCodeWindowTextLines().get(endIndex);
@@ -645,7 +649,7 @@ public class CodeWindowController {
         else{
             //Load the lines at the top
             EditableFormattedTextLine line = textLineController.getCodeWindowTextLines().get(startIndex);
-            while(line.getPosition().y*aspectRatio.y + contentsVerticalPosition < 1.1f && startIndex >= 0){
+            while(line.getPosition().y + contentsVerticalPosition < 1.1f/aspectRatio.y && startIndex >= 0){
                 line = textLineController.getCodeWindowTextLines().get(startIndex);
                 textLineController.loadText(line, contentsVerticalPosition);
                 startIndex--;
@@ -656,7 +660,7 @@ public class CodeWindowController {
             }
             //Unload lines at the bottom
             line = textLineController.getCodeWindowTextLines().get(endIndex);
-            while(line.getPosition().y*aspectRatio.y + contentsVerticalPosition < -1.1f){
+            while(line.getPosition().y + contentsVerticalPosition < -1.1f/aspectRatio.y){
                 textLineController.unloadText(line, contentsVerticalPosition);
                 endIndex--;
                 line = textLineController.getCodeWindowTextLines().get(endIndex);
@@ -678,6 +682,10 @@ public class CodeWindowController {
 
     public float getContentsHorizontalPosition(){
         return contentsHorizontalPosition;
+    }
+
+    public float getDefaultHeight(){
+        return defaultHeight;
     }
 
 }
