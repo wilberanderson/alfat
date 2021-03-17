@@ -37,9 +37,11 @@ public class CodeWindowController {
 
     private float contentsVerticalPosition = 0;
     private float maxVerticalPosition;
+    private float minVerticalPosition;
 
     private float contentsHorizontalPosition = 0;
     private float maxHorizontalPosition;
+    private float minHorizontalPosition;
 
     private float padding;
     private boolean scrollable = false;
@@ -84,11 +86,6 @@ public class CodeWindowController {
         //The length of the longest line number will be needed later
         float longestLineNumber = 0;
 
-        //Create a parser that is used for parsing each line
-        //TODO: Make parser static and remove this. OK I DO IT :( U LIKE? :)
-        //Parser parser = new Parser();
-
-
         //List that holds the lines that were added, used to prevent concurrent modification
         List<EditableFormattedTextLine> newLines = new ArrayList<>();
 
@@ -120,7 +117,7 @@ public class CodeWindowController {
         //If a line was added
         if(newLines.size() > 0){
             //Set them each to use a line number offset based on the longest line number found
-            newLines.get(0).setLineNumberOffset(longestLineNumber/2 + padding);
+            newLines.get(0).setLineNumberOffset(longestLineNumber + padding);
             //Add each line
             for(EditableFormattedTextLine textLine : newLines){
                 textLineController.addCodeWindowTextLine(textLine, -1);
@@ -174,7 +171,7 @@ public class CodeWindowController {
         maxVerticalPosition -= codeWindow.getSize().y/aspectRatio.y;
 
         //Calculate new max horizontal position
-        maxHorizontalPosition = maxHorizontalPosition - codeWindow.getTextNumberFilledBox().getSize().x;
+        maxHorizontalPosition = maxHorizontalPosition - codeWindow.getTextNumberFilledBox().getSize().x - minHorizontalPosition;
         maxHorizontalPosition *= aspectRatio.x;
         maxHorizontalPosition += lineNumberWidth;
 
@@ -183,10 +180,21 @@ public class CodeWindowController {
         codeWindow.getGuiFilledBox().setPosition(new Vector2f(lineNumberWidth-1, -1));
         codeWindow.getGuiFilledBox().setSize(new Vector2f(codeWindow.getSize().x-lineNumberWidth, height));
 
+        //Calculate the minimum scroll positions
+        minVerticalPosition = (height/aspectRatio.y-height)/2;
+        minHorizontalPosition = 1/aspectRatio.x - 1;            //1 is used rather than the current width to prevent text position being based on the width of the text editor
+
+        //Adjust the max positions by the min positions
+        maxHorizontalPosition += minHorizontalPosition;
+        maxVerticalPosition += minVerticalPosition;
+
         //Set the vertical and horizontal contents with the position adjustment needed for position to appear properly
         //TODO: Fix this to change the position to appear the same as it was before resizing(the 0 term)
-        contentsVerticalPosition = 0+(height/aspectRatio.y-height)/2;
-        contentsHorizontalPosition = 0+((1)/aspectRatio.x - (1));
+        contentsVerticalPosition = 0+minVerticalPosition;
+        contentsHorizontalPosition = 0+minHorizontalPosition;
+
+        Printer.print(contentsVerticalPosition);
+        Printer.print(contentsHorizontalPosition);
 
         //The texts start at the top of the window
 //        float startingHeight = codeWindow.getSize().y - 1;
@@ -226,12 +234,12 @@ public class CodeWindowController {
     public void scroll(float scrollChange){
         if(scrollChange != 0) {
             //If the contents are larger than the window
-            if (maxVerticalPosition > codeWindow.getSize().y) {
+            if (maxVerticalPosition - minVerticalPosition > codeWindow.getSize().y) {
                 float newPosition = contentsVerticalPosition + scrollChange;
                 //Update the position of the contents, cursor, and scroll bar
                 //If the position would be negative change position so it would be 0 instead
-                if (newPosition < 0) {
-                    changeContentsVerticalPosition(-contentsVerticalPosition);
+                if (newPosition < minVerticalPosition) {
+                    changeContentsVerticalPosition(minVerticalPosition-contentsVerticalPosition);
                     cursorController.scroll();
                 }
                 //If the position would be greater than max make it so it will be max instead
@@ -258,11 +266,11 @@ public class CodeWindowController {
     public void scrollHorizontal(float scrollChange, float factor){
         if(scrollChange != 0) {
             //If the contents are larger than the window
-            if (maxHorizontalPosition > codeWindow.getSize().x) {
+            if (maxHorizontalPosition - minHorizontalPosition > codeWindow.getSize().x) {
                 float newPosition = contentsHorizontalPosition + scrollChange;
                 //If the position would be negative change position so it would be 0 instead
-                if (newPosition < 0) {
-                    changeContentsHorizontalPosition(contentsHorizontalPosition, factor);
+                if (newPosition < minHorizontalPosition) {
+                    changeContentsHorizontalPosition(contentsHorizontalPosition-minHorizontalPosition, factor);
                     cursorController.scroll();
                 }
                 //If the position would be greater than max make it so it will be max instead
