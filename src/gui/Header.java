@@ -768,7 +768,9 @@ public class Header {
     }
 
     public void clearNotificationText(){
-        TextMaster.removeGuiText(notificationText);
+        if(notificationText != null) {
+            TextMaster.removeGuiText(notificationText);
+        }
         notificationText = null;
     }
 }

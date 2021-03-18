@@ -187,7 +187,7 @@ public class EngineTester {
 
             // Poll for window events. The event callbacks will be called when an event is received
 //            long startTime = System.currentTimeMillis();
-            GLFW.glfwPollEvents();
+            GLFW.glfwWaitEvents();
             //GLFW.glfwWaitEventsTimeout(0.5);
 //            if(System.currentTimeMillis()-startTime < 500){
 ////                System.out.println("Event received");

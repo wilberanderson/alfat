@@ -38,17 +38,30 @@ public class TextLineRenderer {
 		prepare();
 
 		shader.aspectRatio.loadMatrix(GeneralSettings.ASPECT_RATIO);
-
 		for(FormattedTextLine line : textLineController.getLoadedTexts()){
 			if(line.getWords().length > 0) {
+				float yScaleFactor = (codeWindowController.getCodeWindow().getSize().y*codeWindowController.getAspectRatio().y) / codeWindowController.getDefaultHeight();
+				float xScaleFactor = 1*codeWindowController.getAspectRatio().x;
+				Matrix3f codeWindowTransformation = new Matrix3f();
+				codeWindowTransformation.setIdentity();
+				codeWindowTransformation.m00 = 1/codeWindowController.getAspectRatio().x*xScaleFactor;
+				codeWindowTransformation.m11 = 1/codeWindowController.getAspectRatio().y*yScaleFactor;
+				codeWindowTransformation.m20 = -codeWindowController.getContentsHorizontalPosition();
+				codeWindowTransformation.m21 = codeWindowController.getContentsVerticalPosition();
+				Matrix3f lineNumberTransformation = new Matrix3f();
+				lineNumberTransformation.setIdentity();
+				lineNumberTransformation.m00 = 1/codeWindowController.getAspectRatio().x * xScaleFactor;
+				lineNumberTransformation.m11 = 1/codeWindowController.getAspectRatio().y * yScaleFactor;
+				lineNumberTransformation.m20 = -codeWindowController.getContentsHorizontalPosition();
+				lineNumberTransformation.m21 = codeWindowController.getContentsVerticalPosition();
 				if (line instanceof EditableFormattedTextLine) {
 					GL13.glActiveTexture(GL13.GL_TEXTURE0);
 					GL11.glBindTexture(GL11.GL_TEXTURE_2D, line.getWords()[0].getFont().getTextureAtlas());
 					for (TextWord text : line.getWords()) {
 						if (text instanceof LineNumberWord) {
-							renderText(text, codeWindowController.getCodeWindow().getPosition(), codeWindowController.getCodeWindow().getSize(), GeneralSettings.IDENTITY3);
+							renderText(text, codeWindowController.getCodeWindow().getPosition(), codeWindowController.getCodeWindow().getSize(), lineNumberTransformation);
 						} else {
-							renderText(text, codeWindowController.getCodeWindow().getCodeWindowPosition(), codeWindowController.getCodeWindow().getCodeWindowSize(), GeneralSettings.IDENTITY3);
+							renderText(text, codeWindowController.getCodeWindow().getCodeWindowPosition(), codeWindowController.getCodeWindow().getCodeWindowSize(), codeWindowTransformation);
 						}
 					}
 				} else {
