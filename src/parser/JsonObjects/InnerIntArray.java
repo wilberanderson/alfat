@@ -1,4 +1,4 @@
-package parser;
+package parser.JsonObjects;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 

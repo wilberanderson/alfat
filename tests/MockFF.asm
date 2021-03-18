@@ -1,6 +1,11 @@
-*This is a mock pseudo code language to demonstrate 
+      DISPLYMSG_0
+FOOBAR
+FOOBA2
+ OOBAR
+ SOOBA
+*This is a mock pseudo code language to demonstrate a
 *Fixed filed language compatibility in an extremely 
-*sticked fixed filed format. 
+*strict fixed filed format. 
 *1234567890123456789012345678901234567890123456789012
 *Count from zero to 100
       START .MAIN
@@ -8,8 +13,8 @@
  LAB00CALL  ADD1
       IF    EAX    <    100                    LAB00
       DISPLYMSG_0
-
-      CALL  ADD1
+      
+      PRINT MSG_0
       END   .MAIN
 
       

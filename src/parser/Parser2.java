@@ -62,6 +62,12 @@ public class Parser2  {
      * */
     public void setCodeSyntax(CodeSyntax codeSyntax) {
         this.syn = codeSyntax;
+        if(syn.getColumnLengths() != null) {
+            simpleTokenizer.setColumnLength(syn.getColumnLengths().inner);
+        } else {
+            simpleTokenizer.setColumnLength(null);
+        }
+
         simpleTokenizer.setSplitRegex(syn.getKeywordPatterns().getEmptySpace());
         simpleTokenizer.setCommentRegex(syn.getKeywordPatterns().getComment());
         parserLogicScripter = new ParserLogicScripter(syn);
@@ -114,7 +120,10 @@ public class Parser2  {
                     // replaces tabs with spaces
                     //line = line.replace("\t", "    ");
 
+                    simpleTokenizer.setVerbose(false);
                     String[] arrLine = simpleTokenizer.tokenizeString(line);
+                    int columnFragmentIndex = 0; // The start index of the column fragment as a string fragment
+                    int columnFragment = 0; // The actual fragment of the column
 
                     //temp variables:
                     Optional<String> comm = Optional.empty();
@@ -125,21 +134,28 @@ public class Parser2  {
                     boolean jump = false;
                     boolean ret = false;
 
+
+
                     //  arrLine = {"LABEL:", "JGZ", "R1", "R2", "FINISH"}
                     for (String fragment : arrLine) {
-                        if (verbose) System.out.print("[" + fragment + "]");
+                        if (verbose) {System.out.print("[" + fragment + "]");}
+
+                        columnFragment = simpleTokenizer.getColumnFragment(columnFragmentIndex);
+
+                        columnFragmentIndex++;
+                        //System.out.println("column Fragment:" + columnFragment);
 
                         //grab each command in the line, if they exist:
-                        if (parserLogicScripter.commandMatcher.isMatch(fragment)) {
+                        if (parserLogicScripter.commandMatcher.isMatch(fragment,columnFragment)) {
                             comm = Optional.of(fragment);
                             formattedString.add(new CommandWord(comm.get(), new Vector2f(0f, 0)));
                             first = false;
-                        } else if (parserLogicScripter.controlMatcher.isMatch(fragment)) { //Control
+                        } else if (parserLogicScripter.controlMatcher.isMatch(fragment,columnFragment)) { //Control
                             comm = Optional.of(fragment);
                             formattedString.add(new BranchWord(comm.get(), new Vector2f(0f, 0)));
                             jump = true;
                             first = false;
-                        } else if (parserLogicScripter.registerMatcher.isMatch(fragment)) {  //register
+                        } else if (parserLogicScripter.registerMatcher.isMatch(fragment,columnFragment)) {  //register
                             if (fragment.contains(",")) {
                                 if (!registers.contains(fragment.substring(0, fragment.length() - 1))) {
                                     registers.add(fragment.substring(0, fragment.length() - 1));
@@ -153,12 +169,12 @@ public class Parser2  {
                                 formattedString.add(new RegisterWord(fragment, new Vector2f(0f, 0)));
                             }
                             first = false;
-                        } else if (parserLogicScripter.immediateMatcher.isMatch(fragment)) {
+                        } else if (parserLogicScripter.immediateMatcher.isMatch(fragment,columnFragment)) {
                             //immediate value, literal or trap
                             //just skip this for now
                             first = false;
                             formattedString.add(new ImmediateWord(fragment, new Vector2f(0f, 0)));
-                        } else if (jump && parserLogicScripter.labelMatcher.isMatch(fragment)) {   //jump statement, this matches a label
+                        } else if (jump && parserLogicScripter.labelMatcher.isMatch(fragment,columnFragment)) {   //jump statement, this matches a label
                             //if the line is a jump statement,
                             //this matches the label or labels pointed to by the command
                             //if the language supports having the label BEFORE the command,
@@ -167,24 +183,24 @@ public class Parser2  {
                             targetLabel = fragment;
                             formattedString.add(new LabelWord(fragment, new Vector2f(0f, 0)));
                             first = false;
-                        } else if (parserLogicScripter.procedureEndmatcher.isMatch(fragment)) {
+                        } else if (parserLogicScripter.procedureEndmatcher.isMatch(fragment,columnFragment)) {
                             ret = true;
                             jump = true;
                             formattedString.add(new BranchWord(fragment, new Vector2f(0f, 0)));
                             first = false;
-                        } else if (first && parserLogicScripter.labelMatcher.isMatch(fragment)) {
+                        } else if (first && parserLogicScripter.labelMatcher.isMatch(fragment,columnFragment)) {
                             //this is the (optional) label for the line
                             label = fragment;
                             labelMap.put(label, i);
                             formattedString.add(new LabelWord(fragment, new Vector2f(0f, 0)));
                             first = false;
                             //} else if (!jump && fragment.matches("^[a-zA-Z0-9\\-_\"\\\\\\[\\]\\!<>]+")) {
-                        } else if (!jump && parserLogicScripter.userDefinedMatcher.isMatch(fragment)) {
+                        } else if (!jump && parserLogicScripter.userDefinedMatcher.isMatch(fragment,columnFragment)) {
                             //the command isn't a jump statement, so the label must be a variable i.e. string, etc.
                             formattedString.add(new LabelWord(fragment, new Vector2f(0f, 0)));
-                        } else if (parserLogicScripter.commentMatcher.isMatch(fragment)) {
+                        } else if (parserLogicScripter.commentMatcher.isMatch(fragment,columnFragment)) {
                             formattedString.add(new CommentWord(fragment, new Vector2f(0f, 0)));
-                        } else if (parserLogicScripter.separatorMatcher.isMatch(fragment)) {
+                        } else if (parserLogicScripter.separatorMatcher.isMatch(fragment,columnFragment)) {
                             formattedString.add(new SeparatorWord(fragment, new Vector2f(0f, 0f)));
                         } else {
                             formattedString.add(new ErrorWord(fragment, new Vector2f(0f, 0f)));
@@ -244,7 +260,7 @@ public class Parser2  {
         boolean first = true;
         //parse line:
 //        line = line.replace("\t", "    ");
-
+        simpleTokenizer.setVerbose(false);
         String[] arrLine = simpleTokenizer.tokenizeString(line);
 
 

@@ -4,7 +4,9 @@ package parser.LogicScripter;
 import parser.CodeSyntax;
 
 import java.util.ArrayList;
-
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 public class ParserLogicScripter {
@@ -20,7 +22,7 @@ public class ParserLogicScripter {
     //Default Token Matchers MUST be provided in the event that the JSON parser logic is not set
     public TokenMatcher commandMatcher = new TokenMatcher() {
         @Override
-        public boolean isMatch(String token) {
+        public boolean isMatch(String token,int column) {
             return token.matches(syn.getKeywordPatterns().getReserved()) ||
                     token.matches(syn.getKeywordPatterns().getArithmetic()) ||
                     token.matches(syn.getKeywordPatterns().getDataMovement());
@@ -28,19 +30,19 @@ public class ParserLogicScripter {
     };
     public TokenMatcher controlMatcher = new TokenMatcher() {
         @Override
-        public boolean isMatch(String token) {
+        public boolean isMatch(String token,int column) {
             return token.matches(syn.getKeywordPatterns().getControl());
         }
     };
     public TokenMatcher registerMatcher = new TokenMatcher() {
         @Override
-        public boolean isMatch(String token) {
+        public boolean isMatch(String token,int column) {
             return token.matches(syn.getKeywordPatterns().getRegister());
         }
     };
     public TokenMatcher immediateMatcher = new TokenMatcher() {
         @Override
-        public boolean isMatch(String token) {
+        public boolean isMatch(String token,int column) {
             return token.matches(syn.getKeywordPatterns().getConstantNumeric())
                     || token.matches(syn.getKeywordPatterns().getConstantHex())
                     || token.matches(syn.getKeywordPatterns().getConstantNumeric());
@@ -48,41 +50,42 @@ public class ParserLogicScripter {
     };
     public TokenMatcher labelMatcher = new TokenMatcher() {
         @Override
-        public boolean isMatch(String token) {
+        public boolean isMatch(String token,int column) {
             return token.matches(syn.getKeywordPatterns().getLabel());
         }
     };
     public TokenMatcher procedureStartmatcher = new TokenMatcher() {
         @Override
-        public boolean isMatch(String token) {
+        public boolean isMatch(String token,int column) {
             return token.matches(syn.getKeywordPatterns().getProcedurestart());
         }
     };
     public TokenMatcher procedureEndmatcher = new TokenMatcher() {
         @Override
-        public boolean isMatch(String token) {
+        public boolean isMatch(String token,int column) {
             return token.matches(syn.getKeywordPatterns().getProcedureend());
         }
     };
     public TokenMatcher userDefinedMatcher = new TokenMatcher() {
         @Override
-        public boolean isMatch(String token) {
+        public boolean isMatch(String token,int column) {
             return token.matches(syn.getKeywordPatterns().getDoubleQuotedString()) ||
                     token.matches(syn.getKeywordPatterns().getLabel());
         }
     };
     public TokenMatcher commentMatcher = new TokenMatcher() {
         @Override
-        public boolean isMatch(String token) {
+        public boolean isMatch(String token,int column) {
             return token.matches(syn.getKeywordPatterns().getCommentLine());
         }
     };
     public TokenMatcher separatorMatcher = new TokenMatcher() {
         @Override
-        public boolean isMatch(String token) {
+        public boolean isMatch(String token,int column) {
             return token.matches(syn.getKeywordPatterns().getSeparator());
         }
     };
+
 
 
     /**
@@ -93,18 +96,34 @@ public class ParserLogicScripter {
         if(syn.getParserTokenLogic() != null) {
            //CommandMatcher
             if(syn.getParserTokenLogic().getCommand() != null) {
+                //Get the regexes from jsons
                 ArrayList<TokenMatchRegex> regexTempList = new ArrayList<TokenMatchRegex>();
                 for(String parameterName : syn.getParserTokenLogic().getCommand().getRegexes().inner) {
                     addRegexes(regexTempList,parameterName);
                 }
                 commandMatcher = new TokenMatcher() {
                     ArrayList<TokenMatchRegex> regexList = regexTempList;
+                    //Get the columns to check from json
+                    ArrayList<Integer> columnstoCheck = syn.getParserTokenLogic().getCommand().getColumns().inner;
+                    //Check whether the columns is only 1 and contains 0 meaning we want to check regex every time
+                    boolean alwaysRun = syn.getParserTokenLogic().getCommand().getColumns().inner.size() == 1
+                            && syn.getParserTokenLogic().getCommand().getColumns().inner.get(0) == 0;
+
+
                     @Override
-                    public boolean isMatch(String token) {
+                    public boolean isMatch(String token,int column) {
                         boolean result = false;
-                        for(TokenMatchRegex matcher : regexList) {
-                            result = result || matcher.regex(token);
+
+                        if(columnstoCheck.contains(column) || alwaysRun) {
+                            //System.out.println("token" + "[" + token + "]" + " match: " + result + " column index: " +  column);
+                            //Do the regex check
+                            for(TokenMatchRegex matcher : regexList) {
+                                result = result || matcher.regex(token);
+                            }
                         }
+
+
+
                         return result;
                     }
                 };
@@ -120,11 +139,20 @@ public class ParserLogicScripter {
                 }
                 controlMatcher = new TokenMatcher() {
                     ArrayList<TokenMatchRegex> regexList = regexTempList;
+
+                    ArrayList<Integer> columnstoCheck = syn.getParserTokenLogic().getControl().getColumns().inner;
+                    //Check whether the columns is only 1 and contains 0 meaning we want to check regex every time
+                    boolean alwaysRun = syn.getParserTokenLogic().getControl().getColumns().inner.size() == 1
+                            && syn.getParserTokenLogic().getControl().getColumns().inner.get(0) == 0;
+
                     @Override
-                    public boolean isMatch(String token) {
+                    public boolean isMatch(String token,int column) {
                         boolean result = false;
-                        for(TokenMatchRegex matcher : regexList) {
-                            result = result || matcher.regex(token);
+                        if(columnstoCheck.contains(column) || alwaysRun) {
+                            //Do the regex check
+                            for(TokenMatchRegex matcher : regexList) {
+                                result = result || matcher.regex(token);
+                            }
                         }
                         return result;
                     }
@@ -139,12 +167,24 @@ public class ParserLogicScripter {
                 }
                 registerMatcher = new TokenMatcher() {
                     ArrayList<TokenMatchRegex> regexList = regexTempList;
+
+                    ArrayList<Integer> columnstoCheck = syn.getParserTokenLogic().getRegister().getColumns().inner;
+                    //Check whether the columns is only 1 and contains 0 meaning we want to check regex every time
+                    boolean alwaysRun = syn.getParserTokenLogic().getRegister().getColumns().inner.size() == 1
+                            && syn.getParserTokenLogic().getRegister().getColumns().inner.get(0) == 0;
+
+
                     @Override
-                    public boolean isMatch(String token) {
+                    public boolean isMatch(String token,int column) {
                         boolean result = false;
-                        for(TokenMatchRegex matcher : regexList) {
-                            result = result || matcher.regex(token);
+
+                        if(columnstoCheck.contains(column) || alwaysRun) {
+                            //Do the regex check
+                            for(TokenMatchRegex matcher : regexList) {
+                                result = result || matcher.regex(token);
+                            }
                         }
+
                         return result;
                     }
                 };
@@ -158,11 +198,20 @@ public class ParserLogicScripter {
                 }
                 immediateMatcher = new TokenMatcher() {
                     ArrayList<TokenMatchRegex> regexList = regexTempList;
+
+                    ArrayList<Integer> columnstoCheck = syn.getParserTokenLogic().getImmediate().getColumns().inner;
+                    //Check whether the columns is only 1 and contains 0 meaning we want to check regex every time
+                    boolean alwaysRun = syn.getParserTokenLogic().getImmediate().getColumns().inner.size() == 1
+                            && syn.getParserTokenLogic().getImmediate().getColumns().inner.get(0) == 0;
+
                     @Override
-                    public boolean isMatch(String token) {
+                    public boolean isMatch(String token,int column) {
                         boolean result = false;
-                        for(TokenMatchRegex matcher : regexList) {
-                            result = result || matcher.regex(token);
+                        if(columnstoCheck.contains(column) || alwaysRun) {
+                            //Do the regex check
+                            for(TokenMatchRegex matcher : regexList) {
+                                result = result || matcher.regex(token);
+                            }
                         }
                         return result;
                     }
@@ -177,12 +226,24 @@ public class ParserLogicScripter {
                 }
                 labelMatcher = new TokenMatcher() {
                     ArrayList<TokenMatchRegex> regexList = regexTempList;
+                    //Get the columns to check from json
+                    ArrayList<Integer> columnstoCheck = syn.getParserTokenLogic().getLabel().getColumns().inner;
+                    //Check whether the columns is only 1 and contains 0 meaning we want to check regex every time
+                    boolean alwaysRun = syn.getParserTokenLogic().getLabel().getColumns().inner.size() == 1
+                            && syn.getParserTokenLogic().getLabel().getColumns().inner.get(0) == 0;
                     @Override
-                    public boolean isMatch(String token) {
+                    public boolean isMatch(String token,int column) {
                         boolean result = false;
-                        for(TokenMatchRegex matcher : regexList) {
-                            result = result || matcher.regex(token);
+
+
+                        if(columnstoCheck.contains(column) || alwaysRun) {
+                            //System.out.println("token" + "[" + token + "]" + " match: " + result + " column index: " +  column);
+                            for (TokenMatchRegex matcher : regexList) {
+                                result = result || matcher.regex(token);
+                            }
                         }
+
+
                         return result;
                     }
                 };
@@ -196,11 +257,20 @@ public class ParserLogicScripter {
                 }
                 procedureStartmatcher = new TokenMatcher() {
                     ArrayList<TokenMatchRegex> regexList = regexTempList;
+
+                    ArrayList<Integer> columnstoCheck = syn.getParserTokenLogic().getProcedurestart().getColumns().inner;
+                    //Check whether the columns is only 1 and contains 0 meaning we want to check regex every time
+                    boolean alwaysRun = syn.getParserTokenLogic().getProcedurestart().getColumns().inner.size() == 1
+                            && syn.getParserTokenLogic().getProcedurestart().getColumns().inner.get(0) == 0;
+
                     @Override
-                    public boolean isMatch(String token) {
+                    public boolean isMatch(String token,int column) {
                         boolean result = false;
-                        for(TokenMatchRegex matcher : regexList) {
-                            result = result || matcher.regex(token);
+                        if(columnstoCheck.contains(column) || alwaysRun) {
+                            //Do the regex check
+                            for(TokenMatchRegex matcher : regexList) {
+                                result = result || matcher.regex(token);
+                            }
                         }
                         return result;
                     }
@@ -215,11 +285,20 @@ public class ParserLogicScripter {
                 }
                 procedureEndmatcher = new TokenMatcher() {
                     ArrayList<TokenMatchRegex> regexList = regexTempList;
+
+                    ArrayList<Integer> columnstoCheck = syn.getParserTokenLogic().getProcedureend().getColumns().inner;
+                    //Check whether the columns is only 1 and contains 0 meaning we want to check regex every time
+                    boolean alwaysRun = syn.getParserTokenLogic().getProcedureend().getColumns().inner.size() == 1
+                            && syn.getParserTokenLogic().getProcedureend().getColumns().inner.get(0) == 0;
+
                     @Override
-                    public boolean isMatch(String token) {
+                    public boolean isMatch(String token,int column) {
                         boolean result = false;
-                        for(TokenMatchRegex matcher : regexList) {
-                            result = result || matcher.regex(token);
+                        if(columnstoCheck.contains(column) || alwaysRun) {
+                            //Do the regex check
+                            for(TokenMatchRegex matcher : regexList) {
+                                result = result || matcher.regex(token);
+                            }
                         }
                         return result;
                     }
@@ -234,11 +313,21 @@ public class ParserLogicScripter {
                 }
                 userDefinedMatcher = new TokenMatcher() {
                     ArrayList<TokenMatchRegex> regexList = regexTempList;
+
+                    ArrayList<Integer> columnstoCheck = syn.getParserTokenLogic().getUserdefined().getColumns().inner;
+                    //Check whether the columns is only 1 and contains 0 meaning we want to check regex every time
+                    boolean alwaysRun = syn.getParserTokenLogic().getUserdefined().getColumns().inner.size() == 1
+                            && syn.getParserTokenLogic().getUserdefined().getColumns().inner.get(0) == 0;
+
+
                     @Override
-                    public boolean isMatch(String token) {
+                    public boolean isMatch(String token,int column) {
                         boolean result = false;
-                        for(TokenMatchRegex matcher : regexList) {
-                            result = result || matcher.regex(token);
+                        if(columnstoCheck.contains(column) || alwaysRun) {
+                            //Do the regex check
+                            for(TokenMatchRegex matcher : regexList) {
+                                result = result || matcher.regex(token);
+                            }
                         }
                         return result;
                     }
@@ -253,18 +342,27 @@ public class ParserLogicScripter {
                 }
                 commentMatcher = new TokenMatcher() {
                     ArrayList<TokenMatchRegex> regexList = regexTempList;
+
+                    ArrayList<Integer> columnstoCheck = syn.getParserTokenLogic().getComment().getColumns().inner;
+                    //Check whether the columns is only 1 and contains 0 meaning we want to check regex every time
+                    boolean alwaysRun = syn.getParserTokenLogic().getComment().getColumns().inner.size() == 1
+                            && syn.getParserTokenLogic().getComment().getColumns().inner.get(0) == 0;
+
                     @Override
-                    public boolean isMatch(String token) {
+                    public boolean isMatch(String token,int column) {
                         boolean result = false;
-                        for(TokenMatchRegex matcher : regexList) {
-                            result = result || matcher.regex(token);
+                        if(columnstoCheck.contains(column) || alwaysRun) {
+                            //Do the regex check
+                            for(TokenMatchRegex matcher : regexList) {
+                                result = result || matcher.regex(token);
+                            }
                         }
                         return result;
                     }
                 };
             }
             //__________________________________________________________________________________________________
-            //Comment Matcher
+            //Separator Matcher
             if(syn.getParserTokenLogic().getSeparator() != null) {
                 ArrayList<TokenMatchRegex> regexTempList = new ArrayList<TokenMatchRegex>();
                 for(String parameterName : syn.getParserTokenLogic().getSeparator().getRegexes().inner) {
@@ -272,11 +370,20 @@ public class ParserLogicScripter {
                 }
                 separatorMatcher = new TokenMatcher() {
                     ArrayList<TokenMatchRegex> regexList = regexTempList;
+
+                    ArrayList<Integer> columnstoCheck = syn.getParserTokenLogic().getSeparator().getColumns().inner;
+                    //Check whether the columns is only 1 and contains 0 meaning we want to check regex every time
+                    boolean alwaysRun = syn.getParserTokenLogic().getSeparator().getColumns().inner.size() == 1
+                            && syn.getParserTokenLogic().getSeparator().getColumns().inner.get(0) == 0;
+
                     @Override
-                    public boolean isMatch(String token) {
+                    public boolean isMatch(String token,int column) {
                         boolean result = false;
-                        for(TokenMatchRegex matcher : regexList) {
-                            result = result || matcher.regex(token);
+                        if(columnstoCheck.contains(column) || alwaysRun) {
+                            //Do the regex check
+                            for(TokenMatchRegex matcher : regexList) {
+                                result = result || matcher.regex(token);
+                            }
                         }
                         return result;
                     }

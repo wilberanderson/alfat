@@ -20,16 +20,19 @@ public class SimpleTokenizer {
     //private String split = "((?<=\\s)|(?=\\s+))|((?<=,))|(?=\\.)|((?<=\\\")|(?=\\\"))|((?<=\\\\)|(?=\\\\))|((?<=')|(?='))";
     private String splitRegex = "((?<=\\s)|(?=\\s+))|((?<=,))|(?=\\.)|((?<=\\\")|(?=\\\"))|((?<=\\\\)|(?=\\\\))|((?<=')|(?='))|((?<=;)|(?=;))"; //Left to this has default
     private String commentRegex = ";"; //Left to this has default
+    private ArrayList<Integer> columnLengths = null;
+    private ArrayList<Boolean> fullSplitColumn = null;
+    private ArrayList<Integer> numberColumnsIndexAdjusted = new ArrayList<Integer>();
 
 
-    private boolean verbose = true;
+    private boolean verbose = false;
+
 
     public SimpleTokenizer () {
         //DO NOTHING
     }
-    public SimpleTokenizer (String splitRegex) {
-        this.splitRegex = splitRegex;
-    }
+
+
 
 
     /**
@@ -45,42 +48,152 @@ public class SimpleTokenizer {
      * */
     public String[] tokenizeString(String arrLineIn) {
         String arrLineOut[] = null;
+        List arrayList = null;
 
-        arrLineOut = arrLineIn.split(splitRegex);
+      if(columnLengths != null) {
+          numberColumnsIndexAdjusted.clear(); //Clear the adjustColumnIndex
+          arrayList = new ArrayList<String>();
+          //Check for the comment in the part of the string
+          //If it is there then the whole string is a comment no need to split
+          if(isFirstCharAComment(arrLineIn)) {
+              numberColumnsIndexAdjusted.add(1);
+              arrayList.add(arrLineIn);
+          } else {
+              splitStringIntoColumns(arrayList,arrLineIn,columnLengths);
+          }
 
-        List arrayList = new ArrayList<String>(Arrays.asList(arrLineOut));
+          if(verbose) {
+              for (int i = 0; i < numberColumnsIndexAdjusted.size(); i++) {
+                  System.out.print(numberColumnsIndexAdjusted.get(i) + ":{" + arrayList.get(i)+ "}");
+              }
+              System.out.println();
+          }
 
-        if(verbose)
-            verbosePrint(arrayList, "After tokenized");
+      } else {
+          //No columns fill slipt
+          arrLineOut = arrLineIn.split(splitRegex);
 
-        //Reconstruct single quotes [',a,'] -> ['a']
-        reconstructSingleQuotes(arrayList);
-        if(verbose)
-            verbosePrint(arrayList, "reconstructSingleQuotes");
+          arrayList = new ArrayList<String>(Arrays.asList(arrLineOut));
 
-        //Reconstruct slash chars [\,"] -> [\"]
-        reconstructSlashChars(arrayList);
-        if(verbose)
-           //verbosePrint(arrayList, "reconstructSlashChars");
-
-
-        //Reconstruct double quotes [",XXXXX,"] -> ["XXXXX"]
-        reconstructDoublequotes2(arrayList);
-        if(verbose)
-            //verbosePrint(arrayList, "reconstructDoublequotes2 DONE");
-
-        //Reconstruct comment line ["something", ";", "something"] -> ["something", ";something"]
-        yeetComment(arrayList);
-        if(verbose)
-            //verbosePrint(arrayList, "yeet comment");
-
-        if(verbose)
-            verbosePrint(arrayList, "Final");
+          fullSplit(arrayList);
+      }
 
         arrLineOut = new String[arrayList.size()];
         arrayList.toArray(arrLineOut);
 
         return arrLineOut;
+    }
+
+
+    /**
+     * Returns the string fragment index of a column number segment. -1 means there is a error.
+     * Example: 1:|" FOOBAR"| 2:|"IF X"|
+     * column 1 = " FOOBAR" -> string segment 1:[" "] 1:["FOOBAR"]
+     * 0 and 1 in would both return 1 since they belong the column 1 segments.
+     * */
+    public int getColumnFragment(int in) {
+        if(columnLengths == null || in < 0) return -1; //If not defined do nothing!!!
+        return numberColumnsIndexAdjusted.get(in);
+    }
+
+
+
+    /**
+     * Checks whether the first character of a string
+     * is a comment character meaning that this is
+     * a comment string which returns true.
+     * */
+    private boolean isFirstCharAComment(String in) {
+        boolean result = false;
+        if(!in.isEmpty()) {
+            return isCommentRegexMatch(in.substring(0,1));
+        }
+        return false;
+    }
+
+
+
+    private void  splitStringIntoColumns(List out, String in, ArrayList<Integer> columnLens) {
+        //This is the regex that splits the string at column length
+        String splitStr = "(?<=\\G.{%s})";
+        //This is a temp storage for the split string since a "split" always makes 2
+        String temp[] = new String[2];
+        //Set the in string to the end in temp
+        temp[1] = in;
+        //For each column length we split the string into segments
+        int i = 0;
+        boolean stop = false;
+        for(; i < columnLens.size() && stop == false; i++) {
+            //If the string is less than the column length we need to stop since we can't split anymore
+            if(temp[1].length() < columnLens.get(i)) {
+                stop = true;
+            } else {
+                //Split the string into 2 parts
+                temp = temp[1].split(String.format(splitStr,Integer.toString(columnLens.get(i))),2);
+
+                //out.add(temp[0]); //Add the split to the out
+                //numberColumnsIndexAdjusted.add(i+1);
+                lfs(temp[0],out,i+1);
+
+                //Set the larger part to be saved at the end when done
+                temp[0] = temp[1];
+            }
+        }
+        //Add either the last segment of a split or the smallest part
+
+        //TODO: not sure if I need to call lfs here? Probably d0
+        numberColumnsIndexAdjusted.add(i);
+        out.add(temp[1]);
+        //lfs(temp[0],out,i);
+    }
+
+
+    /**
+     * Lazy Full string-split
+     * This cuts a column into segments and retains segment to column index.
+     * TODO: Should be able to define in the JSON how this splitting should happen on a column basis?
+     * what if we wanted to only split string a specific regex at a specific column?
+     * */
+    private void lfs(String in, List out, int columnIndex) {
+        String arrLineOut[] = in.split(splitRegex);
+        for(String str : arrLineOut) {
+            out.add(str);
+            numberColumnsIndexAdjusted.add(columnIndex);
+        }
+
+
+    }
+
+
+
+
+
+    /**
+     * Tokenizes a string completely based on a split string regex then
+     * reconstructs the string back to expected results.
+     * */
+    private void fullSplit(List arrayList) {
+        if(verbose)
+            verbosePrint(arrayList, "After tokenized");
+        //Reconstruct single quotes [',a,'] -> ['a']
+        reconstructSingleQuotes(arrayList);
+        if(verbose)
+            //verbosePrint(arrayList, "reconstructSingleQuotes");
+        //Reconstruct slash chars [\,"] -> [\"]
+        reconstructSlashChars(arrayList);
+        if(verbose)
+            //verbosePrint(arrayList, "reconstructSlashChars");
+        //Reconstruct double quotes [",XXXXX,"] -> ["XXXXX"]
+        reconstructDoublequotes2(arrayList);
+        if(verbose)
+            //verbosePrint(arrayList, "reconstructDoublequotes2 DONE");
+        //Reconstruct comment line ["something", ";", "something"] -> ["something", ";something"]
+        yeetComment(arrayList);
+        if(verbose)
+            //verbosePrint(arrayList, "yeet comment");
+        if(verbose)
+            verbosePrint(arrayList, "Final");
+
     }
 
 
@@ -391,6 +504,16 @@ public class SimpleTokenizer {
     public void setSplitRegex(String splitRegex) {
         this.splitRegex = splitRegex;
     }
+
+    public void setColumnLength(ArrayList<Integer> columnLengths) {
+
+        this.columnLengths = columnLengths;
+        //Set the number of columns
+
+        //System.out.println("columnLengths" + columnLengths);
+    }
+
+
 
 
 

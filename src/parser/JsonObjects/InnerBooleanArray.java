@@ -1,19 +1,20 @@
-package parser;
+package parser.JsonObjects;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 
 import java.util.ArrayList;
 
-public class InnerStrArray {
-    public ArrayList<String> inner;
+public class InnerBooleanArray {
+    public ArrayList<Boolean> inner;
+
     @JsonCreator
-    public InnerStrArray(final ArrayList<String> inner) {
+    public InnerBooleanArray(final ArrayList<Boolean> inner) {
         this.inner = inner;
     }
 
     @Override
     public String toString() {
-        return "InnerStrArray{" +
+        return "InnerBooleanArray{" +
                 "inner=" + inner +
                 '}';
     }

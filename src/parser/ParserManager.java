@@ -10,7 +10,7 @@ import java.io.File;
 
 public class ParserManager {
 
-    private  Parser parser;
+    private  Parser2 parser;
 
 
     private  CodeSyntax codeSyntax;
@@ -19,7 +19,7 @@ public class ParserManager {
 
     public ParserManager() {
         this.codeSyntax = null;
-        parser = new Parser();
+        parser = new Parser2();
         updateSyntaxIfNeeded();
     }
 
@@ -35,13 +35,24 @@ public class ParserManager {
         //the settings menu when the syntax path is changed
         if(GeneralSettings.IS_SYNTAX_PATH_CHANGED) {
             setCodeSyntax(new File(GeneralSettings.USERPREF.getSyntaxPath()));
+
             if(codeSyntax != null) {
-                parser.setCodeSyntax(codeSyntax);
+                //Check if the columns Lengths is valid
+                if(codeSyntax.isColumnLengthsValid() == false) {
+                    codeSyntax.setColumnLengths(null);
+                    //System.out.println(codeSyntax.getColumnLengths());
+                    //TODO: add a notification
+                }
                 //Kill codeSyntax if any of the keyword patterns are invalid (are null)
                 if(codeSyntax.isKeywordsPatternsValid() == false) {
                     codeSyntax = null;
                     ApplicationController.notification.setEvent(AppEvents.INVALID_SYNTAX_FILE);
+                } else {
+                    parser.setCodeSyntax(codeSyntax);
                 }
+                //TODO: must check whether parser token logic is set
+
+
             } else {
                 ApplicationController.notification.setEvent(AppEvents.INVALID_SYNTAX_FILE);
             }
@@ -92,7 +103,7 @@ public class ParserManager {
     /**
      * Returns the parser.
      * */
-    public Parser getParser() {
+    public Parser2 getParser() {
         return parser;
     }
 

@@ -6,5 +6,5 @@ package parser.LogicScripter;
  * @see parser.LogicScripter.ParserLogicScripter
  * */
 public interface TokenMatcher {
-    public boolean isMatch(String token);
+    public boolean isMatch(String token,int column);
 }
