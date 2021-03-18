@@ -9,13 +9,56 @@
     "register": "[rR][0-7](,)?",
     "commentLine": "(;.+?$)|(;)",
     "constantHex": "[x][A-Fa-f0-9]{1,4}",
-    "constantNumeric": "^[x#]-?[0-9]+|[0-9]+",
+    "constantNumeric": "[-+]?([0-9]*\\.[0-9]+|[0-9]+)",
     "constantBinary": "\\b[01]+\\b",
     "constantCharacter": "[A-Za-z][A-Za-z0-9_]+",
     "doubleQuotedString": "^(\".*\")_|^([\\\"\\\\].*[\\\"\\\\])",
-    "emptySpace": "((?<=\\s)|(?=\\s+))|((?<=,))|(?=\\.)|((?<=\\\")|(?=\\\"))|((?<=\\\\)|(?=\\\\))|((?<=')|(?='))|((?<=;)|(?=;))",
+    "emptySpace": "((?<=\\s)|(?=\\s+))\\b|((?=\\,))|(?=\\.)|((?<=\\\")|(?=\\\"))|((?<=\\\\)|(?=\\\\))|((?<=')|(?='))|((?<=;)|(?=;))",
     "label": "^[a-zA-Z0-9\\-_]+",
-    "comment": ";"
+    "comment": ";",
+    "separator": "[ ,\t]"
+  },
+  "parserTokenLogic":  {
+    "command": {
+      "regexes": ["reserved","arithmetic","dataMovement"],
+      "columns": [3]
+    },
+    "control": {
+      "regexes": ["control"],
+      "columns": [3]
+    },
+    "register": {
+      "regexes": ["register"],
+      "columns": [3]
+    },
+    "immediate": {
+      "regexes": ["constantHex","constantNumeric","constantBinary"],
+      "columns": [-1]
+    },
+    "label": {
+      "regexes": ["label"],
+      "columns": [1]
+    },
+    "procedurestart": {
+      "regexes": ["procedurestart"],
+      "columns": [-1]
+    },
+    "procedureend": {
+      "regexes": ["procedureend"],
+      "columns": [-1]
+    },
+    "userdefined": {
+      "regexes": ["doubleQuotedString","label"],
+      "columns": [-1]
+    },
+    "comment": {
+      "regexes": ["commentLine"],
+      "columns": [1]
+    },
+    "separator": {
+      "regexes": ["separator"],
+      "columns": [-1]
+    }
   },
   "columnLengths":[53,1,5,6,6,6,5,6,6,6,6],
   "ruler":[1,6,12,18,24,29,35,41,47,53]

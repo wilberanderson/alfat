@@ -12,6 +12,7 @@ import loaders.Loader;
 import main.GeneralSettings;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL15;
+import org.lwjgl.system.CallbackI;
 import org.lwjgl.util.vector.Matrix2f;
 import org.lwjgl.util.vector.Matrix3f;
 import org.lwjgl.util.vector.Vector2f;
@@ -170,6 +171,8 @@ public class FlowchartWindowController {
     }
 
     public void setFlowchartLineList(List<FlowchartLine> lines){
+        Junction temp = new Junction(new Vector2f(0,0));
+        ArrowHead temp2 = new ArrowHead(new Vector2f(0,0),0);
         flowchartWindow.getFlowchartLineList().addAll(lines);
         numberOfSegments = populateLineVbo(lines, this.lines.getVaoID());
         populateArrowHeadVbo(lines, ArrowHead.getModel().getVaoID());

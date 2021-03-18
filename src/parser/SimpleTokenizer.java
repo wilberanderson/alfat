@@ -22,7 +22,7 @@ public class SimpleTokenizer {
     private String commentRegex = ";"; //Left to this has default
 
 
-    private boolean verbose = false;
+    private boolean verbose = true;
 
     public SimpleTokenizer () {
         //DO NOTHING
@@ -61,18 +61,21 @@ public class SimpleTokenizer {
         //Reconstruct slash chars [\,"] -> [\"]
         reconstructSlashChars(arrayList);
         if(verbose)
-            verbosePrint(arrayList, "reconstructSlashChars");
+           //verbosePrint(arrayList, "reconstructSlashChars");
 
 
         //Reconstruct double quotes [",XXXXX,"] -> ["XXXXX"]
         reconstructDoublequotes2(arrayList);
         if(verbose)
-            verbosePrint(arrayList, "reconstructDoublequotes2 DONE");
+            //verbosePrint(arrayList, "reconstructDoublequotes2 DONE");
 
         //Reconstruct comment line ["something", ";", "something"] -> ["something", ";something"]
         yeetComment(arrayList);
         if(verbose)
-            verbosePrint(arrayList, "yeet comment");
+            //verbosePrint(arrayList, "yeet comment");
+
+        if(verbose)
+            verbosePrint(arrayList, "Final");
 
         arrLineOut = new String[arrayList.size()];
         arrayList.toArray(arrLineOut);
@@ -101,7 +104,7 @@ public class SimpleTokenizer {
                 }
                 //If a single quote is found and its not 2 in front check 3 and it's a match reconstruct
                 //Case [',\,"'] -> ['\"']
-                else if(CheckNAheadForSlash(3,i,al)) {
+               if(CheckNAheadForSlash(3,i,al)) {
                     charStr = getSingleQuote(3,i,al);
                     al.subList(i,i+4).clear();
                     al.add(i,charStr);
@@ -129,7 +132,17 @@ public class SimpleTokenizer {
         if(i+n < al.size()) {
             if(al.get(i+n).equals("'")) {
                 //Need to check if only 1 char in string or if \+char else false
-                if(((String)al.get(i+1)).length() == 1 && ((String)al.get(i+2)).length() == 1 ) {
+                if(((String)al.get(i+1)).length() == 1) {
+                    //Example reason: ['\''] we know that [{'}\''] and ['\{'}'] was found
+                    //so if \ is in the middle and we have a extra ' at the end
+                    //This means that this should be a ['\''] NOT ['\'],[']
+                    if (((String)al.get(i+1)).equals("\\")) {
+                        if(i+3 < al.size()) {
+                            if(((String)al.get(i+3)).equals("'")) {
+                                return false;
+                            }
+                        }
+                    }
                     return true;
                 }
             }

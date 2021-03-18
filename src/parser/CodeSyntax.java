@@ -8,10 +8,20 @@ public class CodeSyntax {
 
     private KeywordPatterns keywordPatterns;
 
+    public ParserTokenLogic parserTokenLogic;
+
     public InnerIntArray columnLengths;
 
     public InnerIntArray ruler;
 
+
+    public ParserTokenLogic getParserTokenLogic() {
+        return parserTokenLogic;
+    }
+
+    public void setParserTokenLogic(ParserTokenLogic parserTokenLogic) {
+        this.parserTokenLogic = parserTokenLogic;
+    }
 
     public KeywordPatterns getKeywordPatterns() {
         return keywordPatterns;
@@ -46,28 +56,29 @@ public class CodeSyntax {
    }
 
    public boolean isKeywordsPatternsValid() {
-        boolean result = false;
-        result = checkNotNull(keywordPatterns.getProcedurestart());
-        result = checkNotNull(keywordPatterns.getProcedureend());
-        result = checkNotNull(keywordPatterns.getControl());
-        result = checkNotNull(keywordPatterns.getRegister());
-        result = checkNotNull(keywordPatterns.getArithmetic());
-        result = checkNotNull(keywordPatterns.getDataMovement());
-        result = checkNotNull(keywordPatterns.getRegister());
-        result = checkNotNull(keywordPatterns.getCommentLine());
-        result = checkNotNull(keywordPatterns.getConstantHex());
-        result = checkNotNull(keywordPatterns.getConstantNumeric());
-        result = checkNotNull(keywordPatterns.getConstantBinary());
-        result = checkNotNull(keywordPatterns.getConstantCharacter());
-        result = checkNotNull(keywordPatterns.getDoubleQuotedString());
-        result = checkNotNull(keywordPatterns.getEmptySpace());
-        result = checkNotNull(keywordPatterns.getLabel());
-        result = checkNotNull(keywordPatterns.getComment());
-        return result;
+        return  checkNotNull(keywordPatterns.getProcedurestart())
+        && checkNotNull(keywordPatterns.getProcedureend())
+        && checkNotNull(keywordPatterns.getControl())
+        && checkNotNull(keywordPatterns.getRegister())
+        && checkNotNull(keywordPatterns.getArithmetic())
+        && checkNotNull(keywordPatterns.getDataMovement())
+        && checkNotNull(keywordPatterns.getRegister())
+        && checkNotNull(keywordPatterns.getCommentLine())
+        && checkNotNull(keywordPatterns.getConstantHex())
+        && checkNotNull(keywordPatterns.getConstantNumeric())
+        && checkNotNull(keywordPatterns.getConstantBinary())
+        && checkNotNull(keywordPatterns.getConstantCharacter())
+        && checkNotNull(keywordPatterns.getDoubleQuotedString())
+        && checkNotNull(keywordPatterns.getEmptySpace())
+        && checkNotNull(keywordPatterns.getLabel())
+        && checkNotNull(keywordPatterns.getComment())
+        && checkNotNull(keywordPatterns.getSeparator());
+
+
    }
 
    private boolean checkNotNull(String in) {
-        return in == null;
+        return (in != null);
    }
 
    //Function to tell whether code has columns
@@ -81,6 +92,7 @@ public class CodeSyntax {
     public String toString() {
         return "CodeSyntax{" +
                 "keywordPatterns=" + keywordPatterns +
+                ", parserTokenLogic=" + parserTokenLogic +
                 ", columnLengths=" + columnLengths +
                 ", ruler=" + ruler +
                 '}';
