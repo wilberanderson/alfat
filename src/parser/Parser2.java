@@ -578,7 +578,7 @@ public class Parser2  {
                         }
                     } else {
                         temp = -1f;
-                        for (Vector2f item : sizes.subList(flowchart.get(index).connection.getBoxNumber() - 1, index)) {
+                        for (Vector2f item : sizes.subList(flowchart.get(index).connection.getBoxNumber() - 1, index+1)) {
                             if (item.x + GeneralSettings.FLOWCHART_PAD_LEFT - 1f > temp)
                                 temp = item.x + GeneralSettings.FLOWCHART_PAD_LEFT - 1f;
                         }

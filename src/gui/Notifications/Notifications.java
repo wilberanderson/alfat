@@ -11,7 +11,7 @@ import java.util.Queue;
  * Notifications, this is a simple observer pattern. This class acts has the subject.
  * (1) Handles sets and gets application events
  * (2) registers observers
- * (3) and notifies ovservers
+ * (3) and notifies observers
  * @see gui.Notifications.Observer
  * @see gui.Notifications.AppEvents
  * */
