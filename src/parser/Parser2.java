@@ -272,23 +272,28 @@ public class Parser2  {
         List<TextWord> formattedString = new ArrayList<>();
         boolean jump = false;
 
+        int columnFragmentIndex = 0; // The start index of the column fragment as a string fragment
+        int columnFragment = 0; // The actual fragment of the column
+
+
         //  arrLine = {"LABEL:", "JGZ", "R1", "R2", "FINISH"}
         for (String fragment : arrLine) {
             if (verbose) System.out.print("[" + fragment + "]");
 
+            columnFragment = simpleTokenizer.getColumnFragment(columnFragmentIndex);
+            columnFragmentIndex++;
+
             //grab each command in the line, if they exist:
-            if (fragment.matches(syn.getKeywordPatterns().getReserved()) ||
-                    fragment.matches(syn.getKeywordPatterns().getArithmetic()) ||
-                    fragment.matches(syn.getKeywordPatterns().getDataMovement())) {
+            if (parserLogicScripter.commandMatcher.isMatch(fragment,columnFragment)) {
                 comm = Optional.of(fragment);
                 formattedString.add(new CommandWord(comm.get(), new Vector2f(0f, 0)));
                 first = false;
-            } else if (fragment.matches(syn.getKeywordPatterns().getControl())) {
+            } else if (parserLogicScripter.controlMatcher.isMatch(fragment,columnFragment)) {
                 comm = Optional.of(fragment);
                 formattedString.add(new BranchWord(comm.get(), new Vector2f(0f, 0)));
                 jump = true;
                 first = false;
-            } else if (fragment.matches(syn.getKeywordPatterns().getRegister())) {  //register
+            } else if (parserLogicScripter.registerMatcher.isMatch(fragment,columnFragment)) {  //register
 
                 if (fragment.contains(",")) {
                     if (!registers.contains(fragment.substring(0, fragment.length() - 1))) {
@@ -303,15 +308,13 @@ public class Parser2  {
                     formattedString.add(new RegisterWord(fragment, new Vector2f(0f, 0)));
                 }
                 first = false;
-            } else if (fragment.matches(syn.getKeywordPatterns().getConstantNumeric())
-                    ||fragment.matches(syn.getKeywordPatterns().getConstantHex())
-                    ||fragment.matches(syn.getKeywordPatterns().getConstantNumeric())
-            ) {
+            } else if (parserLogicScripter.immediateMatcher.isMatch(fragment,columnFragment))
+             {
                 //immediate value, literal or trap
                 //just skip this for now
                 first = false;
                 formattedString.add(new ImmediateWord(fragment, new Vector2f(0f, 0)));
-            } else if (jump && fragment.matches(syn.getKeywordPatterns().getLabel())) {   //jump statement, this matches a label
+            } else if (jump && parserLogicScripter.labelMatcher.isMatch(fragment,columnFragment)) {   //jump statement, this matches a label
                 //if the line is a jump statement,
                 //this matches the label or labels pointed to by the command
                 //if the language supports having the label BEFORE the command,
@@ -319,22 +322,20 @@ public class Parser2  {
                 targetLabel = fragment;
                 formattedString.add(new LabelWord(fragment, new Vector2f(0f, 0)));
                 first = false;
-            } else if (fragment.matches(syn.getKeywordPatterns().getCommentLine())) {
+            } else if (parserLogicScripter.commentMatcher.isMatch(fragment,columnFragment)) {
                 formattedString.add(new CommentWord(fragment, new Vector2f(0f, 0)));
             }
-            else if (first && fragment.matches(syn.getKeywordPatterns().getLabel())) {
+            else if (first && parserLogicScripter.labelMatcher.isMatch(fragment,columnFragment)) {
                 //this is the (optional) label for the line
                 label = fragment;
                 formattedString.add(new LabelWord(fragment, new Vector2f(0f, 0)));
                 first = false;
-            } else if (!jump && fragment.matches(syn.getKeywordPatterns().getLabel())
-                    || !jump && fragment.matches(syn.getKeywordPatterns().getDoubleQuotedString())
-
-            ) {
+            } else if (!jump && parserLogicScripter.userDefinedMatcher.isMatch(fragment,columnFragment))
+            {
                 //the command isn't a jump statement, so the label must be a variable i.e. string, etc.
                 formattedString.add(new LabelWord(fragment, new Vector2f(0f, 0)));
             }
-            else if (fragment.matches("[ ,\t]")){
+            else if (parserLogicScripter.separatorMatcher.isMatch(fragment,columnFragment)){
                 formattedString.add(new SeparatorWord(fragment, new Vector2f(0f,0f)));
             } else {
                 formattedString.add(new ErrorWord(fragment, new Vector2f(0f, 0f)));
