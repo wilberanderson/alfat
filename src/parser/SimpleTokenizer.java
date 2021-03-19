@@ -173,26 +173,34 @@ public class SimpleTokenizer {
      * reconstructs the string back to expected results.
      * */
     private void fullSplit(List arrayList) {
-        if(verbose)
+        if(verbose) {
             verbosePrint(arrayList, "After tokenized");
-        //Reconstruct single quotes [',a,'] -> ['a']
+            //Reconstruct single quotes [',a,'] -> ['a']
+        }
         reconstructSingleQuotes(arrayList);
-        if(verbose)
+        if(verbose) {
             //verbosePrint(arrayList, "reconstructSingleQuotes");
-        //Reconstruct slash chars [\,"] -> [\"]
+            //Reconstruct slash chars [\,"] -> [\"]
+        }
         reconstructSlashChars(arrayList);
-        if(verbose)
+        if(verbose){
             //verbosePrint(arrayList, "reconstructSlashChars");
-        //Reconstruct double quotes [",XXXXX,"] -> ["XXXXX"]
+            //Reconstruct double quotes [",XXXXX,"] -> ["XXXXX"]
+        }
+
         reconstructDoublequotes2(arrayList);
-        if(verbose)
+        if(verbose) {
             //verbosePrint(arrayList, "reconstructDoublequotes2 DONE");
-        //Reconstruct comment line ["something", ";", "something"] -> ["something", ";something"]
+            //Reconstruct comment line ["something", ";", "something"] -> ["something", ";something"]
+        }
         yeetComment(arrayList);
-        if(verbose)
+        if(verbose){
             //verbosePrint(arrayList, "yeet comment");
-        if(verbose)
+        }
+        if(verbose) {
             verbosePrint(arrayList, "Final");
+        }
+
 
     }
 
