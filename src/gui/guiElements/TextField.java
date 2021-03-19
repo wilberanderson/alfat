@@ -21,6 +21,7 @@ public class TextField extends GUIElement{
     private FontType fontType;
     private float scalingFactor;
 
+    //TODO: WHAT freaking vector2f position is this supposed to take????? HOW DO I USE THIS
     public TextField(Vector2f position, Vector2f size, int fontSize, FontType fontType, float scalingFactor){
         this.position = position;
         this.size = size;

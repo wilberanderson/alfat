@@ -7,4 +7,5 @@ public enum AppEvents {
     OPEN_FILE,
     OPEN_FILE_FAIL,
     INVALID_SYNTAX_FILE,
+    FIXED_FORM_SYNTAX_NOT_SET
 }

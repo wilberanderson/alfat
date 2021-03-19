@@ -70,7 +70,7 @@ public class SimpleTokenizer {
           }
 
       } else {
-          //No columns fill slipt
+          //No columns fill split
           arrLineOut = arrLineIn.split(splitRegex);
 
           arrayList = new ArrayList<String>(Arrays.asList(arrLineOut));

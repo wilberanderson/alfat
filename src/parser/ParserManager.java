@@ -39,18 +39,23 @@ public class ParserManager {
             if(codeSyntax != null) {
                 //Check if the columns Lengths is valid
                 if(codeSyntax.isColumnLengthsValid() == false) {
-                    codeSyntax.setColumnLengths(null);
+                    codeSyntax.setColumnLengths(null); //Kill it no good can't use
                     //System.out.println(codeSyntax.getColumnLengths());
-                    //TODO: add a notification
+                    ApplicationController.notification.setEvent(AppEvents.FIXED_FORM_SYNTAX_NOT_SET);
                 }
-                //Kill codeSyntax if any of the keyword patterns are invalid (are null)
+
+                if(codeSyntax.isParserTokenLogicValid() == false) {
+                    codeSyntax.setParserTokenLogic(null); //Kill it's not good can't use!!!
+                    ApplicationController.notification.setEvent(AppEvents.FIXED_FORM_SYNTAX_NOT_SET);
+                }
+
+
                 if(codeSyntax.isKeywordsPatternsValid() == false) {
-                    codeSyntax = null;
+                    codeSyntax = null; // kill it no good can't use
                     ApplicationController.notification.setEvent(AppEvents.INVALID_SYNTAX_FILE);
                 } else {
                     parser.setCodeSyntax(codeSyntax);
                 }
-                //TODO: must check whether parser token logic is set
 
 
             } else {

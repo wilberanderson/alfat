@@ -1,5 +1,11 @@
 package parser.LogicScripter;
 
+/**
+ * This is a enum corresponding to the regex schema
+ * of the keywords pattern type for a syntax json
+ *
+ * @see UtilityKeywordTypeMatcher
+ * */
 public enum KeywordTypes {
     procedurestart,
     procedureend,
@@ -14,5 +20,8 @@ public enum KeywordTypes {
     constantBinary,
     constantCharacter,
     doubleQuotedString,
-    label
+    emptySpace,
+    label,
+    comment,
+    separator
 }

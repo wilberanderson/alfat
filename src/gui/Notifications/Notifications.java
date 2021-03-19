@@ -31,6 +31,7 @@ public class Notifications {
         new EventFileOpenSuccess(this);
         new EventFileOpenFailure(this);
         new EventSyntaxFileFailure(this);
+        new EventFixedFormNotSet(this);
 
     }
 

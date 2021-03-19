@@ -143,7 +143,7 @@ public class EngineTester {
         //************************************Initialize input*************************************
         applicationController = new ApplicationController();
         GLFWEventController.init(window, applicationController);
-        GlobalParser.PARSER_MANAGER = new ParserManager();
+
 
         // Set the clear color
         //GL11.glClearColor(GeneralSettings.base02.x, GeneralSettings.base02.y, GeneralSettings.base02.z, 1);
@@ -154,7 +154,7 @@ public class EngineTester {
         GeneralSettings.updateAspectRatio(GeneralSettings.DEFAULT_WIDTH, GeneralSettings.DEFAULT_HEIGHT);
 
         //************************************Open file**************************************************
-
+        GlobalParser.init();
         if(args.length == 1) {
             applicationController.getHeader().openFile(args[0]);
         }
