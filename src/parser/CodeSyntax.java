@@ -2,6 +2,8 @@ package parser;
 
 import parser.JsonObjects.*;
 
+import java.util.Collections;
+
 
 public class CodeSyntax {
 
@@ -133,6 +135,10 @@ public class CodeSyntax {
        return result;
    }
 
+   /**
+    * This is a helper function that returns true or false whether
+    * a matcher is valid or not.
+    * */
    private boolean isMatcherValid(OuterIntStrArray check) {
        boolean result = true;
        if(check != null) {
@@ -164,6 +170,26 @@ public class CodeSyntax {
             }
        } else {
            result = false;
+       }
+       return result;
+   }
+
+   /**
+    * This checks whether a ruler is valid. A ruler is not valid
+    * if it is null or contains a 0 or -1 number. If it is valid
+    * then this will also sort the arraylist.
+    * */
+   public boolean isRulerValid() {
+       boolean result = true;
+       if(this.ruler == null) {
+           result = false;
+       } else {
+            for (Integer in : ruler.inner) {
+                if (in <= 0) {
+                    result = false;
+                }
+            }
+            Collections.sort(ruler.inner);
        }
        return result;
    }

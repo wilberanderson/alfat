@@ -1,11 +1,11 @@
       DISPLYMSG_0
 FOOBAR
-FOOBA2
+FOOBA2                                               
  OOBAR
  SOOBA
 *This is a mock pseudo code language to demonstrate a
-*Fixed filed language compatibility in an extremely 
-*strict fixed filed format. 
+*Fixed field language compatibility in an extremely 
+*strict fixed field format. 
 *1234567890123456789012345678901234567890123456789012
 *Count from zero to 100
       START .MAIN
@@ -17,7 +17,7 @@ FOOBA2
       PRINT MSG_0
       END   .MAIN
 
-      
+
  ADD1 STPROC
       ADD   EAX   1
       CALL  FOO
