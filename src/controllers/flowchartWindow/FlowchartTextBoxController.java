@@ -1,5 +1,6 @@
 package controllers.flowchartWindow;
 
+import controllers.ApplicationController;
 import controllers.TextLineController;
 import dataStructures.RawModel;
 import gui.FlowchartLine;
@@ -7,6 +8,7 @@ import gui.GUIFilledBox;
 import gui.texts.*;
 import gui.textBoxes.FlowchartTextBox;
 import loaders.Loader;
+import main.EngineTester;
 import main.GeneralSettings;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
@@ -15,6 +17,8 @@ import org.lwjgl.system.CallbackI;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
+import parser.FlowChartObject;
+import parser.GlobalParser;
 import utils.Printer;
 
 import java.nio.FloatBuffer;
@@ -58,8 +62,8 @@ public class FlowchartTextBoxController {
         populateVbo(highlightedLines.getVaoID());
     }
 
-    public void add(Vector2f position, List<FormattedTextLine> formattedTextLines, int lineNumber, List<String> registers, String alert){
-        FlowchartTextBox textBox = new FlowchartTextBox(position, registers, alert, formattedTextLines);
+    public void add(Vector2f position, List<FormattedTextLine> formattedTextLines, int lineNumber, List<String> registers, String alert, int boxNumber){
+        FlowchartTextBox textBox = new FlowchartTextBox(position, registers, alert, formattedTextLines, boxNumber);
         //background color unhighlighted
         textBox.setBackgroundColor(GeneralSettings.TEXT_BOX_BACKGROUND_COLOR);
         textBox.setBorderColor(GeneralSettings.TEXT_BOX_BORDER_COLOR);
@@ -284,7 +288,21 @@ public class FlowchartTextBoxController {
     }
 
     public void click(int key, int action){
-        if(key == GLFW.GLFW_MOUSE_BUTTON_LEFT && action == GLFW.GLFW_RELEASE){
+        if(key == GLFW.GLFW_MOUSE_BUTTON_LEFT && action == GLFW.GLFW_RELEASE && ApplicationController.SHIFT_PRESSED) {
+            // Click on box, shift clicked: minimize box
+            boolean hit = false;
+            for (FlowchartTextBox textBox : textBoxes) {
+                if (mousePosition.x > textBox.getPosition().x && mousePosition.y > textBox.getPosition().y && mousePosition.x < textBox.getPosition().x + textBox.getSize().x && mousePosition.y < textBox.getPosition().y + textBox.getSize().y) {
+                    int clickedBoxNumber = textBox.getBoxNumber();
+                    GlobalParser.PARSER_MANAGER.getParser().flowchart.get(clickedBoxNumber).setMinimized(!GlobalParser.PARSER_MANAGER.getParser().flowchart.get(clickedBoxNumber).minimized);
+                    hit = true;
+                }
+            }
+            if (hit){
+                //reload
+                GlobalParser.PARSER_MANAGER.getParser().createFlowchart(EngineTester.applicationController);
+            }
+        } else if(key == GLFW.GLFW_MOUSE_BUTTON_LEFT && action == GLFW.GLFW_RELEASE){
             // selectedTextBox = null;
             for(FlowchartTextBox textBox : textBoxes){
                 if(mousePosition.x > textBox.getPosition().x && mousePosition.y > textBox.getPosition().y && mousePosition.x < textBox.getPosition().x + textBox.getSize().x && mousePosition.y < textBox.getPosition().y + textBox.getSize().y){

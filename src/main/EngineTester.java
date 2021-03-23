@@ -24,7 +24,7 @@ public class EngineTester {
 
     //Temporary attributes
     private List<GuiTexture> guis;
-    private ApplicationController applicationController;
+    public static ApplicationController applicationController;
     private GUIWindow guiWindow;
     /**
      * Used for all operations of the program

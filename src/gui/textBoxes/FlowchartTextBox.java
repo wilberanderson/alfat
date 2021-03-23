@@ -12,13 +12,15 @@ public class FlowchartTextBox extends TextBox{
     private String alert;
     private boolean isHighlighted = false;
     private List<FormattedTextLine> textLines;
+    private int boxNumber;
 
-    public FlowchartTextBox(Vector2f position, List<String> registers, String alert, List<FormattedTextLine> textLines){
+    public FlowchartTextBox(Vector2f position, List<String> registers, String alert, List<FormattedTextLine> textLines, int boxNumber){
         super();
         super.setPosition(position);
         this.registers = registers;
         this.alert = alert;
         this.textLines = textLines;
+        this.boxNumber = boxNumber;
     }
 
     @Override
@@ -36,5 +38,9 @@ public class FlowchartTextBox extends TextBox{
 
     public List<FormattedTextLine> getTextLines(){
         return textLines;
+    }
+
+    public int getBoxNumber() {
+        return boxNumber;
     }
 }

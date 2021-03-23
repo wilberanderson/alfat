@@ -1,8 +1,13 @@
 package parser;
 
 import gui.texts.FormattedTextLine;
+import gui.texts.LabelWord;
+import gui.texts.TextWord;
+import org.lwjgl.util.vector.Vector2f;
+import org.lwjgl.util.vector.Vector3f;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class FlowChartObject {
@@ -13,6 +18,7 @@ public class FlowChartObject {
     public int startLine;   //the starting line number of the box
     public String alert = "";
     public int boxNumber;
+    public boolean minimized = false;
 
     public boolean jumps = false;
     public boolean returns = false;
@@ -85,7 +91,14 @@ public class FlowChartObject {
     }
 
     public List<FormattedTextLine> getTextLines(){
-        return formattedTextLines;
+        if (!minimized || (lineCount <=3) ) {return formattedTextLines;}
+        List<FormattedTextLine> temp = new ArrayList<>();
+        temp.add(formattedTextLines.get(0));
+        ArrayList<TextWord> dottedLine = new ArrayList<>();
+        dottedLine.add(new LabelWord("... (code folded)", new Vector2f(0,0)));
+        temp.add(new FormattedTextLine(dottedLine));
+        temp.add(formattedTextLines.get(formattedTextLines.size()-1));
+        return temp;
     }
 
     public boolean isReturns() {
@@ -94,5 +107,9 @@ public class FlowChartObject {
 
     public void setReturns(boolean ret){
         this.returns = ret;
+    }
+
+    public void setMinimized(boolean minimized){
+        this.minimized = minimized;
     }
 }

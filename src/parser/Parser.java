@@ -30,7 +30,7 @@ public class Parser  {
     String targetFileTag = "";
     String closingFileTag = "";
     private boolean invalidFlag = false; // invalid labels found in parsing? Highlight after flowchart generation
-    ArrayList<FlowChartObject> flowchart = new ArrayList<>();
+    public ArrayList<FlowChartObject> flowchart = new ArrayList<>();
 
     HashMap<String, Integer> labelMap = new HashMap<>(); // map of labels -> line numbers
     List<CodeLine> lines = new ArrayList<>();
@@ -483,7 +483,7 @@ public class Parser  {
                 System.out.println("Starting @ line #" + box.getStartLine());
             }
 
-            flowchartWindowController.getFlowchartTextBoxController().add(new Vector2f(location.x, location.y), box.getTextLines(), box.getStartLine() + 1, box.getRegisters(), box.alert);
+            flowchartWindowController.getFlowchartTextBoxController().add(new Vector2f(location.x, location.y), box.getTextLines(), box.getStartLine() + 1, box.getRegisters(), box.alert, i);
 //            FlowchartTextBox textBox = new FlowchartTextBox(new Vector2f(location), box.getTextLines(), box.getStartLine()+1, box.getRegisters(), box.alert);
 //            for(TextLine line : textBox.getTextLines()){
 //                flowchartWindowController.getTextLineController().add(line);
