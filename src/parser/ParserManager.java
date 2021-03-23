@@ -4,18 +4,15 @@ import controllers.ApplicationController;
 import gui.Notifications.AppEvents;
 import gui.texts.EditableFormattedTextLine;
 import main.GeneralSettings;
+import parser.LogicScripter.Ruler;
 
 import java.io.File;
 
 
 public class ParserManager {
-
     private  Parser2 parser;
-
-
     private  CodeSyntax codeSyntax;
-
-
+    private Ruler ruler;
 
     public ParserManager() {
         this.codeSyntax = null;
@@ -55,6 +52,12 @@ public class ParserManager {
                     ApplicationController.notification.setEvent(AppEvents.INVALID_SYNTAX_FILE);
                 } else {
                     parser.setCodeSyntax(codeSyntax);
+                }
+
+                if(codeSyntax.isRulerValid() == true) {
+                    this.ruler = new Ruler(codeSyntax.getRuler().inner, true);
+                } else {
+                    this.ruler = null; //KILL it can't be used
                 }
 
 
@@ -132,4 +135,35 @@ public class ParserManager {
     public boolean isSyntaxValid() {
         return !(codeSyntax != null);
     }
+
+
+    /**Returns true or false whether a ruler has been defined in the json
+     * defined meaning not null.
+     * TODO:Add check to make sure -# can't be provided in.
+     * */
+    public boolean isRulerValid() {
+        boolean result = true;
+        if(codeSyntax != null) {
+            if(codeSyntax.getRuler() == null) {
+                result = false;
+            }
+        } else {
+            result = false;
+        }
+        return result;
+    }
+
+
+    /**
+     * Returns the current ruler. If the ruler is not valid
+     * then this will return null.
+     * */
+    public Ruler getRules() {
+        return ruler;
+    }
+
+
+
+
+
 }
