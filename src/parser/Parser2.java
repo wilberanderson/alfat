@@ -120,7 +120,7 @@ public class Parser2  {
                     // replaces tabs with spaces
                     //line = line.replace("\t", "    ");
 
-                    simpleTokenizer.setVerbose(false);
+                    simpleTokenizer.setVerbose(true);
                     String[] arrLine = simpleTokenizer.tokenizeString(line);
                     int columnFragmentIndex = 0; // The start index of the column fragment as a string fragment
                     int columnFragment = 0; // The actual fragment of the column
@@ -195,7 +195,13 @@ public class Parser2  {
                             formattedString.add(new LabelWord(fragment, new Vector2f(0f, 0)));
                             first = false;
                             //} else if (!jump && fragment.matches("^[a-zA-Z0-9\\-_\"\\\\\\[\\]\\!<>]+")) {
-                        } else if (!jump && parserLogicScripter.userDefinedMatcher.isMatch(fragment,columnFragment)) {
+                        }else if (!jump && parserLogicScripter.labelMatcher.isMatch(fragment, columnFragment)) {
+                            //Checks if a label is a implicit goto label
+                            jump = true;
+                            targetLabel = fragment;
+                            formattedString.add(new LabelWord(fragment, new Vector2f(0f, 0)));
+                            first = false;
+                        }  else if (!jump && parserLogicScripter.userDefinedMatcher.isMatch(fragment,columnFragment)) {
                             //the command isn't a jump statement, so the label must be a variable i.e. string, etc.
                             formattedString.add(new LabelWord(fragment, new Vector2f(0f, 0)));
                         } else if (parserLogicScripter.commentMatcher.isMatch(fragment,columnFragment)) {

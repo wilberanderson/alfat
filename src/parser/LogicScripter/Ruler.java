@@ -1,7 +1,5 @@
 package parser.LogicScripter;
 
-import main.GeneralSettings;
-
 import java.util.ArrayList;
 
 /**
@@ -17,11 +15,11 @@ import java.util.ArrayList;
  * integers of rulers array [5,10,15]
  * */
 public class Ruler extends ArrayList<Float> {
-    private final float MUL = 2.f; // The default multiplier value
-    private final float FONTSS = 1; // The default multiplier value
+    private final float MULTIPLIER = 2.f; // The default multiplier value
+    private final float FONTSIZESAPCE = 1; // The default font size space
     private ArrayList<Integer> jsonRulerColumns; //The list of ruler columns from the json
-    private float fontSizeSpace = FONTSS; //The font size
-    private float multiplier = MUL; //The multiplier
+    private float fontSizeSpace = FONTSIZESAPCE; //The font size
+    private float multiplier = MULTIPLIER; //The multiplier
 
     public Ruler() {
         //Do nothing
