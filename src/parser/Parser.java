@@ -210,7 +210,8 @@ public class Parser  {
                     }
 
                     //call constructor for TLine, then add the new object to the arraylist for the file
-                    lines.add(new CodeLine(line, comm, label, targetLabel, jump, registers, i, ret));
+                    // Code block is not implemented here
+                    lines.add(new CodeLine(line, comm, label, targetLabel, jump, registers, i, ret, 0));
                     // Assign formatted text object to the new Tline class
                     lines.get(lines.size() - 1).setTextLine(FormLine);
                 }
