@@ -2,13 +2,13 @@ package main;
 import controllers.ApplicationController;
 import controllers.gui.GUIWindowController;
 import gui.*;
+import gui.TempFiles.TempFileManager;
 import gui.windows.GUIWindow;
 import loaders.*;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
 import org.lwjgl.system.*;
 import parser.GlobalParser;
-import parser.ParserManager;
 import rendering.renderEngine.MasterRenderer;
 import controllers.GLFWEventController;
 
