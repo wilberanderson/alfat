@@ -2,9 +2,9 @@
   "keywordPatterns": {
     "procedurestart": "",
     "procedureend": "(?i)(ret)\\b",
-    "control": "(?i)(if|call|BR|BRn|BRz|BRp|BRnz|BRnp|BRzp|BRnzp|JMP|RET|JSR|JSRR|RTI|br|brn|brz|brp|brnz|brnp|brzp|brnzp|jmp|ret|jsr|jsrr|rti)\\b",
+    "control": "(?i)(goto|if|call|BR|BRn|BRz|BRp|BRnz|BRnp|BRzp|BRnzp|JMP|RET|JSR|JSRR|RTI|br|brn|brz|brp|brnz|brnp|brzp|brnzp|jmp|ret|jsr|jsrr|rti)\\b",
     "reserved": "(?i)(print|disply|TRAP|GETC|OUT|PUTS|IN|HALT|trap|getc|out|puts|in|halt|ALIAS|MACRO|IMPORT|EXPORT|alias|macro|import|export|.ORIG|.FILL|.BLKW|.STRINGZ|.END|.orig|.fill|.blkw|.stringz|.end)\\b",
-    "arithmetic": "(?i)(NOT|AND|ADD|not|and|add|)\\b|(<|>|=|==|!=)",
+    "arithmetic": "(?i)(NOT|AND|ADD|not|and|add|)\\b|(<|>|=|==|!=|!)",
     "dataMovement": "(?i)(LD|LDR|LDI|ST|STR|STI|LEA|ld|ldr|ldi|st|str|sti|lea)\\b",
     "register": "(?i)(e[abcd]x|r[1-9]|[abcd]x)\\b",
     "commentLine": "(\\*.+?$)|(\\*)",
@@ -13,10 +13,10 @@
     "constantBinary": "\\b[01]+\\b",
     "constantCharacter": "[A-Za-z][A-Za-z0-9_]+",
     "doubleQuotedString": "^(\".*\")_|^([\\\"\\\\].*[\\\"\\\\])",
-    "emptySpace": "((?<=\\s)|(?=\\s+))\\b|((?=\\,))|(?=\\.)|((?<=\\\")|(?=\\\"))|((?<=\\\\)|(?=\\\\))|((?<=')|(?='))|((?<=\\*)|(?=\\*))|((?<=[<>])|(?=[<>]))",
+    "emptySpace": "((?<=\\s)|(?=\\s+))\\b|((?=\\,))|(?=\\.)|((?<=\\\")|(?=\\\"))|((?<=\\\\)|(?=\\\\))|((?<=')|(?='))|((?<=\\*)|(?=\\*))|((?<=[<>)])|(?=[<>]))|((?<=(!=)|(=))|(?=(!=)|(=)))",
     "label": "^[a-zA-Z0-9\\-_]+",
     "comment": "\\*",
-    "separator": "[ ,\t]"
+    "separator": "([ ,\t])|(\\s+)"
   },
   "parserTokenLogic":  {
     "command": {
@@ -37,7 +37,7 @@
     },
     "label": {
       "regexes": ["label"],
-      "columns": [1,3,9]
+      "columns": [1,3,5,9]
     },
     "procedurestart": {
       "regexes": ["procedurestart"],
