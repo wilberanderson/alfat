@@ -51,7 +51,8 @@ public class RulerRenderer {
             codeWindowTransformation.m21 = codeWindowController.getContentsVerticalPosition();
             shader.zoomTranslateMatrix.loadMatrix(codeWindowTransformation);
             shader.aspectRatio.loadMatrix(GeneralSettings.ASPECT_RATIO);
-            Printer.print(GeneralSettings.ASPECT_RATIO);
+            shader.windowPosition.loadVec2(controller.getCodeWindowController().getCodeWindow().getCodeWindowPosition());
+            shader.windowSize.loadVec2(controller.getCodeWindowController().getCodeWindow().getCodeWindowSize());
 //            shader.color.loadVec3(1, 1, 1);
 //            shader.endPositions.loadVec4(-0.5f, -1, -0.5f, 1);
 

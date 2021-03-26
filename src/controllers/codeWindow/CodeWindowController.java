@@ -107,8 +107,6 @@ public class CodeWindowController {
         //List that holds the lines that were added, used to prevent concurrent modification
         List<EditableFormattedTextLine> newLines = new ArrayList<>();
 
-        Printer.print(lines.length);
-
         //For each line in the file
         for (String line : lines){
             numberOfLines++;
@@ -157,7 +155,6 @@ public class CodeWindowController {
 
         //Calculate the max positions used for scrolling
         maxVerticalPosition = minHeight-size.y;
-        Printer.print(minHeight);
         maxHorizontalPosition = longestLine + codeWindow.getTextNumberFilledBox().getSize().x + codeWindow.getSize().x/2;// - size.x;
 
         //Create component elements
@@ -255,8 +252,6 @@ public class CodeWindowController {
         //TODO: Fix this to actually change the position to appear the same
         contentsVerticalPosition = 0 + minVerticalPosition;// - (height-defaultHeight);
         contentsHorizontalPosition = 0 + minHorizontalPosition;
-
-        Printer.print(contentsHorizontalPosition);
 
         //The texts start at the top of the window
 //        float startingHeight = codeWindow.getSize().y - 1;
@@ -744,7 +739,6 @@ public class CodeWindowController {
     public void unloadTextsResize(boolean decrease){
         //If the first line is above the screen then lines need to be unloaded at the top and loaded at the bottom
         if(decrease){
-            Printer.print("Screen shrunk");
             //Unload the lines at the top
             EditableFormattedTextLine line = textLineController.getCodeWindowTextLines().get(startIndex);
             while(line.getPosition().y/aspectRatio.y*scaleFactor.y + contentsVerticalPosition > 1f/aspectRatio.y){

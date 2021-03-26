@@ -13,6 +13,7 @@ void main(void){
     vec2 out_Position;
     if(position.x == 0 && position.y == 0){
         out_Position = aspectRatio * vec2((zoomTranslateMatrix * vec3(endPositions.xy, 1)).xy);
+        out_Position.y = -1;
     }else{
         out_Position = aspectRatio * vec2((zoomTranslateMatrix * vec3(endPositions.zw, 1)).xy);
     }

@@ -57,7 +57,6 @@ public class ParserManager {
 
                 if(codeSyntax.isRulerValid() == true) {
                     this.ruler = new Ruler(codeSyntax.getRuler().inner, true);
-                    Printer.print("Ruler created");
                 } else {
                     this.ruler = null; //KILL it can't be used
                 }
