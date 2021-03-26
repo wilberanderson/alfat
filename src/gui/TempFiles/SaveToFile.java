@@ -1,4 +1,4 @@
-package gui;
+package gui.TempFiles;
 
 
 import gui.texts.CodeWindowText;
@@ -10,7 +10,6 @@ import java.util.List;
 
 /**
  * Save TextEditor content to a file.
- * @author Thomas
  * */
 public class SaveToFile {
 

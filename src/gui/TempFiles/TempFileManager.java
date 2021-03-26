@@ -1,9 +1,9 @@
-package gui;
+package gui.TempFiles;
 
-import gui.texts.CodeWindowText;
+import gui.TempFiles.FileSortedArrayList;
+import gui.TempFiles.SaveToFile;
 import gui.texts.EditableFormattedTextLine;
 import gui.texts.GUIText;
-import gui.texts.Text;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -17,7 +17,6 @@ import java.util.List;
 
 /**
  * Manages the paths of the current files in the temp folder.
- * @author Thomas
  * TODO: Get deletes to work
  */
 public class TempFileManager {
@@ -282,7 +281,7 @@ public class TempFileManager {
 
     /**
      * Saves the current the list of code editor contents to a temp file in a temp folder.
-     * @see gui.SaveToFile
+     * @see SaveToFile
      * @see GUIText
      * @param textLines A java LIST<GUIText>
      * @param currentFilePath java string literal

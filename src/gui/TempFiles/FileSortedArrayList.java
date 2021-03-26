@@ -1,4 +1,4 @@
-package gui;
+package gui.TempFiles;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -13,7 +13,6 @@ import java.util.Date;
 /**
  * This is a ArrayList that allows for files to be added and sorted by the last modified date of the file
  * such that the first in the index is the most recent file modified.
- * @author Thoams
  * */
 public class FileSortedArrayList extends ArrayList<File> {
 

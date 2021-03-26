@@ -19,6 +19,7 @@ public class FlowChartObject {
     public String alert = "";
     public int boxNumber;
     public boolean minimized = false;
+    public int codeBlock = 0;
 
     public boolean jumps = false;
     public boolean returns = false;

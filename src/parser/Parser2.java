@@ -12,6 +12,7 @@ import gui.windows.PopupWindow;
 import main.EngineTester;
 import main.GeneralSettings;
 import org.lwjgl.glfw.GLFW;
+import org.lwjgl.system.CallbackI;
 import org.lwjgl.util.vector.Matrix3f;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
@@ -34,6 +35,7 @@ public class Parser2  {
     public ArrayList<FlowChartObject> flowchart = new ArrayList<>();
 
     HashMap<String, Integer> labelMap = new HashMap<>(); // map of labels -> line numbers
+    HashMap<FlowChartObject, FlowChartObject> codeBlockMap = new HashMap<>();
     List<CodeLine> lines = new ArrayList<>();
 
     private SimpleTokenizer simpleTokenizer = new SimpleTokenizer();
@@ -133,8 +135,19 @@ public class Parser2  {
                     List<TextWord> formattedString = new ArrayList<>();
                     boolean jump = false;
                     boolean ret = false;
+                    int codeBlock = 0;
 
-
+                    // TODO: make regex matches
+                    if (line.matches(".*BLOCKSTART.*")){
+                        // block start
+                        codeBlock = 1;
+                    } else if (line.matches(".*BLOCKEND.*")){
+                        // block start
+                        codeBlock = 2;
+                    }
+                    if (line.matches("^[ \t]*BLOCKSTART.*") || line.matches("^[ \t]*BLOCKEND.*")){
+                        first = false;
+                    }
 
                     //  arrLine = {"LABEL:", "JGZ", "R1", "R2", "FINISH"}
                     for (String fragment : arrLine) {
@@ -195,7 +208,8 @@ public class Parser2  {
                             formattedString.add(new LabelWord(fragment, new Vector2f(0f, 0)));
                             first = false;
                             //} else if (!jump && fragment.matches("^[a-zA-Z0-9\\-_\"\\\\\\[\\]\\!<>]+")) {
-                        }else if (!jump && parserLogicScripter.labelMatcher.isMatch(fragment, columnFragment)) {
+                        }else if (!jump && parserLogicScripter.labelMatcher.isMatch(fragment, columnFragment) && !fragment.matches("BLOCKSTART") && !fragment.matches("BLOCKEND")) {
+                            //TODO: Regex again
                             //Checks if a label is a implicit goto label
                             jump = true;
                             targetLabel = fragment;
@@ -229,7 +243,7 @@ public class Parser2  {
                     }
 
                     //call constructor for TLine, then add the new object to the arraylist for the file
-                    lines.add(new CodeLine(line, comm, label, targetLabel, jump, registers, i, ret));
+                    lines.add(new CodeLine(line, comm, label, targetLabel, jump, registers, i, ret, codeBlock));
                     // Assign formatted text object to the new Tline class
                     lines.get(lines.size() - 1).setTextLine(FormLine);
                 }
@@ -390,9 +404,9 @@ public class Parser2  {
                 System.out.println("line text \"" + line.getLineText(true) + "\"");
                 System.out.println("jumps = " + line.isJumps());
             }
-            //This line has a label, start a new box:
+            //This line has a label or starts a code block, start a new box:
             if (verbose) System.out.println("line label: \"" + line.getLabel() + "\"");
-            if (!line.getLabel().isEmpty()) {
+            if (!line.getLabel().isEmpty() || line.getCodeBlock() == 1) {
                 //start new box
                 if (verbose) System.out.println("label found \"" + line.getLabel() + "\"");
                 flowchart.add(new FlowChartObject());
@@ -414,6 +428,14 @@ public class Parser2  {
                 flowchart.get(flowchart.size() - 1).lineCount++;
             }
 
+            // Create code blocks
+            if (flowchart.get(flowchart.size() - 1).codeBlock == 0) {
+                // doesn't have blocking yet
+                flowchart.get(flowchart.size() - 1).codeBlock = line.getCodeBlock();
+            } else if (flowchart.get(flowchart.size() - 1).codeBlock == 1 && line.getCodeBlock() == 2){
+                // box is a single, enclosed codeBlock.
+                flowchart.get(flowchart.size() - 1).codeBlock = 3;
+            }
 
             //if the line is a jump/branch, end the box and start a new one.
             if (line.isJumps()) {
@@ -438,11 +460,14 @@ public class Parser2  {
 
         //create linkages
         int i = 1;
+        List<FlowChartObject> codeBlocks = new ArrayList<>();
         for (FlowChartObject box : flowchart) {
+            // Link jumps:
             box.setBoxNumber(i);
             // If the box jumps, find where it targets and link them.
             if (box.isJumps() && !box.isReturns()) {
                 if (verbose) System.out.println("Creating linkage for box " + box.label + " targeting " + box.target);
+
                 for (FlowChartObject candidate : flowchart) {
                     if (verbose) System.out.println(" -> Checking against box " + box.label);
                     if (candidate.label.equals(box.target)) {
@@ -463,7 +488,39 @@ public class Parser2  {
                     }
                 }
             }
+            //System.out.println(box.codeBlock);
+            // Link code block sections:
+            if ((codeBlocks.size() & 1) == 0){
+                // even or no block:
+                if (box.codeBlock == 1) {
+//                    System.out.println("Box starts, inserted");
+                    codeBlocks.add(box);
+                }
+                if (box.codeBlock == 3) {
+//                    System.out.println("Box is self contained, inserted");
+                    codeBlocks.add(box);
+                    codeBlocks.add(box);
+                }
+            } else {
+                // odd or middle of block
+                if (box.codeBlock == 2) {
+//                    System.out.println("Box ends, inserted");
+                    codeBlocks.add(box);
+                }
+            }
+
             i++;
+        }
+
+        for (FlowChartObject obj : codeBlocks){
+            System.out.print(obj.boxNumber + ",");
+        }
+        System.out.println();
+
+        for (i = 0; i < codeBlocks.size() - codeBlocks.size()%2 ; i += 2){
+            // Key is end of box, value is start of box
+            codeBlockMap.put(codeBlocks.get(i+1),codeBlocks.get(i));
+            System.out.println("mapping box " + codeBlocks.get(i+1).boxNumber + " to box " + codeBlocks.get(i).boxNumber);
         }
 
         if (verbose) {
@@ -472,6 +529,7 @@ public class Parser2  {
                 n++;
                 System.out.println("─ " + box.getBoxNumber() + "\t──────────────────────────────────────────────────────────────────────────");
                 System.out.println(box.getFullText(true));
+                System.out.println(" Code block status: " + box.codeBlock);
                 if (box.isJumps() && !box.isReturns())
                     System.out.println(" Target label: " + box.connection.label + " @ box " + box.connection.getBoxNumber());
                 else if (!box.alert.isEmpty()) System.out.println("┌╼ " + box.alert);
@@ -535,6 +593,7 @@ public class Parser2  {
         // Draw lines:
         List<FlowchartLine> linesList = new ArrayList<>();
         int jump_lines = 0;
+        int codeBlockLines = 0;
 
         Vector3f rainbow[] = {GeneralSettings.magenta, GeneralSettings.red, GeneralSettings.orange, GeneralSettings.yellow, GeneralSettings.green, GeneralSettings.cyan, GeneralSettings.blue, GeneralSettings.violet};
 
@@ -609,6 +668,27 @@ public class Parser2  {
 
                     jump_lines++;
                 }
+            }
+
+            // Code block drawing
+            if (index < flowchart.size() - 1 && codeBlockMap.containsKey(flowchart.get(index))){
+                System.out.println("Adding codeBlock line ending @ box " + index + ", starting @ box " + (codeBlockMap.get(flowchart.get(index)).boxNumber));
+
+                List<Vector2f> coordinates = new ArrayList<>();
+
+                coordinates.add(locations.get(index));
+                coordinates.add(new Vector2f(locations.get(index).x-.1f,locations.get(index).y));
+
+                coordinates.add(new Vector2f(locations.get(codeBlockMap.get(flowchart.get(index)).boxNumber-1).x -.1f,locations.get(codeBlockMap.get(flowchart.get(index)).boxNumber-1).y + sizes.get(codeBlockMap.get(flowchart.get(index)).boxNumber-1).y));
+                coordinates.add(new Vector2f(locations.get(codeBlockMap.get(flowchart.get(index)).boxNumber-1).x,locations.get(codeBlockMap.get(flowchart.get(index)).boxNumber-1).y + sizes.get(codeBlockMap.get(flowchart.get(index)).boxNumber-1).y));
+
+                Terminator terminator = new Junction(coordinates.get(coordinates.size() - 1));
+
+                FlowchartLine line = new FlowchartLine(coordinates, terminator);
+                line.setColor(rainbow[codeBlockLines % rainbow.length]);
+                linesList.add(line);
+
+                codeBlockLines++;
             }
         }
 
