@@ -103,6 +103,7 @@ public class MasterRenderer {
 			cursorRenderer.render(controller.getCodeWindowController().getCursorController());
 		}
 
+		//TODO: Put a check to see if rulers should be rendered
 		rulerRenderer.renderToScreen(controller);
 
 		//Render gui elements
