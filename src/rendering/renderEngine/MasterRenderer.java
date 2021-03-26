@@ -103,10 +103,11 @@ public class MasterRenderer {
 			cursorRenderer.render(controller.getCodeWindowController().getCursorController());
 		}
 
+		rulerRenderer.renderToScreen(controller);
+
 		//Render gui elements
 		filledBoxRenderer.renderGuis(controller.getHeader());
 
-		rulerRenderer.renderToScreen(controller);
 
 		//Render gui text
 		TextMaster.renderGuis();
