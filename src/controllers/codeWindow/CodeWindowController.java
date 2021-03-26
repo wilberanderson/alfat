@@ -2,7 +2,9 @@ package controllers.codeWindow;
 
 import controllers.ControllerSettings;
 import controllers.TextLineController;
+import dataStructures.RawModel;
 import gui.Cursor;
+import gui.FlowchartLine;
 import gui.GUIFilledBox;
 import gui.Mouse;
 import gui.buttons.HorizontalScrollBar;
@@ -10,18 +12,23 @@ import gui.buttons.VerticalScrollBar;
 import gui.texts.*;
 import gui.fontMeshCreator.FontType;
 import gui.textBoxes.CodeWindow;
+import loaders.Loader;
 import main.EngineTester;
 import main.GeneralSettings;
+import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.GLFW;
+import org.lwjgl.opengl.GL15;
 import org.lwjgl.system.CallbackI;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
 import parser.GlobalParser;
+import parser.LogicScripter.Ruler;
 import parser.Parser;
 import parser.ParserManager;
 import utils.Printer;
 
+import java.nio.FloatBuffer;
 import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.List;
@@ -64,6 +71,12 @@ public class CodeWindowController {
 
     float defaultHeight;
     Vector2f scaleFactor = new Vector2f(1, 1);
+
+    private static final float[] VERTICES = {
+            0, 0,
+            0, -1
+    };
+    public RawModel ruler;
 
     public CodeWindowController(Vector2f position, Vector2f size, Vector3f backgroundColor, Vector3f textColor, Vector3f borderColor, String content, FontType font, float fontSize, float thickness, float borderWidth, float border, float headerHeight, TextLineController textLineController){
         this.textLineController = textLineController;
@@ -155,11 +168,46 @@ public class CodeWindowController {
         //Update the aspect ratio in case aspect ratio was changed before opening this file
         aspectRatio = new Vector2f(GeneralSettings.ASPECT_RATIO.m00, GeneralSettings.ASPECT_RATIO.m11);
         endIndex = numberOfLines - 1;
+
+        //Generate the vao for the ruler
+        ruler = Loader.loadToVAO(VERTICES, 2);
+        populateVBO(GlobalParser.PARSER_MANAGER.getRules(), ruler.getVaoID());
+
         updateAspectRatio(aspectRatio, headerHeight);
 
 
 //        scroll(maxVerticalPosition);
 //        scrollHorizontal(maxHorizontalPosition, horizontalScrollBar.getFactor());
+
+    }
+
+    public int populateVBO(Ruler ruler, int vao){
+        int instanceCount = ruler.size() - 1;
+
+        int vbo = Loader.createEmptyVbo(instanceCount*GeneralSettings.RULER_INSTANCED_DATA_LENGTH, GL15.GL_STATIC_DRAW);
+        Loader.addInstanceAttribute(vao, vbo, 1, 4, GeneralSettings.RULER_INSTANCED_DATA_LENGTH, 0);
+        Loader.addInstanceAttribute(vao, vbo, 2, 3, GeneralSettings.RULER_INSTANCED_DATA_LENGTH, 4);
+        FloatBuffer buffer = BufferUtils.createFloatBuffer(instanceCount*GeneralSettings.RULER_INSTANCED_DATA_LENGTH);
+        float data[] = new float[instanceCount*GeneralSettings.RULER_INSTANCED_DATA_LENGTH];
+        int i = 0;
+        for(int j = 1; j < ruler.size(); j++){
+                data[i] = codeWindow.getCodeWindowPosition().x + ruler.get(j-1);//.getPositions().get(j).x;
+                i++;
+                data[i] = codeWindow.getCodeWindowPosition().y;
+                i++;
+                data[i] = codeWindow.getCodeWindowPosition().x + ruler.get(j-1);
+                i++;
+                data[i] = codeWindow.getCodeWindowPosition().y + codeWindow.getCodeWindowSize().y;
+                i++;
+                data[i] = 1;//line.getColor().x;
+                i++;
+                data[i] = 1;//line.getColor().y;
+                i++;
+                data[i] = 1;//line.getColor().z;
+                i++;
+        }
+        Loader.updateVbo(vbo, data, buffer);
+        return instanceCount;
     }
 
     /**

@@ -12,6 +12,7 @@ import rendering.cursor.CursorRenderer;
 import rendering.filledBox.FilledBoxRenderer;
 import rendering.flowchartLine.FlowchartLineRenderer;
 //import rendering.guis.GuiRenderer;
+import rendering.rulers.RulerRenderer;
 import rendering.terminators.TerminatorRenderer;
 import rendering.text.TextMaster;
 import rendering.textLines.TextLineRenderer;
@@ -30,6 +31,7 @@ public class MasterRenderer {
 	private static FlowchartLineRenderer flowchartLineRenderer;
 	private static TerminatorRenderer terminatorRenderer;
 	private static TextLineRenderer textLineRenderer;
+	private static RulerRenderer rulerRenderer;
 
 	private static TextLineController textLineController = new TextLineController();
 
@@ -51,6 +53,7 @@ public class MasterRenderer {
 		flowchartLineRenderer = new FlowchartLineRenderer();
 		terminatorRenderer = new TerminatorRenderer();
 		textLineRenderer = new TextLineRenderer();
+		rulerRenderer = new RulerRenderer();
 	}
 
 	/**
@@ -102,6 +105,8 @@ public class MasterRenderer {
 
 		//Render gui elements
 		filledBoxRenderer.renderGuis(controller.getHeader());
+
+		rulerRenderer.renderToScreen(controller);
 
 		//Render gui text
 		TextMaster.renderGuis();

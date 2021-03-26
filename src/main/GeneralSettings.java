@@ -95,6 +95,8 @@ public class GeneralSettings {
 	public static final MyFile FLOWCHART_FRAGMENT = new MyFile("/rendering/flowchartLine/flowchartLineFragment.glsl");
 	public static final MyFile TERMINATOR_VERTEX = new MyFile("/rendering/terminators/terminatorVertex.glsl");
 	public static final MyFile TERMINATOR_FRAGMENT = new MyFile("/rendering/terminators/terminatorFragment.glsl");
+	public static final MyFile RULER_VERTEX = new MyFile("/rendering/rulers/rulerVertex.glsl");
+	public static final MyFile RULER_FRAGMENT = new MyFile("/rendering/rulers/rulerFragment.glsl");
 
 	//***********************************Window settings*****************************************
 	public static final int DEFAULT_WIDTH = 1280;
@@ -128,6 +130,7 @@ public class GeneralSettings {
 	public static final int TEXT_LINE_INSTANCED_DATA_LENGTH = 7;			//The number of floats making up the per instance data for a flowchart line
 	public static final int JUNCTION_INSTANCED_DATA_LENGTH = 5;
 	public static final int ARROW_HEAD_INSTANCED_DATA_LENGTH = 5;
+	public static final int RULER_INSTANCED_DATA_LENGTH = 7;
 
 	public static final int MAX_LINES = 1000;
 	public static boolean OPEN_PARTIAL_FILE = false;

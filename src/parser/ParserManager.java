@@ -5,6 +5,7 @@ import gui.Notifications.AppEvents;
 import gui.texts.EditableFormattedTextLine;
 import main.GeneralSettings;
 import parser.LogicScripter.Ruler;
+import utils.Printer;
 
 import java.io.File;
 
@@ -56,6 +57,7 @@ public class ParserManager {
 
                 if(codeSyntax.isRulerValid() == true) {
                     this.ruler = new Ruler(codeSyntax.getRuler().inner, true);
+                    Printer.print("Ruler created");
                 } else {
                     this.ruler = null; //KILL it can't be used
                 }
