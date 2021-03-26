@@ -18,7 +18,7 @@ public class RulerShader extends ShaderProgram{
     protected UniformVec2 windowSize = new UniformVec2("windowSize");
     protected UniformMat3 zoomTranslateMatrix = new UniformMat3("zoomTranslateMatrix");
     protected UniformMat2 aspectRatio = new UniformMat2("aspectRatio");
-    protected UniformBoolean doClipping = new UniformBoolean("doClipping");
+//    protected UniformBoolean doClipping = new UniformBoolean("doClipping");
 
     /**
      * Performs setup for a {@link RulerShader}
@@ -28,7 +28,7 @@ public class RulerShader extends ShaderProgram{
      */
     public RulerShader() {
         super(GeneralSettings.RULER_VERTEX, GeneralSettings.RULER_FRAGMENT, "position", "endPositions", "color");
-        super.storeAllUniformLocations(windowPosition, windowSize, zoomTranslateMatrix, aspectRatio, doClipping);//, color, endPositions);
+        super.storeAllUniformLocations(windowPosition, windowSize, zoomTranslateMatrix, aspectRatio);//, color, endPositions);
     }
 
 

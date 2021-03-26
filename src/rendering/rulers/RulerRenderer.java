@@ -96,7 +96,7 @@ public class RulerRenderer {
         shader.zoomTranslateMatrix.loadMatrix(GeneralSettings.IMAGE_TRANSLATION);
         shader.aspectRatio.loadMatrix(GeneralSettings.IDENTITY2);
 
-        shader.doClipping.loadBoolean(false);
+        //shader.doClipping.loadBoolean(false);
 
         for (FlowchartLine line : flowchartWindowController.getFlowchartLineList()) {
             GL31.glDrawArraysInstanced(GL11.GL_TRIANGLE_STRIP, 0, flowchartWindowController.lines.getVertexCount(), flowchartWindowController.numberOfSegments);//renderLine(line);
