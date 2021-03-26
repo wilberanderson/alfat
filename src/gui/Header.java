@@ -552,7 +552,10 @@ public class Header {
      * Opens the settings menu
      */
     public void settings(){
-        SettingsMenu sMenu = new SettingsMenu();
+        if(SettingsMenu.OPENABLE) {
+            SettingsMenu.OPENABLE = false;
+            SettingsMenu sMenu = new SettingsMenu();
+        }
     }
 
     /**

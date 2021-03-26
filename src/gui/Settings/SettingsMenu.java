@@ -46,6 +46,9 @@ public class SettingsMenu extends Component {
     private String validIntType = "^[1-9]\\d*$";
     private String validFloatType = "^\\d*\\.?\\d*$";
 
+    //Prevents multiple settings menus from being opened
+    public static boolean OPENABLE = true;
+
     /**
      * Builds and displays the settings GUI
      * */
@@ -62,6 +65,8 @@ public class SettingsMenu extends Component {
         jSplitPane = new JSplitPane();
         //jSplitPane.setResizeWeight(0);
         jSplitPane.setContinuousLayout(true);
+        jSplitPane.setOneTouchExpandable(true);
+        jSplitPane.setDividerSize(0);
         jSplitPane.setPreferredSize(new Dimension(GUI_WIDTH,GUI_HEIGHT));
 
 
@@ -106,6 +111,18 @@ public class SettingsMenu extends Component {
         //Set icon
         root.setIconImage(Toolkit.getDefaultToolkit().getImage("src/res/icon/alfatlogo2.png"));
         root.setVisible(true);
+
+        //Listener to ensure only 1 settings menu can be opened at a time
+        root.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                System.out.println("Window Closing");
+                OPENABLE = true;
+                //System.exit(0);
+            }
+        });
+
+
     }
 
     public static void run()  {
@@ -149,6 +166,7 @@ public class SettingsMenu extends Component {
         });
 
         leftPanel.setPreferredSize(new Dimension(100, 100));
+        //leftPanel.setMinimumSize(new Dimension(50, 50));
 
         leftPanel.setLayout(new BorderLayout());
         leftPanel.add(BorderLayout.CENTER,fakebutton);
@@ -509,32 +527,6 @@ public class SettingsMenu extends Component {
         });
         syntaxFilePathPane.add(changeSyntxPath);
 
-        //fixed form or free form mode
-        JPanel fixedorFreeFromPane = new JPanel(new FlowLayout());
-        JLabel fixedOrFreefromJLabel = new JLabel("Fixed or Free Form Mode");
-        JRadioButton fixedFormModeJRadioBtn = new JRadioButton("Fixed Form");
-        fixedFormModeJRadioBtn.setFont(labelFont);
-        JRadioButton freeFormModeJRadioBtn = new JRadioButton("Free Form");
-        freeFormModeJRadioBtn.setFont(labelFont);
-        //general settings mode for free form
-        if(GeneralSettings.USERPREF.getFixedOrFreeFromMode()) {
-            fixedFormModeJRadioBtn.setSelected(true);
-        } else {
-            freeFormModeJRadioBtn.setSelected(true);
-        }
-        fixedFormModeJRadioBtn.addActionListener(e-> {
-            fixedFormModeJRadioBtn.setSelected(true);
-            freeFormModeJRadioBtn.setSelected(false);
-            GeneralSettings.USERPREF.setFixedOrFreeFromMode(true);
-        });
-        freeFormModeJRadioBtn.addActionListener(e-> {
-            fixedFormModeJRadioBtn.setSelected(false);
-            freeFormModeJRadioBtn.setSelected(true);
-            GeneralSettings.USERPREF.setFixedOrFreeFromMode(false);
-        });
-        fixedorFreeFromPane.add(fixedOrFreefromJLabel);
-        fixedorFreeFromPane.add(fixedFormModeJRadioBtn);
-        fixedorFreeFromPane.add(freeFormModeJRadioBtn);
 
         //Change current directory
         //Sets up a panel that changes the user preferences for the default folder path
@@ -629,7 +621,6 @@ public class SettingsMenu extends Component {
 
 
         superContainer.add(syntaxFilePathPane);
-        superContainer.add(fixedorFreeFromPane);
         superContainer.add(tempFilePathPane);
         superContainer.add(tempFileLimitPane);
         superContainer.add(preferredFileTypePane);
@@ -706,8 +697,8 @@ public class SettingsMenu extends Component {
         GridBagConstraints gbc = new GridBagConstraints();
 
         //This is the internal dimensions of the mock gui within the content
-        int mockGUI_Height = 300;
-        int mockGUI_Width = 600;
+        int mockGUI_Height = 300; //300
+        int mockGUI_Width = 600; //600
 
         //Top label added
         JLabel topLabel = new JLabel("Color Picker & Preview");
@@ -731,7 +722,7 @@ public class SettingsMenu extends Component {
         layeredPane.setPreferredSize(new Dimension(mockGUI_Width,mockGUI_Height));
 
         //Create the buttons
-        int barPadding = 20;
+        int barPadding = 20; //20
 
         Vector3f bgColor = GeneralSettings.USERPREF.getBackgroundColor3f();
 
@@ -755,16 +746,15 @@ public class SettingsMenu extends Component {
         JButton backgroundBtn = contentLayer(mockGUIcolorPointers[mockGUIbackgroundColor],0,0, mockGUI_Width,mockGUI_Height);
         //*************************** Set The Text Color Buttons **********************************
         //TODO: Add color for text from general settings
-        branchTextColorBtn  = makeColorbtn(GeneralSettings.USERPREF.getBranchTextColor(), mockGUIcolorPointers[mockGUIbackgroundColor], mockGUIbackgroundColor,"Branch");
-        commandTextColorBtn  = makeColorbtn(GeneralSettings.USERPREF.getCommandTextColor(), mockGUIcolorPointers[mockGUIbackgroundColor], mockGUIbackgroundColor,"Command");
-        commentTextColorBtn  = makeColorbtn(GeneralSettings.USERPREF.getCommentColor(), mockGUIcolorPointers[mockGUIbackgroundColor], mockGUIbackgroundColor,"Comment");
-        errorTextColorBtn  = makeColorbtn(GeneralSettings.USERPREF.getErrorColor(),mockGUIcolorPointers[mockGUIbackgroundColor], mockGUIbackgroundColor,"Error");
-        immediateTextColorBtn  = makeColorbtn(GeneralSettings.USERPREF.getImmediateColor(), mockGUIcolorPointers[mockGUIbackgroundColor], mockGUIbackgroundColor,"Immediate");
-        labelTextColorBtn  = makeColorbtn(GeneralSettings.USERPREF.getLabelColor(), mockGUIcolorPointers[mockGUIbackgroundColor], mockGUIbackgroundColor,"Label");
-        lineNumberTextColorBtn  = makeColorbtn(GeneralSettings.USERPREF.getLineNumberColor(), mockGUIcolorPointers[mockGUIbackgroundColor], mockGUIbackgroundColor,"Line Number");
-        registerTextColorBtn  = makeColorbtn(GeneralSettings.USERPREF.getRegisterColor(), mockGUIcolorPointers[mockGUIbackgroundColor], mockGUIbackgroundColor,"Register");
-        separatorTextColorBtn  = makeColorbtn(GeneralSettings.USERPREF.getSeparatorColor(), mockGUIcolorPointers[mockGUIbackgroundColor], mockGUIbackgroundColor,"Separator");
-
+        branchTextColorBtn  = makeColorbtn(GeneralSettings.USERPREF.getBranchTextColor(), mockGUIcolorPointers[mockGUItexteditorColor], mockGUItexteditorColor,"Branch");
+        commandTextColorBtn  = makeColorbtn(GeneralSettings.USERPREF.getCommandTextColor(), mockGUIcolorPointers[mockGUItexteditorColor], mockGUItexteditorColor,"Command");
+        commentTextColorBtn  = makeColorbtn(GeneralSettings.USERPREF.getCommentColor(), mockGUIcolorPointers[mockGUItexteditorColor], mockGUItexteditorColor,"Comment");
+        errorTextColorBtn  = makeColorbtn(GeneralSettings.USERPREF.getErrorColor(),mockGUIcolorPointers[mockGUItexteditorColor], mockGUItexteditorColor,"Error");
+        immediateTextColorBtn  = makeColorbtn(GeneralSettings.USERPREF.getImmediateColor(), mockGUIcolorPointers[mockGUItexteditorColor], mockGUItexteditorColor,"Immediate");
+        labelTextColorBtn  = makeColorbtn(GeneralSettings.USERPREF.getLabelColor(), mockGUIcolorPointers[mockGUItexteditorColor], mockGUItexteditorColor,"Label");
+        lineNumberTextColorBtn  = makeColorbtn(GeneralSettings.USERPREF.getLineNumberColor(), mockGUIcolorPointers[mockGUItexteditorColor], mockGUItexteditorColor,"Line Number");
+        registerTextColorBtn  = makeColorbtn(GeneralSettings.USERPREF.getRegisterColor(), mockGUIcolorPointers[mockGUItexteditorColor], mockGUItexteditorColor,"Register");
+        separatorTextColorBtn  = makeColorbtn(GeneralSettings.USERPREF.getSeparatorColor(), mockGUIcolorPointers[mockGUItexteditorColor], mockGUItexteditorColor,"Separator");
 
         //Menu
         JButton headerBtn = contentLayer(mockGUIcolorPointers[mockGUIheaderColor], 0,0, mockGUI_Width,barPadding);
@@ -792,6 +782,39 @@ public class SettingsMenu extends Component {
 
         ArrowJButton arrowJButton = new ArrowJButton(Color.WHITE,ArrowJButton.DOWN);
         arrowJButton.setBounds((mockGUI_Width/2)+barPadding-4,(barPadding*2)+ mockGUI_Height-(barPadding*11)+32,50,50);
+
+        //Listener for panel resizing
+       /* main.addComponentListener(new ComponentAdapter() {
+
+            private int s1h = main.getSize().height;
+            private int s1w = main.getSize().width;;
+            public void currentSize() {
+
+            }
+
+            public void componentResized(ComponentEvent componentEvent) {
+
+                int s2h = componentEvent.getComponent().getSize().height;
+                int s2w = componentEvent.getComponent().getSize().width;
+
+                if(s1h>0 && s1w>0) {
+                    System.out.println("Window Resizing: s1w = " + s1w + ", s2w = " + s2w);
+                    System.out.println("Window Resizing: s1h = " + s1h + ", s2h = " + s2h);
+                    if(s2h>s1h)
+                    headerBtn.setBounds(0, 0, headerBtn.getWidth()+barPadding, headerBtn.getHeight() + barPadding);
+                    layeredPane.setBounds(0,0,layeredPane.getWidth() + barPadding,layeredPane.getHeight() + barPadding);
+                    layeredPane.setPreferredSize(new Dimension( layeredPane.getWidth() + barPadding, layeredPane.getHeight() + barPadding));
+                    main.getLayout().;
+                    //Add the mockGUI container to the main JPanel and set the grid constraints to padding to size
+
+                    //temp
+
+                }
+                s1w = s2w;
+                s1h = s2h;
+            }
+        });*/
+
 
         //Set the listeners
         menuBtn.addActionListener(e-> {
