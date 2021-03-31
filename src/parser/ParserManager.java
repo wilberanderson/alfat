@@ -8,6 +8,7 @@ import parser.LogicScripter.Ruler;
 import utils.Printer;
 
 import java.io.File;
+import java.util.ArrayList;
 
 
 public class ParserManager {
@@ -58,7 +59,9 @@ public class ParserManager {
                 if(codeSyntax.isRulerValid() == true) {
                     this.ruler = new Ruler(codeSyntax.getRuler().inner, true);
                 } else {
-                    this.ruler = null; //KILL it can't be used
+                    ArrayList<Integer> foo = new ArrayList<Integer>();
+                    foo.add(0);
+                    this.ruler = new Ruler(foo, true);
                 }
 
 
