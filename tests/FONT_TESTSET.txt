@@ -1,0 +1,12 @@
+ABCDEFGHIJKLMNOPQRSTUVWXYZ
+abcdefghijklmnopqrstuvwxyz
+1234567890 
+"!`?'.,;:()[]{}<>|/@\^$-%+=#_&~* 
+[" "]space
+["	"]tab
+The quick brown fox jumps over the lazy dog.
+THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG!
+12345678901234567890123456789012345678901234567890
+12345678901234567890123456789012345678901234567890
+;) :) -_- -...-
+          _---_
