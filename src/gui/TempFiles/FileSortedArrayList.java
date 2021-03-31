@@ -36,6 +36,19 @@ public class FileSortedArrayList extends ArrayList<File> {
     }
 
     /**
+     * Bubble sorts the files from first created to last created.
+     * */
+    public void bubbleSort() {
+        for (int i = 0; i < this.size(); i++) {
+            for(int j = 0; j < this.size()-i-1; j++){
+                if(cmp(get(j),get(j+1)) > 0) {
+                    Collections.swap(this, j, j+1);
+                }
+            }
+        }
+    }
+
+    /**
      * Comparator method. int > 0 cur is after stored,
      * int < 0 cur is before stored, int == 0, cur and stored are equal.
      * @see public void addSort(File file)
