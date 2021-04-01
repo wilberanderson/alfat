@@ -1,30 +1,15 @@
-      DISPLYMSG_0
-FOOBAR
-FOOBA2                                               
- OOBAR
- SOOBA
 *This is a mock pseudo code language to demonstrate a
 *Fixed field language compatibility in an extremely 
 *strict fixed field format. 
 *1234567890123456789012345678901234567890123456789012
-*Count from zero to 100
+*Call a function to add up to some 100
       START .MAIN
-      MOVE  0     EAX
- LAB00CALL  ADD1
-      IF    EAX    <    100                    LAB00
-      DISPLYMSG_0
-      
-      PRINT MSG_0
+      MOVE    0   EAX
+      CALL  C100  
       END   .MAIN
-
-
- ADD1 STPROC
-      ADD   EAX   1
-      CALL  FOO
+ C100 STPROC
+ CLOOPMOVE  0     count
+      ADD     1   eax                   
+      IF    count  <     100                   CLOOP 
+      ENDIF
       ENPROC
-
- FOO  STPROC
-* DO SOMETHING
-      ENPROC
-
- MSG_0STR   "Program done"

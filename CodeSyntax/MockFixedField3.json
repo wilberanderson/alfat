@@ -1,11 +1,11 @@
 {
   "keywordPatterns": {
-    "procedurestart": "",
-    "procedureend": "(?i)(ret)\\b",
+    "procedurestart": "(?i)(STPROC|START)\\b",
+    "procedureend": "(?i)(ENPROC|ret|END)\\b",
     "control": "(?i)(goto|if|call|BR|BRn|BRz|BRp|BRnz|BRnp|BRzp|BRnzp|JMP|RET|JSR|JSRR|RTI|br|brn|brz|brp|brnz|brnp|brzp|brnzp|jmp|ret|jsr|jsrr|rti)\\b",
-    "reserved": "(?i)(print|disply|TRAP|GETC|OUT|PUTS|IN|HALT|trap|getc|out|puts|in|halt|ALIAS|MACRO|IMPORT|EXPORT|alias|macro|import|export|.ORIG|.FILL|.BLKW|.STRINGZ|.END|.orig|.fill|.blkw|.stringz|.end)\\b",
+    "reserved": "(?i)(.MAIN|print|disply|TRAP|GETC|OUT|PUTS|IN|HALT|trap|getc|out|puts|in|halt|ALIAS|MACRO|IMPORT|EXPORT|alias|macro|import|export|.ORIG|.FILL|.BLKW|.STRINGZ|.END|.orig|.fill|.blkw|.stringz|.end)\\b",
     "arithmetic": "(?i)(NOT|AND|ADD|not|and|add|)\\b|(<|>|=|==|!=|!)",
-    "dataMovement": "(?i)(LD|LDR|LDI|ST|STR|STI|LEA|ld|ldr|ldi|st|str|sti|lea)\\b",
+    "dataMovement": "(?i)(MOVE|LD|LDR|LDI|ST|STR|STI|LEA|ld|ldr|ldi|st|str|sti|lea)\\b",
     "register": "(?i)(e[abcd]x|r[1-9]|[abcd]x)\\b",
     "commentLine": "(\\*.+?$)|(\\*)",
     "constantHex": "[x][A-Fa-f0-9]{1,4}",
@@ -41,7 +41,7 @@
     },
     "procedurestart": {
       "regexes": ["procedurestart"],
-      "columns": [1]
+      "columns": [2]
     },
     "procedureend": {
       "regexes": ["procedureend"],

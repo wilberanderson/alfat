@@ -122,7 +122,7 @@ public class Parser2  {
                     // replaces tabs with spaces
                     //line = line.replace("\t", "    ");
 
-                    simpleTokenizer.setVerbose(true);
+                    simpleTokenizer.setVerbose(false);
                     String[] arrLine = simpleTokenizer.tokenizeString(line);
                     int columnFragmentIndex = 0; // The start index of the column fragment as a string fragment
                     int columnFragment = 0; // The actual fragment of the column
@@ -137,17 +137,7 @@ public class Parser2  {
                     boolean ret = false;
                     int codeBlock = 0;
 
-                    // TODO: make regex matches
-                    if (line.matches(".*BLOCKSTART.*")){
-                        // block start
-                        codeBlock = 1;
-                    } else if (line.matches(".*BLOCKEND.*")){
-                        // block start
-                        codeBlock = 2;
-                    }
-                    if (line.matches("^[ \t]*BLOCKSTART.*") || line.matches("^[ \t]*BLOCKEND.*")){
-                        first = false;
-                    }
+
 
                     //  arrLine = {"LABEL:", "JGZ", "R1", "R2", "FINISH"}
                     for (String fragment : arrLine) {
@@ -157,6 +147,21 @@ public class Parser2  {
 
                         columnFragmentIndex++;
                         //System.out.println("column Fragment:" + columnFragment);
+
+                        // TODO: make regex matches
+                        if (parserLogicScripter.procedureStartmatcher.isMatch(fragment,columnFragment)){
+                            // block start
+                            codeBlock = 1;
+                        } else if (parserLogicScripter.procedureEndmatcher.isMatch(fragment,columnFragment)){
+                            // block start
+                            codeBlock = 2;
+                        }
+                        if (parserLogicScripter.procedureEndmatcher.isMatch(fragment,columnFragment) || parserLogicScripter.procedureEndmatcher.isMatch(fragment,columnFragment)){
+                            first = false;
+                        }
+
+
+
 
                         //grab each command in the line, if they exist:
                         if (parserLogicScripter.commandMatcher.isMatch(fragment,columnFragment)) {
@@ -208,7 +213,9 @@ public class Parser2  {
                             formattedString.add(new LabelWord(fragment, new Vector2f(0f, 0)));
                             first = false;
                             //} else if (!jump && fragment.matches("^[a-zA-Z0-9\\-_\"\\\\\\[\\]\\!<>]+")) {
-                        }else if (!jump && parserLogicScripter.labelMatcher.isMatch(fragment, columnFragment) && !fragment.matches("BLOCKSTART") && !fragment.matches("BLOCKEND")) {
+                        }else if (!jump && parserLogicScripter.labelMatcher.isMatch(fragment, columnFragment)
+                                && !parserLogicScripter.procedureEndmatcher.isMatch(fragment,columnFragment)
+                                && !parserLogicScripter.procedureStartmatcher.isMatch(fragment,columnFragment)) {
                             //TODO: Regex again
                             //Checks if a label is a implicit goto label
                             jump = true;
@@ -671,7 +678,7 @@ public class Parser2  {
             }
 
             // Code block drawing
-            if (index < flowchart.size() - 1 && codeBlockMap.containsKey(flowchart.get(index))){
+            if (index < flowchart.size() && codeBlockMap.containsKey(flowchart.get(index))){
                 System.out.println("Adding codeBlock line ending @ box " + index + ", starting @ box " + (codeBlockMap.get(flowchart.get(index)).boxNumber));
 
                 List<Vector2f> coordinates = new ArrayList<>();
