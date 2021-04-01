@@ -6,6 +6,7 @@ import org.lwjgl.opengl.GL20;
 //import utils.MyFile;
 import rendering.shaders.uniforms.*;
 import utils.MyFile;
+import utils.Printer;
 
 public class ShaderProgram {
 

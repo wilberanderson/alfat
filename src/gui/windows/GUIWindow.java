@@ -242,7 +242,8 @@ public abstract class GUIWindow {
     }
 
     protected void close(){
-        renderer.cleanUp();
+        //The renderer does not need to be cleaned up
+        //Delete the window
         GUIWindowController.remove(this);
     }
 
