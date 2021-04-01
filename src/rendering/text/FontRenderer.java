@@ -80,6 +80,7 @@ public class FontRenderer {
 	 *
 	 */
 	public void cleanUp() {
+//		Printer.print();
 		shader.cleanUp();
 	}
 

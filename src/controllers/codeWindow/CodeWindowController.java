@@ -435,7 +435,7 @@ public class CodeWindowController {
             //Move the physical cursor to the mouse's position
             //If a scroll bar was just grabbed do not move the cursor
             else{
-                cursorController.moveCursor(new Vector2f(mousePosition), this);
+                cursorController.moveCursor(new Vector2f(mousePosition.x+contentsHorizontalPosition, mousePosition.y+contentsVerticalPosition), this);
             }
 
             //The event has been processesd, return true

@@ -8,6 +8,7 @@ import main.EngineTester;
 import main.GeneralSettings;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.util.vector.Vector2f;
 import rendering.cursor.CursorRenderer;
 import rendering.filledBox.FilledBoxRenderer;
 import rendering.flowchartLine.FlowchartLineRenderer;
@@ -100,7 +101,7 @@ public class MasterRenderer {
 
 		//If the cursor controller is not null then the cursor is present. Render the cursor
 		if (controller.getCodeWindowController() != null && controller.getCodeWindowController().getCursorController() != null) {
-			cursorRenderer.render(controller.getCodeWindowController().getCursorController());
+			cursorRenderer.render(controller.getCodeWindowController().getCursorController(), new Vector2f(-controller.getCodeWindowController().getContentsVerticalPosition(), -controller.getCodeWindowController().getContentsHorizontalPosition()));
 		}
 
 		//TODO: Put a check to see if rulers should be rendered

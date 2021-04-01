@@ -10,6 +10,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.util.vector.Matrix2f;
+import org.lwjgl.util.vector.Vector2f;
 import rendering.filledBox.FilledBoxShader;
 
 import java.util.List;
@@ -53,7 +54,7 @@ public class CursorRenderer {
      * @param cursorController the {@link CursorController cursor controller} which contains
      *                         the cursor to be rendered.
      */
-    public void render(CursorController cursorController) {
+    public void render(CursorController cursorController, Vector2f codeWindowTranslation) {
         //Sets the OpenGL state to be appropriate for rendering the cursor
         prepare();
 
@@ -70,7 +71,7 @@ public class CursorRenderer {
         shader.aspectRatio.loadMatrix(aspectRatio);
 
         //Load the cursors position, color, and font height
-        shader.mousePosition.loadVec2(cursorController.getCursor().getPosition());
+        shader.mousePosition.loadVec2(cursorController.getCursor().getPosition().x+codeWindowTranslation.x, cursorController.getCursor().getPosition().y+codeWindowTranslation.y);
         shader.fontHeight.loadFloat(GeneralSettings.FONT_HEIGHT);
         shader.color.loadVec3(cursorController.getCursor().getColor());
 

@@ -11,6 +11,7 @@ import gui.buttons.HeaderMenu;
 import gui.texts.*;
 import main.EngineTester;
 import main.GeneralSettings;
+import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector2f;
 
@@ -114,6 +115,8 @@ public class ApplicationController {
      * @param height the new height of the window in pixels
      */
     public void setFrameBufferSize(int width, int height){
+        GLFW.glfwMakeContextCurrent(EngineTester.getWindow());
+
         //Resize the windows viewport to cause the application to fill the full window
         GL11.glViewport(0, 0, width, height);
 
