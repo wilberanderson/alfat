@@ -188,11 +188,11 @@ public class CodeWindowController {
         float data[] = new float[instanceCount*GeneralSettings.RULER_INSTANCED_DATA_LENGTH];
         int i = 0;
         for(int j = 1; j < ruler.size(); j++){
-                data[i] = codeWindow.getCodeWindowPosition().x + ruler.get(j-1)+padding;//.getPositions().get(j).x;
+                data[i] = codeWindow.getCodeWindowPosition().x + ruler.get(j-1) + padding;//.getPositions().get(j).x;
                 i++;
                 data[i] = codeWindow.getCodeWindowPosition().y;
                 i++;
-                data[i] = codeWindow.getCodeWindowPosition().x + ruler.get(j-1)+padding;
+                data[i] = codeWindow.getCodeWindowPosition().x + ruler.get(j-1) + padding;
                 i++;
                 data[i] = codeWindow.getCodeWindowPosition().y + codeWindow.getCodeWindowSize().y;
                 i++;
