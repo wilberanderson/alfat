@@ -3,6 +3,7 @@ package gui.windows;
 import controllers.gui.ButtonController;
 import gui.buttons.Button;
 import gui.buttons.TextButton;
+import gui.fontMeshCreator.FontType;
 import gui.guiElements.GUIElement;
 import gui.guiElements.TextField;
 import gui.texts.GUIText;
@@ -82,5 +83,28 @@ public class PopupWindow extends GUIWindow{
     }
     public void onContinue(){
         close();
+    }
+
+
+
+    public void makeButton(float x, float y, String text) {
+        Button button = new TextButton(new Vector2f(x, y), text, GeneralSettings.USERPREF.getMenuBtnBGColor3f(), GeneralSettings.USERPREF.getMenuBtnHLColor3f(), null, fontType, 4, 0, 0, window) {
+            @Override
+            public void onPress() {
+                onContinue();
+            }
+        };
+        button.setPosition(new Vector2f((button.getSize().x - 0.5f), -0.9f));
+        button.getGuiText().setPosition(new Vector2f(button.getPosition().x, button.getPosition().y + 0.045f*4));
+        button.getFilledBox().setPosition(button.getPosition());
+        ButtonController.add(button);
+        this.addElement(button);
+        TextMaster.removeGuiText(this.elementList.get(1).getGuiText());
+    }
+
+
+    public FontType getFontType() {
+        FontType temp = fontType;
+        return temp;
     }
 }

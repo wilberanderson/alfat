@@ -40,8 +40,6 @@ public class HorizontalScrollBar {
         fullscreenWidth = fullRange + 1;
 
         //Create the filled box which is used for the visible scroll bar
-        //TODO: Create color in general settings and user pref
-        //filledBox = new GUIFilledBox(new Vector2f(position.x, position.y), new Vector2f(width, height), new Vector3f(0.3f, 0.3f, 0.3f));
         filledBox = new GUIFilledBox(new Vector2f(position.x, position.y), new Vector2f(width, height), GeneralSettings.USERPREF.getScrollBarColor3f());
     }
 

@@ -100,10 +100,6 @@ public class CodeWindowController {
         float longestLineNumber = 0;
 
         //Create a parser that is used for parsing each line
-        //TODO: Make parser static and remove this. OK I DO IT :( U LIKE? :)
-        //Parser parser = new Parser();
-
-
         //List that holds the lines that were added, used to prevent concurrent modification
         List<EditableFormattedTextLine> newLines = new ArrayList<>();
 

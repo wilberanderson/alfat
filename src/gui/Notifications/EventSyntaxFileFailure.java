@@ -1,6 +1,7 @@
 package gui.Notifications;
 
 import controllers.ApplicationController;
+import gui.windows.PopupWindow;
 
 public class EventSyntaxFileFailure extends Observer{
     public EventSyntaxFileFailure(Notifications subject){
@@ -10,7 +11,16 @@ public class EventSyntaxFileFailure extends Observer{
 
     @Override
     public void update() {
+
+
+
+
         if (subject.getEvent() == AppEvents.INVALID_SYNTAX_FILE) {
+            /*
+            String contentsText = "Code Syntax File Error: Check syntax file path.";
+            PopupWindow foo = new PopupWindow("Attention", contentsText);
+            foo.makeButton(0.1f,0.1f,"  Ok  ");
+            */
             ApplicationController.getHeader().setNotificationText("Syntax File Error: Check file.");
             if (!subject.isClearTimerRunning()) {
                 subject.setClearTimer(true);
@@ -36,6 +46,11 @@ public class EventSyntaxFileFailure extends Observer{
                 thread.start();
             }
 
+
+
         }
+
+
+
     }
 }

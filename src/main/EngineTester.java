@@ -229,14 +229,13 @@ public class EngineTester {
     private void saveIfCrash() {
         if(applicationController.getCodeWindowController() != null) {
             TempFileManager tfm = new TempFileManager(GeneralSettings.TEMP_DIR);
-            //TODO: Change to use the user preferences temp folder over TEMP DIR. Maybe make UserPref from header public or make a getter?
-            tfm.saveCodeEditorTextToFile(applicationController.getCodeWindowController().getTexts(),GeneralSettings.FILE_PATH, GeneralSettings.TEMP_DIR);
+            //TODO: What are we saving? If there is no more code window then what do we save?
+            tfm.saveCodeEditorTextToFile(applicationController.getCodeWindowController().getTexts(),GeneralSettings.FILE_PATH, GeneralSettings.USERPREF.getUserTempFileDirPath());
         }
     }
 
 
     /**Used for a graceful crash of the program
-     *  - TODO: Saves changes to files
      *  - Frees up memory
      *  - Exits with an error code
      */

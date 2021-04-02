@@ -394,7 +394,6 @@ public class ApplicationController {
         }
     }
 
-    //TODO: Make sure it's ok to make this static...
     public static Header getHeader(){
         return header;
     }

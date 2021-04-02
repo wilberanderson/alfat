@@ -197,7 +197,7 @@ public class UserPreferences {
         userPref.putFloat(keyBGColor_GREEN, bgColor.getGreen()/255f);
         userPref.putFloat(keyBGColor_BLUE, bgColor.getBlue()/255f);
 
-        System.out.println("userPref set:" + bgColor.getRed()/255f + " " + bgColor.getGreen()/255f + " " + bgColor.getBlue()/255f);
+        //System.out.println("userPref set:" + bgColor.getRed()/255f + " " + bgColor.getGreen()/255f + " " + bgColor.getBlue()/255f);
 
     }
 
@@ -1034,7 +1034,7 @@ public class UserPreferences {
 
 
     //*********************************************************************************************************************************************
-    //OS Settings calls TODO: Consider removing if we have no need for this
+    //OS Settings calls
     /**Returns true if os is windows*/
     public Boolean isOSWindows() {
         Boolean result = false;
@@ -1066,7 +1066,25 @@ public class UserPreferences {
         return result;
     }
 
-    //TODO: Create better reset methods
+
+    /**Reset all the display settings (removes from registry)*/
+    public void resetDisplaySettings() {
+        userPref.remove(keyAutoGenFlowchart);
+        userPref.remove(keyOpenSplitScreen);
+        userPref.remove(keyOpenFullScreen);
+        userPref.remove(keyMenuDefaultLineWidth);
+        userPref.remove(keyMenuHighlightedLineWidth);
+    }
+
+    /**Reset all the file settings (removes from registry)*/
+    public void resetFileSettings() {
+        userPref.remove(keyTempFileLimit);
+        userPref.remove(keyPreferredFiletype);
+    }
+
+
+
+
     /**Removes ALL attributes (hard reset). Next time any get is called is will return fall back values*/
     public void resetAll() {
         removeAutoGenFlowchart();

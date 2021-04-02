@@ -107,7 +107,7 @@ public class Header {
         };
         fileMenuButtonList.add(button);
 
-        //TODO: Delete this temp button
+        /*
         button = new TextButton("Popup test") {
             @Override
             public void onPress() {
@@ -116,6 +116,7 @@ public class Header {
             }
         };
         fileMenuButtonList.add(button);
+        */
 
         //Create the header menu
         HeaderMenu fileButton = new HeaderMenu(new Vector2f(-1f, 1 - GeneralSettings.FONT_HEIGHT - 2 * GeneralSettings.TEXT_BUTTON_PADDING), "File ", GeneralSettings.USERPREF.getMenuBtnBGColor3f(), GeneralSettings.HIGHLIGHT_COLOR, GeneralSettings.TEXT_COLOR, GeneralSettings.FONT, GeneralSettings.FONT_SIZE, GeneralSettings.FONT_WIDTH, GeneralSettings.FONT_EDGE, fileMenuButtonList);
@@ -441,7 +442,6 @@ public class Header {
 
     /**
      * Saves the file to the currently selected location
-     * TODO: Make this work
      */
     public void save(){
         //Saves contents of the text editor over the original source file

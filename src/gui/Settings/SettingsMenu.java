@@ -209,6 +209,12 @@ public class SettingsMenu extends Component {
 
         fakeButtonscontent.add(new SettingsContent("Help", helpContent()));
     }
+    //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    //                                                                          Swing Colors
+    String panelBackgroundColor = "#15202B";
+    String paneltextColor = "#FFFFFF";
+
+
 
     //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     //                                                                          Display Settings
@@ -219,6 +225,8 @@ public class SettingsMenu extends Component {
 
         JPanel main = new JPanel();
 
+        main.setBackground(Color.decode(panelBackgroundColor));
+
         //Set up container for box layout
         JPanel container = new JPanel();
         BoxLayout boxLayout = new BoxLayout(container, BoxLayout.Y_AXIS);
@@ -227,6 +235,7 @@ public class SettingsMenu extends Component {
         //Top of Layout
         JLabel ofbLable = new JLabel(" Open File Behavior ");
         ofbLable.setFont(new Font("Verdana", Font.BOLD, 18));
+        //ofbLable.setForeground(Color.decode("#FFFFFF"));
         ofbLable.setAlignmentX(Component.CENTER_ALIGNMENT);
         container.add(ofbLable);
 
@@ -489,6 +498,67 @@ public class SettingsMenu extends Component {
 
 
 
+        JPanel subContainer6 = new JPanel(new FlowLayout());
+        JLabel resetLabel = new JLabel("Reset To Default:");
+        JButton btnReset = new JButton("Reset");
+
+        btnReset.addActionListener(e -> {
+            GeneralSettings.USERPREF.resetDisplaySettings();
+            //Set GUI to current user setting
+            if(GeneralSettings.USERPREF.getAutoGenFlowchart() == true) {
+                yesBtn.setSelected(true);
+                noBtn.setSelected(false);
+            } else {
+                noBtn.setSelected(true);
+                yesBtn.setSelected(false);
+            }
+
+            //Set GUI to current user setting
+            if(GeneralSettings.USERPREF.getSplitScreen() == true) {
+                ssYes.setSelected(true);
+                ssNo.setSelected(false);
+
+                fsNo.setEnabled(false);
+                fsYes.setEnabled(false);
+                fsGroup.clearSelection();
+
+            } else {
+                ssYes.setSelected(false);
+                ssNo.setSelected(true);
+
+                fsNo.setEnabled(true);
+                fsYes.setEnabled(true);
+            }
+
+            //Set user settings to gui
+
+            if(GeneralSettings.USERPREF.getFullscreen() == 0) {
+                //False
+                fsGroup.clearSelection();
+            } else if (GeneralSettings.USERPREF.getFullscreen() > 0){
+                //To editor
+                fsYes.setSelected(true);
+                fsNo.setSelected(false);
+            } else if (GeneralSettings.USERPREF.getFullscreen() < 0) {
+
+                //Toggle on auto gen flowchart and gray out
+                yesBtn.setSelected(true);
+                noBtn.setSelected(false);
+                yesBtn.setEnabled(false);
+                noBtn.setEnabled(false);
+                GeneralSettings.USERPREF.setAutoGenFlowchart(true);
+
+                //To Flowchart
+                fsYes.setSelected(false);
+                fsNo.setSelected(true);
+            }
+            defaultSizeTextfield.setText(GeneralSettings.USERPREF.getDefaultLineWidth()+"");
+            highlightSizeTextfield.setText(GeneralSettings.USERPREF.getHighlightedLineWidth()+"");
+        });
+
+        subContainer6.add(resetLabel);
+        subContainer6.add(btnReset);
+        container.add(subContainer6);
 
         main.add(BorderLayout.CENTER,container);
         return main;
@@ -584,7 +654,6 @@ public class SettingsMenu extends Component {
         //-----------------------------------------
         //Change preferred file type for open and save as
         //NOTE: Sets up a panel that changes the user preferences for the default folder path
-        //TODO: Make it more clear what the correct file type format should be, maybe add a reset button
         JPanel preferredFileTypePane = new JPanel(new FlowLayout());
         JLabel enterPrefFileTypeLabel = new JLabel("Enter preferred file type");
         enterPrefFileTypeLabel.setFont(labelFont);
@@ -616,14 +685,28 @@ public class SettingsMenu extends Component {
                 pftTextField.setForeground(Color.BLACK);
             }
         });
-
         preferredFileTypePane.add(submitChange);
 
+
+
+        //-----------------------------------------
+        //Rest button
+        JPanel restFilePane = new JPanel(new FlowLayout());
+        JLabel restFileLabel = new JLabel("Rest to defaults");
+        JButton restBtn = new JButton("Reset");
+        restBtn.addActionListener(e-> {
+            GeneralSettings.USERPREF.resetFileSettings();
+            limitTextField.setText(Integer.toString(GeneralSettings.USERPREF.getTempFileLimit()));
+            pftTextField.setText(GeneralSettings.USERPREF.getPreferredFiletype());
+        });
+        restFilePane.add(restFileLabel);
+        restFilePane.add(restBtn);
 
         superContainer.add(syntaxFilePathPane);
         superContainer.add(tempFilePathPane);
         superContainer.add(tempFileLimitPane);
         superContainer.add(preferredFileTypePane);
+        superContainer.add(restFilePane);
 
         main.add(superContainer);
 
@@ -745,7 +828,6 @@ public class SettingsMenu extends Component {
         //Background
         JButton backgroundBtn = contentLayer(mockGUIcolorPointers[mockGUIbackgroundColor],0,0, mockGUI_Width,mockGUI_Height);
         //*************************** Set The Text Color Buttons **********************************
-        //TODO: Add color for text from general settings
         branchTextColorBtn  = makeColorbtn(GeneralSettings.USERPREF.getBranchTextColor(), mockGUIcolorPointers[mockGUItexteditorColor], mockGUItexteditorColor,"Branch");
         commandTextColorBtn  = makeColorbtn(GeneralSettings.USERPREF.getCommandTextColor(), mockGUIcolorPointers[mockGUItexteditorColor], mockGUItexteditorColor,"Command");
         commentTextColorBtn  = makeColorbtn(GeneralSettings.USERPREF.getCommentColor(), mockGUIcolorPointers[mockGUItexteditorColor], mockGUItexteditorColor,"Comment");
@@ -904,6 +986,15 @@ public class SettingsMenu extends Component {
 
 
         });
+
+        //TODO: Account for the fact that there is two types of line number text color. For flowchart and code editor
+        textEditorBtn.addPropertyChangeListener("background",new BackgroundColorListener(
+                branchTextColorBtn, commandTextColorBtn, commentTextColorBtn,
+                errorTextColorBtn, immediateTextColorBtn, labelTextColorBtn,
+                lineNumberTextColorBtn, registerTextColorBtn,separatorTextColorBtn,
+                mockGUItexteditorColor) );
+
+
 
         lineNumberBtn.addActionListener(e-> {
             Color newColor = JColorChooser.showDialog(this,"Select a color",GeneralSettings.USERPREF.getBackgroundColor());

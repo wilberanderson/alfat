@@ -17,7 +17,6 @@ import java.util.List;
 
 /**
  * Manages the paths of the current files in the temp folder.
- * TODO: Get deletes to work
  */
 public class TempFileManager {
     private String directoryPath;

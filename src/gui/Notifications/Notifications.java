@@ -55,6 +55,7 @@ public class Notifications {
 
     /**notify all observers of the current event*/
     public void notifyAllObservers() {
+        //TODO: Should make threaded to allow a popupWindow notification system that does not cause two popup windows to open at once
         for (Observer observer : observers) {
             observer.update();
         }

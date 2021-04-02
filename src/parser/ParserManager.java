@@ -59,17 +59,23 @@ public class ParserManager {
                 if(codeSyntax.isRulerValid() == true) {
                     this.ruler = new Ruler(codeSyntax.getRuler().inner, true);
                 } else {
-                    ArrayList<Integer> foo = new ArrayList<Integer>();
-                    foo.add(0);
-                    this.ruler = new Ruler(foo, true);
+                    makeEmptyRuler();
                 }
 
 
             } else {
+                makeEmptyRuler();
                 ApplicationController.notification.setEvent(AppEvents.INVALID_SYNTAX_FILE);
             }
             GeneralSettings.IS_SYNTAX_PATH_CHANGED = false;
         }
+    }
+
+    /**Makes a empty ruler if the ruler does not exist as defined in the code syntax*/
+    private void makeEmptyRuler() {
+        ArrayList<Integer> foo = new ArrayList<Integer>();
+        foo.add(0);
+        this.ruler = new Ruler(foo, true);
     }
 
     /**
