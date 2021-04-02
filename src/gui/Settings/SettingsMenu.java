@@ -937,12 +937,7 @@ public class SettingsMenu extends Component {
 
         });
 
-        //TODO: Account for the fact that there is two types of line number text color. For flowchart and code editor
-        backgroundBtn.addPropertyChangeListener("background",new BackgroundColorListener(
-                branchTextColorBtn, commandTextColorBtn, commentTextColorBtn,
-                errorTextColorBtn, immediateTextColorBtn, labelTextColorBtn,
-                lineNumberTextColorBtn, registerTextColorBtn,separatorTextColorBtn,
-                mockGUIbackgroundColor) );
+
 
 
 
