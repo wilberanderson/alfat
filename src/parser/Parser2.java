@@ -578,6 +578,7 @@ public class Parser2  {
         List<Vector2f> locations = new ArrayList<>();
         List<Vector2f> sizes = new ArrayList<>();
         Vector2f bottomRight = new Vector2f(x_bound,y_bound);
+        Vector2f topLeft = new Vector2f(400,-100);
 
         //draw the boxes vertically offset
         for (FlowChartObject box : flowchart) {
@@ -635,10 +636,6 @@ public class Parser2  {
 
                 FlowchartLine line = new FlowchartLine(coordinates, terminator);
                 linesList.add(line);
-                for (Vector2f coordinate : coordinates){
-                    bottomRight.x = Math.max(bottomRight.x,coordinate.x);
-                    bottomRight.y = Math.max(bottomRight.y,coordinate.y);
-                }
                 //if (verbose) System.out.println();
             }
 
@@ -690,12 +687,6 @@ public class Parser2  {
                     linesList.add(line);
 
                     jump_lines++;
-
-                    // flowchart boundary grabber
-                    for (Vector2f coordinate : coordinates){
-                        bottomRight.x = Math.max(bottomRight.x,coordinate.x);
-                        bottomRight.y = Math.max(bottomRight.y,coordinate.y);
-                    }
                 }
             }
 
@@ -719,10 +710,6 @@ public class Parser2  {
                 Terminator terminator = new Junction(coordinates.get(coordinates.size() - 1));
 
                 FlowchartLine line = new FlowchartLine(coordinates, terminator);
-                for (Vector2f coordinate : coordinates){
-                    bottomRight.x = Math.max(bottomRight.x,coordinate.x);
-                    bottomRight.y = Math.max(bottomRight.y,coordinate.y);
-                }
                 line.setColor(rainbow[codeBlockLines % rainbow.length]);
                 linesList.add(line);
 
@@ -739,6 +726,22 @@ public class Parser2  {
 //        }  else {
 //            y_bound = 0;
 //        }
+
+        for (Vector2f coordinate : locations){
+            bottomRight.x = Math.max(bottomRight.x,coordinate.x);
+            bottomRight.y = Math.min(bottomRight.y,coordinate.y);
+            topLeft.x = Math.min(topLeft.x,coordinate.x);
+            topLeft.y = Math.max(topLeft.y,coordinate.y);
+        }
+
+        for (FlowchartLine line : linesList){
+            for (Vector2f coordinate : line.getPositions()){
+                bottomRight.x = Math.max(bottomRight.x,coordinate.x);
+                bottomRight.y = Math.min(bottomRight.y,coordinate.y);
+                topLeft.x = Math.min(topLeft.x,coordinate.x);
+                topLeft.y = Math.max(topLeft.y,coordinate.y);
+            }
+        }
 
         // Screenshotting helper commands
         if (verbose)
