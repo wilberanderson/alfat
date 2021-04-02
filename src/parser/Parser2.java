@@ -24,7 +24,7 @@ import java.util.*;
 
 public class Parser2  {
     public float x_bound = -10;
-    public float y_bound = -10;
+    public float y_bound = 10;
     // attributes
     String infile;  // file path
     boolean verbose; // final release should have this changed to false
@@ -95,6 +95,8 @@ public class Parser2  {
         this.openToTag = openToTag;
         boolean ready = !openToTag; // flag to start saving parsed info
         boolean done = false;
+        ArrayList<Integer> gotoList = new ArrayList<>();
+
         if (openToTag){
             this.targetFileTag = "[ \t]*"+ GeneralSettings.PARTIAL_FILE_TAG_TARGET + "\\b.*";
             if (!GeneralSettings.PARTIAL_FILE_TAG_ENDING.isBlank()) {
@@ -201,6 +203,11 @@ public class Parser2  {
                             targetLabel = fragment;
                             formattedString.add(new LabelWord(fragment, new Vector2f(0f, 0)));
                             first = false;
+                        } else if (jump && fragment.matches("[0-9]*")) {
+                            // probably a goto label
+                            gotoList.add(Integer.parseInt(fragment));
+                            formattedString.add(new LabelWord(fragment, new Vector2f(0f, 0)));
+                            targetLabel = fragment;
                         } else if (parserLogicScripter.procedureEndmatcher.isMatch(fragment,columnFragment)) {
                             ret = true;
                             jump = true;
@@ -222,7 +229,7 @@ public class Parser2  {
                             targetLabel = fragment;
                             formattedString.add(new LabelWord(fragment, new Vector2f(0f, 0)));
                             first = false;
-                        }  else if (!jump && parserLogicScripter.userDefinedMatcher.isMatch(fragment,columnFragment)) {
+                        } else if (!jump && parserLogicScripter.userDefinedMatcher.isMatch(fragment,columnFragment)) {
                             //the command isn't a jump statement, so the label must be a variable i.e. string, etc.
                             formattedString.add(new LabelWord(fragment, new Vector2f(0f, 0)));
                         } else if (parserLogicScripter.commentMatcher.isMatch(fragment,columnFragment)) {
@@ -264,6 +271,13 @@ public class Parser2  {
                 // Tag was never found
                 System.out.println("Invalid tag provided. Check the source file or the tag and try again.");
                 // TODO: throw popup here, probably.
+            }
+            for (CodeLine l :lines){
+                for (Integer j : gotoList){
+                    if (l.getLineNumber() == j){
+                        l.setLabel(j.toString());
+                    }
+                }
             }
         } catch (FileNotFoundException e) {
             if (verbose) System.out.println("File not found");
@@ -464,7 +478,6 @@ public class Parser2  {
         //remove all empty boxes
         flowchart.removeIf(box -> box.getLineCount() == 0);
         flowchart.removeIf(box -> box.getFullText(true).isBlank());
-
         //create linkages
         int i = 1;
         List<FlowChartObject> codeBlocks = new ArrayList<>();
@@ -564,6 +577,7 @@ public class Parser2  {
         float magic_number = -.1f;
         List<Vector2f> locations = new ArrayList<>();
         List<Vector2f> sizes = new ArrayList<>();
+        Vector2f bottomRight = new Vector2f(x_bound,y_bound);
 
         //draw the boxes vertically offset
         for (FlowChartObject box : flowchart) {
@@ -621,6 +635,10 @@ public class Parser2  {
 
                 FlowchartLine line = new FlowchartLine(coordinates, terminator);
                 linesList.add(line);
+                for (Vector2f coordinate : coordinates){
+                    bottomRight.x = Math.max(bottomRight.x,coordinate.x);
+                    bottomRight.y = Math.max(bottomRight.y,coordinate.y);
+                }
                 //if (verbose) System.out.println();
             }
 
@@ -656,8 +674,6 @@ public class Parser2  {
                         }
                     }
 
-                    x_bound = Math.max(x_bound, (temp + jump_lines * GeneralSettings.LINE_OFFSET));
-
                     if (flowchart.get(index) == flowchart.get(index).connection) {
                         coordinates.add(new Vector2f((-.95f + temp), (locations.get(index).y) - (GeneralSettings.FLOWCHART_PAD_TOP / 3)));
                         coordinates.add(new Vector2f((-.95f + temp), (sizes.get(flowchart.get(index).connection.getBoxNumber() - 1).y + locations.get(flowchart.get(index).connection.getBoxNumber() - 1).y + (GeneralSettings.FLOWCHART_PAD_TOP / 3))));
@@ -674,6 +690,12 @@ public class Parser2  {
                     linesList.add(line);
 
                     jump_lines++;
+
+                    // flowchart boundary grabber
+                    for (Vector2f coordinate : coordinates){
+                        bottomRight.x = Math.max(bottomRight.x,coordinate.x);
+                        bottomRight.y = Math.max(bottomRight.y,coordinate.y);
+                    }
                 }
             }
 
@@ -683,41 +705,54 @@ public class Parser2  {
 
                 List<Vector2f> coordinates = new ArrayList<>();
 
+                // first point: bottom left of last box of the block
                 coordinates.add(locations.get(index));
+                // second point: same as ^ but .1 to the left
                 coordinates.add(new Vector2f(locations.get(index).x-.1f,locations.get(index).y));
 
+                // third point: straight up from point 2, in line with the top of the first block box
                 coordinates.add(new Vector2f(locations.get(codeBlockMap.get(flowchart.get(index)).boxNumber-1).x -.1f,locations.get(codeBlockMap.get(flowchart.get(index)).boxNumber-1).y + sizes.get(codeBlockMap.get(flowchart.get(index)).boxNumber-1).y));
+                // last point: top left corner of first box in the block
                 coordinates.add(new Vector2f(locations.get(codeBlockMap.get(flowchart.get(index)).boxNumber-1).x,locations.get(codeBlockMap.get(flowchart.get(index)).boxNumber-1).y + sizes.get(codeBlockMap.get(flowchart.get(index)).boxNumber-1).y));
 
+                // terminators can't be null
                 Terminator terminator = new Junction(coordinates.get(coordinates.size() - 1));
 
                 FlowchartLine line = new FlowchartLine(coordinates, terminator);
+                for (Vector2f coordinate : coordinates){
+                    bottomRight.x = Math.max(bottomRight.x,coordinate.x);
+                    bottomRight.y = Math.max(bottomRight.y,coordinate.y);
+                }
                 line.setColor(rainbow[codeBlockLines % rainbow.length]);
                 linesList.add(line);
 
                 codeBlockLines++;
             }
         }
+        System.out.println(bottomRight);
 
         if (verbose) System.out.println("Lines added: " + linesList.size());
 
-        // get y_bound coordinate:
-        if(locations.size() > 0) {
-            y_bound = locations.get(locations.size() - 1).y;
-        }  else {
-            y_bound = 0;
-        }
+//        // get y_bound coordinate:
+//        if(locations.size() > 0) {
+//            y_bound = locations.get(locations.size() - 1).y;
+//        }  else {
+//            y_bound = 0;
+//        }
 
+        // Screenshotting helper commands
         if (verbose)
-            System.out.println("(" + (Math.abs(x_bound) + 1f) + ", " + (Math.abs(y_bound) + 1f + GeneralSettings.FLOWCHART_PAD_TOP) + ")");
-        GeneralSettings.IMAGE_SIZE = new Vector2f(Math.abs(x_bound) + 1f, Math.abs(y_bound) + 1f + GeneralSettings.FLOWCHART_PAD_TOP);
+            System.out.println("(x,y) area of the flowchart: (" + (Math.abs(bottomRight.x) + 1f) + ", " + (Math.abs(bottomRight.y) + 1f + GeneralSettings.FLOWCHART_PAD_TOP) + ")");
+        GeneralSettings.IMAGE_SIZE = new Vector2f(Math.abs(bottomRight.x) + 1f - GeneralSettings.FLOWCHART_PAD_LEFT, Math.abs(bottomRight.y) + 1f + GeneralSettings.FLOWCHART_PAD_TOP);
         Matrix3f translation = new Matrix3f();
         translation.setIdentity();
-        magic_number = -.875f;
-        translation.m00 = 2 / GeneralSettings.IMAGE_SIZE.x;         // X scaling
-        translation.m11 = 2 / GeneralSettings.IMAGE_SIZE.y;         // Y scale
-        translation.m20 = 0f - GeneralSettings.FLOWCHART_PAD_LEFT;//-.2f;                                     // X translation
-        translation.m21 = - (y_bound * translation.m11) + magic_number; // Y translation
+        magic_number = -.9f;
+        translation.m00 = 2 / (GeneralSettings.IMAGE_SIZE.x - .2f);   // X scaling
+        translation.m11 = 2 / (GeneralSettings.IMAGE_SIZE.y);         // Y scale
+        translation.m20 = -(.5f * (bottomRight.x + .8f)) / GeneralSettings.IMAGE_SIZE.x;// - .2f;                                     // X translation
+        translation.m21 = 1f + (.5f * bottomRight.y + 1f) / GeneralSettings.IMAGE_SIZE.y; // Y translation
+        System.out.println("Center of flowchart is at coordinates (" + (.5f * (x_bound + .8f)) + "," + (.5f * y_bound) + ")");
+
 //        System.out.println(infile + ": " + translation.m00 + "," + translation.m11);
 //        System.out.println("y_bound: " + y_bound);
 //        System.out.println("m20 and m21" + ": " + translation.m20 + "," + translation.m21);

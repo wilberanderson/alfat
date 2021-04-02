@@ -66,6 +66,7 @@ public class FlowchartLineRenderer {
      * @param flowchartWindowController
      */
     public void renderToImage(FlowchartWindowController flowchartWindowController) {
+
         prepare(flowchartWindowController.lines.getVaoID());
 
         shader.zoomTranslateMatrix.loadMatrix(GeneralSettings.IMAGE_TRANSLATION);
@@ -73,9 +74,8 @@ public class FlowchartLineRenderer {
 
         shader.doClipping.loadBoolean(false);
 
-        for (FlowchartLine line : flowchartWindowController.getFlowchartLineList()) {
-            GL31.glDrawArraysInstanced(GL11.GL_TRIANGLE_STRIP, 0, flowchartWindowController.lines.getVertexCount(), flowchartWindowController.numberOfSegments);//renderLine(line);
-        }
+        GL31.glDrawArraysInstanced(GL11.GL_LINES, 0, flowchartWindowController.lines.getVertexCount(), flowchartWindowController.numberOfSegments);//renderLine(line);
+
         endRendering();
     }
 

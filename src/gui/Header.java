@@ -313,7 +313,7 @@ public class Header {
         GeneralSettings.FILE_PATH = of.getFilePath();
 
 
-        // If the file exists, load it into the text editor.
+        // If the file exists, load it into the text editor
         if (GeneralSettings.FILE_PATH != null){
             if (GeneralSettings.FILE_PATH.contains("/")){
                 windowTitle = "ALFAT – " + GeneralSettings.FILE_PATH.substring(GeneralSettings.FILE_PATH.lastIndexOf('/')+1);
