@@ -481,6 +481,9 @@ public class Header {
         }
 
         //Determine the width and height of the image in pixels
+        //int width = (int) GeneralSettings.IMAGE_SIZE.x * GeneralSettings.DEFAULT_WIDTH / 2;
+        //int height = (int) GeneralSettings.IMAGE_SIZE.y * GeneralSettings.DEFAULT_HEIGHT / 2;
+
         int width = (int) GeneralSettings.IMAGE_SIZE.x * GeneralSettings.DEFAULT_WIDTH / 2;
         int height = (int) GeneralSettings.IMAGE_SIZE.y * GeneralSettings.DEFAULT_HEIGHT / 2;
 

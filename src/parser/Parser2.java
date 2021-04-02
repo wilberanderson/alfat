@@ -577,8 +577,8 @@ public class Parser2  {
         float magic_number = -.1f;
         List<Vector2f> locations = new ArrayList<>();
         List<Vector2f> sizes = new ArrayList<>();
-        Vector2f bottomRight = new Vector2f(x_bound,y_bound);
-        Vector2f topLeft = new Vector2f(400,-100);
+        Vector2f bottomRight = new Vector2f(location);
+        Vector2f topLeft = new Vector2f(location);
 
         //draw the boxes vertically offset
         for (FlowChartObject box : flowchart) {
@@ -742,24 +742,65 @@ public class Parser2  {
                 topLeft.y = Math.max(topLeft.y,coordinate.y);
             }
         }
+        Vector2f midpoint = new Vector2f((.5f * (bottomRight.x + topLeft.x)),(.5f * (bottomRight.y + topLeft.y)));
 
         // Screenshotting helper commands
-        if (verbose)
-            System.out.println("(x,y) area of the flowchart: (" + (Math.abs(bottomRight.x) + 1f) + ", " + (Math.abs(bottomRight.y) + 1f + GeneralSettings.FLOWCHART_PAD_TOP) + ")");
-        GeneralSettings.IMAGE_SIZE = new Vector2f(Math.abs(bottomRight.x) + 1f - GeneralSettings.FLOWCHART_PAD_LEFT, Math.abs(bottomRight.y) + 1f + GeneralSettings.FLOWCHART_PAD_TOP);
+        if (true) {
+            //System.out.println("(x,y) area of the flowchart: (" + (Math.abs(bottomRight.x) + Math.abs(topLeft.x) + ", " + (Math.abs(bottomRight.y - topLeft.x) + 1f + GeneralSettings.FLOWCHART_PAD_TOP) + ")");
+            System.out.println("Top left: " + topLeft);
+            System.out.println("Bottom right: " + bottomRight);
+            System.out.println("Center of flowchart is at coordinates (" + midpoint.x + "," + midpoint.y + ")");
+
+            // outline flowchart
+            List<Vector2f> coordinates = new ArrayList<>();
+            coordinates.add(topLeft);
+            coordinates.add(new Vector2f(bottomRight.x, topLeft.y));
+            coordinates.add(bottomRight);
+            coordinates.add(new Vector2f(topLeft.x, bottomRight.y));
+            coordinates.add(topLeft);
+            Terminator terminator = new Junction(coordinates.get(coordinates.size() - 1));
+            FlowchartLine line = new FlowchartLine(coordinates, terminator);
+            line.setColor(new Vector3f(0f, 0f, 0f));
+            linesList.add(line);
+
+            // show padding outline
+            coordinates = new ArrayList<>();
+            coordinates.add(new Vector2f(topLeft.x - .2f, topLeft.y + .2f));
+            coordinates.add(new Vector2f(bottomRight.x + .2f, topLeft.y + .2f));
+            coordinates.add(new Vector2f(bottomRight.x + .2f, bottomRight.y - .2f));
+            coordinates.add(new Vector2f(topLeft.x - .2f, bottomRight.y - .2f));
+            coordinates.add(new Vector2f(topLeft.x - .2f, topLeft.y + .2f));
+            terminator = new Junction(coordinates.get(coordinates.size() - 1));
+            line = new FlowchartLine(coordinates, terminator);
+            line.setColor(GeneralSettings.magenta);
+            linesList.add(line);
+
+            // dot at center
+            coordinates = new ArrayList<>();
+//        coordinates.add(topLeft);
+//        coordinates.add(bottomRight);
+            coordinates.add(midpoint);
+            terminator = new Junction(coordinates.get(coordinates.size() - 1));
+            line = new FlowchartLine(coordinates, terminator);
+            line.setColor(new Vector3f(255f, 255f, 255f));
+            linesList.add(line);
+        }
+
+        GeneralSettings.IMAGE_SIZE = new Vector2f(Math.abs(bottomRight.x) + Math.abs(topLeft.x) - GeneralSettings.FLOWCHART_PAD_LEFT, Math.abs(bottomRight.y) + Math.abs(topLeft.y) - GeneralSettings.FLOWCHART_PAD_TOP);
         Matrix3f translation = new Matrix3f();
         translation.setIdentity();
         magic_number = -.9f;
-        translation.m00 = 2 / (GeneralSettings.IMAGE_SIZE.x - .2f);   // X scaling
-        translation.m11 = 2 / (GeneralSettings.IMAGE_SIZE.y);         // Y scale
+        translation.m00 = 2 / (GeneralSettings.IMAGE_SIZE.x);   // X scaling
+        translation.m11 = 2 / (GeneralSettings.IMAGE_SIZE.y);   // Y scale
         translation.m20 = -(.5f * (bottomRight.x + .8f)) / GeneralSettings.IMAGE_SIZE.x;// - .2f;                                     // X translation
-        translation.m21 = 1f + (.5f * bottomRight.y + 1f) / GeneralSettings.IMAGE_SIZE.y; // Y translation
-        System.out.println("Center of flowchart is at coordinates (" + (.5f * (x_bound + .8f)) + "," + (.5f * y_bound) + ")");
+        translation.m21 = 1f + (.5f * (bottomRight.y + topLeft.y)) / GeneralSettings.IMAGE_SIZE.y; // Y translation
 
 //        System.out.println(infile + ": " + translation.m00 + "," + translation.m11);
 //        System.out.println("y_bound: " + y_bound);
 //        System.out.println("m20 and m21" + ": " + translation.m20 + "," + translation.m21);
         GeneralSettings.IMAGE_TRANSLATION = translation;
+
+
         //Find line overlaps:
         for (FlowchartLine line1 : linesList) {
             for (FlowchartLine line2 : linesList) {
