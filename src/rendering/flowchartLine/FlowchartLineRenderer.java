@@ -58,6 +58,8 @@ public class FlowchartLineRenderer {
             GL31.glDrawArraysInstanced(GL11.GL_LINES, 0, flowchartWindowController.lines.getVertexCount(), flowchartWindowController.getFlowchartTextBoxController().instanceCount);//renderLine(line);
             GL11.glLineWidth(GeneralSettings.USERPREF.getDefaultLineWidth());
 
+
+
             endRendering();
         }
     }

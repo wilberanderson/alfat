@@ -484,8 +484,19 @@ public class Header {
         //int width = (int) GeneralSettings.IMAGE_SIZE.x * GeneralSettings.DEFAULT_WIDTH / 2;
         //int height = (int) GeneralSettings.IMAGE_SIZE.y * GeneralSettings.DEFAULT_HEIGHT / 2;
 
-        int width = (int) GeneralSettings.IMAGE_SIZE.x * GeneralSettings.DEFAULT_WIDTH / 2;
-        int height = (int) GeneralSettings.IMAGE_SIZE.y * GeneralSettings.DEFAULT_HEIGHT / 2;
+        double widthf = (1.5f * GeneralSettings.IMAGE_SIZE.x)  * (double)GeneralSettings.DEFAULT_WIDTH / 2.0f;
+        //double widthf = (1.5f * GeneralSettings.IMAGE_SIZE.x)  * (double) 3840 / 2.0f;
+        System.out.println("widthf " + widthf);
+        int width = (int) widthf;
+        System.out.println("width " + width);
+        double heightf = (1.5f * GeneralSettings.IMAGE_SIZE.y)  * (double)GeneralSettings.DEFAULT_HEIGHT / 2.0f;
+        //double heightf = (1.5f * GeneralSettings.IMAGE_SIZE.y)  * (double)2160 / 2.0f;
+        System.out.println("heightf " + heightf);
+        int height = (int) heightf;
+        System.out.println("height " + height);
+
+
+
 
         //Create a frame buffer to render the image to
         int renderBuffer = GL30.glGenFramebuffers();
@@ -510,6 +521,9 @@ public class Header {
         //Load the data in the frame buffer into a byte buffer which can be saved to an image
         int bpp = 4; // Assuming a 32-bit display with a byte each for red, green, blue, and alpha.
         ByteBuffer buffer = BufferUtils.createByteBuffer(width * height * bpp);
+        //Render the flowchart to the image
+        MasterRenderer.renderScreenshot(controller.getFlowchartWindowController());
+        //GL11.glReadPixels(0, 0, width, height, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, buffer);
         GL11.glReadPixels(0, 0, width, height, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, buffer);
 
         //Find where to save the file
@@ -523,7 +537,7 @@ public class Header {
             //Create the file
             File file = new File(path);
             String format = "PNG"; // Example: "PNG" or "JPG"
-            BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+            BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 
             //Read the data from the byte buffer
             for (int x = 0; x < width; x++) {
