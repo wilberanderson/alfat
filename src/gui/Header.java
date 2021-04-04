@@ -497,12 +497,9 @@ public class Header {
         System.out.println("height " + height);
 
         FlowchartToPng flowchartToPng = new FlowchartToPng(GeneralSettings.USERPREF.getUserTempFileDirPath());
-
         flowchartToPng.startImageSlice(width, height, controller);
-
-
        //Force method to return
-        if(flowchartToPng != null) {
+        if(true) {
             return;
         }
 
@@ -526,6 +523,7 @@ public class Header {
         //Render the flowchart to the image
         MasterRenderer.renderScreenshot(controller.getFlowchartWindowController());
 
+        //height -= 1000;//this is what you need to change to crop
         //Load the data in the frame buffer into a byte buffer which can be saved to an image
         int bpp = 4; // Assuming a 32-bit display with a byte each for red, green, blue, and alpha.
         ByteBuffer buffer = BufferUtils.createByteBuffer(width * height * bpp);

@@ -6,6 +6,9 @@ import ar.com.hjg.pngj.PngReader;
 import ar.com.hjg.pngj.PngWriter;
 import ar.com.hjg.pngj.chunks.ChunkCopyBehaviour;
 import ar.com.hjg.pngj.chunks.ChunkLoadBehaviour;
+
+
+
 import controllers.ApplicationController;
 import gui.OpenFileDialog;
 import main.GeneralSettings;
@@ -30,6 +33,8 @@ public class FlowchartToPng {
 
     private String directoryPath = null;
     private final String FOLDER_NAME = ".img" + File.separator;
+    private int imageCount = 0;
+    public FileSortedArrayList files = new FileSortedArrayList();
 
 
 
@@ -55,12 +60,40 @@ public class FlowchartToPng {
         int widthSource = width;
         int heightSource = height;
 
-        //while(width != 0) {
-            //Change height to account for
-            doRenderCall(widthSource,heightSource,height, controller);
+        //remainder
+        int heightRemainder = height;
+        int heightTemp = 0;
 
-        //}
+        int pixelsChop = (int)((double)heightSource/(double)10);
+        float paddingRatio = (float)((double)GeneralSettings.IMAGE_SIZE.y/(double)10);
+
+        for(int i = 0; i < 10; i++){
+
+            doRenderCall(widthSource,heightSource,pixelsChop, controller);
+            GeneralSettings.IMAGE_TRANSLATION.m21 -= paddingRatio;
+
+        }
+
+
+        //Clear previous files
+        clearTempFiles();
+
+        //Go to grab files from directory and add them to file sorted array list
+        attachFilesFromDir(this.directoryPath);
+
+
+        //Place file paths into strings... (should really just use the file paths)
+        String filesPaths [] = new String[files.size()];
+        for(int i = 0; i < files.size(); i++) {
+            filesPaths[i] = files.get(i).getAbsolutePath();
+        }
+        //Recombined files and save to file path
+        doTiling(filesPaths,this.directoryPath + "out.png");
     }
+
+
+
+
 
     /**does a LWJGL render call for of the flowchart*/
     public void doRenderCall(int widthSource, int heightSource,int height, ApplicationController controller) {
@@ -79,10 +112,13 @@ public class FlowchartToPng {
         GL30.glFramebufferTexture2D(GL30.GL_FRAMEBUFFER, GL30.GL_COLOR_ATTACHMENT0, GL11.GL_TEXTURE_2D, imageIndex, 0);
         GL30.glDrawBuffers(GL30.GL_COLOR_ATTACHMENT0);
         GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, renderBuffer);
-        GL11.glViewport(0, 0, widthSource, height);
+        GL11.glViewport(0, 0, widthSource, heightSource);
 
         //Render the flowchart to the image
         MasterRenderer.renderScreenshot(controller.getFlowchartWindowController());
+
+
+
 
         //Load the data in the frame buffer into a byte buffer which can be saved to an image
         int bpp = 4; // Assuming a 32-bit display with a byte each for red, green, blue, and alpha.
@@ -90,16 +126,18 @@ public class FlowchartToPng {
         //Render the flowchart to the image
         MasterRenderer.renderScreenshot(controller.getFlowchartWindowController());
         //GL11.glReadPixels(0, 0, width, height, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, buffer);
-        GL11.glReadPixels(0, 0, widthSource, heightSource, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, buffer);
+        GL11.glReadPixels(0, 0, widthSource, height, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, buffer);
 
         //Find where to save the file
-        OpenFileDialog openFileDialog = new OpenFileDialog();
-        openFileDialog.setFilterList("png,jpg");
-        openFileDialog.saveFileWindow();
+//        OpenFileDialog openFileDialog = new OpenFileDialog();
+//        openFileDialog.setFilterList("png,jpg");
+//        openFileDialog.saveFileWindow();
 
         //Ensure a valid file path is entered before saving
-        String path = openFileDialog.getFilePath();
-        writePng(path, widthSource,height,bpp, buffer);
+       // String path = openFileDialog.getFilePath();
+        writePng(this.directoryPath+ File.separator + (imageCount++) + ".png", widthSource,height,bpp, buffer);
+
+
 
         //Delete the frame buffer when done
         GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0);
@@ -128,7 +166,6 @@ public class FlowchartToPng {
                     image.setRGB(x, height - (y + 1), (0xFF << 24) | (r << 16) | (g << 8) | b);
                 }
             }
-
             //Attempt to save the image
             try {
                 ImageIO.write(image, format, file);
@@ -138,7 +175,22 @@ public class FlowchartToPng {
         }
     }
 
-
+    /**
+     * Opens the folder and attaches the files in order of
+     * creation date to the FileSortedArrayList
+     * Should set path to directoryPath
+     */
+    public void attachFilesFromDir(String path) {
+        if (isPathExist(path)) {
+            files.clear(); //Lazy I know TO BAD!
+            File folder = new File(directoryPath);
+            File[] listOfFiles = folder.listFiles();
+            for (File in : listOfFiles) {
+                files.add(in);
+            }
+            files.bubbleSort2();
+        }
+    }
 
     /**
      * This initializes the temp folder directory
