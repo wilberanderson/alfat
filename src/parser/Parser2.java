@@ -796,7 +796,7 @@ public class Parser2  {
         translation.m20 = -(.5f * (bottomRight.x + .8f)) / GeneralSettings.IMAGE_SIZE.x;// - .2f;                                     // X translation
         translation.m20 = 0.12f - GeneralSettings.FLOWCHART_PAD_LEFT;//-.2f;
         translation.m21 = 1f + (.5f * (bottomRight.y + topLeft.y)) / GeneralSettings.IMAGE_SIZE.y; // Y translation
-        translation.m21 = - ((bottomRight.y + topLeft.y) * translation.m11) + magic_number;
+        translation.m21 = - ((bottomRight.y + topLeft.y) * translation.m11) + magic_number ;
 
 //        System.out.println(infile + ": " + translation.m00 + "," + translation.m11);
 //        System.out.println("y_bound: " + y_bound);

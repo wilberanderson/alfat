@@ -5,6 +5,7 @@ import controllers.codeWindow.CodeWindowController;
 import controllers.gui.ButtonController;
 import gui.Notifications.AppEvents;
 import gui.Settings.SettingsMenu;
+import gui.TempFiles.FlowchartToPng;
 import gui.TempFiles.SaveToFile;
 import gui.TempFiles.TempFileManager;
 import gui.buttons.HeaderMenu;
@@ -484,19 +485,26 @@ public class Header {
         //int width = (int) GeneralSettings.IMAGE_SIZE.x * GeneralSettings.DEFAULT_WIDTH / 2;
         //int height = (int) GeneralSettings.IMAGE_SIZE.y * GeneralSettings.DEFAULT_HEIGHT / 2;
 
-        //double widthf = (1.5f * GeneralSettings.IMAGE_SIZE.x)  * (double)GeneralSettings.DEFAULT_WIDTH / 2.0f;
-        double widthf = (1.5f * GeneralSettings.IMAGE_SIZE.x)  * (double) 3840 / 2.0f;
+        double widthf = (1.5f * GeneralSettings.IMAGE_SIZE.x)  * (double)GeneralSettings.DEFAULT_WIDTH / 2.0f;
+        //double widthf = (1.5f * GeneralSettings.IMAGE_SIZE.x)  * (double) 3840 / 2.0f;
         System.out.println("widthf " + widthf);
         int width = (int) widthf;
         System.out.println("width " + width);
-        //double heightf = (1.5f * GeneralSettings.IMAGE_SIZE.y)  * (double)GeneralSettings.DEFAULT_HEIGHT / 2.0f;
-        double heightf = (1.5f * GeneralSettings.IMAGE_SIZE.y)  * (double)2160 / 2.0f;
+        double heightf = (1.5f * GeneralSettings.IMAGE_SIZE.y)  * (double)GeneralSettings.DEFAULT_HEIGHT / 2.0f;
+        //double heightf = (1.5f * GeneralSettings.IMAGE_SIZE.y)  * (double)2160 / 2.0f;
         System.out.println("heightf " + heightf);
         int height = (int) heightf;
         System.out.println("height " + height);
 
+        FlowchartToPng flowchartToPng = new FlowchartToPng(GeneralSettings.USERPREF.getUserTempFileDirPath());
+
+        flowchartToPng.startImageSlice(width, height, controller);
 
 
+       //Force method to return
+        if(flowchartToPng != null) {
+            return;
+        }
 
         //Create a frame buffer to render the image to
         int renderBuffer = GL30.glGenFramebuffers();

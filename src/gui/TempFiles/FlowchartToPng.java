@@ -6,13 +6,18 @@ import ar.com.hjg.pngj.PngReader;
 import ar.com.hjg.pngj.PngWriter;
 import ar.com.hjg.pngj.chunks.ChunkCopyBehaviour;
 import ar.com.hjg.pngj.chunks.ChunkLoadBehaviour;
+import controllers.ApplicationController;
 import gui.OpenFileDialog;
+import main.GeneralSettings;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL30;
 import rendering.renderEngine.MasterRenderer;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 
@@ -46,55 +51,91 @@ public class FlowchartToPng {
 
     /**Starts slicing the flowchart into chunks then saves each chunk
      * */
-    public void startImageSlice(int width, int height) {
-        while(height != 0) {
-            //Change height to account for
+    public void startImageSlice(int width, int height,ApplicationController controller) {
+        int widthSource = width;
+        int heightSource = height;
 
-            doRenderCall();
-            writePng();
-        }
+        //while(width != 0) {
+            //Change height to account for
+            doRenderCall(widthSource,heightSource,height, controller);
+
+        //}
     }
 
     /**does a LWJGL render call for of the flowchart*/
-    public void doRenderCall() {
+    public void doRenderCall(int widthSource, int heightSource,int height, ApplicationController controller) {
 //Create a frame buffer to render the image to
-//        int renderBuffer = GL30.glGenFramebuffers();
-//        GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, renderBuffer);
-//
-//        //Create a texture to load the data into
-//        int imageIndex = GL11.glGenTextures();
-//        GL11.glBindTexture(GL11.GL_TEXTURE_2D, imageIndex);
-//        GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGB8, width, height, 0, GL11.GL_RGB, GL11.GL_UNSIGNED_BYTE, 0);
-//        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_NEAREST);
-//        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_NEAREST);
-//
-//        //Configure frame buffer
-//        GL30.glFramebufferTexture2D(GL30.GL_FRAMEBUFFER, GL30.GL_COLOR_ATTACHMENT0, GL11.GL_TEXTURE_2D, imageIndex, 0);
-//        GL30.glDrawBuffers(GL30.GL_COLOR_ATTACHMENT0);
-//        GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, renderBuffer);
-//        GL11.glViewport(0, 0, width, height);
-//
-//        //Render the flowchart to the image
-//        MasterRenderer.renderScreenshot(controller.getFlowchartWindowController());
-//
-//        //Load the data in the frame buffer into a byte buffer which can be saved to an image
-//        int bpp = 4; // Assuming a 32-bit display with a byte each for red, green, blue, and alpha.
-//        ByteBuffer buffer = BufferUtils.createByteBuffer(width * height * bpp);
-//        //Render the flowchart to the image
-//        MasterRenderer.renderScreenshot(controller.getFlowchartWindowController());
-//        //GL11.glReadPixels(0, 0, width, height, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, buffer);
-//        GL11.glReadPixels(0, 0, width, height, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, buffer);
-//
-//        //Find where to save the file
-//        OpenFileDialog openFileDialog = new OpenFileDialog();
-//        openFileDialog.setFilterList("png,jpg");
-//        openFileDialog.saveFileWindow();
+        int renderBuffer = GL30.glGenFramebuffers();
+        GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, renderBuffer);
+
+        //Create a texture to load the data into
+        int imageIndex = GL11.glGenTextures();
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, imageIndex);
+        GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGB8, widthSource, heightSource, 0, GL11.GL_RGB, GL11.GL_UNSIGNED_BYTE, 0);
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_NEAREST);
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_NEAREST);
+
+        //Configure frame buffer
+        GL30.glFramebufferTexture2D(GL30.GL_FRAMEBUFFER, GL30.GL_COLOR_ATTACHMENT0, GL11.GL_TEXTURE_2D, imageIndex, 0);
+        GL30.glDrawBuffers(GL30.GL_COLOR_ATTACHMENT0);
+        GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, renderBuffer);
+        GL11.glViewport(0, 0, widthSource, height);
+
+        //Render the flowchart to the image
+        MasterRenderer.renderScreenshot(controller.getFlowchartWindowController());
+
+        //Load the data in the frame buffer into a byte buffer which can be saved to an image
+        int bpp = 4; // Assuming a 32-bit display with a byte each for red, green, blue, and alpha.
+        ByteBuffer buffer = BufferUtils.createByteBuffer(widthSource * height * bpp);
+        //Render the flowchart to the image
+        MasterRenderer.renderScreenshot(controller.getFlowchartWindowController());
+        //GL11.glReadPixels(0, 0, width, height, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, buffer);
+        GL11.glReadPixels(0, 0, widthSource, heightSource, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, buffer);
+
+        //Find where to save the file
+        OpenFileDialog openFileDialog = new OpenFileDialog();
+        openFileDialog.setFilterList("png,jpg");
+        openFileDialog.saveFileWindow();
+
+        //Ensure a valid file path is entered before saving
+        String path = openFileDialog.getFilePath();
+        writePng(path, widthSource,height,bpp, buffer);
+
+        //Delete the frame buffer when done
+        GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0);
+        GL11.glViewport(0, 0, GeneralSettings.DISPLAY_WIDTH, GeneralSettings.DISPLAY_HEIGHT);
+        GL11.glDeleteTextures(imageIndex);
+        GL30.glDeleteFramebuffers(renderBuffer);
     }
 
 
     /**Writes the buffer into a image*/
-    public void writePng() {
+    public void writePng(String path, int widthSource, int height, int bpp, ByteBuffer buffer) {
 
+        if(path != null) {
+            //Create the file
+            File file = new File(path);
+            String format = "PNG"; // Example: "PNG" or "JPG"
+            BufferedImage image = new BufferedImage(widthSource, height, BufferedImage.TYPE_INT_ARGB);
+
+            //Read the data from the byte buffer
+            for (int x = 0; x < widthSource; x++) {
+                for (int y = 0; y < height; y++) {
+                    int i = (x + (widthSource * y)) * bpp;
+                    int r = buffer.get(i) & 0xFF;
+                    int g = buffer.get(i + 1) & 0xFF;
+                    int b = buffer.get(i + 2) & 0xFF;
+                    image.setRGB(x, height - (y + 1), (0xFF << 24) | (r << 16) | (g << 8) | b);
+                }
+            }
+
+            //Attempt to save the image
+            try {
+                ImageIO.write(image, format, file);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 
