@@ -496,6 +496,7 @@ public class Header {
         int height = (int) heightf;
         System.out.println("height " + height);
 
+
         FlowchartToPng flowchartToPng = new FlowchartToPng(GeneralSettings.USERPREF.getUserTempFileDirPath());
         flowchartToPng.startImageSlice(width, height, controller);
        //Force method to return

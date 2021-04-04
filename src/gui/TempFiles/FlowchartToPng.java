@@ -57,6 +57,10 @@ public class FlowchartToPng {
     /**Starts slicing the flowchart into chunks then saves each chunk
      * */
     public void startImageSlice(int width, int height,ApplicationController controller) {
+
+        //Clear previous files
+        clearTempFiles();
+
         int widthSource = width;
         int heightSource = height;
 
@@ -64,19 +68,31 @@ public class FlowchartToPng {
         int heightRemainder = height;
         int heightTemp = 0;
 
+
+
         int pixelsChop = (int)((double)heightSource/(double)10);
+        System.out.println("pixelsChop:" + pixelsChop);
+
+
         float paddingRatio = (float)((double)GeneralSettings.IMAGE_SIZE.y/(double)10);
+        System.out.println("paddingRatio:" + paddingRatio);
+
+        System.out.println("GeneralSettings.IMAGE_SIZE.y: " + GeneralSettings.IMAGE_SIZE.y);
+
+        pixelsChop = GeneralSettings.DISPLAY_HEIGHT;
 
         for(int i = 0; i < 10; i++){
 
             doRenderCall(widthSource,heightSource,pixelsChop, controller);
             GeneralSettings.IMAGE_TRANSLATION.m21 -= paddingRatio;
+            GeneralSettings.IMAGE_TRANSLATION.m21 -= 1;
+
+
 
         }
 
 
-        //Clear previous files
-        clearTempFiles();
+
 
         //Go to grab files from directory and add them to file sorted array list
         attachFilesFromDir(this.directoryPath);
