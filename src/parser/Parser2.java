@@ -786,18 +786,16 @@ public class Parser2  {
             linesList.add(line);
         }
 
-        GeneralSettings.IMAGE_SIZE = new Vector2f(Math.abs(bottomRight.x) + Math.abs(topLeft.x) - GeneralSettings.FLOWCHART_PAD_LEFT, Math.abs(bottomRight.y) + Math.abs(topLeft.y) - GeneralSettings.FLOWCHART_PAD_TOP);
+        GeneralSettings.IMAGE_SIZE =
+                new Vector2f(Math.abs(bottomRight.x) + Math.abs(topLeft.x) - GeneralSettings.FLOWCHART_PAD_LEFT,
+                Math.abs(bottomRight.y) + Math.abs(topLeft.y) - GeneralSettings.FLOWCHART_PAD_TOP);
         Matrix3f translation = new Matrix3f();
         translation.setIdentity();
-        //magic_number = -.9f;
-        magic_number = -.875f;
+        magic_number = -0.9f; //This is the zoom reset padding for some reason
         translation.m00 = 1.5f / (GeneralSettings.IMAGE_SIZE.x);   // X scaling
         translation.m11 = 1.5f / (GeneralSettings.IMAGE_SIZE.y);   // Y scale
-        translation.m20 = -(.5f * (bottomRight.x + .8f)) / GeneralSettings.IMAGE_SIZE.x;// - .2f;                                     // X translation
-        translation.m20 = 0.12f - GeneralSettings.FLOWCHART_PAD_LEFT;//-.2f;
-        translation.m21 = 1f + (.5f * (bottomRight.y + topLeft.y)) / GeneralSettings.IMAGE_SIZE.y; // Y translation
-        translation.m21 = - ((bottomRight.y + topLeft.y) * translation.m11) + magic_number;
-
+        translation.m20 = 0;   // X translation
+        translation.m21 = - ((bottomRight.y + topLeft.y) *  translation.m11) + magic_number; // Y translation
 
 //        System.out.println(infile + ": " + translation.m00 + "," + translation.m11);
 //        System.out.println("y_bound: " + y_bound);

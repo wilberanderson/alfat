@@ -71,21 +71,31 @@ public class FlowchartToPng {
 
 
         int pixelsChop = (int)((double)heightSource/(double)10);
+        pixelsChop = GeneralSettings.DISPLAY_HEIGHT;
         System.out.println("pixelsChop:" + pixelsChop);
 
 
         float paddingRatio = (float)((double)GeneralSettings.IMAGE_SIZE.y/(double)10);
+        paddingRatio = (float) (((double)pixelsChop * GeneralSettings.IMAGE_SIZE.y) / (double)heightSource);
+
+
+
+
+
         System.out.println("paddingRatio:" + paddingRatio);
 
         System.out.println("GeneralSettings.IMAGE_SIZE.y: " + GeneralSettings.IMAGE_SIZE.y);
 
-        pixelsChop = GeneralSettings.DISPLAY_HEIGHT;
+
 
         for(int i = 0; i < 10; i++){
 
             doRenderCall(widthSource,heightSource,pixelsChop, controller);
-            GeneralSettings.IMAGE_TRANSLATION.m21 -= paddingRatio;
-            GeneralSettings.IMAGE_TRANSLATION.m21 -= 1;
+            //What is the missing padding!!!
+            GeneralSettings.IMAGE_TRANSLATION.m21 -= (paddingRatio);
+            //GeneralSettings.IMAGE_TRANSLATION.m21 -= (paddingRatio-GeneralSettings.FLOWCHART_PAD_TOP);
+
+            //GeneralSettings.IMAGE_TRANSLATION.m21 -= 1;
 
 
 
