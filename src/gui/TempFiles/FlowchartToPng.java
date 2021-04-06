@@ -35,6 +35,16 @@ public class FlowchartToPng {
     private final String FOLDER_NAME = ".img" + File.separator;
     private int imageCount = 0;
     public FileSortedArrayList files = new FileSortedArrayList();
+    /**
+     * <pre>
+     *  This value in openGL coordinates will move a screen down by one screen width
+     *                         y|(0,1)
+     *              (-1,0) ---- |---- x (1,0)
+     *                          | (0,-1)
+     *  So to move down one screen size you translate by 2
+     * </pre>
+     * */
+    private final float MOVE_ONE_SCREEN_DOWN = 2.f;
 
 
 
@@ -57,7 +67,6 @@ public class FlowchartToPng {
     /**Starts slicing the flowchart into chunks then saves each chunk
      * */
     public void startImageSlice(int width, int height,ApplicationController controller) {
-
         //Clear previous files
         clearTempFiles();
 
@@ -68,45 +77,28 @@ public class FlowchartToPng {
         int heightRemainder = height;
         int heightTemp = 0;
 
-
-
-        int pixelsChop = (int)((double)heightSource/(double)10);
-        pixelsChop = GeneralSettings.DISPLAY_HEIGHT;
+        int pixelsChop = GeneralSettings.DISPLAY_HEIGHT;
         System.out.println("pixelsChop:" + pixelsChop);
-
-
-        float paddingRatio = (float)((double)GeneralSettings.IMAGE_SIZE.y/(double)10);
-        paddingRatio = (float) (((double)pixelsChop * GeneralSettings.IMAGE_SIZE.y) / (double)heightSource);
-
-
-
-
-
-        System.out.println("paddingRatio:" + paddingRatio);
-
         System.out.println("GeneralSettings.IMAGE_SIZE.y: " + GeneralSettings.IMAGE_SIZE.y);
 
 
+        //Store the original translation
+        float originalTranslationY = GeneralSettings.IMAGE_TRANSLATION.m21;
 
-        for(int i = 0; i < 10; i++){
+        //move down for as many openGL spaces it takes to exceed the image size by a minimal amount
+        float imageSizeTemp = GeneralSettings.IMAGE_SIZE.y;
 
+        while(imageSizeTemp > -MOVE_ONE_SCREEN_DOWN/2) {
             doRenderCall(widthSource,heightSource,pixelsChop, controller);
-            //What is the missing padding!!!
-            GeneralSettings.IMAGE_TRANSLATION.m21 -= (paddingRatio);
-            //GeneralSettings.IMAGE_TRANSLATION.m21 -= (paddingRatio-GeneralSettings.FLOWCHART_PAD_TOP);
-
-            //GeneralSettings.IMAGE_TRANSLATION.m21 -= 1;
-
-
-
+            GeneralSettings.IMAGE_TRANSLATION.m21 -= MOVE_ONE_SCREEN_DOWN;
+            imageSizeTemp -= MOVE_ONE_SCREEN_DOWN;
         }
 
-
-
+        //Reset the originalTranslationY
+        GeneralSettings.IMAGE_TRANSLATION.m21 = originalTranslationY;
 
         //Go to grab files from directory and add them to file sorted array list
         attachFilesFromDir(this.directoryPath);
-
 
         //Place file paths into strings... (should really just use the file paths)
         String filesPaths [] = new String[files.size()];
@@ -130,7 +122,7 @@ public class FlowchartToPng {
         //Create a texture to load the data into
         int imageIndex = GL11.glGenTextures();
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, imageIndex);
-        GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGB8, widthSource, heightSource, 0, GL11.GL_RGB, GL11.GL_UNSIGNED_BYTE, 0);
+        GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGB8, widthSource, height, 0, GL11.GL_RGB, GL11.GL_UNSIGNED_BYTE, 0);
         GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_NEAREST);
         GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_NEAREST);
 
@@ -138,7 +130,7 @@ public class FlowchartToPng {
         GL30.glFramebufferTexture2D(GL30.GL_FRAMEBUFFER, GL30.GL_COLOR_ATTACHMENT0, GL11.GL_TEXTURE_2D, imageIndex, 0);
         GL30.glDrawBuffers(GL30.GL_COLOR_ATTACHMENT0);
         GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, renderBuffer);
-        GL11.glViewport(0, 0, widthSource, heightSource);
+        GL11.glViewport(0, 0, widthSource, height);
 
         //Render the flowchart to the image
         MasterRenderer.renderScreenshot(controller.getFlowchartWindowController());

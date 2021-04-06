@@ -157,7 +157,7 @@ public class GeneralSettings {
 	//*****************************Image saving parameters*************************************
 	public static Matrix3f IMAGE_TRANSLATION;                              //The required translation to save the currently open flowchart centered in the screen
 	public static Vector2f IMAGE_SIZE;                                     //The size of the screenshot using the OpenGL coordinate system
-
+	public static float EXTRA = 0f;
 	//******************************File input/output fields**********************************
 	public static String FILE_PATH;                                              //A string used for holding the current file path of the file open in the text editor
 	public static String SYNTAX_PATH = "CodeSyntax/LC3.json";                    //The location of the default syntax at compile time

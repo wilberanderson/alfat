@@ -124,7 +124,7 @@ public class Parser2  {
                     // replaces tabs with spaces
                     //line = line.replace("\t", "    ");
 
-                    simpleTokenizer.setVerbose(false);
+                    simpleTokenizer.setVerbose(true);
                     String[] arrLine = simpleTokenizer.tokenizeString(line);
                     int columnFragmentIndex = 0; // The start index of the column fragment as a string fragment
                     int columnFragment = 0; // The actual fragment of the column
@@ -203,7 +203,7 @@ public class Parser2  {
                             targetLabel = fragment;
                             formattedString.add(new LabelWord(fragment, new Vector2f(0f, 0)));
                             first = false;
-                        } else if (jump && fragment.matches("[0-9]*")) {
+                        } else if (jump && parserLogicScripter.immediateMatcher.isMatch(fragment,columnFragment)) {
                             // probably a goto label
                             gotoList.add(Integer.parseInt(fragment));
                             formattedString.add(new LabelWord(fragment, new Vector2f(0f, 0)));
@@ -789,13 +789,20 @@ public class Parser2  {
         GeneralSettings.IMAGE_SIZE =
                 new Vector2f(Math.abs(bottomRight.x) + Math.abs(topLeft.x) - GeneralSettings.FLOWCHART_PAD_LEFT,
                 Math.abs(bottomRight.y) + Math.abs(topLeft.y) - GeneralSettings.FLOWCHART_PAD_TOP);
+
+
         Matrix3f translation = new Matrix3f();
         translation.setIdentity();
         magic_number = -0.9f; //This is the zoom reset padding for some reason
-        translation.m00 = 1.5f / (GeneralSettings.IMAGE_SIZE.x);   // X scaling
-        translation.m11 = 1.5f / (GeneralSettings.IMAGE_SIZE.y);   // Y scale
+        translation.m00 = 1;   // X scaling
+        translation.m11 = 1;   // Y scale
         translation.m20 = 0;   // X translation
         translation.m21 = - ((bottomRight.y + topLeft.y) *  translation.m11) + magic_number; // Y translation
+
+        GeneralSettings.EXTRA = 0;
+
+
+
 
 //        System.out.println(infile + ": " + translation.m00 + "," + translation.m11);
 //        System.out.println("y_bound: " + y_bound);

@@ -20,6 +20,11 @@ public class ParserLogicScripter {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //Default Token Matchers MUST be provided in the event that the JSON parser logic is not set
+    /**
+     * <pre>
+     *     Anything that is a command word
+     * </pre>
+     * */
     public TokenMatcher commandMatcher = new TokenMatcher() {
         @Override
         public boolean isMatch(String token,int column) {
@@ -28,18 +33,37 @@ public class ParserLogicScripter {
                     token.matches(syn.getKeywordPatterns().getDataMovement());
         }
     };
+
+    /**
+     * <pre>
+     *     Anything that is control word
+     * </pre>
+     * */
     public TokenMatcher controlMatcher = new TokenMatcher() {
         @Override
         public boolean isMatch(String token,int column) {
             return token.matches(syn.getKeywordPatterns().getControl());
         }
     };
+
+    /**
+     * <pre>
+     *     Anything that is a register
+     * </pre>
+     * */
     public TokenMatcher registerMatcher = new TokenMatcher() {
         @Override
         public boolean isMatch(String token,int column) {
             return token.matches(syn.getKeywordPatterns().getRegister());
         }
     };
+
+    /**
+     * <pre>
+     *     Anything that is a immediate value
+     *     e,g. a number
+     * </pre>
+     * */
     public TokenMatcher immediateMatcher = new TokenMatcher() {
         @Override
         public boolean isMatch(String token,int column) {
@@ -48,24 +72,49 @@ public class ParserLogicScripter {
                     || token.matches(syn.getKeywordPatterns().getConstantNumeric());
         }
     };
+
+    /**
+     * <pre>
+     *    anything that is a label
+     * </pre>
+     * */
     public TokenMatcher labelMatcher = new TokenMatcher() {
         @Override
         public boolean isMatch(String token,int column) {
             return token.matches(syn.getKeywordPatterns().getLabel());
         }
     };
+
+    /**
+     * <pre>
+     *    Anything that is a start of a procedure
+     * </pre>
+     * */
     public TokenMatcher procedureStartmatcher = new TokenMatcher() {
         @Override
         public boolean isMatch(String token,int column) {
             return token.matches(syn.getKeywordPatterns().getProcedurestart());
         }
     };
+
+    /**
+     * <pre>
+     *    Anything that is a end  of a procedure
+     * </pre>
+     * */
     public TokenMatcher procedureEndmatcher = new TokenMatcher() {
         @Override
         public boolean isMatch(String token,int column) {
             return token.matches(syn.getKeywordPatterns().getProcedureend());
         }
     };
+
+    /**
+     * <pre>
+     *    Any none keyword that is not a immediate.
+     *    Could be a string or some user defined word.
+     * </pre>
+     * */
     public TokenMatcher userDefinedMatcher = new TokenMatcher() {
         @Override
         public boolean isMatch(String token,int column) {
@@ -73,12 +122,24 @@ public class ParserLogicScripter {
                     token.matches(syn.getKeywordPatterns().getLabel());
         }
     };
+    /**
+     * <pre>
+     *    Anything that could be a comment
+     * </pre>
+     * */
     public TokenMatcher commentMatcher = new TokenMatcher() {
         @Override
         public boolean isMatch(String token,int column) {
             return token.matches(syn.getKeywordPatterns().getCommentLine());
         }
     };
+
+    /**
+     * <pre>
+     *    Anything that could be a separator token
+     *    e.g., white space, tab
+     * </pre>
+     * */
     public TokenMatcher separatorMatcher = new TokenMatcher() {
         @Override
         public boolean isMatch(String token,int column) {

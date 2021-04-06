@@ -47,6 +47,7 @@ public class Header {
     private String windowTitle = null;
     ApplicationController controller;
     GUIText notificationText;
+    private boolean isBtnOpenable = true;
 
 
     public Header(Vector2f position, Vector2f size, ApplicationController controller){
@@ -70,7 +71,12 @@ public class Header {
         TextButton button = new TextButton("Open File") {
             @Override
             public void onPress() {
-                openFile();
+                if(isBtnOpenable == true) {
+                    isBtnOpenable = false;
+                    openFile();
+                    isBtnOpenable = true;
+                }
+
             }
         };
         fileMenuButtonList.add(button);
@@ -78,8 +84,11 @@ public class Header {
         button = new TextButton("Save") {
             @Override
             public void onPress() {
-                save();
-
+                if(isBtnOpenable == true) {
+                    isBtnOpenable = false;
+                    save();
+                    isBtnOpenable = true;
+                }
             }
         };
         fileMenuButtonList.add(button);
@@ -87,7 +96,11 @@ public class Header {
         button = new TextButton("Save As") {
             @Override
             public void onPress() {
-                saveAs();
+                if(isBtnOpenable == true) {
+                    isBtnOpenable = false;
+                    saveAs();
+                    isBtnOpenable = true;
+                }
             }
         };
         fileMenuButtonList.add(button);
@@ -95,7 +108,11 @@ public class Header {
         button = new TextButton("Save flowchart") {
             @Override
             public void onPress() {
-                saveFlowchart();
+                if(isBtnOpenable == true) {
+                    isBtnOpenable = false;
+                    saveFlowchart();
+                    isBtnOpenable = true;
+                }
             }
         };
         fileMenuButtonList.add(button);
@@ -487,6 +504,7 @@ public class Header {
 
         double widthf = (1.5 * GeneralSettings.IMAGE_SIZE.x)  * (double)GeneralSettings.DEFAULT_WIDTH / 2.0f;
         //double widthf = (1.5f * GeneralSettings.IMAGE_SIZE.x)  * (double) 3840 / 2.0f;
+
         System.out.println("widthf " + widthf);
         int width = (int) widthf;
         System.out.println("width " + width);
