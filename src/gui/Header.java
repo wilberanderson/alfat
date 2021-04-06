@@ -502,13 +502,13 @@ public class Header {
         //int width = (int) GeneralSettings.IMAGE_SIZE.x * GeneralSettings.DEFAULT_WIDTH / 2;
         //int height = (int) GeneralSettings.IMAGE_SIZE.y * GeneralSettings.DEFAULT_HEIGHT / 2;
 
-        double widthf = (1.5 * GeneralSettings.IMAGE_SIZE.x)  * (double)GeneralSettings.DEFAULT_WIDTH / 2.0f;
+        double widthf = (1.5 * GeneralSettings.IMAGE_SIZE.x)  * (double)GeneralSettings.DEFAULT_WIDTH / 2f;
         //double widthf = (1.5f * GeneralSettings.IMAGE_SIZE.x)  * (double) 3840 / 2.0f;
 
         System.out.println("widthf " + widthf);
         int width = (int) widthf;
         System.out.println("width " + width);
-        double heightf = (1.5 * GeneralSettings.IMAGE_SIZE.y)  * (double)GeneralSettings.DEFAULT_HEIGHT / 2.0f;
+        double heightf = (1.5 * GeneralSettings.IMAGE_SIZE.y)  * (double)GeneralSettings.DEFAULT_HEIGHT / 2f;
         //double heightf = (1.5f * GeneralSettings.IMAGE_SIZE.y)  * (double)2160 / 2.0f;
         System.out.println("heightf " + heightf);
         int height = (int) heightf;

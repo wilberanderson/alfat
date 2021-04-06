@@ -73,14 +73,13 @@ public class FlowchartToPng {
         int widthSource = width;
         int heightSource = height;
 
-        //remainder
-        int heightRemainder = height;
-        int heightTemp = 0;
+        int pixelsChop = Math.round(width / 2f);
+        pixelsChop = GeneralSettings.DEFAULT_HEIGHT;
 
-        int pixelsChop = GeneralSettings.DISPLAY_HEIGHT;
+
         System.out.println("pixelsChop:" + pixelsChop);
         System.out.println("GeneralSettings.IMAGE_SIZE.y: " + GeneralSettings.IMAGE_SIZE.y);
-
+        System.out.println("GeneralSettings.IMAGE_SIZE.x: " + GeneralSettings.IMAGE_SIZE.x);
 
         //Store the original translation
         float originalTranslationY = GeneralSettings.IMAGE_TRANSLATION.m21;
