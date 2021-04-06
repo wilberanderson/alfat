@@ -787,7 +787,7 @@ public class Parser2  {
         }
 
         GeneralSettings.IMAGE_SIZE =
-                new Vector2f(Math.abs(bottomRight.x) + Math.abs(topLeft.x) - GeneralSettings.FLOWCHART_PAD_LEFT,
+                new Vector2f(Math.abs(bottomRight.x) + Math.abs(topLeft.x) - GeneralSettings.SCREENSHOT_PADDING_SIZE,
                 Math.abs(bottomRight.y) + Math.abs(topLeft.y) - GeneralSettings.FLOWCHART_PAD_TOP);
 
 

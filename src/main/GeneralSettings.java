@@ -118,7 +118,7 @@ public class GeneralSettings {
 	public static final Vector3f FLOWCHART_LINE_COLOR = new Vector3f(1, 1, 1);                              //The color for lines connecting boxes in a flowchart
 	public static final float MIN_ZOOM = 0.1f;                                                              //The smallest amount of zoom that is allowed for the flowchart
 	public static final float FLOWCHART_PAD_TOP = .2f;                                                      //The vertical spacing between flowchart boxes
-	public static final float FLOWCHART_PAD_LEFT = FLOWCHART_PAD_TOP * (DEFAULT_WIDTH / DEFAULT_HEIGHT);    //The horizontal spacing between flowchart boxes
+	public static final float FLOWCHART_PAD_LEFT = .2f;    //The horizontal spacing between flowchart boxes
 	public static final float LINE_OFFSET = .05f;                                                           //The minmum distance between lines pathing in the same direction in the flowchart
 	public static final float FLOWCHART_TEXT_BOX_INTERNAL_PAD_RIGHT = 0.1f;
 	public static final int ARROWHEAD_RIGHT = 3;
@@ -131,6 +131,8 @@ public class GeneralSettings {
 	public static final int JUNCTION_INSTANCED_DATA_LENGTH = 5;
 	public static final int ARROW_HEAD_INSTANCED_DATA_LENGTH = 5;
 	public static final int RULER_INSTANCED_DATA_LENGTH = 7;
+
+	public static final float SCREENSHOT_PADDING_SIZE = .2f;
 
 	public static final int MAX_LINES = 1000;
 	public static boolean OPEN_PARTIAL_FILE = false;
