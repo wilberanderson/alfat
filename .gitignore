@@ -2,7 +2,7 @@
 .gitignore
 /out/production
 /temp/
-/.idea/
+
 /tests/test.png/
 /test/.vscode/
 /test/footest.asm

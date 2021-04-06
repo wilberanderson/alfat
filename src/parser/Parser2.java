@@ -124,7 +124,7 @@ public class Parser2  {
                     // replaces tabs with spaces
                     //line = line.replace("\t", "    ");
 
-                    simpleTokenizer.setVerbose(true);
+                    simpleTokenizer.setVerbose(false);
                     String[] arrLine = simpleTokenizer.tokenizeString(line);
                     int columnFragmentIndex = 0; // The start index of the column fragment as a string fragment
                     int columnFragment = 0; // The actual fragment of the column
