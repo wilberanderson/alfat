@@ -794,9 +794,9 @@ public class Parser2  {
         Matrix3f translation = new Matrix3f();
         translation.setIdentity();
         magic_number = -0.9f; //This is the zoom reset padding for some reason
-        translation.m00 = 1;   // X scaling
-        translation.m11 = 1;   // Y scale
-        translation.m20 = 0;   // X translation
+        translation.m00 = 1f;   // X scaling
+        translation.m11 = 1f;   // Y scale
+        translation.m20 = 0f;   // X translation
         translation.m21 = - ((bottomRight.y + topLeft.y) *  translation.m11) + magic_number; // Y translation
 
         GeneralSettings.EXTRA = 0;

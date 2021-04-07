@@ -13,36 +13,37 @@ import java.util.Date;
 /**
  * This is a ArrayList that allows for files to be added and sorted by the last modified date of the file
  * such that the first in the index is the most recent file modified.
- * */
+ */
 public class FileSortedArrayList extends ArrayList<File> {
 
     /**
      * Add a file and sorts by last modified date
+     *
      * @param file java File type
-     * */
+     */
     @SuppressWarnings("unchecked")
     public void addSort(File file) {
         add(file);
-        for (int i = size()-1; i > 0 && cmp(file,get(i-1)) > 0; i--)
-            Collections.swap(this, i, i-1);
+        for (int i = size() - 1; i > 0 && cmp(file, get(i - 1)) > 0; i--)
+            Collections.swap(this, i, i - 1);
     }
 
     /**
      * Resorts files by last modified date
-     * */
+     */
     public void resort() {
-        for (int i = size()-1; i > 0 && cmp(get(i),get(i-1)) > 0; i--)
-            Collections.swap(this, i, i-1);
+        for (int i = size() - 1; i > 0 && cmp(get(i), get(i - 1)) > 0; i--)
+            Collections.swap(this, i, i - 1);
     }
 
     /**
      * Bubble sorts the files from first created to last created.
-     * */
+     */
     public void bubbleSort() {
         for (int i = 0; i < this.size(); i++) {
-            for(int j = 0; j < this.size()-i-1; j++){
-                if(cmp(get(j),get(j+1)) > 0) {
-                    Collections.swap(this, j, j+1);
+            for (int j = 0; j < this.size() - i - 1; j++) {
+                if (cmp(get(j), get(j + 1)) > 0) {
+                    Collections.swap(this, j, j + 1);
                 }
             }
         }
@@ -51,12 +52,12 @@ public class FileSortedArrayList extends ArrayList<File> {
 
     /**
      * Bubble sorts the files from last created to frist created.
-     * */
+     */
     public void bubbleSort2() {
         for (int i = 0; i < this.size(); i++) {
-            for(int j = 0; j < this.size()-i-1; j++){
-                if(cmp(get(j),get(j+1)) < 0) {
-                    Collections.swap(this, j, j+1);
+            for (int j = 0; j < this.size() - i - 1; j++) {
+                if (cmp(get(j), get(j + 1)) < 0) {
+                    Collections.swap(this, j, j + 1);
                 }
             }
         }
@@ -66,15 +67,16 @@ public class FileSortedArrayList extends ArrayList<File> {
     /**
      * Comparator method. int > 0 cur is after stored,
      * int < 0 cur is before stored, int == 0, cur and stored are equal.
-     * @see public void addSort(File file)
+     *
      * @param current java File type
-     * @param stored java File type
+     * @param stored  java File type
      * @return int value based on comparison
-     * */
+     * @see public void addSort(File file)
+     */
     private int cmp(File current, File stored) {
         int result = 0;
 
-        try{
+        try {
             BasicFileAttributes attrsCurr = Files.readAttributes(current.toPath(), BasicFileAttributes.class);
             BasicFileAttributes attrsStored = Files.readAttributes(stored.toPath(), BasicFileAttributes.class);
             FileTime timeCurr = attrsCurr.creationTime();
@@ -103,4 +105,18 @@ public class FileSortedArrayList extends ArrayList<File> {
     }
 
 
+    /**
+     * Returns all all file paths in the form of a string array.
+     * If there are no files this returns null.
+     */
+    public String[] FilesToStringArray() {
+        String[] result = null;
+        if (!this.isEmpty()) {
+            result = new String[this.size()];
+            for (int i = 0; i < this.size(); i++) {
+                result[i] = this.get(i).getAbsolutePath();
+            }
+        }
+        return result;
+    }
 }
