@@ -6,4 +6,4 @@
 /tests/test.png/
 /test/.vscode/
 /test/footest.asm
-mainTester.java
+/src/main/mainTester.java
