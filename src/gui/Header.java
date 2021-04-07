@@ -499,8 +499,6 @@ public class Header {
         }
 
         //Determine the width and height of the image in pixels
-        //int width = (int) GeneralSettings.IMAGE_SIZE.x * GeneralSettings.DEFAULT_WIDTH / 2;
-        //int height = (int) GeneralSettings.IMAGE_SIZE.y * GeneralSettings.DEFAULT_HEIGHT / 2;
         float adjust = 0;
         long check = Integer.MAX_VALUE;
 
@@ -529,7 +527,7 @@ public class Header {
 
 
         FlowchartToPng flowchartToPng = new FlowchartToPng(GeneralSettings.USERPREF.getUserTempFileDirPath());
-        flowchartToPng.startImageSlice(width, height, controller);
+        flowchartToPng.startImageSlice(width, height, controller, "dummy");
        //Force method to return
         if(true) {
             return;

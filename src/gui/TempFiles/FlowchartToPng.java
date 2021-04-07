@@ -8,7 +8,6 @@ import ar.com.hjg.pngj.chunks.ChunkCopyBehaviour;
 import ar.com.hjg.pngj.chunks.ChunkLoadBehaviour;
 
 
-
 import controllers.ApplicationController;
 import main.GeneralSettings;
 import org.lwjgl.BufferUtils;
@@ -28,17 +27,26 @@ import java.util.Arrays;
 /**
  * This class combines flowchart slices (png images) to be converted into
  * a single large image.
- * */
+ * This is a flowchart to png class. It will make multiple render calls
+ * and save the image buffer into smaller images then piece them altogether
+ * into a single png image.
+ * NOTE: A images (width * height * 4) < Integer.MAX_VALUE
+ * if this class is provided width and height greater than that it will crash
+ * the application because that is the limit to how much byte buffer can be
+ * stored at once. It is best if the (width * height * 4) < sqrt(Integer.MAX_Value),
+ * to be safe.
+ */
 public class FlowchartToPng {
-
-    private String directoryPath = null;
-    private String directoryPath_row = null;
-    private String directoryPath_col = null;
+    private String directoryPath = null;     //The .img directory path
+    private String directoryPath_row = null; //The .row sub directory
+    private String directoryPath_col = null; //The .col sub directory
     private final String FOLDER_NAME = ".img" + File.separator;
     private final String FOLDER_ROW = ".row" + File.separator;
     private final String FOLDER_COL = ".col" + File.separator;
     private int imageCount = 0; //Numbers the images
-    public FileSortedArrayList files = new FileSortedArrayList();
+    private FileSortedArrayList files = new FileSortedArrayList(); //Used to hold and sort files from directories
+    public boolean verbose = false;
+
     /**
      * <pre>
      *  This value in openGL coordinates will move a screen down by one screen width
@@ -47,11 +55,18 @@ public class FlowchartToPng {
      *                          | (0,-1)
      *  So to move down one screen size you translate by 2
      * </pre>
-     * */
+     */
     private final float MOVE_ONE_SCREEN_DOWN = 2.f;
+    /**
+     * <pre>
+     *  This value in openGL coordinates will move a screen down by one screen width
+     *                         y|(0,1)
+     *              (-1,0) ---- |---- x (1,0)
+     *                          | (0,-1)
+     *  So to move down one screen size you translate by 2
+     * </pre>
+     */
     private final float MOVE_ONE_SCREEN_RIGHT = 2.f;
-
-    private int numberOfImageColumns = 0;
 
     public FlowchartToPng() {
         //do nothing
@@ -61,30 +76,38 @@ public class FlowchartToPng {
      * Set the directory path
      * Should be something like
      * Should set to GeneralSettings.USERPREF.getUserTempFileDirPath()
-     * */
+     */
     public FlowchartToPng(String dirPath) {
         initializeDirectory(dirPath);
     }
 
+    /**
+     * Starts slicing the flowchart into chunks then saves each chunk
+     * NOTE: If (width * height * 4) > Integer.Max_Value the application will crash!!!
+     *
+     * @param width      the pixel height of the image
+     * @param height     the pixel width of the image
+     * @param controller this should only be the flowchart controller
+     * @param outPath    the path the file is to be saved to
+     */
+    public void startImageSlice(int width, int height, ApplicationController controller, String outPath) {
+        //prevent bad things from happening if someone calls this without setting the directory path
+        if (this.directoryPath == null) { return; }
 
-    /**Starts slicing the flowchart into chunks then saves each chunk
-     * */
-    public void startImageSlice(int width, int height,ApplicationController controller) {
         //Clear previous files
         clearAllTempFileFolders();
-        System.out.println("Integer.MAX_VALUE "+ Integer.MAX_VALUE);
 
         int widthSource = width;
         int heightSource = height;
 
+        //TODO:Find a better way to cut down the pixels used to render the height
         int pixelsChop = Math.round(width / 2f);
         //pixelsChop = GeneralSettings.DEFAULT_HEIGHT;
-
-
-        System.out.println("pixelsChop:" + pixelsChop);
-        System.out.println("GeneralSettings.IMAGE_SIZE.y: " + GeneralSettings.IMAGE_SIZE.y);
-        System.out.println("GeneralSettings.IMAGE_SIZE.x: " + GeneralSettings.IMAGE_SIZE.x);
-
+        if (verbose) {
+            System.out.println("pixelsChop:" + pixelsChop);
+            System.out.println("GeneralSettings.IMAGE_SIZE.y: " + GeneralSettings.IMAGE_SIZE.y);
+            System.out.println("GeneralSettings.IMAGE_SIZE.x: " + GeneralSettings.IMAGE_SIZE.x);
+        }
         //Store the original translation
         float originalTranslationY = GeneralSettings.IMAGE_TRANSLATION.m21;
         float originalTranslationX = GeneralSettings.IMAGE_TRANSLATION.m20;
@@ -95,10 +118,10 @@ public class FlowchartToPng {
 
         //This slicing a image from the bottom left to the right and moving up then starting at the left and repeating
         //While we can still down the image we want to take a screen shot
-        while(imageSizeTempY > -MOVE_ONE_SCREEN_DOWN/2f) {
+        while (imageSizeTempY > -MOVE_ONE_SCREEN_DOWN / 2f) {
             //While we can move to the right we want to take a screen shot
-            while(imageSizeTempX > 0) {
-                doRenderCall(widthSource,heightSource,pixelsChop, controller, this.directoryPath_col); //Takes a screen shot
+            while (imageSizeTempX > 0) {
+                doRenderCall(widthSource, heightSource, pixelsChop, controller, this.directoryPath_col); //Takes a screen shot
                 GeneralSettings.IMAGE_TRANSLATION.m20 -= MOVE_ONE_SCREEN_RIGHT; //MOVE TO THE RIGHT
                 imageSizeTempX -= MOVE_ONE_SCREEN_RIGHT;  //Adjust X size that is available
             }
@@ -112,15 +135,20 @@ public class FlowchartToPng {
         GeneralSettings.IMAGE_TRANSLATION.m21 = originalTranslationY;
         GeneralSettings.IMAGE_TRANSLATION.m20 = originalTranslationX;
 
-        //Build the final image
-        combinedPng("dummy", GeneralSettings.IMAGE_SIZE.x);
+        //Build the final image TODO:Replace the outPath with the one provided to allow the user to save the image to the place they want
+        combinedPng(this.directoryPath + "out.png", GeneralSettings.IMAGE_SIZE.x);
     }
 
-    /**Does a LWJGL render call for of the flowchart
+    /**
+     * Does a LWJGL render call for the flowchart. Then saves the image.
      *
-     * */
-    public void doRenderCall(int widthSource, int heightSource,int height, ApplicationController controller, String pathOut) {
-//Create a frame buffer to render the image to
+     * @param widthSource  the source width used to render the render window and save image
+     * @param heightSource the source height of the flowchart (not used) TODO: remove?
+     * @param height       the height used to render the window and save image
+     * @param pathOut      the outPath the image is to be saved to. This should always be set to the .col folder
+     */
+    private void doRenderCall(int widthSource, int heightSource, int height, ApplicationController controller, String pathOut) {
+        //Create a frame buffer to render the image to
         int renderBuffer = GL30.glGenFramebuffers();
         GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, renderBuffer);
 
@@ -149,7 +177,7 @@ public class FlowchartToPng {
         GL11.glReadPixels(0, 0, widthSource, height, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, buffer);
 
         //Write the buffer into a png image
-        writePng(pathOut + File.separator + (imageCount++) + ".png", widthSource,height,bpp, buffer);
+        writePng(pathOut + File.separator + (imageCount++) + ".png", widthSource, height, bpp, buffer);
 
         //Delete the frame buffer when done
         GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0);
@@ -158,11 +186,17 @@ public class FlowchartToPng {
         GL30.glDeleteFramebuffers(renderBuffer);
     }
 
+    /**
+     * Writes the buffer into a .png image
+     * NOTE: If (width * height * 4) > Integer.MAX_Value the program will crash!
+     * @param  path the path the image is saved to
+     * @param  widthSource the width of the image to save
+     * @param height the height of the image to save
+     * @param  buffer the buffer to copy from
+     */
+    private void writePng(String path, int widthSource, int height, int bpp, ByteBuffer buffer) {
 
-    /**Writes the buffer into a .png image*/
-    public void writePng(String path, int widthSource, int height, int bpp, ByteBuffer buffer) {
-
-        if(path != null) {
+        if (path != null) {
             //Create the file
             File file = new File(path);
             String format = "PNG"; // Example: "PNG" or "JPG"
@@ -189,24 +223,25 @@ public class FlowchartToPng {
 
     /**
      * Opens the folder and attaches the files to the files sorted arrayList
-     * @param path the folder path
+     *
+     * @param path        the folder path
      * @param firstToLast boolean to sort from first created to last
      *                    true = first to last, false = last to first
      */
-    public void attachFilesFromDir(String path, boolean firstToLast) {
+    private void attachFilesFromDir(String path, boolean firstToLast) {
         if (isPathExist(path)) {
             files.clear(); //Lazy I know TO BAD!
             File folder = new File(path);
             File[] listOfFiles = folder.listFiles();
             for (File in : listOfFiles) {
-                if(in.isFile()) {
+                if (in.isFile()) {
                     files.add(in);
                 }
             }
-            if(firstToLast == true) {
+            if (firstToLast == true) {
                 files.bubbleSort();
             } else {
-                 files.bubbleSort2();
+                files.bubbleSort2();
             }
         }
     }
@@ -214,8 +249,8 @@ public class FlowchartToPng {
     /**
      * This initializes the temp folder directory
      * Should set to GeneralSettings.USERPREF.getUserTempFileDirPath()
-     * */
-    public void initializeDirectory(String dirPath) {
+     */
+    private void initializeDirectory(String dirPath) {
         //Make main directory
         dirPath = dirPath + File.separator + FOLDER_NAME;
         File directory = new File(dirPath);
@@ -232,7 +267,7 @@ public class FlowchartToPng {
         }
         this.directoryPath_row = dirPath;
 
-        dirPath =  this.directoryPath + FOLDER_COL;
+        dirPath = this.directoryPath + FOLDER_COL;
         directory = new File(dirPath);
         if (!directory.exists()) {
             directory.mkdirs();
@@ -243,7 +278,7 @@ public class FlowchartToPng {
 
     /**
      * Clears the file in .img, .row, and .col
-     * */
+     */
     private void clearAllTempFileFolders() {
         clearTempFiles(this.directoryPath);
         clearTempFiles(this.directoryPath_col);
@@ -258,9 +293,9 @@ public class FlowchartToPng {
      * You have been warned!!
      * Should only EVER be a valid temp file path
      * set initially.
-     * */
+     */
     private void clearTempFiles(String path) {
-        if(isPathExist(path)) {
+        if (isPathExist(path)) {
             File folder = new File(path);
             File[] listOfFiles = folder.listFiles();
             for (int i = 0; i < listOfFiles.length; i++) {
@@ -284,32 +319,30 @@ public class FlowchartToPng {
     }
 
 
-
     /**
      * This opens the .img folder and combined columns into rows
      * then rows into a final out image.
-     * */
-    public void combinedPng(String outputPath, float imageSizeX) {
+     * @param outputPath the final path the final image is to be saved to
+     * @param imageSizeX the openGL X size of the image
+     */
+    private void combinedPng(String outputPath, float imageSizeX) {
         int imageColumns = getNumberOfImageColumns(imageSizeX);
 
         //Grab all the files from the columns directory and build them into rows
         attachFilesFromDir(this.directoryPath_col, true);
         //Get all the files paths
-        String filesPaths [] = files.FilesToStringArray();
+        String filesPaths[] = files.FilesToStringArray();
 
         //Recombined files and save to the rows folder
-        doTilingColumnManager(filesPaths,imageColumns, this.directoryPath_row);
+        doTilingColumnManager(filesPaths, imageColumns, this.directoryPath_row);
 
         //Get all the file paths from the row folder
         files.clear();
         attachFilesFromDir(this.directoryPath_row, false);
         filesPaths = files.FilesToStringArray();
         //Recombined the files rows and save to a out directory
-        doTilingRow(filesPaths,this.directoryPath + "out.png");
+        doTilingRow(filesPaths, outputPath);
     }
-
-
-
 
     /**
      * tile column manager. Feeds in images based on a column index.
@@ -318,17 +351,15 @@ public class FlowchartToPng {
      *    -> 0:{"file1", "file2"} 1:{"file3", "file4"}
      *    -> call doTilingColumn
      * </pre>
-     *
-     * */
-    public static void doTilingColumnManager(String source[],int indexSize, String outPath) {
+     */
+    private static void doTilingColumnManager(String source[], int indexSize, String outPath) {
 
 //        for(String in : source) {
 //            System.out.println(" " + in);
 //        }
 
-
         ArrayList<String[]> sourceIn = new ArrayList<String[]>();
-        String [] sourcesInArray = null;
+        String[] sourcesInArray = null;
         int indexTemp = 0;
         //Add all the source files into array of strings that are the length of the index size
         for (int i = 0; i < source.length; i++) {
@@ -337,7 +368,7 @@ public class FlowchartToPng {
             }
             sourcesInArray[indexTemp] = source[i];
 
-            if (indexTemp == indexSize-1) {
+            if (indexTemp == indexSize - 1) {
                 indexTemp = 0;
                 sourceIn.add(sourcesInArray);
             } else {
@@ -345,11 +376,11 @@ public class FlowchartToPng {
             }
         }
         //Add the leftover which there should not be any...
-        if(indexTemp != 0) {
-            String [] keep = new String[indexTemp];
+        if (indexTemp != 0) {
+            String[] keep = new String[indexTemp];
             int i = 0;
             for (String isValid : sourcesInArray) {
-                if(isValid != null) {
+                if (isValid != null) {
                     keep[i++] = isValid;
                 }
             }
@@ -364,24 +395,23 @@ public class FlowchartToPng {
 //			System.out.println("");
 //		}
 
-
         //Start converting th columns into rows
         int outIntex = 0;
-        for(String[] str : sourceIn) {
-            doTilingColumn(str,outPath + File.separator + (outIntex++) + ".png");
+        for (String[] str : sourceIn) {
+            doTilingColumn(str, outPath + File.separator + (outIntex++) + ".png");
         }
 
     }
 
 
-
     /**
      * Do tiling row combines rows of images into a single image. The sizes of the rows MUST have equal heights and widths.
      * IMAGES ONLY WORK WITH PNG FILES!
+     *
      * @param source list of source files to be combined in a single image from first (top) to last (bottom)
-     * @param out the out file path
-     * */
-    public void doTilingRow(String source[], String out){
+     * @param out    the out file path
+     */
+    private void doTilingRow(String source[], String out) {
         ImageInfo imageTemp, imageOut;
         int rows = 0;
 
@@ -413,8 +443,8 @@ public class FlowchartToPng {
         //Stack images into one png
         int currentOutRow = 0;
         for (int i = 0; i < source.length; i++) {
-            Arrays.fill(outScanLine.getScanline(),0);
-            for(int j = 0; j < pngReaders[i].imgInfo.rows; j++, currentOutRow++) {
+            Arrays.fill(outScanLine.getScanline(), 0);
+            for (int j = 0; j < pngReaders[i].imgInfo.rows; j++, currentOutRow++) {
                 ImageLineInt linein = (ImageLineInt) pngReaders[i].readRow(j);
                 System.arraycopy(linein.getScanline(), 0, outScanLine.getScanline(),
                         0, linein.getScanline().length);
@@ -423,7 +453,7 @@ public class FlowchartToPng {
 
         }
         //Close writers / readers
-        for(int i = 0; i < pngReaders.length; i++) {
+        for (int i = 0; i < pngReaders.length; i++) {
             pngReaders[i].end();
         }
         pngoutWriter.end();
@@ -433,10 +463,11 @@ public class FlowchartToPng {
     /**
      * Do tiling column combines columns of images into a single image.
      * The sizes of the heights MUST be equal.
-     * @param  source list of source files to be combined in a single image from left to right
-     * @param  out the out file path
-     * */
-    public static void doTilingColumn(String source[], String out){
+     *
+     * @param source list of source files to be combined in a single image from left to right
+     * @param out    the out file path
+     */
+    private static void doTilingColumn(String source[], String out) {
         ImageInfo imageTemp, imageOut;
         int cols = 0;
 
@@ -467,9 +498,9 @@ public class FlowchartToPng {
 
         //Copy row by row for each image
         for (int i = 0; i < imageOut.rows; i++) {
-            Arrays.fill(outScanLine.getScanline(),0);
+            Arrays.fill(outScanLine.getScanline(), 0);
             ImageLineInt linein;
-            for(int j = 0; j < source.length; j++) {
+            for (int j = 0; j < source.length; j++) {
                 linein = (ImageLineInt) pngReaders[j].readRow(i);
                 System.arraycopy(
                         linein.getScanline(),
@@ -483,7 +514,7 @@ public class FlowchartToPng {
         }
 
         //Close writers / readers
-        for(int i = 0; i < pngReaders.length; i++) {
+        for (int i = 0; i < pngReaders.length; i++) {
             pngReaders[i].end();
         }
         pngoutWriter.end();
@@ -496,7 +527,9 @@ public class FlowchartToPng {
      * subtracting the imageSizeX by the move_right_amount
      * and the int it returns is the number of images needed
      * to represent a full row.
-     * */
+     * @param imageSizeX the float that is the openGL X size
+     * @return the int value of the number of columns
+     */
     private int getNumberOfImageColumns(float imageSizeX) {
         int result = 0;
         while (imageSizeX > 0) {
