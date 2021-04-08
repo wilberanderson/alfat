@@ -303,6 +303,10 @@ public class FlowchartWindowController {
         flowchartWindow.setZoom(1f);
     }
 
+    public void screenPan(float amount){
+        flowchartWindow.setTranslation(new Vector2f(flowchartWindow.getTranslation().x,flowchartWindow.getTranslation().y+amount));
+    }
+
     public float getZoom(){
         return flowchartWindow.getZoom();
     }
