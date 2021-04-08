@@ -16,6 +16,7 @@ import org.lwjgl.opengl.GL30;
 import rendering.renderEngine.MasterRenderer;
 
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -88,7 +89,7 @@ public class FlowchartToPng {
      * @param width      the pixel height of the image
      * @param height     the pixel width of the image
      * @param controller this should only be the flowchart controller
-     * @param outPath    the path the file is to be saved to
+     * @param outPath    the path the .png is to be saved to
      */
     public void startImageSlice(int width, int height, ApplicationController controller, String outPath) {
         //prevent bad things from happening if someone calls this without setting the directory path
@@ -135,8 +136,17 @@ public class FlowchartToPng {
         GeneralSettings.IMAGE_TRANSLATION.m21 = originalTranslationY;
         GeneralSettings.IMAGE_TRANSLATION.m20 = originalTranslationX;
 
+        //Build the header image TODO: replace message, textColor, and background color with stuff from user pref set from the settings menu
+        writeHeaderPng((widthSource*getNumberOfImageColumns(GeneralSettings.IMAGE_SIZE.x)), 100, "foobar",
+                new Font("TimesRoman", Font.BOLD, 40),
+                GeneralSettings.USERPREF.getLabelColor(),
+                GeneralSettings.USERPREF.getBackgroundColor(),
+                this.directoryPath);
+
         //Build the final image TODO:Replace the outPath with the one provided to allow the user to save the image to the place they want
         combinedPng(this.directoryPath + "out.png", GeneralSettings.IMAGE_SIZE.x);
+
+
     }
 
     /**
@@ -233,6 +243,7 @@ public class FlowchartToPng {
             files.clear(); //Lazy I know TO BAD!
             File folder = new File(path);
             File[] listOfFiles = folder.listFiles();
+
             for (File in : listOfFiles) {
                 if (in.isFile()) {
                     files.add(in);
@@ -321,7 +332,8 @@ public class FlowchartToPng {
 
     /**
      * This opens the .img folder and combined columns into rows
-     * then rows into a final out image.
+     * then rows into a final out image with no header, then adds the header
+     * and finally saves that image to the out path.
      * @param outputPath the final path the final image is to be saved to
      * @param imageSizeX the openGL X size of the image
      */
@@ -341,7 +353,14 @@ public class FlowchartToPng {
         attachFilesFromDir(this.directoryPath_row, false);
         filesPaths = files.FilesToStringArray();
         //Recombined the files rows and save to a out directory
-        doTilingRow(filesPaths, outputPath);
+        doTilingRow(filesPaths, this.directoryPath+"out-no-header.png");
+
+        //Grab the header image and the final out-no-header image and combined them and send it to the out path
+        files.clear();
+        attachFilesFromDir(this.directoryPath,true);
+        filesPaths = files.FilesToStringArray();
+        doTilingRow(filesPaths,outputPath);
+
     }
 
     /**
@@ -538,5 +557,47 @@ public class FlowchartToPng {
         }
         return result;
     }
+
+
+    /**
+     * Creates a header message image by a width and height.
+     * Then saves it as a png file. The text is centered in the image.
+     * NOTE: If (width * height * 4 > Integer.MAX_VALUE) this will crash
+     * @param width the width of the image. NOTE: Best to use (widthSource*getNumberOfImageColumns(GeneralSettings.IMAGE_SIZE.x)
+     * @param height the height of the image
+     * @param message the message of to be written
+     * @param font the font type and size e.g, new Font("TimesRoman", Font.BOLD, 40)
+     * @param textColor the text color
+     * @param backgroundColor the background color
+     * @param outPath the path the file is saved to. File is always saved as header.png
+     * */
+    private void writeHeaderPng(int width, int height, String message, Font font, Color textColor, Color backgroundColor, String outPath) {
+        try {
+            BufferedImage bi = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+            Graphics2D ig2 = bi.createGraphics();
+            //Font font = new Font("TimesRoman", Font.BOLD, 40);
+            ig2.setFont(font);
+            FontMetrics fontMetrics = ig2.getFontMetrics();
+            int stringWidth = fontMetrics.stringWidth(message);
+            int stringHeight = fontMetrics.getAscent();
+            /*
+            ig2.setColor(new Color(GeneralSettings.USERPREF.getBackgroundColor3f().x,
+                    GeneralSettings.USERPREF.getBackgroundColor3f().y,
+                    GeneralSettings.USERPREF.getBackgroundColor3f().z));
+            ig2.fillRect(0, 0, width, height);
+            ig2.setPaint(Color.black);
+            */
+            ig2.setColor(backgroundColor);
+            ig2.fillRect(0,0,width,height);
+            ig2.setPaint(textColor);
+            ig2.drawString(message, (width - stringWidth) / 2, height / 2 + stringHeight / 4);
+            ImageIO.write(bi, "PNG", new File(outPath + "header.png"));
+        } catch (IOException e) {
+            System.out.println(e.getStackTrace());
+        }
+
+    }
+
+
 
 }
