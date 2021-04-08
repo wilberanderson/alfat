@@ -287,7 +287,7 @@ public class CodeWindowController {
     public void scroll(float scrollChange){
         if(scrollChange != 0) {
             //If the contents are larger than the window
-            if (maxVerticalPosition > codeWindow.getSize().y) {
+            if (maxVerticalPosition > 0){//codeWindow.getSize().y) {
                 float newPosition = contentsVerticalPosition + scrollChange;
                 //Update the position of the contents, cursor, and scroll bar
                 //If the position would be negative change position so it would be 0 instead

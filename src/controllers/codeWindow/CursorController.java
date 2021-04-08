@@ -328,10 +328,6 @@ public class CursorController {
 //                cursor.getPosition().x = (codeWindow.getCodeWindow().getCodeWindowPosition().x + codeWindow.getCodeWindow().getCodeWindowSize().x) / aspectRatio.x;
 //            }
 //        }
-        Printer.print(codeWindowOffset.x);
-        Printer.print(currentText.getPosition().x);
-        Printer.print(characterIndex);
-        Printer.print(currentText.getCharacterEdges()[characterIndex]);
         cursor.getPosition().x -= codeWindowOffset.x;
     }
 
@@ -369,7 +365,6 @@ public class CursorController {
 
         }
         this.aspectRatio = new Vector2f(codeWindow.getAspectRatio());
-        Printer.print("a" + aspectRatio);
         if(currentText != null) {
             updatePosition();
         }

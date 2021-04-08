@@ -126,27 +126,6 @@ public class TextLineController {
             codeWindowFormattedTextLines.add(index, line);
         }
         loadedTexts.add(line);
-        Printer.print("text" + line.getTextString().length());
-        Printer.print("Edges" + line.getCharacterEdges().length);
-        for(int j = 0; j < line.getTextString().length(); j++){
-            char c = line.getTextString().charAt(j);
-            if(c != '\t'){
-                System.out.print(c);
-            }
-            else{
-                System.out.print("\\t");
-            }
-        }
-        int count = 0;
-        for(int k = 0; k < line.getWords().length; k++){
-            if(line.getWords()[k] instanceof  SeparatorWord){
-                count++;
-            }
-        }
-        System.out.println();
-        System.out.println(line.getWords().length);
-        System.out.println(count);
-        System.out.println(line.getCharacterEdges().length-1-line.getTextString().length());
     }
 
     /**
