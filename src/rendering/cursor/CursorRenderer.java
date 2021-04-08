@@ -71,7 +71,7 @@ public class CursorRenderer {
         shader.aspectRatio.loadMatrix(aspectRatio);
 
         //Load the cursors position, color, and font height
-        shader.mousePosition.loadVec2(cursorController.getCursor().getPosition().x+codeWindowTranslation.x, cursorController.getCursor().getPosition().y+codeWindowTranslation.y);
+        shader.mousePosition.loadVec2(cursorController.getCursor().getPosition().x, cursorController.getCursor().getPosition().y);
         shader.fontHeight.loadFloat(GeneralSettings.FONT_HEIGHT);
         shader.color.loadVec3(cursorController.getCursor().getColor());
 

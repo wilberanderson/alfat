@@ -122,6 +122,7 @@ public class FlowchartLineRenderer {
         GL20.glEnableVertexAttribArray(0);
         GL20.glEnableVertexAttribArray(1);
         GL20.glEnableVertexAttribArray(2);
+        GL11.glLineWidth(GeneralSettings.USERPREF.getDefaultLineWidth());
     }
 
     /**

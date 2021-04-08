@@ -287,24 +287,24 @@ public class CodeWindowController {
     public void scroll(float scrollChange){
         if(scrollChange != 0) {
             //If the contents are larger than the window
-            if (maxVerticalPosition > codeWindow.getSize().y) {
+            if (maxVerticalPosition > 0){//codeWindow.getSize().y) {
                 float newPosition = contentsVerticalPosition + scrollChange;
                 //Update the position of the contents, cursor, and scroll bar
                 //If the position would be negative change position so it would be 0 instead
                 if (newPosition < minVerticalPosition) {
                     changeContentsVerticalPosition(minVerticalPosition-contentsVerticalPosition);
-                    cursorController.scroll();
+                    cursorController.scroll(new Vector2f(contentsHorizontalPosition, contentsVerticalPosition));
                 }
                 //If the position would be greater than max make it so it will be max instead
                 else if (newPosition > maxVerticalPosition) {
                     changeContentsVerticalPosition(maxVerticalPosition - contentsVerticalPosition);
-                    cursorController.scroll();
+                    cursorController.scroll(new Vector2f(contentsHorizontalPosition, contentsVerticalPosition));
 
                 }
                 //Otherwise scroll
                 else {
                     changeContentsVerticalPosition(scrollChange);
-                    cursorController.scroll();
+                    cursorController.scroll(new Vector2f(contentsHorizontalPosition, contentsVerticalPosition));
                 }
             }
             unloadTexts();
@@ -324,17 +324,17 @@ public class CodeWindowController {
                 //If the position would be negative change position so it would be 0 instead
                 if (newPosition < minHorizontalPosition) {
                     changeContentsHorizontalPosition(contentsHorizontalPosition-minHorizontalPosition, factor);
-                    cursorController.scroll();
+                    cursorController.scroll(new Vector2f(contentsHorizontalPosition, contentsVerticalPosition));
                 }
                 //If the position would be greater than max make it so it will be max instead
                 else if (newPosition > maxHorizontalPosition) {
                     changeContentsHorizontalPosition(-(maxHorizontalPosition - contentsHorizontalPosition), factor);
-                    cursorController.scroll();
+                    cursorController.scroll(new Vector2f(contentsHorizontalPosition, contentsVerticalPosition));
                 }
                 //Otherwise scroll
                 else {
                     changeContentsHorizontalPosition(-scrollChange, factor);
-                    cursorController.scroll();
+                    cursorController.scroll(new Vector2f(contentsHorizontalPosition, contentsVerticalPosition));
                 }
             }
         }
@@ -431,7 +431,7 @@ public class CodeWindowController {
             //Move the physical cursor to the mouse's position
             //If a scroll bar was just grabbed do not move the cursor
             else{
-                cursorController.moveCursor(new Vector2f(mousePosition.x+contentsHorizontalPosition, mousePosition.y+contentsVerticalPosition), this);
+                cursorController.moveCursor(new Vector2f(mousePosition.x, mousePosition.y), this, new Vector2f(contentsHorizontalPosition, contentsVerticalPosition));
             }
 
             //The event has been processesd, return true
@@ -559,6 +559,7 @@ public class CodeWindowController {
         codeWindow.getGuiFilledBox().setSize(new Vector2f(2f, 2f));
         //Update the position bounds used for clipping
         codeWindow.getPositionBounds().z = codeWindow.getPosition().x + codeWindow.getSize().x;
+        cursorController.setVisible(true);
     }
 
     /**
@@ -573,6 +574,7 @@ public class CodeWindowController {
         //Perform operations to scroll bars to split screen them
         verticalScrollBar.goSplitScreen();
         horizontalScrollBar.goSplitScreen();
+        cursorController.setVisible(true);
     }
 
     /**
@@ -589,6 +591,7 @@ public class CodeWindowController {
         //Perform operations to scroll bars to minimize them
         verticalScrollBar.minimize();
         horizontalScrollBar.minimize();
+        cursorController.setVisible(false);
     }
 
     /**

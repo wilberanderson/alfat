@@ -4,6 +4,7 @@ import gui.Cursor;
 import gui.texts.EditableFormattedTextLine;
 import main.GeneralSettings;
 import org.lwjgl.util.vector.Vector2f;
+import utils.Printer;
 
 import java.util.List;
 
@@ -18,6 +19,9 @@ public class CursorController {
     private boolean visible = false;
     private boolean toggle = true;
     private int savedCharacterIndex = -1;
+    private Vector2f codeWindowOffset = new Vector2f(0, 0);
+    private Vector2f originalAspectRatio;
+    boolean originalAspectRatioSet = false;
 
     public CursorController(Cursor cursor, CodeWindowController codeWindow){
         this.cursor = cursor;
@@ -29,8 +33,8 @@ public class CursorController {
      * @param mousePosition
      * @param codeWindow
      */
-    public void moveCursor(Vector2f mousePosition, CodeWindowController codeWindow){
-
+    public void moveCursor(Vector2f mousePosition, CodeWindowController codeWindow, Vector2f codeWindowOffset){
+        this.codeWindowOffset = codeWindowOffset;
         this.codeWindow = codeWindow;
         texts = codeWindow.getTextLineController().getCodeWindowTextLines();
         this.aspectRatio = new Vector2f(codeWindow.getAspectRatio());
@@ -51,7 +55,7 @@ public class CursorController {
         //For each text
         for (int i = 0; i < texts.size(); i++){
             //Find the texts height
-            float newHeight = texts.get(i).getPosition().y;
+            float newHeight = texts.get(i).getPosition().y+codeWindowOffset.y;
             //If this is the last text and the cursor is still lower then the cursor should jump up to this position
             if(i+1 == texts.size()){
                 mousePosition.y = newHeight;
@@ -59,7 +63,7 @@ public class CursorController {
                 continue;
             }
             //If the height is closest to this texts height set the cursor to have the same height
-            if (testHeight < newHeight  && testHeight > texts.get(i+1).getPosition().y){
+            if (testHeight < newHeight  && testHeight > texts.get(i+1).getPosition().y+codeWindowOffset.y){
                 mousePosition.y = newHeight;
                 currentText = texts.get(i);
                 break;
@@ -72,7 +76,7 @@ public class CursorController {
             //character edges defines where boundaries between two characters are
             float[] characterEdges = currentText.getCharacterEdges();
             //Character edges is relative to the texts origin, create a test width in this scale
-            float testWidth = mousePosition.x - currentText.getPosition().x;
+            float testWidth = mousePosition.x - (currentText.getPosition().x-codeWindowOffset.x);
 
             //For each edge except the last check to see if the cursor is closer to it than the next one, if so that is the closest character boundary
             int i;
@@ -91,7 +95,8 @@ public class CursorController {
             characterIndex = i;
         }
         //The mouse position has been found, move the cursor to that position
-        cursor.setPosition(mousePosition);
+        updatePosition();
+        //cursor.setPosition(mousePosition);
     }
 
     /**
@@ -298,7 +303,8 @@ public class CursorController {
     /**
      * Moves the cursor based on the scroll
      */
-    public void scroll(){
+    public void scroll(Vector2f codeWindowOffset){
+        this.codeWindowOffset = codeWindowOffset;
         if(this.currentText != null) {
             updateXPosition(false);
             updateYPosition(false);
@@ -312,16 +318,17 @@ public class CursorController {
         //Move the cursor
         cursor.getPosition().x = currentText.getCharacterEdges()[characterIndex] * 2 + currentText.getPosition().x;
 
-        if(adjustCodeWindow) {
-            //If the cursor is outside the bounds of the code window scroll the code window to correct it
-            if ((codeWindow.getCodeWindow().getCodeWindowPosition().x) / aspectRatio.x > cursor.getPosition().x) {
-                codeWindow.changeContentsHorizontalPosition((codeWindow.getCodeWindow().getCodeWindowPosition().x) / aspectRatio.x - (cursor.getPosition().x), codeWindow.getHorizontalScrollBar().getFactor());
-                cursor.getPosition().x = (codeWindow.getCodeWindow().getCodeWindowPosition().x) / aspectRatio.x;
-            } else if (cursor.getPosition().x / aspectRatio.x > (codeWindow.getCodeWindow().getCodeWindowPosition().x + codeWindow.getCodeWindow().getCodeWindowSize().x)) {
-                codeWindow.changeContentsHorizontalPosition(-(cursor.getPosition().x - (codeWindow.getCodeWindow().getCodeWindowPosition().x + codeWindow.getCodeWindow().getCodeWindowSize().x) / aspectRatio.x), codeWindow.getHorizontalScrollBar().getFactor());
-                cursor.getPosition().x = (codeWindow.getCodeWindow().getCodeWindowPosition().x + codeWindow.getCodeWindow().getCodeWindowSize().x) / aspectRatio.x;
-            }
-        }
+//        if(adjustCodeWindow) {
+//            //If the cursor is outside the bounds of the code window scroll the code window to correct it
+//            if ((codeWindow.getCodeWindow().getCodeWindowPosition().x) / aspectRatio.x > cursor.getPosition().x) {
+//                codeWindow.changeContentsHorizontalPosition((codeWindow.getCodeWindow().getCodeWindowPosition().x) / aspectRatio.x - (cursor.getPosition().x), codeWindow.getHorizontalScrollBar().getFactor());
+//                cursor.getPosition().x = (codeWindow.getCodeWindow().getCodeWindowPosition().x) / aspectRatio.x;
+//            } else if (cursor.getPosition().x / aspectRatio.x > (codeWindow.getCodeWindow().getCodeWindowPosition().x + codeWindow.getCodeWindow().getCodeWindowSize().x)) {
+//                codeWindow.changeContentsHorizontalPosition(-(cursor.getPosition().x - (codeWindow.getCodeWindow().getCodeWindowPosition().x + codeWindow.getCodeWindow().getCodeWindowSize().x) / aspectRatio.x), codeWindow.getHorizontalScrollBar().getFactor());
+//                cursor.getPosition().x = (codeWindow.getCodeWindow().getCodeWindowPosition().x + codeWindow.getCodeWindow().getCodeWindowSize().x) / aspectRatio.x;
+//            }
+//        }
+        cursor.getPosition().x -= codeWindowOffset.x;
     }
 
     /**
@@ -331,16 +338,17 @@ public class CursorController {
         //Move the cursor
         cursor.getPosition().y = currentText.getPosition().y;
 
-        if(adjustCodeWindow) {
-            //If the cursor is outside the bounds of the code window scroll the code window to correct it
-            if ((codeWindow.getCodeWindow().getCodeWindowPosition().y) / aspectRatio.y > cursor.getPosition().y - GeneralSettings.FONT_HEIGHT) {
-                codeWindow.changeContentsVerticalPosition((codeWindow.getCodeWindow().getCodeWindowPosition().y) / aspectRatio.y - (cursor.getPosition().y - GeneralSettings.FONT_HEIGHT));
-                cursor.getPosition().y = currentText.getPosition().y;
-            } else if (cursor.getPosition().y / aspectRatio.y > (codeWindow.getCodeWindow().getCodeWindowPosition().y + codeWindow.getCodeWindow().getCodeWindowSize().y)) {
-                codeWindow.changeContentsVerticalPosition(-(cursor.getPosition().y - (codeWindow.getCodeWindow().getCodeWindowPosition().y + codeWindow.getCodeWindow().getCodeWindowSize().y) / aspectRatio.y));
-                cursor.getPosition().y = currentText.getPosition().y;
-            }
-        }
+//        if(adjustCodeWindow) {
+//            //If the cursor is outside the bounds of the code window scroll the code window to correct it
+//            if ((codeWindow.getCodeWindow().getCodeWindowPosition().y) / aspectRatio.y > cursor.getPosition().y - GeneralSettings.FONT_HEIGHT) {
+//                codeWindow.changeContentsVerticalPosition((codeWindow.getCodeWindow().getCodeWindowPosition().y) / aspectRatio.y - (cursor.getPosition().y - GeneralSettings.FONT_HEIGHT));
+//                cursor.getPosition().y = currentText.getPosition().y;
+//            } else if (cursor.getPosition().y / aspectRatio.y > (codeWindow.getCodeWindow().getCodeWindowPosition().y + codeWindow.getCodeWindow().getCodeWindowSize().y)) {
+//                codeWindow.changeContentsVerticalPosition(-(cursor.getPosition().y - (codeWindow.getCodeWindow().getCodeWindowPosition().y + codeWindow.getCodeWindow().getCodeWindowSize().y) / aspectRatio.y));
+//                cursor.getPosition().y = currentText.getPosition().y;
+//            }
+//        }
+        cursor.getPosition().y += codeWindowOffset.y;
     }
 
     /**
@@ -352,6 +360,10 @@ public class CursorController {
     }
 
     public void updateAspectRatio(){
+        if(!originalAspectRatioSet){
+            originalAspectRatio = new Vector2f(codeWindow.getAspectRatio());
+
+        }
         this.aspectRatio = new Vector2f(codeWindow.getAspectRatio());
         if(currentText != null) {
             updatePosition();
