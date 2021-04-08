@@ -559,6 +559,7 @@ public class CodeWindowController {
         codeWindow.getGuiFilledBox().setSize(new Vector2f(2f, 2f));
         //Update the position bounds used for clipping
         codeWindow.getPositionBounds().z = codeWindow.getPosition().x + codeWindow.getSize().x;
+        cursorController.setVisible(true);
     }
 
     /**
@@ -573,6 +574,7 @@ public class CodeWindowController {
         //Perform operations to scroll bars to split screen them
         verticalScrollBar.goSplitScreen();
         horizontalScrollBar.goSplitScreen();
+        cursorController.setVisible(true);
     }
 
     /**
@@ -589,6 +591,7 @@ public class CodeWindowController {
         //Perform operations to scroll bars to minimize them
         verticalScrollBar.minimize();
         horizontalScrollBar.minimize();
+        cursorController.setVisible(false);
     }
 
     /**
