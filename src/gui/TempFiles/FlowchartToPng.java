@@ -136,7 +136,7 @@ public class FlowchartToPng {
         GeneralSettings.IMAGE_TRANSLATION.m21 = originalTranslationY;
         GeneralSettings.IMAGE_TRANSLATION.m20 = originalTranslationX;
 
-        //Build the header image
+        //Build the header image TODO: replace message, textColor, and background color with stuff from user pref set from the settings menu
         writeHeaderPng((widthSource*getNumberOfImageColumns(GeneralSettings.IMAGE_SIZE.x)), 100, "foobar",
                 new Font("TimesRoman", Font.BOLD, 40),
                 GeneralSettings.USERPREF.getLabelColor(),
