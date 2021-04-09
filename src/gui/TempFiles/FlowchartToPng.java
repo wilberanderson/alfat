@@ -46,7 +46,7 @@ public class FlowchartToPng {
     private final String FOLDER_COL = ".col" + File.separator;
     private int imageCount = 0; //Numbers the images
     private FileSortedArrayList files = new FileSortedArrayList(); //Used to hold and sort files from directories
-    public boolean verbose = false;
+    public boolean verbose = true;
 
     /**
      * <pre>
@@ -102,10 +102,22 @@ public class FlowchartToPng {
         int heightSource = height;
 
         //TODO:Find a better way to cut down the pixels used to render the height
-        int pixelsChop = Math.round(width / 2f);
-        //pixelsChop = GeneralSettings.DEFAULT_HEIGHT;
+        int heightPixelsChop = Math.round(height / getNumberOfImageColumnsY(GeneralSettings.IMAGE_SIZE.y));
+        int widthPixelsChop = Math.round(width / getNumberOfImageColumns(GeneralSettings.IMAGE_SIZE.x));
+
+        //Special case
+        if(widthPixelsChop < (GeneralSettings.DEFAULT_WIDTH / 2)) {
+            heightPixelsChop = 600;
+            widthPixelsChop = 900;
+        }
+
+
+
+
+        //widthPixelsChop = GeneralSettings.DEFAULT_HEIGHT;
         if (verbose) {
-            System.out.println("pixelsChop:" + pixelsChop);
+            System.out.println("heightPixelsChop:" + heightPixelsChop);
+            System.out.println("widthPixelsChop:" + widthPixelsChop);
             System.out.println("GeneralSettings.IMAGE_SIZE.y: " + GeneralSettings.IMAGE_SIZE.y);
             System.out.println("GeneralSettings.IMAGE_SIZE.x: " + GeneralSettings.IMAGE_SIZE.x);
         }
@@ -122,13 +134,17 @@ public class FlowchartToPng {
         while (imageSizeTempY > -MOVE_ONE_SCREEN_DOWN / 2f) {
             //While we can move to the right we want to take a screen shot
             while (imageSizeTempX > 0) {
-                doRenderCall(widthSource, heightSource, pixelsChop, controller, this.directoryPath_col); //Takes a screen shot
+                //doRenderCall(widthSource, heightSource, heightPixelsChop, controller, this.directoryPath_col); //Takes a screen shot
+                doRenderCall(widthPixelsChop, heightSource, heightPixelsChop, controller, this.directoryPath_col); //Takes a screen shot
+
                 GeneralSettings.IMAGE_TRANSLATION.m20 -= MOVE_ONE_SCREEN_RIGHT; //MOVE TO THE RIGHT
                 imageSizeTempX -= MOVE_ONE_SCREEN_RIGHT;  //Adjust X size that is available
             }
             GeneralSettings.IMAGE_TRANSLATION.m21 -= MOVE_ONE_SCREEN_DOWN; //MOVE DOWN
             GeneralSettings.IMAGE_TRANSLATION.m20 = originalTranslationX; //Restore the X translation
+
             imageSizeTempX = GeneralSettings.IMAGE_SIZE.x; //Restore the X size that is available
+
             imageSizeTempY -= MOVE_ONE_SCREEN_DOWN; //Adjust the Y size that is available
         }
 
@@ -136,8 +152,9 @@ public class FlowchartToPng {
         GeneralSettings.IMAGE_TRANSLATION.m21 = originalTranslationY;
         GeneralSettings.IMAGE_TRANSLATION.m20 = originalTranslationX;
 
-        //Build the header image TODO: replace message, textColor, and background color with stuff from user pref set from the settings menu
-        writeHeaderPng((widthSource*getNumberOfImageColumns(GeneralSettings.IMAGE_SIZE.x)), 100, "foobar",
+        //Build the header image TODO: replace message, textColor, and background color with stuff from user pref set from the settings me
+
+        writeHeaderPng((widthPixelsChop*getNumberOfImageColumns(GeneralSettings.IMAGE_SIZE.x)), 100, "foobar",
                 new Font("TimesRoman", Font.BOLD, 40),
                 GeneralSettings.USERPREF.getLabelColor(),
                 GeneralSettings.USERPREF.getBackgroundColor(),
@@ -557,6 +574,28 @@ public class FlowchartToPng {
         }
         return result;
     }
+
+
+    /**
+     * This approximates the number of image columns it takes
+     * to capture the full images height. This is done by
+     * subtracting the imageSizeY by the move_one_screen_down
+     * and the int it returns is the number of images needed
+     * to represent a full row.
+     * @param imageSizY the float that is the openGL X size
+     * @return the int value of the number of columns
+     */
+    private int getNumberOfImageColumnsY(float imageSizY) {
+        int result = 0;
+        while (imageSizY  > -MOVE_ONE_SCREEN_DOWN / 2f) {
+            imageSizY -= MOVE_ONE_SCREEN_DOWN;
+            result++;
+        }
+        return result;
+    }
+
+
+
 
 
     /**
