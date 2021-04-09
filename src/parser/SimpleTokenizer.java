@@ -66,6 +66,10 @@ public class SimpleTokenizer {
               for (int i = 0; i < numberColumnsIndexAdjusted.size(); i++) {
                   System.out.print(numberColumnsIndexAdjusted.get(i) + ":{" + arrayList.get(i)+ "}");
               }
+//              System.out.println();
+//              for (int i = 0; i < arrayList.size(); i++) {
+//                  System.out.print(":{" + arrayList.get(i) + "}");
+//              }
               System.out.println();
           }
 
