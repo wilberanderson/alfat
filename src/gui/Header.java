@@ -498,6 +498,16 @@ public class Header {
             return;
         }
 
+        //Get the file form the user
+        OpenFileDialog ofd = new OpenFileDialog();
+        ofd.setFilterList("png;png");
+        ofd.saveFileWindow();
+        String outFile = ofd.getFilePath();
+
+        if(outFile == null) {
+            return; // no path or clicked cancel
+        }
+
         //Determine the width and height of the image in pixels
         float adjust = 0;
         long check = Integer.MAX_VALUE;
@@ -507,6 +517,7 @@ public class Header {
         int height;
 
         //Adjust the size of the pixels used to ensure that it can't go over the max int.
+        //TODO:Place overhead into the flowchart to png class
         do {
             widthf = (1.5 * GeneralSettings.IMAGE_SIZE.x)  * (double)GeneralSettings.DEFAULT_WIDTH / (2f);
             widthf += -(adjust*1000);
@@ -526,7 +537,8 @@ public class Header {
 
 
         FlowchartToPng flowchartToPng = new FlowchartToPng(GeneralSettings.USERPREF.getUserTempFileDirPath());
-        flowchartToPng.startImageSlice(width, height, controller, "dummy");
+
+        flowchartToPng.startImageSlice(width, height, controller, outFile);
     }
 
     /**
