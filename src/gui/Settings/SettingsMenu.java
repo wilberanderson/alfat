@@ -839,6 +839,26 @@ public class SettingsMenu extends Component {
         }
     }
 
+
+    //Define Mock GUI buttons
+    //Menu
+    JButton headerBtn;
+    JButton menuBtn;
+
+    //Text editor
+    JButton textEditorBtn;
+    JButton lineNumberBtn;
+    JButton scrollBtnVert;
+    JButton scrollBtnHoriz;
+
+    //Flowchart box 1
+    JButton flowchartBox1Bar;
+    JButton flowchartBox1Text;
+
+
+
+
+
     private JPanel colorPickerContent() {
         //The main JPanel uses GridBagLayout to position content
         JPanel main = new JPanel(new GridBagLayout());
@@ -907,20 +927,20 @@ public class SettingsMenu extends Component {
         separatorTextColorBtn  = makeColorbtn(GeneralSettings.USERPREF.getSeparatorColor(), mockGUIcolorPointers[mockGUItexteditorColor], mockGUItexteditorColor,"Separator");
 
         //Menu
-        JButton headerBtn = contentLayer(mockGUIcolorPointers[mockGUIheaderColor], 0,0, mockGUI_Width,barPadding);
-        JButton menuBtn = contentLayer(mockGUIcolorPointers[mockGUImenuBtncolor], 0,0, barPadding*4,barPadding);
+        headerBtn = contentLayer(mockGUIcolorPointers[mockGUIheaderColor], 0,0, mockGUI_Width,barPadding);
+        menuBtn = contentLayer(mockGUIcolorPointers[mockGUImenuBtncolor], 0,0, barPadding*4,barPadding);
 
 
         //Text editor
-        JButton textEditorBtn = contentLayer(mockGUIcolorPointers[mockGUItexteditorColor], barPadding,barPadding, barPadding*12,mockGUI_Height-barPadding);
-        JButton lineNumberBtn = contentLayer(mockGUIcolorPointers[mockGUItexteditorLinenumberBGColor], 0,barPadding, barPadding,mockGUI_Height-barPadding);
-        JButton scrollBtnVert = contentLayer(mockGUIcolorPointers[mockGUIScrollBarColor], (barPadding*12)+5,barPadding, barPadding-5, (mockGUI_Height-barPadding)-(barPadding-5));
-        JButton scrollBtnHoriz = contentLayer(mockGUIcolorPointers[mockGUIScrollBarColor], barPadding,(mockGUI_Height-barPadding)+5,(barPadding*11)+5, barPadding-5);
+        textEditorBtn = contentLayer(mockGUIcolorPointers[mockGUItexteditorColor], barPadding,barPadding, barPadding*12,mockGUI_Height-barPadding);
+        lineNumberBtn = contentLayer(mockGUIcolorPointers[mockGUItexteditorLinenumberBGColor], 0,barPadding, barPadding,mockGUI_Height-barPadding);
+        scrollBtnVert = contentLayer(mockGUIcolorPointers[mockGUIScrollBarColor], (barPadding*12)+5,barPadding, barPadding-5, (mockGUI_Height-barPadding)-(barPadding-5));
+        scrollBtnHoriz = contentLayer(mockGUIcolorPointers[mockGUIScrollBarColor], barPadding,(mockGUI_Height-barPadding)+5,(barPadding*11)+5, barPadding-5);
 
 
         //Flowchart box 1
-        JButton flowchartBox1Bar = contentLayer(mockGUIcolorPointers[mockGUIfloatchartNumberlineBGcolor], mockGUI_Width/2,barPadding*2, barPadding,mockGUI_Height-(barPadding*11));
-        JButton flowchartBox1Text = contentLayer(mockGUIcolorPointers[mockGUIflowchartBoxBGcolor], mockGUI_Width/2+barPadding,barPadding*2, barPadding*7,mockGUI_Height-(barPadding*11));
+        flowchartBox1Bar = contentLayer(mockGUIcolorPointers[mockGUIfloatchartNumberlineBGcolor], mockGUI_Width/2,barPadding*2, barPadding,mockGUI_Height-350/*(barPadding*11)*/);
+        flowchartBox1Text = contentLayer(mockGUIcolorPointers[mockGUIflowchartBoxBGcolor], mockGUI_Width/2+barPadding,barPadding*2, barPadding*7,mockGUI_Height-350/*(barPadding*11)*/);
 
         //Flowchart box 2
         JButton flowchartBox2Bar = contentLayer(mockGUIcolorPointers[mockGUIfloatchartNumberlineBGcolor], mockGUI_Width/2,barPadding*9, barPadding,mockGUI_Height-350/*(barPadding*11)*/);
@@ -1028,6 +1048,15 @@ public class SettingsMenu extends Component {
 
 
         });
+        //TODO: Account for the fact that there is two types of line number text color. For flowchart and code editor
+        textEditorBtn.addPropertyChangeListener("background",new BackgroundColorListener(
+                branchTextColorBtn, commandTextColorBtn, commentTextColorBtn,
+                errorTextColorBtn, immediateTextColorBtn, labelTextColorBtn,
+                lineNumberTextColorBtn, registerTextColorBtn,separatorTextColorBtn,
+                mockGUItexteditorColor) );
+
+
+
 
 
         textEditorBtn.addActionListener(e->{
