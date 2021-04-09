@@ -103,30 +103,32 @@ public class CursorController {
      * Moves the cursor one character to the left
      */
     public void moveLeft(){
-        //The saved character index should no longer be restored
-        savedCharacterIndex = -1;
+        if(currentText != null) {
+            //The saved character index should no longer be restored
+            savedCharacterIndex = -1;
 
-        //Try to move the cursor
-        characterIndex -= 1;
-        //If the cursor did not wrap onto a new line then update it's position
-        if(characterIndex >= 0) {
-            updateXPosition(true);
-        }
-        //If the cursor wrapped onto a new line
-        else{
-            //If this was not the very first line move to the end of the previous line
-            if(lineIndex > 0){
-                lineIndex--;
-                currentText = texts.get(lineIndex);
-                characterIndex = currentText.getCharacterEdges().length-1;
-                if(characterIndex < 0){
+            //Try to move the cursor
+            characterIndex -= 1;
+            //If the cursor did not wrap onto a new line then update it's position
+            if (characterIndex >= 0) {
+                updateXPosition(true);
+            }
+            //If the cursor wrapped onto a new line
+            else {
+                //If this was not the very first line move to the end of the previous line
+                if (lineIndex > 0) {
+                    lineIndex--;
+                    currentText = texts.get(lineIndex);
+                    characterIndex = currentText.getCharacterEdges().length - 1;
+                    if (characterIndex < 0) {
+                        characterIndex = 0;
+                    }
+                    updatePosition();
+                }
+                //If this is the first line character index should not change and position does not need to be updated
+                else {
                     characterIndex = 0;
                 }
-                updatePosition();
-            }
-            //If this is the first line character index should not change and position does not need to be updated
-            else{
-                characterIndex = 0;
             }
         }
     }
@@ -136,27 +138,29 @@ public class CursorController {
      * Moves the cursor one character to the right
      */
     public void moveRight(){
-        //The saved character index should no longer be restored
-        savedCharacterIndex = -1;
+        if(currentText != null) {
+            //The saved character index should no longer be restored
+            savedCharacterIndex = -1;
 
-        //Try to move the cursor
-        characterIndex += 1;
-        //If the cursor did not wrap onto a new line then update it's position
-        if(characterIndex < currentText.getCharacterEdges().length) {
-            updateXPosition(true);
-        }
-        //If the cursor wrapped onto a new line
-        else{
-            //If this was not the very last line move to the beginning of the next line
-            if(lineIndex < texts.size()-1){
-                lineIndex++;
-                currentText = texts.get(lineIndex);
-                characterIndex = 0;
-                updatePosition();
+            //Try to move the cursor
+            characterIndex += 1;
+            //If the cursor did not wrap onto a new line then update it's position
+            if (characterIndex < currentText.getCharacterEdges().length) {
+                updateXPosition(true);
             }
-            //If this is the last line character index should not change and position does not need to be updated
-            else{
-                characterIndex = currentText.getCharacterEdges().length-1;
+            //If the cursor wrapped onto a new line
+            else {
+                //If this was not the very last line move to the beginning of the next line
+                if (lineIndex < texts.size() - 1) {
+                    lineIndex++;
+                    currentText = texts.get(lineIndex);
+                    characterIndex = 0;
+                    updatePosition();
+                }
+                //If this is the last line character index should not change and position does not need to be updated
+                else {
+                    characterIndex = currentText.getCharacterEdges().length - 1;
+                }
             }
         }
     }
@@ -165,36 +169,38 @@ public class CursorController {
      * Moves the cursor one line down
      */
     public void moveDown(){
-        //If this is not the very last text
-        if(lineIndex < texts.size()-1){
-            //Move down
-            lineIndex++;
-            currentText = texts.get(lineIndex);
+        if(currentText != null) {
+            //If this is not the very last text
+            if (lineIndex < texts.size() - 1) {
+                //Move down
+                lineIndex++;
+                currentText = texts.get(lineIndex);
 
-            //Try to use the saved character index as the character index
-            if(savedCharacterIndex != -1){
-                characterIndex = savedCharacterIndex;
-            }
-
-            //Ensure that character index is within the bounds of the text
-            if(characterIndex > currentText.getCharacterEdges().length-1){
-                //Save the character index
-                if(characterIndex > savedCharacterIndex){
-                    savedCharacterIndex = characterIndex;
+                //Try to use the saved character index as the character index
+                if (savedCharacterIndex != -1) {
+                    characterIndex = savedCharacterIndex;
                 }
-                characterIndex = currentText.getCharacterEdges().length-1;
+
+                //Ensure that character index is within the bounds of the text
+                if (characterIndex > currentText.getCharacterEdges().length - 1) {
+                    //Save the character index
+                    if (characterIndex > savedCharacterIndex) {
+                        savedCharacterIndex = characterIndex;
+                    }
+                    characterIndex = currentText.getCharacterEdges().length - 1;
+                }
+
+                //Update the position
+                updatePosition();
             }
+            //If this is the last line then the cursor should be moved to the end of the line
+            else {
+                //The saved character index should no longer be restored
+                savedCharacterIndex = -1;
 
-            //Update the position
-            updatePosition();
-        }
-        //If this is the last line then the cursor should be moved to the end of the line
-        else{
-            //The saved character index should no longer be restored
-            savedCharacterIndex = -1;
-
-            characterIndex = currentText.getCharacterEdges().length-1;
-            updateXPosition(true);
+                characterIndex = currentText.getCharacterEdges().length - 1;
+                updateXPosition(true);
+            }
         }
     }
 
@@ -202,36 +208,38 @@ public class CursorController {
      * Moves the cursor one line down
      */
     public void moveUp(){
-        //If this is not the very first text
-        if(lineIndex > 0){
-            //Move up
-            lineIndex--;
-            currentText = texts.get(lineIndex);
+        if(currentText != null) {
+            //If this is not the very first text
+            if (lineIndex > 0) {
+                //Move up
+                lineIndex--;
+                currentText = texts.get(lineIndex);
 
-            //Try to use the saved character index as the character index
-            if(savedCharacterIndex != -1){
-                characterIndex = savedCharacterIndex;
-            }
-
-            //Ensure that character index is within the bounds of the text
-            if(characterIndex > currentText.getCharacterEdges().length-1){
-                //Save the character index
-                if(characterIndex > savedCharacterIndex){
-                    savedCharacterIndex = characterIndex;
+                //Try to use the saved character index as the character index
+                if (savedCharacterIndex != -1) {
+                    characterIndex = savedCharacterIndex;
                 }
-                characterIndex = currentText.getCharacterEdges().length-1;
+
+                //Ensure that character index is within the bounds of the text
+                if (characterIndex > currentText.getCharacterEdges().length - 1) {
+                    //Save the character index
+                    if (characterIndex > savedCharacterIndex) {
+                        savedCharacterIndex = characterIndex;
+                    }
+                    characterIndex = currentText.getCharacterEdges().length - 1;
+                }
+
+                //Update the position
+                updatePosition();
             }
+            //If this is the first line then put the cursor at the start of the line instead
+            else {
+                //The saved character index should no longer be restored
+                savedCharacterIndex = -1;
 
-            //Update the position
-            updatePosition();
-        }
-        //If this is the first line then put the cursor at the start of the line instead
-        else{
-            //The saved character index should no longer be restored
-            savedCharacterIndex = -1;
-
-            characterIndex = 0;
-            updateXPosition(true);
+                characterIndex = 0;
+                updateXPosition(true);
+            }
         }
     }
 
@@ -239,40 +247,44 @@ public class CursorController {
      * Deletes the single character preceding the cursor
      */
     public void backSpace(){
-        //The saved character index should no longer be restored
-        savedCharacterIndex = -1;
+        if(currentText != null) {
+            //The saved character index should no longer be restored
+            savedCharacterIndex = -1;
 
-        //If a character is being removed from a single line
-        if (characterIndex > 0){
-            currentText = codeWindow.getTextLineController().backspace(currentText, characterIndex, true);
-            characterIndex--;
+            //If a character is being removed from a single line
+            if (characterIndex > 0) {
+                currentText = codeWindow.getTextLineController().backspace(currentText, characterIndex, true);
+                characterIndex--;
+            }
+            //If a newline character is being removed two lines need to be merged
+            else if (lineIndex > 0) {
+                characterIndex = codeWindow.getTextLineController().getCodeWindowTextLines().get(lineIndex - 1).getCharacterEdges().length - 1;
+                currentText = codeWindow.getTextLineController().merge(codeWindow.getTextLineController().getCodeWindowTextLines().get(lineIndex - 1), currentText, codeWindow);
+                lineIndex--;
+            }
+            //The cursors character or line index changed, update accordingly
+            updatePosition();
         }
-        //If a newline character is being removed two lines need to be merged
-        else if (lineIndex > 0) {
-            characterIndex = codeWindow.getTextLineController().getCodeWindowTextLines().get(lineIndex - 1).getCharacterEdges().length - 1;
-            currentText = codeWindow.getTextLineController().merge(codeWindow.getTextLineController().getCodeWindowTextLines().get(lineIndex - 1), currentText, codeWindow);
-            lineIndex--;
-        }
-        //The cursors character or line index changed, update accordingly
-        updatePosition();
     }
 
     /**
      * Deletes the single character following the cursor
      */
     public void delete(){
-        //The saved character index should no longer be restored
-        savedCharacterIndex = -1;
+        if(currentText != null) {
+            //The saved character index should no longer be restored
+            savedCharacterIndex = -1;
 
-        //If a character is being removed from a single line
-        if(characterIndex < currentText.getCharacterEdges().length-1) {
-            currentText = codeWindow.getTextLineController().backspace(currentText, characterIndex, false);
+            //If a character is being removed from a single line
+            if (characterIndex < currentText.getCharacterEdges().length - 1) {
+                currentText = codeWindow.getTextLineController().backspace(currentText, characterIndex, false);
+            }
+            //If a newline character is being removed two lines need to be merged
+            else if (lineIndex < texts.size() - 1) {
+                currentText = codeWindow.getTextLineController().merge(currentText, codeWindow.getTextLineController().getCodeWindowTextLines().get(lineIndex + 1), codeWindow);
+            }
+            //The cursors position is unchanged
         }
-        //If a newline character is being removed two lines need to be merged
-        else if(lineIndex < texts.size()-1){
-            currentText = codeWindow.getTextLineController().merge(currentText, codeWindow.getTextLineController().getCodeWindowTextLines().get(lineIndex+1), codeWindow);
-        }
-        //The cursors position is unchanged
     }
 
     /**

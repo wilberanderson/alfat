@@ -243,6 +243,7 @@ public class TextLineController {
 
         //Delete right and replace left
         codeWindowFormattedTextLines.remove(right);
+        loadedTexts.remove(right);
         replaceCodeWindowTextLine(newLine, codeWindowFormattedTextLines.indexOf(left));
 
         //Update the number of lines which the controller has to ensure proper behavior of scrolling
