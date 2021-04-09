@@ -371,7 +371,8 @@ public class CursorController {
         updateYPosition(true);
     }
 
-    public void updateAspectRatio(){
+    public void updateAspectRatio(Vector2f codeWindowOffset){
+        this.codeWindowOffset = codeWindowOffset;
         if(!originalAspectRatioSet){
             originalAspectRatio = new Vector2f(codeWindow.getAspectRatio());
 
@@ -379,6 +380,7 @@ public class CursorController {
         this.aspectRatio = new Vector2f(codeWindow.getAspectRatio());
         if(currentText != null) {
             updatePosition();
+            Printer.print("Position updated");
         }
     }
 

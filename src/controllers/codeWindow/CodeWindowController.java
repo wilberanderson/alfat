@@ -275,7 +275,7 @@ public class CodeWindowController {
         verticalScrollBar.updateAspectRatio(0.02f*aspectRatio.x, codeWindow.getSize().y, codeWindow.getSize().y-0.03f*aspectRatio.y, maxVerticalPosition + codeWindow.getSize().y);
         float range = codeWindow.getSize().x - codeWindow.getTextNumberFilledBox().getSize().x;
         horizontalScrollBar.updateAspectRatio(new Vector2f(codeWindow.getGuiFilledBox().getPosition()), 0.03f*aspectRatio.y, range, range -0.02f*aspectRatio.x, (maxHorizontalPosition)*aspectRatio.x/scaleFactor.x);//*aspectRatio.x*scaleFactor.x);
-        cursorController.updateAspectRatio();
+        cursorController.updateAspectRatio(new Vector2f(contentsHorizontalPosition, contentsVerticalPosition));
         textLineController.update(textLineController.getCodeWindowTextLines().get(0), 0, '\0');
 
     }
