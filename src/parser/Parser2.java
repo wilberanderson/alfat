@@ -301,7 +301,7 @@ public class Parser2  {
         boolean first = true;
         //parse line:
 //        line = line.replace("\t", "    ");
-        simpleTokenizer.setVerbose(true);
+        simpleTokenizer.setVerbose(false);
         String[] arrLine = simpleTokenizer.tokenizeString(line);
 
 

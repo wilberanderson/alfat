@@ -521,16 +521,14 @@ public class Header {
         do {
             widthf = (1.5 * GeneralSettings.IMAGE_SIZE.x)  * (double)GeneralSettings.DEFAULT_WIDTH / (2f);
             widthf += -(adjust*1000);
-            //double widthf = (1.5f * GeneralSettings.IMAGE_SIZE.x)  * (double) 3840 / 2.0f;
-            System.out.println("widthf " + widthf);
+            //System.out.println("widthf " + widthf);
             width = (int) widthf;
-            System.out.println("width " + width);
+            //System.out.println("width " + width);
             heightf = (1.5 * GeneralSettings.IMAGE_SIZE.y)  * (double)GeneralSettings.DEFAULT_HEIGHT / (2f);
             heightf += -(adjust*1000);
-            //double heightf = (1.5f * GeneralSettings.IMAGE_SIZE.y)  * (double)2160 / 2.0f;
-            System.out.println("heightf " + heightf);
+            //System.out.println("heightf " + heightf);
             height = (int) heightf;
-            System.out.println("height " + height);
+            //System.out.println("height " + height);
             adjust += .1;
         }while (check < ((long)width*(long)height*4));
 

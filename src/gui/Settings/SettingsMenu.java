@@ -747,6 +747,74 @@ public class SettingsMenu extends Component {
         preferredFileTypePane.add(submitChange);
 
 
+        //-----------------------------------------
+        //Image header color and font and message string
+        JPanel imageHeaderPanel = new JPanel(new FlowLayout());
+        imageHeaderPanel.setBackground(Color.decode(panelBackgroundColor));
+
+        JLabel headerMessageLabel = new JLabel("Image Header String");
+        headerMessageLabel.setForeground(Color.decode(paneltextColor));
+        imageHeaderPanel.add(headerMessageLabel);
+        //Set with the default stuff from user preferences
+        JTextField headerMessageField = new JTextField(GeneralSettings.USERPREF.getImageHeaderMessage());
+        headerMessageField.setForeground(GeneralSettings.USERPREF.getHeaderMSGTextColor());
+        headerMessageField.setBackground(GeneralSettings.USERPREF.getHeaderMSGBackgroundColor());
+        headerMessageField.setPreferredSize(new Dimension(300, 26));
+        headerMessageField.setFont(new Font("TimesRoman", Font.BOLD, 14));
+        imageHeaderPanel.add(headerMessageField);
+
+        JButton setHeaderMessageButton = new JButton("Set");
+        setHeaderMessageButton.setForeground(Color.decode(buttonTextColor));
+        setHeaderMessageButton.setBackground(Color.decode(buttonBackgroundColor));
+        imageHeaderPanel.add(setHeaderMessageButton);
+
+        setHeaderMessageButton.addActionListener(e -> {
+            GeneralSettings.USERPREF.setImageHeaderMessage(headerMessageField.getText());
+            GeneralSettings.USERPREF.setHeaderMSGTextColor(headerMessageField.getForeground());
+            GeneralSettings.USERPREF.setHeaderMSGBackgroundColor(headerMessageField.getBackground());
+        });
+
+
+
+
+        JPanel imageHeaderColorPanel = new JPanel(new FlowLayout());
+        imageHeaderColorPanel.setBackground(Color.decode(panelBackgroundColor));
+
+        JButton fontColorButton = new JButton("Choose Font Color");
+        fontColorButton.setForeground(Color.decode(buttonTextColor));
+        fontColorButton.setBackground(Color.decode(buttonBackgroundColor));
+        imageHeaderColorPanel.add(fontColorButton);
+
+        fontColorButton.addActionListener(e-> {
+            Color current = headerMessageField.getForeground();
+            Color newColor = JColorChooser.showDialog(this,"Select a color",current);
+            if(newColor != null) {
+                headerMessageField.setForeground(newColor);
+            }
+        });
+
+
+        JButton backgroundColorButton = new JButton("Choose Background Color");
+        backgroundColorButton.setForeground(Color.decode(buttonTextColor));
+        backgroundColorButton.setBackground(Color.decode(buttonBackgroundColor));
+        imageHeaderColorPanel.add(backgroundColorButton);
+
+        backgroundColorButton.addActionListener(e-> {
+            Color current = headerMessageField.getBackground();
+            Color newColor = JColorChooser.showDialog(this,"Select a color",current);
+            if(newColor != null) {
+                headerMessageField.setBackground(newColor);
+            }
+        });
+
+
+
+
+
+
+
+
+
 
         //-----------------------------------------
         //Rest button
@@ -763,16 +831,25 @@ public class SettingsMenu extends Component {
             GeneralSettings.USERPREF.resetFileSettings();
             limitTextField.setText(Integer.toString(GeneralSettings.USERPREF.getTempFileLimit()));
             pftTextField.setText(GeneralSettings.USERPREF.getPreferredFiletype());
+            headerMessageField.setText(GeneralSettings.USERPREF.getImageHeaderMessage());
+            headerMessageField.setForeground(GeneralSettings.USERPREF.getHeaderMSGTextColor());
+            headerMessageField.setBackground(GeneralSettings.USERPREF.getHeaderMSGBackgroundColor());
+
+
+
         });
         restFilePane.add(restFileLabel);
         restFilePane.add(restBtn);
+
+
 
         superContainer.add(syntaxFilePathPane);
         superContainer.add(tempFilePathPane);
         superContainer.add(tempFileLimitPane);
         superContainer.add(preferredFileTypePane);
+        superContainer.add(imageHeaderPanel);
+        superContainer.add(imageHeaderColorPanel);
         superContainer.add(restFilePane);
-
         main.add(superContainer);
 
        //main.add(BorderLayout.CENTER,tempFilePathPane);
@@ -866,11 +943,11 @@ public class SettingsMenu extends Component {
         GridBagConstraints gbc = new GridBagConstraints();
 
         //This is the internal dimensions of the mock gui within the content
-        int mockGUI_Height = 450; //300
+        int mockGUI_Height = 460; //300
         int mockGUI_Width = 900; //600
 
         //Top label added
-        JLabel topLabel = new JLabel("Color Picker & Preview");
+        JLabel topLabel = new JLabel("Color Picker & Preview (click any area to change the color)");
         topLabel.setForeground(Color.decode(paneltextColor));
         topLabel.setFont(labelFont);
 
@@ -932,26 +1009,26 @@ public class SettingsMenu extends Component {
 
 
         //Text editor
-        textEditorBtn = contentLayer(mockGUIcolorPointers[mockGUItexteditorColor], barPadding,barPadding, barPadding*12,mockGUI_Height-barPadding);
+        textEditorBtn = contentLayer(mockGUIcolorPointers[mockGUItexteditorColor], barPadding,barPadding, barPadding*18,mockGUI_Height-barPadding);
         lineNumberBtn = contentLayer(mockGUIcolorPointers[mockGUItexteditorLinenumberBGColor], 0,barPadding, barPadding,mockGUI_Height-barPadding);
-        scrollBtnVert = contentLayer(mockGUIcolorPointers[mockGUIScrollBarColor], (barPadding*12)+5,barPadding, barPadding-5, (mockGUI_Height-barPadding)-(barPadding-5));
-        scrollBtnHoriz = contentLayer(mockGUIcolorPointers[mockGUIScrollBarColor], barPadding,(mockGUI_Height-barPadding)+5,(barPadding*11)+5, barPadding-5);
+        scrollBtnVert = contentLayer(mockGUIcolorPointers[mockGUIScrollBarColor], (barPadding*18)+5,barPadding, barPadding-5, (mockGUI_Height-barPadding)-(barPadding-5));
+        scrollBtnHoriz = contentLayer(mockGUIcolorPointers[mockGUIScrollBarColor], barPadding,(mockGUI_Height-barPadding)+5,(barPadding*17)+5, barPadding-5);
 
 
         //Flowchart box 1
-        flowchartBox1Bar = contentLayer(mockGUIcolorPointers[mockGUIfloatchartNumberlineBGcolor], mockGUI_Width/2,barPadding*2, barPadding,mockGUI_Height-350/*(barPadding*11)*/);
-        flowchartBox1Text = contentLayer(mockGUIcolorPointers[mockGUIflowchartBoxBGcolor], mockGUI_Width/2+barPadding,barPadding*2, barPadding*7,mockGUI_Height-350/*(barPadding*11)*/);
+        flowchartBox1Bar = contentLayer(mockGUIcolorPointers[mockGUIfloatchartNumberlineBGcolor], mockGUI_Width/2,barPadding*2, barPadding,(barPadding*7));
+        flowchartBox1Text = contentLayer(mockGUIcolorPointers[mockGUIflowchartBoxBGcolor], mockGUI_Width/2+barPadding,barPadding*2, barPadding*20,(barPadding*7));
 
         //Flowchart box 2
-        JButton flowchartBox2Bar = contentLayer(mockGUIcolorPointers[mockGUIfloatchartNumberlineBGcolor], mockGUI_Width/2,barPadding*9, barPadding,mockGUI_Height-350/*(barPadding*11)*/);
-        JButton flowchartBox2Text = contentLayer(mockGUIcolorPointers[mockGUIflowchartBoxBGcolor], mockGUI_Width/2+barPadding,barPadding*9, barPadding*7,mockGUI_Height-350/*(barPadding*11)*/);
+        JButton flowchartBox2Bar = contentLayer(mockGUIcolorPointers[mockGUIfloatchartNumberlineBGcolor], mockGUI_Width/2,barPadding*12, barPadding,(barPadding*7));
+        JButton flowchartBox2Text = contentLayer(mockGUIcolorPointers[mockGUIflowchartBoxBGcolor], mockGUI_Width/2+barPadding,barPadding*12, barPadding*20,(barPadding*7));
 
         //Lines And Arrows
-        LineJButton flowchartLine1 = new LineJButton(Color.WHITE, 0,0,0,30,6);
-        flowchartLine1.setBounds((mockGUI_Width/2)+barPadding,(barPadding*2)+ mockGUI_Height-350/*(barPadding*11)*/,12,35);
+        LineJButton flowchartLine1 = new LineJButton(Color.WHITE, 0,0,0,60,6);
+        flowchartLine1.setBounds((mockGUI_Width/2)+barPadding,(barPadding*9),20,60);
 
         ArrowJButton arrowJButton = new ArrowJButton(Color.WHITE,ArrowJButton.DOWN);
-        arrowJButton.setBounds((mockGUI_Width/2)+barPadding-4,(barPadding*2)+ mockGUI_Height-350/*(barPadding*11)*/+32,50,50);
+        arrowJButton.setBounds((mockGUI_Width/2)+barPadding-4,(barPadding*12)-5,60,60);
 
         //Listener for panel resizing
        /* main.addComponentListener(new ComponentAdapter() {
@@ -1868,6 +1945,7 @@ public class SettingsMenu extends Component {
 
         //Add the title Syntax color options
         JLabel sycoLabel = new JLabel("Syntax Color Options:");
+        sycoLabel.setForeground(Color.decode(paneltextColor));
         sycoLabel.setFont(labelFont);
         scopGBC.gridx = 0; scopGBC.gridy = 0; scopGBC.fill = GridBagConstraints.CENTER; scopGBC.gridwidth = 4;
         syntaxColorOptionsPane.add(sycoLabel, scopGBC);

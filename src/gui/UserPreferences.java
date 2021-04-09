@@ -229,6 +229,113 @@ public class UserPreferences {
 
 
     //*********************************************************************************************************************************************
+    // Flowchart to image message (see settings menu file settings)
+    private final String keyHeaderMSG = "imageheadermsg";
+    private final String fbValueHeaderMSG = ""; //If there is no message then there is no message.
+
+    /**Set the image header message*/
+    public void setImageHeaderMessage(String str) {
+        userPref.put(keyHeaderMSG,str);
+    }
+
+    /**Get the image header message*/
+    public String getImageHeaderMessage() {
+        return userPref.get(keyHeaderMSG,fbValueHeaderMSG);
+    }
+
+    //*********************************************************************************************************************************************
+    // Flowchart to image message text color  (see settings menu file settings)
+
+    private final String keyHeaderMSGTextColor_RED = "hmtcred";
+    private final float fbValueHeaderMSGTextColor_RED = GeneralSettings.TEXT_COLOR.x;
+
+    private final String keyHeaderMSGTextColor_GREEN = "hmtcgreen";
+    private final float fbValueHeaderMSGTextColor_GREEN = GeneralSettings.TEXT_COLOR.y;
+
+    private final String keyHeaderMSGTextColor_BLUE = "hmtcblue";
+    private final float fbValueHeaderMSGTextColor_BLUE = GeneralSettings.TEXT_COLOR.z;
+
+    /**Set the image header text color*/
+    public void setHeaderMSGTextColor(Color bgColor) {
+        userPref.putFloat(keyHeaderMSGTextColor_RED, bgColor.getRed()/255f);
+        userPref.putFloat(keyHeaderMSGTextColor_GREEN, bgColor.getGreen()/255f);
+        userPref.putFloat(keyHeaderMSGTextColor_BLUE, bgColor.getBlue()/255f);
+    }
+
+    /**get the image header text color*/
+    public void setHeaderMSGTextColor3f(Vector3f bgColor) {
+        userPref.putFloat(keyHeaderMSGTextColor_RED, bgColor.x);
+        userPref.putFloat(keyHeaderMSGTextColor_GREEN, bgColor.y);
+        userPref.putFloat(keyHeaderMSGTextColor_BLUE, bgColor.z);
+    }
+
+    /**Get the image header text color*/
+    public Vector3f getHeaderMSGTextColorColor3f() {
+        Vector3f bgColor = new Vector3f();
+        bgColor.setX(userPref.getFloat(keyHeaderMSGTextColor_RED, fbValueHeaderMSGTextColor_RED));
+        bgColor.setY(userPref.getFloat(keyHeaderMSGTextColor_GREEN, fbValueHeaderMSGTextColor_GREEN));
+        bgColor.setZ(userPref.getFloat(keyHeaderMSGTextColor_BLUE, fbValueHeaderMSGTextColor_BLUE));
+        return bgColor;
+    }
+
+    /**Get the image header text color*/
+    public Color getHeaderMSGTextColor() {
+        Color bgColor = new Color(
+                userPref.getFloat(keyHeaderMSGTextColor_RED, fbValueHeaderMSGTextColor_RED),
+                userPref.getFloat(keyHeaderMSGTextColor_GREEN, fbValueHeaderMSGTextColor_GREEN),
+                userPref.getFloat(keyHeaderMSGTextColor_BLUE, fbValueHeaderMSGTextColor_BLUE)
+        );
+        return bgColor;
+    }
+
+    //*********************************************************************************************************************************************
+    // Flowchart to image message background color  (see settings menu file settings)
+
+    private final String keyHeaderMSGBackgroundColor_RED = "hmbgcred";
+    private final float fbValueHeaderMSGBackgroundColor_RED = GeneralSettings.base02.x;
+
+    private final String keyHeaderMSGBackgroundColor_GREEN = "hmbgcgreen";
+    private final float fbValueHeaderMSGBackgroundColor_GREEN = GeneralSettings.base02.y;
+
+    private final String keyHeaderMSGBackgroundColor_BLUE = "hmbgcblue";
+    private final float fbHeaderMSGBackgroundColor_BLUE = GeneralSettings.base02.z;
+
+    /**Set the image header text color*/
+    public void setHeaderMSGBackgroundColor(Color bgColor) {
+        userPref.putFloat(keyHeaderMSGBackgroundColor_RED, bgColor.getRed()/255f);
+        userPref.putFloat(keyHeaderMSGBackgroundColor_GREEN, bgColor.getGreen()/255f);
+        userPref.putFloat(keyHeaderMSGBackgroundColor_BLUE, bgColor.getBlue()/255f);
+    }
+
+    /**get the image header text color*/
+    public void setHeaderMSGBackgroundColor3f(Vector3f bgColor) {
+        userPref.putFloat(keyHeaderMSGBackgroundColor_RED, bgColor.x);
+        userPref.putFloat(keyHeaderMSGBackgroundColor_GREEN, bgColor.y);
+        userPref.putFloat(keyHeaderMSGBackgroundColor_BLUE, bgColor.z);
+    }
+
+    /**Get the image header text color*/
+    public Vector3f getHeaderMSGBackgroundColor3f() {
+        Vector3f bgColor = new Vector3f();
+        bgColor.setX(userPref.getFloat(keyHeaderMSGBackgroundColor_RED, fbValueHeaderMSGBackgroundColor_RED));
+        bgColor.setY(userPref.getFloat(keyHeaderMSGBackgroundColor_GREEN, fbValueHeaderMSGBackgroundColor_GREEN));
+        bgColor.setZ(userPref.getFloat(keyHeaderMSGBackgroundColor_BLUE, fbHeaderMSGBackgroundColor_BLUE));
+        return bgColor;
+    }
+
+    /**Get the image header text color*/
+    public Color getHeaderMSGBackgroundColor() {
+        Color bgColor = new Color(
+                userPref.getFloat(keyHeaderMSGBackgroundColor_RED, fbValueHeaderMSGBackgroundColor_RED),
+                userPref.getFloat(keyHeaderMSGBackgroundColor_GREEN, fbValueHeaderMSGBackgroundColor_GREEN),
+                userPref.getFloat(keyHeaderMSGBackgroundColor_BLUE, fbHeaderMSGBackgroundColor_BLUE)
+        );
+        return bgColor;
+    }
+
+
+
+    //*********************************************************************************************************************************************
     //Flowchart background color
     private final String keyFlowchartBoxBGColor_RED = "fcbbgcolorred";
     private final float fbValueFlowchartBoxBGColor_RED = GeneralSettings.TEXT_BOX_BACKGROUND_COLOR.x;
@@ -652,12 +759,12 @@ public class UserPreferences {
 
     //*********************************************************************************************************************************************
     //Branch text color
-    public final String keyBranchTextColor_Red = "branchtextcolorred";
-    public final float fbValueBranchTextColor_Red = GeneralSettings.branchColor.x;
-    public final String getKeyBranchTextColor_Green = "branchtextcolorgreen";
-    public final float fbValueBranchTextColor_Green = GeneralSettings.branchColor.y;
-    public final String keyBranchTextColor_Blue = "branchtextcolorblue";
-    public final float fbValueBranchTextColor_Blue = GeneralSettings.branchColor.z;
+    private final String keyBranchTextColor_Red = "branchtextcolorred";
+    private final float fbValueBranchTextColor_Red = GeneralSettings.branchColor.x;
+    private final String getKeyBranchTextColor_Green = "branchtextcolorgreen";
+    private final float fbValueBranchTextColor_Green = GeneralSettings.branchColor.y;
+    private final String keyBranchTextColor_Blue = "branchtextcolorblue";
+    private final float fbValueBranchTextColor_Blue = GeneralSettings.branchColor.z;
 
 
     /**Sets the text color of branch syntax*/
@@ -694,12 +801,12 @@ public class UserPreferences {
     //*********************************************************************************************************************************************
     //Command text color
 
-    public final String keyCommandTextColor_Red = "Commandtextcolorred";
-    public final float fbValueCommandTextColor_Red = GeneralSettings.commandColor.x;
-    public final String getKeyCommandTextColor_Green = "Commandtextcolorgreen";
-    public final float fbValueCommandTextColor_Green = GeneralSettings.commandColor.y;
-    public final String keyCommandTextColor_Blue = "Commandtextcolorblue";
-    public final float fbValueCommandTextColor_Blue = GeneralSettings.commandColor.z;
+    private final String keyCommandTextColor_Red = "Commandtextcolorred";
+    private final float fbValueCommandTextColor_Red = GeneralSettings.commandColor.x;
+    private final String getKeyCommandTextColor_Green = "Commandtextcolorgreen";
+    private final float fbValueCommandTextColor_Green = GeneralSettings.commandColor.y;
+    private final String keyCommandTextColor_Blue = "Commandtextcolorblue";
+    private final float fbValueCommandTextColor_Blue = GeneralSettings.commandColor.z;
 
 
     /**Sets the text color of command syntax*/
@@ -1080,6 +1187,18 @@ public class UserPreferences {
     public void resetFileSettings() {
         userPref.remove(keyTempFileLimit);
         userPref.remove(keyPreferredFiletype);
+        userPref.remove(keyHeaderMSG);
+
+        userPref.remove(keyHeaderMSGTextColor_RED);
+        userPref.remove(keyHeaderMSGTextColor_GREEN);
+        userPref.remove(keyHeaderMSGTextColor_BLUE);
+
+        userPref.remove(keyHeaderMSGBackgroundColor_RED);
+        userPref.remove(keyHeaderMSGBackgroundColor_GREEN);
+        userPref.remove(keyHeaderMSGBackgroundColor_BLUE);
+
+
+
     }
 
 

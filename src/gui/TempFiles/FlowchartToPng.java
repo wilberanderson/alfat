@@ -56,7 +56,7 @@ public class FlowchartToPng {
     private final String FOLDER_COL = ".col" + File.separator;
     private int imageCount = 0; //Numbers the images
     private FileSortedArrayList files = new FileSortedArrayList(); //Used to hold and sort files from directories
-    public boolean verbose = true;
+    public boolean verbose = false;
 
     /**
      * <pre>
@@ -96,6 +96,7 @@ public class FlowchartToPng {
      * Starts slicing the flowchart into chunks then saves each chunk. Then combines all the chunks
      * into a single image.
      * NOTE: If (width * height * 4) > Integer.Max_Value the application will crash!!!
+     *
      * @param width      the pixel height of the image
      * @param height     the pixel width of the image
      * @param controller this should only be the flowchart controller
@@ -103,7 +104,9 @@ public class FlowchartToPng {
      */
     public void startImageSlice(int width, int height, ApplicationController controller, String outPath) {
         //prevent bad things from happening if someone calls this without setting the directory path
-        if (this.directoryPath == null) { return; }
+        if (this.directoryPath == null) {
+            return;
+        }
 
         //Clear previous files
         clearAllTempFileFolders();
@@ -118,7 +121,7 @@ public class FlowchartToPng {
         //Special case: in the event that the default width is too small based on the correct scaling divisions
         //The height and width that will be used to chop the image will be set to 600 X 900 px. This seems
         //to be a readable scale however it may not look good in all extreme cases...
-        if(widthPixelsChop < (GeneralSettings.DEFAULT_WIDTH / 2)) {
+        if (widthPixelsChop < (GeneralSettings.DEFAULT_WIDTH / 2)) {
             heightPixelsChop = 600;
             widthPixelsChop = 900;
         }
@@ -161,29 +164,46 @@ public class FlowchartToPng {
         GeneralSettings.IMAGE_TRANSLATION.m21 = originalTranslationY;
         GeneralSettings.IMAGE_TRANSLATION.m20 = originalTranslationX;
 
-        //Build the header image TODO: replace message, textColor, and background color with stuff from user pref set from the settings me
-        writeHeaderPng((widthPixelsChop*getNumberOfImageColumns(GeneralSettings.IMAGE_SIZE.x)), 100, "foobar",
-                new Font("TimesRoman", Font.BOLD, 40),
-                GeneralSettings.USERPREF.getLabelColor(),
-                GeneralSettings.USERPREF.getBackgroundColor(),
-                this.directoryPath);
+        //IF there is no string then we do not make the header image!
+        if (!GeneralSettings.USERPREF.getImageHeaderMessage().isEmpty()) {
+            writeHeaderPng((widthPixelsChop * getNumberOfImageColumns(GeneralSettings.IMAGE_SIZE.x)),
+                    getHeaderRatioSize(heightPixelsChop),
+                    GeneralSettings.USERPREF.getImageHeaderMessage(),
+                    new Font("TimesRoman", Font.BOLD, 72),
+                    GeneralSettings.USERPREF.getHeaderMSGTextColor(),
+                    GeneralSettings.USERPREF.getHeaderMSGBackgroundColor(),
+                    this.directoryPath);
+        }
 
-        //Build the final image TODO:Replace the outPath with the one provided to allow the user to save the image to the place they want
+
         //combinedPng(this.directoryPath + "out.png", GeneralSettings.IMAGE_SIZE.x);
         combinedPng(outFilePathClean(outPath), GeneralSettings.IMAGE_SIZE.x);
-
-
-
     }
+
+    /**
+     * This takes a height in pixels and returns approximately 10% of it positionally
+     * to be used as the height of the header.
+     *
+     * @param height should be the height of the column used for rendering screen shots i.e. heightPixelsChop
+     */
+    private int getHeaderRatioSize(int height) {
+        double hf = height;
+        hf *= .10f; //Multiply the float height by 10%
+        int hint = (int) Math.round(hf); //Round and cast to a int
+        return hint;
+    }
+
 
     /**
      * This checks whether a source file contains a .png,
      * if it does not it adds a .png to the end of it.
      * Otherwise it does not do anything.
-     * */
+     */
     private String outFilePathClean(String sourceOutPath) {
+        if (verbose) {
+            System.out.println(sourceOutPath);
+        }
 
-        System.out.println(sourceOutPath);
 
         final char dot = '.';
         final char p = 'p';
@@ -196,30 +216,30 @@ public class FlowchartToPng {
         boolean addOrnotToAdd = true;
 
         //Assume we can check the last 3
-        if(sourceOutPath.length() > 4){
-            if(sourceOutPath.charAt(sourceOutPath.length()-1) == g ||
-                    sourceOutPath.charAt(sourceOutPath.length()-1) == G ) {
-                contain +=1;
+        if (sourceOutPath.length() > 4) {
+            if (sourceOutPath.charAt(sourceOutPath.length() - 1) == g ||
+                    sourceOutPath.charAt(sourceOutPath.length() - 1) == G) {
+                contain += 1;
             }
-            if(sourceOutPath.charAt(sourceOutPath.length()-2) == n ||
-                    sourceOutPath.charAt(sourceOutPath.length()-2) == N ) {
-                contain +=1;
+            if (sourceOutPath.charAt(sourceOutPath.length() - 2) == n ||
+                    sourceOutPath.charAt(sourceOutPath.length() - 2) == N) {
+                contain += 1;
             }
-            if(sourceOutPath.charAt(sourceOutPath.length()-3) == p ||
-                    sourceOutPath.charAt(sourceOutPath.length()-3) == P ) {
-                contain +=1;
+            if (sourceOutPath.charAt(sourceOutPath.length() - 3) == p ||
+                    sourceOutPath.charAt(sourceOutPath.length() - 3) == P) {
+                contain += 1;
             }
-            if(sourceOutPath.charAt(sourceOutPath.length()-4) == dot) {
-                contain +=1;
+            if (sourceOutPath.charAt(sourceOutPath.length() - 4) == dot) {
+                contain += 1;
             }
         }
         //Then there is already a .png extension?
-        if(contain == 4) {
+        if (contain == 4) {
             addOrnotToAdd = false;
         }
 
         //Add the .png extension
-        if(addOrnotToAdd) {
+        if (addOrnotToAdd) {
             sourceOutPath += ".png";
         }
 
@@ -227,15 +247,14 @@ public class FlowchartToPng {
     }
 
 
-
-
     /**
      * Does a LWJGL render call for the flowchart. Then saves the image.
+     *
      * @param widthSource  the source width used to render the render window and save image
-     * @param heightSource       the height used to render the window and save image
+     * @param heightSource the height used to render the window and save image
      * @param pathOut      the outPath the image is to be saved to. This should always be set to the .col folder
      */
-    private void doRenderCall(int widthSource,int heightSource, ApplicationController controller, String pathOut) {
+    private void doRenderCall(int widthSource, int heightSource, ApplicationController controller, String pathOut) {
         //Create a frame buffer to render the image to
         int renderBuffer = GL30.glGenFramebuffers();
         GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, renderBuffer);
@@ -277,10 +296,11 @@ public class FlowchartToPng {
     /**
      * Writes the buffer into a .png image
      * NOTE: If (width * height * 4) > Integer.MAX_Value the program will crash!
-     * @param  path the path the image is saved to
-     * @param  widthSource the width of the image to save
-     * @param height the height of the image to save
-     * @param  buffer the buffer to copy from
+     *
+     * @param path        the path the image is saved to
+     * @param widthSource the width of the image to save
+     * @param height      the height of the image to save
+     * @param buffer      the buffer to copy from
      */
     private void writePng(String path, int widthSource, int height, int bpp, ByteBuffer buffer) {
 
@@ -412,6 +432,7 @@ public class FlowchartToPng {
      * This opens the .img folder and combined columns into rows
      * then rows into a final out image with no header, then adds the header
      * and finally saves that image to the out path.
+     *
      * @param outputPath the final path the final image is to be saved to
      * @param imageSizeX the openGL X size of the image
      */
@@ -431,13 +452,13 @@ public class FlowchartToPng {
         attachFilesFromDir(this.directoryPath_row, false);
         filesPaths = files.FilesToStringArray();
         //Recombined the files rows and save to a out directory
-        doTilingRow(filesPaths, this.directoryPath+"out-no-header.png");
+        doTilingRow(filesPaths, this.directoryPath + "out-no-header.png");
 
         //Grab the header image and the final out-no-header image and combined them and send it to the out path
         files.clear();
-        attachFilesFromDir(this.directoryPath,true);
+        attachFilesFromDir(this.directoryPath, true);
         filesPaths = files.FilesToStringArray();
-        doTilingRow(filesPaths,outputPath);
+        doTilingRow(filesPaths, outputPath);
 
     }
 
@@ -561,6 +582,7 @@ public class FlowchartToPng {
      * Do tiling column combines columns of images into a single image.
      * The sizes of the heights MUST be equal.
      * IMAGES ONLY WORK WITH PNG FILES
+     *
      * @param source list of source files to be combined in a single image from left to right
      * @param out    the out file path
      */
@@ -624,6 +646,7 @@ public class FlowchartToPng {
      * subtracting the imageSizeX by the move_right_amount
      * and the int it returns is the number of images needed
      * to represent a full row.
+     *
      * @param imageSizeX the float that is the openGL X size
      * @return the int value of the number of columns
      */
@@ -643,12 +666,13 @@ public class FlowchartToPng {
      * subtracting the imageSizeY by the move_one_screen_down
      * and the int it returns is the number of images needed
      * to represent a full row.
+     *
      * @param imageSizY the float that is the openGL X size
      * @return the int value of the number of columns
      */
     private int getNumberOfImageColumnsY(float imageSizY) {
         int result = 0;
-        while (imageSizY  > -MOVE_ONE_SCREEN_DOWN / 2f) {
+        while (imageSizY > -MOVE_ONE_SCREEN_DOWN / 2f) {
             imageSizY -= MOVE_ONE_SCREEN_DOWN;
             result++;
         }
@@ -659,25 +683,31 @@ public class FlowchartToPng {
      * Creates a header message image by a width and height.
      * Then saves it as a png file. The text is centered in the image.
      * NOTE: If (width * height * 4 > Integer.MAX_VALUE) this will crash
-     * @param width the width of the image. NOTE: Best to use (widthSource*getNumberOfImageColumns(GeneralSettings.IMAGE_SIZE.x)
-     * @param height the height of the image
-     * @param message the message of to be written
-     * @param font the font type and size e.g, new Font("TimesRoman", Font.BOLD, 40)
-     * @param textColor the text color
+     *
+     * @param width           the width of the image. NOTE: Best to use (widthSource*getNumberOfImageColumns(GeneralSettings.IMAGE_SIZE.x)
+     * @param height          the height of the image
+     * @param message         the message of to be written
+     * @param font            the font type and size e.g, new Font("TimesRoman", Font.BOLD, 40)
+     * @param textColor       the text color
      * @param backgroundColor the background color
-     * @param outPath the path the file is saved to. File is always saved as header.png
-     * */
+     * @param outPath         the path the file is saved to. File is always saved as header.png
+     */
     private void writeHeaderPng(int width, int height, String message, Font font, Color textColor, Color backgroundColor, String outPath) {
         try {
             BufferedImage bi = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
             Graphics2D ig2 = bi.createGraphics();
-            ig2.setFont(font);
+            RenderingHints rh = new RenderingHints(
+                    RenderingHints.KEY_TEXT_ANTIALIASING,
+                    RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+            ig2.setRenderingHints(rh);
+            ig2.setFont(scaleFontToFit(message, width, ig2, font));
             FontMetrics fontMetrics = ig2.getFontMetrics();
             int stringWidth = fontMetrics.stringWidth(message);
             int stringHeight = fontMetrics.getAscent();
             ig2.setColor(backgroundColor);
-            ig2.fillRect(0,0,width,height);
+            ig2.fillRect(0, 0, width, height);
             ig2.setPaint(textColor);
+            //Center Text
             ig2.drawString(message, (width - stringWidth) / 2, height / 2 + stringHeight / 4);
             ImageIO.write(bi, "PNG", new File(outPath + "header.png"));
         } catch (IOException e) {
@@ -685,6 +715,22 @@ public class FlowchartToPng {
         }
     }
 
+    /**
+     * Scales the font to the max size it can be relative to the width and the width of the characters in the string.
+     *
+     * @param text  the text of the string
+     * @param width the width
+     * @param g     graphics context
+     * @param pFont previous front
+     */
+    public static Font scaleFontToFit(String text, int width, Graphics g, Font pFont) {
+        float fontSize = pFont.getSize();
+        float fWidth = g.getFontMetrics(pFont).stringWidth(text);
+        if (fWidth <= width)
+            return pFont;
+        fontSize = ((float) width / fWidth) * fontSize;
+        return pFont.deriveFont(fontSize);
+    }
 
 
 }
