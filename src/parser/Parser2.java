@@ -745,7 +745,7 @@ public class Parser2  {
         Vector2f midpoint = new Vector2f((.5f * (bottomRight.x + topLeft.x)),(.5f * (bottomRight.y + topLeft.y)));
 
         // Screenshotting helper commands
-        if (true) {
+        if (verbose) {
             //System.out.println("(x,y) area of the flowchart: (" + (Math.abs(bottomRight.x) + Math.abs(topLeft.x) + ", " + (Math.abs(bottomRight.y - topLeft.x) + 1f + GeneralSettings.FLOWCHART_PAD_TOP) + ")");
             System.out.println("Top left: " + topLeft);
             System.out.println("Bottom right: " + bottomRight);
