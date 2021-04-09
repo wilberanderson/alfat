@@ -6,6 +6,7 @@ import main.GeneralSettings;
 import org.lwjgl.util.vector.Matrix2f;
 import org.lwjgl.util.vector.Matrix3f;
 import org.lwjgl.util.vector.Vector2f;
+import org.lwjgl.util.vector.Vector3f;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -77,5 +78,9 @@ public class FlowchartWindow {
     void setTranslation(Vector2f translation){
         zoomTranslateMatrix.m20 = translation.x;
         zoomTranslateMatrix.m21 = translation.y;
+    }
+
+    public Vector2f getTranslation(){
+        return new Vector2f(zoomTranslateMatrix.m20,zoomTranslateMatrix.m21);
     }
 }

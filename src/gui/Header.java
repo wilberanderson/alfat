@@ -693,7 +693,16 @@ public class Header {
         if (controller.getFlowchartWindowController() != null) {
             controller.getFlowchartWindowController().resetZoom();
         }
+    }
 
+    /** Pan flowchart vertically.
+     *
+     * @param amount Distance moved where 2f is 100% of the viewport height.
+     */
+    public void screenPan(float amount){
+        if (controller.getFlowchartWindowController() != null) {
+            controller.getFlowchartWindowController().screenPan(amount);
+        }
     }
 
     /**

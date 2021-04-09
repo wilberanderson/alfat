@@ -266,6 +266,15 @@ public class ApplicationController {
             header.registers();
             return;
         }
+
+        // Process pageup/pagedown
+        if (key == GLFW_KEY_PAGE_UP){
+            header.screenPan(-GeneralSettings.PAGE_JUMP_AMOUNT);
+        }
+
+        if (key == GLFW_KEY_PAGE_DOWN){
+            header.screenPan(GeneralSettings.PAGE_JUMP_AMOUNT);
+        }
     }
 
     /**
