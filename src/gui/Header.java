@@ -501,13 +501,12 @@ public class Header {
         //Determine the width and height of the image in pixels
         float adjust = 0;
         long check = Integer.MAX_VALUE;
-
         double widthf;
         int width;
         double heightf;
         int height;
+
         //Adjust the size of the pixels used to ensure that it can't go over the max int.
-        //TODO: Find a better scale and method for this since HUGE images create HUGE files!!!
         do {
             widthf = (1.5 * GeneralSettings.IMAGE_SIZE.x)  * (double)GeneralSettings.DEFAULT_WIDTH / (2f);
             widthf += -(adjust*1000);
@@ -528,77 +527,6 @@ public class Header {
 
         FlowchartToPng flowchartToPng = new FlowchartToPng(GeneralSettings.USERPREF.getUserTempFileDirPath());
         flowchartToPng.startImageSlice(width, height, controller, "dummy");
-       //Force method to return
-        if(true) {
-            return;
-        }
-
-        //Create a frame buffer to render the image to
-        int renderBuffer = GL30.glGenFramebuffers();
-        GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, renderBuffer);
-
-        //Create a texture to load the data into
-        int imageIndex = GL11.glGenTextures();
-        GL11.glBindTexture(GL11.GL_TEXTURE_2D, imageIndex);
-        GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGB8, width, height, 0, GL11.GL_RGB, GL11.GL_UNSIGNED_BYTE, 0);
-        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_NEAREST);
-        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_NEAREST);
-
-        //Configure frame buffer
-        GL30.glFramebufferTexture2D(GL30.GL_FRAMEBUFFER, GL30.GL_COLOR_ATTACHMENT0, GL11.GL_TEXTURE_2D, imageIndex, 0);
-        GL30.glDrawBuffers(GL30.GL_COLOR_ATTACHMENT0);
-        GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, renderBuffer);
-        GL11.glViewport(0, 0, width, height);
-
-        //Render the flowchart to the image
-        MasterRenderer.renderScreenshot(controller.getFlowchartWindowController());
-
-        //height -= 1000;//this is what you need to change to crop
-        //Load the data in the frame buffer into a byte buffer which can be saved to an image
-        int bpp = 4; // Assuming a 32-bit display with a byte each for red, green, blue, and alpha.
-        ByteBuffer buffer = BufferUtils.createByteBuffer(width * height * bpp);
-        //Render the flowchart to the image
-        MasterRenderer.renderScreenshot(controller.getFlowchartWindowController());
-        //GL11.glReadPixels(0, 0, width, height, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, buffer);
-        GL11.glReadPixels(0, 0, width, height, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, buffer);
-
-        //Find where to save the file
-        OpenFileDialog openFileDialog = new OpenFileDialog();
-        openFileDialog.setFilterList("png,jpg");
-        openFileDialog.saveFileWindow();
-
-        //Ensure a valid file path is entered before saving
-        String path = openFileDialog.getFilePath();
-        if(path != null) {
-            //Create the file
-            File file = new File(path);
-            String format = "PNG"; // Example: "PNG" or "JPG"
-            BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-
-            //Read the data from the byte buffer
-            for (int x = 0; x < width; x++) {
-                for (int y = 0; y < height; y++) {
-                    int i = (x + (width * y)) * bpp;
-                    int r = buffer.get(i) & 0xFF;
-                    int g = buffer.get(i + 1) & 0xFF;
-                    int b = buffer.get(i + 2) & 0xFF;
-                    image.setRGB(x, height - (y + 1), (0xFF << 24) | (r << 16) | (g << 8) | b);
-                }
-            }
-
-            //Attempt to save the image
-            try {
-                ImageIO.write(image, format, file);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        //Delete the frame buffer when done
-        GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0);
-        GL11.glViewport(0, 0, GeneralSettings.DISPLAY_WIDTH, GeneralSettings.DISPLAY_HEIGHT);
-        GL11.glDeleteTextures(imageIndex);
-        GL30.glDeleteFramebuffers(renderBuffer);
     }
 
     /**
