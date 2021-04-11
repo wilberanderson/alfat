@@ -227,6 +227,7 @@ public class GeneralSettings {
 	 * Loads the default font for use in rendering texts.
 	 */
 	public static void initializeFonts() {
+		DEFAULT_FONT_LOCATION = USERPREF.getCurrentFontInUse(); //Sets the font path based on what is defined by the user
 		FONT = new FontType(Loader.loadTexture(new MyFile(DEFAULT_FONT_LOCATION + ".png")), new MyFile(DEFAULT_FONT_LOCATION + ".fnt"));
 	}
 }

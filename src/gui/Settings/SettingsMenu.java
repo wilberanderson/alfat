@@ -9,6 +9,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -203,9 +204,9 @@ public class SettingsMenu extends Component {
 
         fakeButtonscontent.add(new SettingsContent("File Settings", fileSettingsContent()));
 
-        fakeButtonscontent.add(new SettingsContent("Color Picker", colorPickerContent()));
+        fakeButtonscontent.add(new SettingsContent("GUI Color Picker", colorPickerContent()));
 
-        fakeButtonscontent.add(new SettingsContent("Text Color", textColorContent()));
+        fakeButtonscontent.add(new SettingsContent("Text Color & Font", textColorContent()));
 
         fakeButtonscontent.add(new SettingsContent("Help", helpContent()));
     }
@@ -1936,6 +1937,12 @@ public class SettingsMenu extends Component {
 
         JPanel mainPane = new JPanel();
         mainPane.setBackground(Color.decode(panelBackgroundColor));
+
+
+
+
+
+
         //Syntax Color Options
         JPanel syntaxColorOptionsContainerPane = new JPanel();
         syntaxColorOptionsContainerPane.setBackground(Color.decode(panelBackgroundColor));
@@ -1948,7 +1955,9 @@ public class SettingsMenu extends Component {
         sycoLabel.setForeground(Color.decode(paneltextColor));
         sycoLabel.setFont(labelFont);
         scopGBC.gridx = 0; scopGBC.gridy = 0; scopGBC.fill = GridBagConstraints.CENTER; scopGBC.gridwidth = 4;
+
         syntaxColorOptionsPane.add(sycoLabel, scopGBC);
+
         syntaxColorOptionsContainerPane.add(BorderLayout.CENTER, syntaxColorOptionsPane);
 
         //Make labels and buttons
@@ -2002,7 +2011,6 @@ public class SettingsMenu extends Component {
 
         driverButtons.add(defaultBtn); driverButtons.add(setALLBtn);
         driverButtons.add(cancelBtn); driverButtons.add(applyBtn);
-
 
         defaultBtn.addActionListener(e-> {
 
@@ -2061,8 +2069,40 @@ public class SettingsMenu extends Component {
 
         scopGBC.gridx = 0; scopGBC.gridy = 4; scopGBC.gridwidth = 4;
         syntaxColorOptionsPane.add(driverButtons, scopGBC);
-        mainPane.add(syntaxColorOptionsContainerPane);
 
+        //Row 6
+        JLabel fontLabel = new JLabel("Choose Font (Applies on restart):");
+        fontLabel.setFont(labelFont);
+        fontLabel.setForeground(Color.decode(paneltextColor));
+
+        scopGBC.gridx = 0; scopGBC.gridy = 5; scopGBC.gridwidth = 4;
+        syntaxColorOptionsPane.add(fontLabel,scopGBC);
+
+        //Row 7
+        //Font drop down
+        AvailableFonts availableFonts = new AvailableFonts();
+        String[] petStrings = availableFonts.getFontNamesStrings();
+        JComboBox fontDropDownComboBox = new JComboBox(petStrings);
+        fontDropDownComboBox.setPrototypeDisplayValue("12345678901234567890"); //Sets a width for the box
+        fontDropDownComboBox.setFont(new Font("Verdana", Font.BOLD, 14)); //Make the font larger
+        fontDropDownComboBox.setSelectedIndex(availableFonts.getNameIndexFromPath(GeneralSettings.USERPREF.getCurrentFontInUse())); //Set the selection index
+        fontDropDownComboBox.addActionListener(e->{
+            JComboBox cb = (JComboBox)e.getSource();
+            String fontName = (String)cb.getSelectedItem();
+            String filePath = availableFonts.FONT_PATHS.get(availableFonts.getNameIndexFromName(fontName));
+            //System.out.println(fontName);
+            //System.out.println(availableFonts.FONT_PATHS.get(availableFonts.getNameIndexFromName(fontName)));
+            //Prevent a change to a path that does not exist?
+            GeneralSettings.USERPREF.setCurrentFontInUse(filePath);
+        });
+
+        scopGBC.gridx = 0; scopGBC.gridy = 6; scopGBC.gridwidth = 4;
+        syntaxColorOptionsPane.add(fontDropDownComboBox,scopGBC);
+
+
+
+
+        mainPane.add(syntaxColorOptionsContainerPane);
         return mainPane;
     }
 

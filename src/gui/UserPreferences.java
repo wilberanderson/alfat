@@ -1140,6 +1140,29 @@ public class UserPreferences {
     }
 
 
+
+    //*********************************************************************************************************************************************
+    //Current Font Used
+    private final String keyCurrentFontInUse = "curfontinuse";
+    private final String fbValueCurentFontInUse = GeneralSettings.DEFAULT_FONT_LOCATION;
+
+    /**Set the current font in use. NOTE: This will ONLY apply during launch
+     * @see GeneralSettings initializeFonts()
+     * @see gui.Settings.SettingsMenu
+     * */
+    public void setCurrentFontInUse(String path) {
+        userPref.put(keyCurrentFontInUse,path);
+    }
+
+    /**Get the current font in use. NOTE: This will ONLY apply during launch
+     * @see GeneralSettings initializeFonts()
+     * @see gui.Settings.SettingsMenu
+     * */
+    public String getCurrentFontInUse() {
+        return userPref.get(keyCurrentFontInUse,fbValueCurentFontInUse);
+    }
+
+
     //*********************************************************************************************************************************************
     //OS Settings calls
     /**Returns true if os is windows*/
