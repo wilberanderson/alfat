@@ -6,6 +6,7 @@ import main.GeneralSettings;
 import org.lwjgl.util.vector.Vector3f;
 
 import java.awt.*;
+import java.io.File;
 import java.util.prefs.Preferences;
 /**
  * This class gets and sets java preferences for the ALFAT user preferences.
@@ -1161,6 +1162,37 @@ public class UserPreferences {
     public String getCurrentFontInUse() {
         return userPref.get(keyCurrentFontInUse,fbValueCurentFontInUse);
     }
+
+    /**Test whether a font path exist located in the res folder
+     * <pre>
+     * A font path is always:
+     * src/res/NAME/NAME.png
+     * src/res/NAME/NAME.fnt
+     * </pre>
+     * @param testPath a string /res/fonts/NAME/NAME
+     * */
+    public boolean isFontPathValid(String testPath) {
+        int count2True = 0;
+        boolean result = true;
+        File tempPNG = new File("src"+testPath+".png");
+        File tempFNT = new File("src"+testPath+".fnt");
+        if(tempPNG.exists()){
+            count2True += 1;
+        }
+        if(tempFNT.exists()){
+            count2True += 1;
+        }
+        if(count2True != 2) {
+            result = false;
+        }
+        return result;
+    }
+
+    /**Reset the font path to the default value*/
+    public void resetCurrentFontPath(){
+        userPref.remove(keyCurrentFontInUse);
+    }
+
 
 
     //*********************************************************************************************************************************************

@@ -228,6 +228,11 @@ public class GeneralSettings {
 	 */
 	public static void initializeFonts() {
 		DEFAULT_FONT_LOCATION = USERPREF.getCurrentFontInUse(); //Sets the font path based on what is defined by the user
+		//IF the font path is not valid for some reason then we reset it back to whatever the default is (which should always be valid)
+		if(!USERPREF.isFontPathValid(DEFAULT_FONT_LOCATION)) {
+			USERPREF.resetCurrentFontPath();
+			DEFAULT_FONT_LOCATION = USERPREF.getCurrentFontInUse();
+		}
 		FONT = new FontType(Loader.loadTexture(new MyFile(DEFAULT_FONT_LOCATION + ".png")), new MyFile(DEFAULT_FONT_LOCATION + ".fnt"));
 	}
 }
