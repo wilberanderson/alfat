@@ -587,7 +587,7 @@ public class Parser2  {
                 System.out.println("Starting @ line #" + box.getStartLine());
             }
 
-            flowchartWindowController.getFlowchartTextBoxController().add(new Vector2f(location.x, location.y), box.getTextLines(), box.getStartLine() + 1, box.getRegisters(), box.alert, i);
+            flowchartWindowController.getFlowchartTextBoxController().add(new Vector2f(location.x, location.y), box.getTextLines(), box.getStartLine() + 1, box.getRegisters(), box.alert, i, box.minimized, box.lineCount);
 //            FlowchartTextBox textBox = new FlowchartTextBox(new Vector2f(location), box.getTextLines(), box.getStartLine()+1, box.getRegisters(), box.alert);
 //            for(TextLine line : textBox.getTextLines()){
 //                flowchartWindowController.getTextLineController().add(line);

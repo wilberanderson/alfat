@@ -62,7 +62,7 @@ public class FlowchartTextBoxController {
         populateVbo(highlightedLines.getVaoID());
     }
 
-    public void add(Vector2f position, List<FormattedTextLine> formattedTextLines, int lineNumber, List<String> registers, String alert, int boxNumber){
+    public void add(Vector2f position, List<FormattedTextLine> formattedTextLines, int lineNumber, List<String> registers, String alert, int boxNumber, boolean minimized, int lineCount){
         FlowchartTextBox textBox = new FlowchartTextBox(position, registers, alert, formattedTextLines, boxNumber);
         //background color unhighlighted
         textBox.setBackgroundColor(GeneralSettings.TEXT_BOX_BACKGROUND_COLOR);
@@ -76,29 +76,74 @@ public class FlowchartTextBoxController {
 
         boolean lineNumberChanged = false;
 
-        for (FormattedTextLine line : formattedTextLines) {
-            if (line.getLength() > greatestLength) {
-                greatestLength = line.getLength();
-            }
-
-            line.getPosition().setX(GeneralSettings.TEXT_BOX_BORDER_WIDTH * 2 + position.x);
-            line.getPosition().setY(position.y - minHeight);
-
-            LineNumberWord lineNumberText = new LineNumberWord(Integer.toString(lineNumber),new Vector2f(GeneralSettings.TEXT_BOX_BORDER_WIDTH + position.x, line.getPosition().y - lineHeight * formattedTextLines.size() - GeneralSettings.TEXT_BOX_BORDER_WIDTH));
-            line.getWords()[0] = lineNumberText;
-            if (lineNumberText.getLength() > longestLineNumber) {
-                if(longestLineNumber > 0){
-                    lineNumberChanged = true;
+        if (!minimized){
+            for (FormattedTextLine line : formattedTextLines) {
+                if (line.getLength() > greatestLength) {
+                    greatestLength = line.getLength();
                 }
-                longestLineNumber = (float) lineNumberText.getLength();
+
+                line.getPosition().setX(GeneralSettings.TEXT_BOX_BORDER_WIDTH * 2 + position.x);
+                line.getPosition().setY(position.y - minHeight);
+
+                LineNumberWord lineNumberText = new LineNumberWord(Integer.toString(lineNumber), new Vector2f(GeneralSettings.TEXT_BOX_BORDER_WIDTH + position.x, line.getPosition().y - lineHeight * formattedTextLines.size() - GeneralSettings.TEXT_BOX_BORDER_WIDTH));
+                line.getWords()[0] = lineNumberText;
+                if (lineNumberText.getLength() > longestLineNumber) {
+                    if (longestLineNumber > 0) {
+                        lineNumberChanged = true;
+                    }
+                    longestLineNumber = (float) lineNumberText.getLength();
+                }
+
+                textLineController.addFlowchartTextLine(line);
+
+                minHeight += lineHeight;
+                lineNumber++;
+
             }
-
-            textLineController.addFlowchartTextLine(line);
-
-            minHeight += lineHeight;
-            lineNumber++;
-
+        } else {
+            int j = 0;  // index, these boxes only have 3 lines
+            String lastLine = Integer.toString(lineNumber+lineCount-1);
+            String middle = "";
+            for (int k = 0;k<lastLine.length();k++){
+                middle += " ";
+            }
+            for (FormattedTextLine line : formattedTextLines) {
+                if (line.getLength() > greatestLength) {
+                    greatestLength = line.getLength();
+                }
+                LineNumberWord lineNumberText;
+                switch (j){
+                    case 0: //first line: line # = first of box
+                        line.getPosition().setX(GeneralSettings.TEXT_BOX_BORDER_WIDTH * 2 + position.x);
+                        line.getPosition().setY(position.y - minHeight);
+                        lineNumberText = new LineNumberWord(Integer.toString(lineNumber),new Vector2f(GeneralSettings.TEXT_BOX_BORDER_WIDTH + position.x, line.getPosition().y - lineHeight * formattedTextLines.size() - GeneralSettings.TEXT_BOX_BORDER_WIDTH));
+                        line.getWords()[0] = lineNumberText;
+                        textLineController.addFlowchartTextLine(line);
+                        minHeight += lineHeight;
+                        break;
+                    case 1: //middle line - no line #
+                        line.getPosition().setX(GeneralSettings.TEXT_BOX_BORDER_WIDTH * 2 + position.x);
+                        line.getPosition().setY(position.y - minHeight);
+                        lineNumberText = new LineNumberWord(middle,new Vector2f(GeneralSettings.TEXT_BOX_BORDER_WIDTH + position.x, line.getPosition().y - lineHeight * formattedTextLines.size() - GeneralSettings.TEXT_BOX_BORDER_WIDTH));
+                        line.getWords()[0] = lineNumberText;
+                        textLineController.addFlowchartTextLine(line);
+                        minHeight += lineHeight;
+                        break;
+                    case 2: // last line: line # = first of box + length of box - 1
+                        line.getPosition().setX(GeneralSettings.TEXT_BOX_BORDER_WIDTH * 2 + position.x);
+                        line.getPosition().setY(position.y - minHeight);
+                        lineNumberText = new LineNumberWord(lastLine,new Vector2f(GeneralSettings.TEXT_BOX_BORDER_WIDTH + position.x, line.getPosition().y - lineHeight * formattedTextLines.size() - GeneralSettings.TEXT_BOX_BORDER_WIDTH));
+                        line.getWords()[0] = lineNumberText;
+                        lineNumberChanged = true;
+                        longestLineNumber = (float) lineNumberText.getLength();
+                        textLineController.addFlowchartTextLine(line);
+                        minHeight += lineHeight;
+                        break;
+                }
+                j++;
+            }
         }
+
         if(lineNumberChanged){
             for(FormattedTextLine line: formattedTextLines){
                 line.changeContentsHorizontalPosition(longestLineNumber*2 - (float)formattedTextLines.get(0).getWords()[0].getLength()*2, false);
@@ -294,7 +339,9 @@ public class FlowchartTextBoxController {
             for (FlowchartTextBox textBox : textBoxes) {
                 if (mousePosition.x > textBox.getPosition().x && mousePosition.y > textBox.getPosition().y && mousePosition.x < textBox.getPosition().x + textBox.getSize().x && mousePosition.y < textBox.getPosition().y + textBox.getSize().y) {
                     int clickedBoxNumber = textBox.getBoxNumber();
-                    GlobalParser.PARSER_MANAGER.getParser().flowchart.get(clickedBoxNumber).setMinimized(!GlobalParser.PARSER_MANAGER.getParser().flowchart.get(clickedBoxNumber).minimized);
+                    if (GlobalParser.PARSER_MANAGER.getParser().flowchart.get(clickedBoxNumber).lineCount > 3) {
+                        GlobalParser.PARSER_MANAGER.getParser().flowchart.get(clickedBoxNumber).setMinimized(!GlobalParser.PARSER_MANAGER.getParser().flowchart.get(clickedBoxNumber).minimized);
+                    }
                     hit = true;
                 }
             }

@@ -95,10 +95,11 @@ public class FlowChartObject {
 
     public List<FormattedTextLine> getTextLines(){
         if (!minimized || (lineCount <=3) ) {return formattedTextLines;}
+
         List<FormattedTextLine> temp = new ArrayList<>();
         temp.add(formattedTextLines.get(0));
         ArrayList<TextWord> dottedLine = new ArrayList<>();
-        dottedLine.add(new LabelWord("... (code folded - ", new Vector2f(0,0)));
+        dottedLine.add(new LabelWord("    (code folded - ", new Vector2f(0,0)));
         dottedLine.add(new ImmediateWord(""+(lineCount-2), new Vector2f(0,0)));
         dottedLine.add(new LabelWord(" lines hidden)", new Vector2f(0,0)));
         temp.add(new FormattedTextLine(dottedLine));
