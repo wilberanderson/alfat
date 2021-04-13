@@ -6,7 +6,9 @@ import org.lwjgl.util.vector.Vector3f;
 
 public class SeparatorWord extends TextWord {
 
-    private static Vector3f color = new Vector3f(0, 0, 0);
+    //private static Vector3f color = new Vector3f(0, 0, 0);
+    private static Vector3f color = GeneralSettings.USERPREF.getSeparatorColor3f();
+
     private String text;
 
     public SeparatorWord(String text, Vector2f position) {

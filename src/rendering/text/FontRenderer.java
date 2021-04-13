@@ -1,12 +1,11 @@
 package rendering.text;
 
 import controllers.flowchartWindow.FlowchartWindowController;
-import gui.texts.CodeWindowText;
-import gui.texts.GUIText;
-import gui.texts.Text;
+import gui.guiElements.TextField;
+import gui.texts.*;
 import gui.fontMeshCreator.FontType;
 import gui.textBoxes.CodeWindow;
-import gui.texts.TextWord;
+import gui.guiElements.GUIElement;
 import main.GeneralSettings;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
@@ -14,6 +13,8 @@ import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.util.vector.Matrix2f;
 import org.lwjgl.util.vector.Matrix3f;
+import org.lwjgl.util.vector.Vector2f;
+import utils.Printer;
 
 import java.util.List;
 import java.util.Map;
@@ -51,17 +52,35 @@ public class FontRenderer {
 			GL13.glActiveTexture(GL13.GL_TEXTURE0);
 			GL11.glBindTexture(GL11.GL_TEXTURE_2D, font.getTextureAtlas());
 			for (Text text : texts.get(font)) {
-				renderText(text, flowChartWindowController, codeWindow, doClipping);
+				renderText(text, flowChartWindowController, codeWindow, doClipping, null, null);
 			}
 		}
 		endRendering();
+	}
 
+	public void renderGUIElements(List<GUIElement> elementList){
+		prepare();
+		shader.aspectRatio.loadMatrix(GeneralSettings.IDENTITY2);
+		for(GUIElement element : elementList){
+			if(element.getGuiText() != null){
+				GL13.glActiveTexture(GL13.GL_TEXTURE0);
+				GL11.glBindTexture(GL11.GL_TEXTURE_2D, element.getGuiText().getFont().getTextureAtlas());
+				if(element instanceof TextField) {
+					renderText(element.getGuiText(), null, null, false, ((TextField) element).getPosition(), ((TextField) element).getSize());
+				}else{
+					renderText(element.getGuiText(), null, null, false, null, null);
+				}
+
+			}
+		}
+		endRendering();
 	}
 
 	/**
 	 *
 	 */
 	public void cleanUp() {
+//		Printer.print();
 		shader.cleanUp();
 	}
 
@@ -80,8 +99,9 @@ public class FontRenderer {
 	 * @param flowchartWindowController
 	 * @param codeWindow
 	 * @param doClipping
+	 * TODO: Move window calculation outside of render text
 	 */
-	private void renderText(Text text, FlowchartWindowController flowchartWindowController, CodeWindow codeWindow, boolean doClipping) {
+	private void renderText(Text text, FlowchartWindowController flowchartWindowController, CodeWindow codeWindow, boolean doClipping, Vector2f position, Vector2f size) {
 		GL30.glBindVertexArray(text.getMesh());
 		GL20.glEnableVertexAttribArray(0);
 		GL20.glEnableVertexAttribArray(1);
@@ -111,7 +131,13 @@ public class FontRenderer {
 			shader.windowSize.loadVec2(2, 2);
 			shader.zoomTranslateMatrix.loadMatrix(zoomTranslateMatrix);
 			if (codeWindow == null) {
-				shader.color.loadVec3(GUIText.getColor());
+				if(text instanceof DarkGUIText){
+					shader.windowPosition.loadVec2(position);
+					shader.windowSize.loadVec2(size);
+					shader.color.loadVec3(DarkGUIText.getColor());
+				}else {
+					shader.color.loadVec3(GUIText.getColor());
+				}
 				GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, text.getVertexCount());
 			}
 		} else if (text instanceof CodeWindowText && codeWindow != null) {

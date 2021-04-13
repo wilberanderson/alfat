@@ -41,7 +41,7 @@ public class HeaderMenu extends TextButton {
         if (!isOpen) {
             for (TextButton button : dropDownButtons) {
                 ButtonController.add(button);
-                TextMaster.loadGuiText(button.getText());
+                TextMaster.loadGuiText(button.getText(), -1);
             }
             this.isOpen = true;
         } else {

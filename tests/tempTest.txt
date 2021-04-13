@@ -1,0 +1,2 @@
+LD R0, SAVE
+PUTS

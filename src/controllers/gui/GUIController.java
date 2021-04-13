@@ -8,4 +8,8 @@ public class GUIController {
         guiWindowController = new GUIWindowController();
     }
 
+
+    public GUIWindowController getGuiWindowController() {
+        return guiWindowController;
+    }
 }

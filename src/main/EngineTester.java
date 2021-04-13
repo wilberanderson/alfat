@@ -1,16 +1,14 @@
 package main;
 import controllers.ApplicationController;
-import controllers.flowchartWindow.FlowchartWindow;
+import controllers.gui.GUIWindowController;
 import gui.*;
-import gui.textBoxes.TextBox;
+import gui.TempFiles.TempFileManager;
 import gui.windows.GUIWindow;
 import loaders.*;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
 import org.lwjgl.system.*;
-import org.lwjgl.util.vector.Vector2f;
-import org.lwjgl.util.vector.Vector3f;
-import org.lwjgl.util.vector.Vector4f;
+import parser.GlobalParser;
 import rendering.renderEngine.MasterRenderer;
 import controllers.GLFWEventController;
 
@@ -26,7 +24,7 @@ public class EngineTester {
 
     //Temporary attributes
     private List<GuiTexture> guis;
-    private ApplicationController applicationController;
+    public static ApplicationController applicationController;
     private GUIWindow guiWindow;
     /**
      * Used for all operations of the program
@@ -34,9 +32,9 @@ public class EngineTester {
      *  - Enters the main loop
      *  - If an exception occurs in the main loop the crash method is called
      */
-    public void run() {
+    public void run(String[] args) {
 
-        init();
+        init(args);
         try {
             loop();
         }catch(Exception e){
@@ -54,9 +52,12 @@ public class EngineTester {
      *  - Updates the icon on taskbar and the window
      *
      */
-    private void init() {
+    private void init(String[] args) {
 
         GeneralSettings.USERPREF = new UserPreferences();
+        //GlobalParser.PARSER_MANAGER = new ParserManager();
+
+
 
         //********************************Create the window************************************
         // Setup an error callback. The default implementation
@@ -109,7 +110,7 @@ public class EngineTester {
 
         //********************************Change the icon***************************************
         try {
-            IconLoader.setIcons("/res/icon/icon.png", window,512);
+            IconLoader.setIcons("/res/icon/alfatlogo2.png", window,512);
         }catch(Exception e){
             e.printStackTrace();
         }
@@ -135,8 +136,10 @@ public class EngineTester {
         //Create the FontTypes in GeneralSettings, must happen before using any font
         GeneralSettings.initializeFonts();
 
-        //Initializes the render engine
+        //Initialize the render engine for the main window and popup windows
         MasterRenderer.init();
+
+
         //************************************Initialize input*************************************
         applicationController = new ApplicationController();
         GLFWEventController.init(window, applicationController);
@@ -150,6 +153,11 @@ public class EngineTester {
         //************************************Initialize the aspect ratio********************************
         GeneralSettings.updateAspectRatio(GeneralSettings.DEFAULT_WIDTH, GeneralSettings.DEFAULT_HEIGHT);
 
+        //************************************Open file**************************************************
+        GlobalParser.init();
+        if(args.length == 1) {
+            applicationController.getHeader().openFile(args[0]);
+        }
 
         //****************************************Perform temporary initializations****************************
         tempInit();
@@ -164,6 +172,7 @@ public class EngineTester {
         //guiWindow = new GUIWindow(200, 100);
 //        guiWindow.title("Alfat popup");
 //
+//        PopupWindow popupWindow = new PopupWindow("Popup test", "This is a popup test");
     }
 
     /**
@@ -177,21 +186,34 @@ public class EngineTester {
             //GLFW.glfwRequestWindowAttention(window);
 
             // Poll for window events. The event callbacks will be called when an event is received
-            GLFW.glfwPollEvents();
-            long startTime = System.currentTimeMillis();
+//            long startTime = System.currentTimeMillis();
+            GLFW.glfwWaitEvents();
             //GLFW.glfwWaitEventsTimeout(0.5);
-            if(System.currentTimeMillis()-startTime < 500){
-//                System.out.println("Event received");
-            }else{
-//                System.out.println("Timed out");
-            }
-            //Render
+//            if(System.currentTimeMillis()-startTime < 500){
+////                System.out.println("Event received");
+//            }else{
+////                System.out.println("Timed out");
+//            }
+            long eventTime = System.currentTimeMillis();
+
+            //Render main window
             GLFW.glfwMakeContextCurrent(window);
             MasterRenderer.renderScene(guis, applicationController);
 
-            if(guiWindow != null) {
-                guiWindow.render();
-            }
+            //Render any open popups
+            GUIWindowController.render();
+
+            long renderTime = System.currentTimeMillis();
+
+//            Print per frame timing info
+//            if((eventTime-startTime) > 0){
+//                System.out.println("Time to process events: " + (eventTime-startTime));
+//            }
+//            if((renderTime-eventTime) > 0){
+//                System.out.println("Time to render: " + (renderTime - eventTime));
+//            }
+//            System.out.println("Ratio: " + ((eventTime-startTime)/(renderTime-startTime)*100) + ":" + ((renderTime-eventTime)/(renderTime/startTime)*100));
+
             // Memory usage:
 //            Runtime runtime = Runtime.getRuntime();
 //            runtime.gc();
@@ -207,14 +229,13 @@ public class EngineTester {
     private void saveIfCrash() {
         if(applicationController.getCodeWindowController() != null) {
             TempFileManager tfm = new TempFileManager(GeneralSettings.TEMP_DIR);
-            //TODO: Change to use the user preferences temp folder over TEMP DIR. Maybe make UserPref from header public or make a getter?
-            tfm.saveCodeEditorTextToFile(applicationController.getCodeWindowController().getTexts(),GeneralSettings.FILE_PATH, GeneralSettings.TEMP_DIR);
+            //TODO: What are we saving? If there is no more code window then what do we save?
+            tfm.saveCodeEditorTextToFile(applicationController.getCodeWindowController().getTexts(),GeneralSettings.FILE_PATH, GeneralSettings.USERPREF.getUserTempFileDirPath());
         }
     }
 
 
     /**Used for a graceful crash of the program
-     *  - TODO: Saves changes to files
      *  - Frees up memory
      *  - Exits with an error code
      */
@@ -254,7 +275,7 @@ public class EngineTester {
      * Runs the program, if the program completes running without any errors then the exit code 0 will be used
      */
     public static void main(String[] args) {
-        new EngineTester().run();
+        new EngineTester().run(args);
         System.exit(0);
     }
 

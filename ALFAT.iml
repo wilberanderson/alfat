@@ -113,5 +113,6 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="pngj-2.1.1" level="project" />
   </component>
 </module>

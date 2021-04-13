@@ -55,6 +55,23 @@ public class MetaFile {
 		close();
 	}
 
+
+	/**
+	 * Opens a font file in preparation for reading.
+	 *
+	 * @param file
+	 *            - the font file.
+	 */
+	protected MetaFile(MyFile file, int width, int height) {
+		this.aspectRatio = width / height;
+		openFile(file);
+		loadPaddingData();
+		loadLineSizes();
+		int imageWidth = getValueOfVariable("scaleW");
+		loadCharacterData(imageWidth);
+		close();
+	}
+
 	protected double getSpaceWidth() {
 		return spaceWidth;
 	}

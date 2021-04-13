@@ -25,6 +25,8 @@ public class CodeLine {
     private String target;
     private List<String> registers = new ArrayList<>();
     private boolean jump;
+    private boolean returns;
+    private int codeBlock; // 0: none, 1:start, 2:end
     private FormattedTextLine textLine;
     //general constructor:
     private CodeLine(){
@@ -41,7 +43,7 @@ public class CodeLine {
      * @param registers Registers used by this line
      * @param line Line index
      */
-    public CodeLine(String fullText, Optional<String> comm, String label, String targetLabel, boolean jump, List<String> registers, int line) {
+    public CodeLine(String fullText, Optional<String> comm, String label, String targetLabel, boolean jump, List<String> registers, int line, boolean returns, int codeBlock) {
         comm.ifPresent(s -> this.command = s);
         if (!label.isEmpty())       this.label = label;
         if (!targetLabel.isEmpty()) this.target = targetLabel;
@@ -52,6 +54,8 @@ public class CodeLine {
         if (this.label == null){
             this.label = "";
         }
+        this.returns = returns;
+        this.codeBlock = codeBlock;
     }
 
     public String getLabel() {
@@ -144,5 +148,17 @@ public class CodeLine {
 
     public void setTextLine(FormattedTextLine textLine) {
         this.textLine = textLine;
+    }
+
+    public boolean isReturns() {
+        return returns;
+    }
+
+    public void setReturns(boolean returns){
+        this.returns = returns;
+    }
+
+    public int getCodeBlock(){
+        return codeBlock;
     }
 }

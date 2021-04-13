@@ -1,0 +1,66 @@
+{
+  "keywordPatterns": {
+    "procedurestart": "",
+    "procedureend": "(?i)(ret)\\b",
+    "control": "(?i)(BR|BRn|BRz|BRp|BRnz|BRnp|BRzp|BRnzp|JMP|RET|JSR|JSRR|RTI|br|brn|brz|brp|brnz|brnp|brzp|brnzp|jmp|ret|jsr|jsrr|rti)\\b",
+    "reserved": "(?i)(TRAP|GETC|OUT|PUTS|IN|HALT|trap|getc|out|puts|in|halt|ALIAS|MACRO|IMPORT|EXPORT|alias|macro|import|export|.ORIG|.FILL|.BLKW|.STRINGZ|.END|.orig|.fill|.blkw|.stringz|.end)\\b",
+    "arithmetic": "(?i)(NOT|AND|ADD|not|and|add)\\b",
+    "dataMovement": "(?i)(LD|LDR|LDI|ST|STR|STI|LEA|ld|ldr|ldi|st|str|sti|lea)\\b",
+    "register": "[rR][0-7](,)?",
+    "commentLine": "(;.+?$)|(;)",
+    "constantHex": "[x][A-Fa-f0-9]{1,4}",
+    "constantNumeric": "[-+]?([0-9]*\\.[0-9]+|[0-9]+)",
+    "constantBinary": "\\b[01]+\\b",
+    "constantCharacter": "[A-Za-z][A-Za-z0-9_]+",
+    "doubleQuotedString": "^(\".*\")_|^([\\\"\\\\].*[\\\"\\\\])",
+    "emptySpace": "((?<=\\s)|(?=\\s+))\\b|((?=\\,))|(?=\\.)|((?<=\\\")|(?=\\\"))|((?<=\\\\)|(?=\\\\))|((?<=')|(?='))|((?<=;)|(?=;))",
+    "label": "^[a-zA-Z0-9\\-_]+",
+    "comment": ";",
+    "separator": "[ ,\t]"
+  },
+  "parserTokenLogic":  {
+    "command": {
+      "regexes": ["reserved","arithmetic","dataMovement"],
+      "columns": [3]
+    },
+    "control": {
+      "regexes": ["control"],
+      "columns": [3]
+    },
+    "register": {
+      "regexes": ["register"],
+      "columns": [3]
+    },
+    "immediate": {
+      "regexes": ["constantHex","constantNumeric","constantBinary"],
+      "columns": [-1]
+    },
+    "label": {
+      "regexes": ["label"],
+      "columns": [1]
+    },
+    "procedurestart": {
+      "regexes": ["procedurestart"],
+      "columns": [-1]
+    },
+    "procedureend": {
+      "regexes": ["procedureend"],
+      "columns": [-1]
+    },
+    "userdefined": {
+      "regexes": ["doubleQuotedString","label"],
+      "columns": [-1]
+    },
+    "comment": {
+      "regexes": ["commentLine"],
+      "columns": [1]
+    },
+    "separator": {
+      "regexes": ["separator"],
+      "columns": [-1]
+    }
+  },
+
+  "ruler":[1,6,12,18,24,29,35,41,47,53],
+  "columnLengths":[-1,6,6,5,6,6,6,6]
+}

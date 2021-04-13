@@ -5,6 +5,8 @@ import org.lwjgl.util.vector.Vector2f;
 
 public abstract class Terminator{
     private Vector2f position;
+    private boolean highlighted = false;
+
     public Terminator(Vector2f position){
         this.position = position;
     }
@@ -17,6 +19,15 @@ public abstract class Terminator{
         this.position = position;
     }
 
-    public abstract RawModel getModel();
+    public static RawModel getModel(){
+        return null;
+    }
 
+    public void setHighlighted(boolean highlighted) {
+        this.highlighted = highlighted;
+    }
+
+    public boolean isHighlighted() {
+        return highlighted;
+    }
 }

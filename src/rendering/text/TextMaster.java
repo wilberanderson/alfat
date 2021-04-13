@@ -54,9 +54,9 @@ public class TextMaster {
 		}
 	}
 
-	public static TextMeshData loadGuiText(GUIText text){
+	public static TextMeshData loadGuiText(GUIText text, float maxSize){
 		FontType font = text.getFont();
-		TextMeshData data = font.loadText(text, text.getTextString());
+		TextMeshData data = font.loadText(text, text.getTextString(), maxSize);
 		int vao = Loader.loadToVAO(data.getVertexPositions(), data.getTextureCoords());
 		text.setMeshInfo(vao, data.getVertexCount());
 		List<Text> textBatch = guiTexts.get(font);
@@ -68,9 +68,8 @@ public class TextMaster {
 		return data;
 	}
 
-	public static TextMeshData loadGuiText(GUIText text, String textString){
-		FontType font = text.getFont();
-		TextMeshData data = font.loadText(text, textString);
+	public static TextMeshData loadGuiText(GUIText text, String textString, FontType font, float maxSize){
+		TextMeshData data = font.loadText(text, textString, maxSize);
 		int vao = Loader.loadToVAO(data.getVertexPositions(), data.getTextureCoords());
 		text.setMeshInfo(vao, data.getVertexCount());
 		List<Text> textBatch = guiTexts.get(font);

@@ -8,13 +8,16 @@ import main.EngineTester;
 import main.GeneralSettings;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.util.vector.Vector2f;
 import rendering.cursor.CursorRenderer;
 import rendering.filledBox.FilledBoxRenderer;
 import rendering.flowchartLine.FlowchartLineRenderer;
 //import rendering.guis.GuiRenderer;
+import rendering.rulers.RulerRenderer;
 import rendering.terminators.TerminatorRenderer;
 import rendering.text.TextMaster;
 import rendering.textLines.TextLineRenderer;
+import utils.Printer;
 
 import java.util.List;
 
@@ -29,6 +32,7 @@ public class MasterRenderer {
 	private static FlowchartLineRenderer flowchartLineRenderer;
 	private static TerminatorRenderer terminatorRenderer;
 	private static TextLineRenderer textLineRenderer;
+	private static RulerRenderer rulerRenderer;
 
 	private static TextLineController textLineController = new TextLineController();
 
@@ -50,6 +54,7 @@ public class MasterRenderer {
 		flowchartLineRenderer = new FlowchartLineRenderer();
 		terminatorRenderer = new TerminatorRenderer();
 		textLineRenderer = new TextLineRenderer();
+		rulerRenderer = new RulerRenderer();
 	}
 
 	/**
@@ -79,17 +84,14 @@ public class MasterRenderer {
 			GeneralSettings.MasterRendererUserPrefToggle = false;
 		}
 
-		if(controller.getCodeWindowController() != null) {
-			if (controller.getFlowchartWindowController() == null) {
-				filledBoxRenderer.renderToScreen(controller.getFlowchartWindowController(), controller.getCodeWindowController());
-			} else {
-				filledBoxRenderer.renderToScreen(controller.getFlowchartWindowController(), controller.getCodeWindowController());
-			}
-		}
-		if(controller.getFlowchartWindowController() != null) {
-			flowchartLineRenderer.renderToScreen(controller.getFlowchartWindowController());
-			terminatorRenderer.renderToScreen(controller.getFlowchartWindowController());
-		}
+//		if(controller.getCodeWindowController() != null) {
+//			if (controller.getFlowchartWindowController() == null) {
+//				filledBoxRenderer.renderToScreen(controller.getFlowchartWindowController(), controller.getCodeWindowController());
+//			} else {
+//				filledBoxRenderer.renderToScreen(controller.getFlowchartWindowController(), controller.getCodeWindowController());
+//			}
+//		}
+
 		if(controller.getCodeWindowController() != null){
 			TextMaster.render(controller.getFlowchartWindowController(), controller.getCodeWindowController().getCodeWindow(), true, false);
 		}
@@ -99,11 +101,15 @@ public class MasterRenderer {
 
 		//If the cursor controller is not null then the cursor is present. Render the cursor
 		if (controller.getCodeWindowController() != null && controller.getCodeWindowController().getCursorController() != null) {
-			cursorRenderer.render(controller.getCodeWindowController().getCursorController());
+			cursorRenderer.render(controller.getCodeWindowController().getCursorController(), new Vector2f(-controller.getCodeWindowController().getContentsVerticalPosition(), -controller.getCodeWindowController().getContentsHorizontalPosition()));
 		}
+
+		//TODO: Put a check to see if rulers should be rendered
+		rulerRenderer.renderToScreen(controller);
 
 		//Render gui elements
 		filledBoxRenderer.renderGuis(controller.getHeader());
+
 
 		//Render gui text
 		TextMaster.renderGuis();

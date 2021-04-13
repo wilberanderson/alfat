@@ -1,0 +1,66 @@
+{
+  "keywordPatterns": {
+    "procedurestart": "",
+    "procedureend": "(?i)(ret)\\b",
+    "control": "(?i)(if|call|BR|BRn|BRz|BRp|BRnz|BRnp|BRzp|BRnzp|JMP|RET|JSR|JSRR|RTI|br|brn|brz|brp|brnz|brnp|brzp|brnzp|jmp|ret|jsr|jsrr|rti)\\b",
+    "reserved": "(?i)(print|disply|TRAP|GETC|OUT|PUTS|IN|HALT|trap|getc|out|puts|in|halt|ALIAS|MACRO|IMPORT|EXPORT|alias|macro|import|export|.ORIG|.FILL|.BLKW|.STRINGZ|.END|.orig|.fill|.blkw|.stringz|.end)\\b",
+    "arithmetic": "(?i)(NOT|AND|ADD|not|and|add|)\\b|(<|>|=|==|!=)",
+    "dataMovement": "(?i)(LD|LDR|LDI|ST|STR|STI|LEA|ld|ldr|ldi|st|str|sti|lea)\\b",
+    "register": "(?i)(e[abcd]x|r[1-9]|[abcd]x)\\b",
+    "commentLine": "(\\*.+?$)|(\\*)",
+    "constantHex": "[x][A-Fa-f0-9]{1,4}",
+    "constantNumeric": "[-+]?([0-9]*\\.[0-9]+|[0-9]+)",
+    "constantBinary": "\\b[01]+\\b",
+    "constantCharacter": "[A-Za-z][A-Za-z0-9_]+",
+    "doubleQuotedString": "^(\".*\")_|^([\\\"\\\\].*[\\\"\\\\])",
+    "emptySpace": "((?<=\\s)|(?=\\s+))\\b|((?=\\,))|(?=\\.)|((?<=\\\")|(?=\\\"))|((?<=\\\\)|(?=\\\\))|((?<=')|(?='))|((?<=\\*)|(?=\\*))|((?<=[<>])|(?=[<>]))",
+    "label": "^[a-zA-Z0-9\\-_]+",
+    "comment": "\\*",
+    "separator": "[ ,\t]"
+  },
+  "parserTokenLogic":  {
+    "command": {
+      "regexes": ["reserved","arithmetic","dataMovement"],
+      "columns": [2,3,4]
+    },
+    "control": {
+      "regexes": ["control"],
+      "columns": [2]
+    },
+    "register": {
+      "regexes": ["register"],
+      "columns": [3]
+    },
+    "immediate": {
+      "regexes": ["constantHex","constantNumeric","constantBinary"],
+      "columns": [3,4,5]
+    },
+    "label": {
+      "regexes": ["label"],
+      "columns": [1,3,9]
+    },
+    "procedurestart": {
+      "regexes": ["procedurestart"],
+      "columns": [1]
+    },
+    "procedureend": {
+      "regexes": ["procedureend"],
+      "columns": [2]
+    },
+    "userdefined": {
+      "regexes": ["doubleQuotedString","label"],
+      "columns": [0]
+    },
+    "comment": {
+      "regexes": ["commentLine"],
+      "columns": [1]
+    },
+    "separator": {
+      "regexes": ["separator"],
+      "columns": [0]
+    }
+  },
+  "fullSplitColumn": [false,false,false,false,false,false,false],
+  "columnLengths":[6,6,6,6,5,6,6,6,6],
+  "ruler":[1,6,12,18,24,29,35,41,47,53]
+}

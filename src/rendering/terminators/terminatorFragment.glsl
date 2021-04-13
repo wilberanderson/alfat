@@ -1,10 +1,10 @@
 #version 330
 
 in vec2 fragment_Position;
+in vec3 pass_Color;
 
 out vec4 out_color;
 
-uniform vec3 color;
 uniform vec2 windowPosition;
 uniform vec2 windowSize;
 uniform float doClipping;
@@ -16,5 +16,5 @@ void main(void){
 		}
 	}
 	//Set the color to be the color loaded via uniform
-	out_color = vec4(color, 1);
+	out_color = vec4(pass_Color, 1);
 }

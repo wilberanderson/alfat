@@ -8,28 +8,64 @@ import gui.terminators.Junction;
 import gui.terminators.Terminator;
 import gui.textBoxes.FlowchartTextBox;
 import gui.texts.*;
+import gui.windows.PopupWindow;
+import main.EngineTester;
 import main.GeneralSettings;
+import org.lwjgl.glfw.GLFW;
 import org.lwjgl.util.vector.Matrix3f;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
+import utils.Printer;
 
 import java.io.*;
 import java.util.*;
 
-public class Parser implements CodeReader {
+public class Parser  {
     public float x_bound = -10;
     public float y_bound = -10;
     // attributes
     String infile;  // file path
     boolean verbose; // final release should have this changed to false
-    ArrayList<FlowChartObject> flowchart = new ArrayList<>();
+    boolean openToTag = false;
+    String targetFileTag = "";
+    String closingFileTag = "";
+    private boolean invalidFlag = false; // invalid labels found in parsing? Highlight after flowchart generation
+    public ArrayList<FlowChartObject> flowchart = new ArrayList<>();
 
     HashMap<String, Integer> labelMap = new HashMap<>(); // map of labels -> line numbers
     List<CodeLine> lines = new ArrayList<>();
 
-    public Parser(String infile, boolean verbose) {
-        this.infile = infile;
-        this.verbose = verbose;
+    private SimpleTokenizer simpleTokenizer = new SimpleTokenizer();
+
+    //JsonReader jr = new JsonReader(new File("CodeSyntax/LC3.json"));
+    //JsonReader jr = new JsonReader(new File("CodeSyntax/x86.json"));
+    private CodeSyntax syn = JsonReader.mapJsonToCodeSyntax(new File("CodeSyntax/LC3.json"));
+
+
+    /**
+     * Clears out clears out values of parser.
+     * */
+    public void clear() {
+        invalidFlag = false;
+        flowchart.clear();
+        labelMap.clear();
+        lines.clear();
+    }
+
+    /**
+     * Set the code syntax of parser
+     * This also sets the SimpleTokenizer split string regex and comment regex.
+     * Warning: This assumes that codeSyntax is valid and contains these...
+     * */
+    public void setCodeSyntax(CodeSyntax codeSyntax) {
+        this.syn = codeSyntax;
+        simpleTokenizer.setSplitRegex(syn.getKeywordPatterns().getEmptySpace());
+        simpleTokenizer.setCommentRegex(syn.getKeywordPatterns().getComment());
+    }
+
+    public Parser(boolean verbose, boolean openToTag) {
+        this.verbose = true;
+        this.openToTag = openToTag;
     }
 
     public Parser(){
@@ -37,20 +73,21 @@ public class Parser implements CodeReader {
         this.verbose = false;
     }
 
-    //TODO: change from hardcoded to dynamically loaded from JSON
-    JsonReader jr = new JsonReader(new File(GeneralSettings.USERPREF.getSyntaxPath()));
-    //LC3Syntax syn = jr.mapJsonLC3Syntax();
-    CodeSyntax syn = jr.mapJsonToSyntax();
-    String[] commands = syn.getCommands();
-    String[] jumps = syn.getJumps();
-    String[] registerNames = syn.getRegisterNames();
-
     /**Read an input file. Parse the input file line by line, and store them in the arrayList of CodeLine objects.
      *
      * @param infile The absolute or relative location of the file, as a string.
      */
-    @Override
-    public void ReadFile(String infile) {
+    public void ReadFile(String infile, boolean openToTag) {
+        invalidFlag = false;
+        this.openToTag = openToTag;
+        boolean ready = !openToTag; // flag to start saving parsed info
+        boolean done = false;
+        if (openToTag){
+            this.targetFileTag = "[ \t]*"+ GeneralSettings.PARTIAL_FILE_TAG_TARGET + "\\b.*";
+            if (!GeneralSettings.PARTIAL_FILE_TAG_ENDING.isBlank()) {
+                this.closingFileTag = "[ \t]*" + GeneralSettings.PARTIAL_FILE_TAG_ENDING + "\\b.*";
+            }
+        }
         //prepare to read file:
         this.infile = infile;
         File file = new File(infile);
@@ -60,114 +97,140 @@ public class Parser implements CodeReader {
             int i = 0;
             String line;
             while ((line = br.readLine()) != null) {
-                // HERE
-                boolean first = true;
-                //parse line:
                 i++;    //line numbers start at 1
-                if (verbose) System.out.println("\nparsing line #" + i + "`" + line + "`");
-                // replaces tabs with spaces
-                //line = line.replace("\t", "    ");
+                if (!ready){
+                    ready = line.matches(this.targetFileTag);
+                }
+                if (ready && !done) {
+                    // HERE
+                    boolean first = true;
+                    //parse line:
+                    if (verbose) System.out.println("\nparsing line #" + i + "`" + line + "`");
+                    // replaces tabs with spaces
+                    //line = line.replace("\t", "    ");
 
-                //take entire line before semicolon
-                int index = line.indexOf(";");
-                if (index == -1) index = line.length();
-                String[] arrLine = line.substring(0, index).split("((?<=\\s)|(?=\\s+))");
+                    String[] arrLine = simpleTokenizer.tokenizeString(line);
 
-                //temp variables:
-                Optional<String> comm = Optional.empty();
-                String label = "";
-                String targetLabel = "";
-                List<String> registers = new ArrayList<>();
-                List<TextWord> formattedString = new ArrayList<>();
-                boolean jump = false;
+                    //temp variables:
+                    Optional<String> comm = Optional.empty();
+                    String label = "";
+                    String targetLabel = "";
+                    List<String> registers = new ArrayList<>();
+                    List<TextWord> formattedString = new ArrayList<>();
+                    boolean jump = false;
+                    boolean ret = false;
 
-                //  arrLine = {"LABEL:", "JGZ", "R1", "R2", "FINISH"}
-                for (String fragment : arrLine) {
-                    if (verbose) System.out.print("[" + fragment + "]");
+                    //  arrLine = {"LABEL:", "JGZ", "R1", "R2", "FINISH"}
+                    for (String fragment : arrLine) {
+                        if (verbose) System.out.print("[" + fragment + "]");
 
-                    //grab each command in the line, if they exist:
-                    if (Arrays.asList(commands).contains(fragment.toUpperCase())) {
-                        comm = Arrays.stream(commands).filter(fragment.toUpperCase()::equals).findAny();
-                        formattedString.add(new CommandWord(comm.get(), new Vector2f(0f, 0)));
-                        first = false;
-                    } else if (Arrays.asList(jumps).contains(fragment.toUpperCase()) || fragment.matches("^BR[nzp]{0,3}$")) {
-                        comm = Optional.of(fragment);
-                        formattedString.add(new CommandWord(comm.get(), new Vector2f(0f, 0)));
-                        jump = true;
-                        first = false;
-                    } else if (registerMatch(fragment)) {  //register
-                        if (fragment.contains(",")) {
-                            if (!registers.contains(fragment.substring(0, fragment.length() - 1))) {
-                                registers.add(fragment.substring(0, fragment.length() - 1));
+                        //grab each command in the line, if they exist:
+                        if (fragment.matches(syn.getKeywordPatterns().getReserved()) ||
+                                fragment.matches(syn.getKeywordPatterns().getArithmetic()) ||
+                                fragment.matches(syn.getKeywordPatterns().getDataMovement())
+                        ) {
+                            comm = Optional.of(fragment);
+                            formattedString.add(new CommandWord(comm.get(), new Vector2f(0f, 0)));
+                            first = false;
+                        } else if (fragment.matches(syn.getKeywordPatterns().getControl())) { //Control
+                            comm = Optional.of(fragment);
+                            formattedString.add(new BranchWord(comm.get(), new Vector2f(0f, 0)));
+                            jump = true;
+                            first = false;
+                        } else if (fragment.matches(syn.getKeywordPatterns().getRegister())) {  //register
+                            if (fragment.contains(",")) {
+                                if (!registers.contains(fragment.substring(0, fragment.length() - 1))) {
+                                    registers.add(fragment.substring(0, fragment.length() - 1));
+                                }
+                                formattedString.add(new RegisterWord(fragment.substring(0, fragment.length() - 1), new Vector2f(0f, 0)));
+                                formattedString.add(new LabelWord(",", new Vector2f(0f, 0)));
+                            } else {
+                                if (!registers.contains(fragment)) {
+                                    registers.add(fragment);
+                                }
+                                formattedString.add(new RegisterWord(fragment, new Vector2f(0f, 0)));
                             }
-                            formattedString.add(new RegisterWord(fragment.substring(0, fragment.length()-1), new Vector2f(0f, 0)));
-                            formattedString.add(new LabelWord(",", new Vector2f(0f, 0)));
+                            first = false;
+                        } else if (fragment.matches(syn.getKeywordPatterns().getConstantNumeric())
+                                || fragment.matches(syn.getKeywordPatterns().getConstantHex())
+                                || fragment.matches(syn.getKeywordPatterns().getConstantNumeric())) {
+                            //immediate value, literal or trap
+                            //just skip this for now
+                            first = false;
+                            formattedString.add(new ImmediateWord(fragment, new Vector2f(0f, 0)));
+                        } else if (jump && fragment.matches(syn.getKeywordPatterns().getLabel())) {   //jump statement, this matches a label
+                            //if the line is a jump statement,
+                            //this matches the label or labels pointed to by the command
+                            //if the language supports having the label BEFORE the command,
+                            //remove the `jump &&` statement as it will cause problems.
+                            // target label for the line.
+                            targetLabel = fragment;
+                            formattedString.add(new LabelWord(fragment, new Vector2f(0f, 0)));
+                            first = false;
+                        } else if (fragment.matches(syn.getKeywordPatterns().getProcedureend())) {
+                            ret = true;
+                            jump = true;
+                            formattedString.add(new BranchWord(fragment, new Vector2f(0f, 0)));
+                            first = false;
+                        } else if (first && fragment.matches(syn.getKeywordPatterns().getLabel())) {
+                            //this is the (optional) label for the line
+                            label = fragment;
+                            labelMap.put(label, i);
+                            formattedString.add(new LabelWord(fragment, new Vector2f(0f, 0)));
+                            first = false;
+                            //} else if (!jump && fragment.matches("^[a-zA-Z0-9\\-_\"\\\\\\[\\]\\!<>]+")) {
+                        } else if (!jump && fragment.matches(syn.getKeywordPatterns().getLabel())
+                                || !jump && fragment.matches(syn.getKeywordPatterns().getDoubleQuotedString())
+
+                        ) {
+                            //the command isn't a jump statement, so the label must be a variable i.e. string, etc.
+                            formattedString.add(new LabelWord(fragment, new Vector2f(0f, 0)));
+                        } else if (fragment.matches(syn.getKeywordPatterns().getCommentLine())) {
+                            formattedString.add(new CommentWord(fragment, new Vector2f(0f, 0)));
+                        } else if (fragment.matches("[ ,\t]")) {
+                            formattedString.add(new SeparatorWord(fragment, new Vector2f(0f, 0f)));
                         } else {
-                            if (!registers.contains(fragment)) {
-                                registers.add(fragment);
-                            }
-                            formattedString.add(new RegisterWord(fragment, new Vector2f(0f, 0)));
+                            formattedString.add(new ErrorWord(fragment, new Vector2f(0f, 0f)));
                         }
-                        first = false;
-                    } else if (fragment.matches("^[x#]-?[0-9]+")) {
-                        //immediate value, literal or trap
-                        //just skip this for now
-                        first = false;
-                        formattedString.add(new ImmediateWord(fragment, new Vector2f(0f, 0)));
-                    } else if (jump && fragment.matches("^[a-zA-Z0-9\\-_]+")) {   //jump statement, this matches a label
-                        //if the line is a jump statement,
-                        //this matches the label or labels pointed to by the command
-                        //if the language supports having the label BEFORE the command,
-                        //remove the `jump &&` statement as it will cause problems.
-                        targetLabel = fragment;
-                        formattedString.add(new LabelWord(fragment, new Vector2f(0f, 0)));
-                        first = false;
-                    } else if (first && fragment.matches("^[a-zA-Z0-9\\-_]+")) {
-                        //this is the (optional) label for the line
-                        label = fragment;
-                        labelMap.put(label, i);
-                        formattedString.add(new LabelWord(fragment, new Vector2f(0f, 0)));
-                        first = false;
-                    } else if (!jump && fragment.matches("^[a-zA-Z0-9\\-_\"\\\\\\[\\]\\!<>]+")) {
-                        //the command isn't a jump statement, so the label must be a variable i.e. string, etc.
-                        formattedString.add(new LabelWord(fragment, new Vector2f(0f, 0)));
-                    } else if (fragment.matches("[ ,\t]")){
-                        formattedString.add(new SeparatorWord(fragment, new Vector2f(0f,0f)));
-                    } else {
-                        formattedString.add(new ErrorWord(fragment, new Vector2f(0f,0f)));
+
                     }
 
+
+                    //Put formatted text into an object
+                    FormattedTextLine FormLine = new FormattedTextLine(formattedString);
+
+                    //log testing data, if verbose parsing is on:
+                    if (verbose) {
+                        System.out.println("\nParsed line " + i);
+                        comm.ifPresent(s -> System.out.println(" command: \"" + s + "\""));
+                        if (!label.isEmpty()) System.out.println(" line label: \"" + label + "\"");
+                        if (jump) System.out.println(" Line is a jump line (break, jump, etc.)");
+                        if (jump) System.out.println(" jump targets: \"" + targetLabel + "\"");
+                        System.out.println(" registers used: " + registers);
+                    }
+
+                    //call constructor for TLine, then add the new object to the arraylist for the file
+                    // Code block is not implemented here
+                    lines.add(new CodeLine(line, comm, label, targetLabel, jump, registers, i, ret, 0));
+                    // Assign formatted text object to the new Tline class
+                    lines.get(lines.size() - 1).setTextLine(FormLine);
                 }
-
-                if (index < line.length() - 1) {
-                    formattedString.add(new CommentWord(line.substring(index), new Vector2f(0f, 0)));
+                if (ready && !done && !closingFileTag.isBlank()) {
+                    // check if closing tag reached
+                    done = line.matches(this.closingFileTag);
                 }
-
-                //Put formatted text into an object
-                FormattedTextLine FormLine = new FormattedTextLine(formattedString);
-
-                //log testing data, if verbose parsing is on:
-                if (verbose) {
-                    System.out.println("\nParsed line " + i);
-                    comm.ifPresent(s -> System.out.println(" command: \"" + s + "\""));
-                    if (!label.isEmpty()) System.out.println(" line label: \"" + label + "\"");
-                    if (jump) System.out.println(" Line is a jump line (break, jump, etc.)");
-                    if (jump) System.out.println(" jump targets: \"" + targetLabel + "\"");
-                    System.out.println(" registers used: " + registers);
-                }
-
-                //call constructor for TLine, then add the new object to the arraylist for the file
-                lines.add(new CodeLine(line, comm, label, targetLabel, jump, registers, i));
-                // Assign formatted text object to the new LC3Tline class
-                lines.get(lines.size() - 1).setTextLine(FormLine);
-
             }
             br.close();
+            if (!ready){
+                // Tag was never found
+                System.out.println("Invalid tag provided. Check the source file or the tag and try again.");
+                // TODO: throw popup here, probably.
+            }
         } catch (FileNotFoundException e) {
             if (verbose) System.out.println("File not found");
             e.printStackTrace();
         } catch (IOException e) {
-            if (verbose) System.out.println("IO error occured");
+            if (verbose) System.out.println("IO error occurred");
             e.printStackTrace();
         }
     }
@@ -180,12 +243,10 @@ public class Parser implements CodeReader {
     public EditableFormattedTextLine getFormattedLine(String line){
         boolean first = true;
         //parse line:
-        line = line.replace("\t", "    ");
+//        line = line.replace("\t", "    ");
 
-        //take entire line before semicolon
-        int index = line.indexOf(";");
-        if (index == -1) index = line.length();
-        String[] arrLine = line.substring(0, index).split("((?<=\\s)|(?=\\s+))");
+        String[] arrLine = simpleTokenizer.tokenizeString(line);
+
 
         //temp variables:
         Optional<String> comm = Optional.empty();
@@ -200,16 +261,19 @@ public class Parser implements CodeReader {
             if (verbose) System.out.print("[" + fragment + "]");
 
             //grab each command in the line, if they exist:
-            if (Arrays.asList(commands).contains(fragment.toUpperCase())) {
-                comm = Arrays.stream(commands).filter(fragment.toUpperCase()::equals).findAny();
-                formattedString.add(new CommandWord(comm.get(), new Vector2f(0f, 0)));
-                first = false;
-            } else if (Arrays.asList(jumps).contains(fragment.toUpperCase()) || fragment.matches("^BR[nzp]{0,3}$")) {
+            if (fragment.matches(syn.getKeywordPatterns().getReserved()) ||
+                    fragment.matches(syn.getKeywordPatterns().getArithmetic()) ||
+                    fragment.matches(syn.getKeywordPatterns().getDataMovement())) {
                 comm = Optional.of(fragment);
                 formattedString.add(new CommandWord(comm.get(), new Vector2f(0f, 0)));
+                first = false;
+            } else if (fragment.matches(syn.getKeywordPatterns().getControl())) {
+                comm = Optional.of(fragment);
+                formattedString.add(new BranchWord(comm.get(), new Vector2f(0f, 0)));
                 jump = true;
                 first = false;
-            } else if (Arrays.stream(registerNames).anyMatch(fragment.toUpperCase()::contains)) {  //register
+            } else if (fragment.matches(syn.getKeywordPatterns().getRegister())) {  //register
+
                 if (fragment.contains(",")) {
                     if (!registers.contains(fragment.substring(0, fragment.length() - 1))) {
                         registers.add(fragment.substring(0, fragment.length() - 1));
@@ -223,12 +287,15 @@ public class Parser implements CodeReader {
                     formattedString.add(new RegisterWord(fragment, new Vector2f(0f, 0)));
                 }
                 first = false;
-            } else if (fragment.matches("^[x#]-?[0-9]+")) {
+            } else if (fragment.matches(syn.getKeywordPatterns().getConstantNumeric())
+                       ||fragment.matches(syn.getKeywordPatterns().getConstantHex())
+                       ||fragment.matches(syn.getKeywordPatterns().getConstantNumeric())
+            ) {
                 //immediate value, literal or trap
                 //just skip this for now
                 first = false;
                 formattedString.add(new ImmediateWord(fragment, new Vector2f(0f, 0)));
-            } else if (jump && fragment.matches("^[a-zA-Z0-9\\-_]+")) {   //jump statement, this matches a label
+            } else if (jump && fragment.matches(syn.getKeywordPatterns().getLabel())) {   //jump statement, this matches a label
                 //if the line is a jump statement,
                 //this matches the label or labels pointed to by the command
                 //if the language supports having the label BEFORE the command,
@@ -236,25 +303,29 @@ public class Parser implements CodeReader {
                 targetLabel = fragment;
                 formattedString.add(new LabelWord(fragment, new Vector2f(0f, 0)));
                 first = false;
-            } else if (first && fragment.matches("^[a-zA-Z0-9\\-_]+")) {
+            } else if (fragment.matches(syn.getKeywordPatterns().getCommentLine())) {
+                formattedString.add(new CommentWord(fragment, new Vector2f(0f, 0)));
+            }
+            else if (first && fragment.matches(syn.getKeywordPatterns().getLabel())) {
                 //this is the (optional) label for the line
                 label = fragment;
                 formattedString.add(new LabelWord(fragment, new Vector2f(0f, 0)));
                 first = false;
-            } else if (!jump && fragment.matches("^[a-zA-Z0-9\\-_]+")) {
+            } else if (!jump && fragment.matches(syn.getKeywordPatterns().getLabel())
+                    || !jump && fragment.matches(syn.getKeywordPatterns().getDoubleQuotedString())
+
+            ) {
                 //the command isn't a jump statement, so the label must be a variable i.e. string, etc.
                 formattedString.add(new LabelWord(fragment, new Vector2f(0f, 0)));
-            } else if (fragment.matches("[ ,\t]")){
+            }
+            else if (fragment.matches("[ ,\t]")){
                 formattedString.add(new SeparatorWord(fragment, new Vector2f(0f,0f)));
             } else {
                 formattedString.add(new ErrorWord(fragment, new Vector2f(0f, 0f)));
             }
         }
 
-        if (index < line.length() - 1) {
-            formattedString.add(new CommentWord(line.substring(index), new Vector2f(0f, 0)));
-            //formattedString.add(new SeparatorWord("\t", new Vector2f(0f,0f)));
-        }
+
 
         //Put formatted text into an object
         EditableFormattedTextLine FormLine = new EditableFormattedTextLine(formattedString, line);
@@ -272,9 +343,18 @@ public class Parser implements CodeReader {
     }
 
     /**
+     * Default formatted text line. Used when there is no valid syntax in use.
+     * Defaults to making all text white.
+     * */
+    public EditableFormattedTextLine getFormattedLineDefault(String line) {
+        List<TextWord> formattedString = new ArrayList<>();
+        formattedString.add(new LabelWord(line, new Vector2f(0f, 0)));
+        return new EditableFormattedTextLine(formattedString, line);
+    }
+
+    /**
      * Create flowchart objects. <b>Only</b> call after the file has been parsed.
      */
-    @Override
     public void generateFlowObjects() {
         //generate naive boxes for flowchart.
         if (verbose) System.out.println("\n\nBeginning flowchart parsing:");
@@ -316,7 +396,13 @@ public class Parser implements CodeReader {
             if (line.isJumps()) {
                 if (verbose) System.out.println("Line jumps, box ended.");
                 flowchart.get(flowchart.size() - 1).jumps = true;
-                flowchart.get(flowchart.size() - 1).target = line.getTarget();
+                if (line.isReturns()) {
+                    // line returns
+                    flowchart.get(flowchart.size() - 1).setReturns(true);
+                } else {
+                    // line doesn't return; i.e. has a target label:
+                    flowchart.get(flowchart.size() - 1).target = line.getTarget();
+                }
 
                 flowchart.add(new FlowChartObject());
                 flowchart.get(flowchart.size() - 1).setStartLine(line.getLineNumber());
@@ -332,7 +418,7 @@ public class Parser implements CodeReader {
         for (FlowChartObject box : flowchart) {
             box.setBoxNumber(i);
             // If the box jumps, find where it targets and link them.
-            if (box.isJumps()) {
+            if (box.isJumps() && !box.isReturns()) {
                 if (verbose) System.out.println("Creating linkage for box " + box.label + " targeting " + box.target);
                 for (FlowChartObject candidate : flowchart) {
                     if (verbose) System.out.println(" -> Checking against box " + box.label);
@@ -345,6 +431,13 @@ public class Parser implements CodeReader {
                 if (box.connection == null) {
                     box.jumps = false;
                     box.alert += "invalid_label";
+                    // popup goes here
+                    if (!invalidFlag) {
+                        // only show a single pop up for invalid labels.
+                        PopupWindow popup = new PopupWindow("Warning", "Invalid label found", "cancel", "continue");
+                        GLFW.glfwMakeContextCurrent(EngineTester.getWindow());
+                        invalidFlag = true;
+                    }
                 }
             }
             i++;
@@ -356,7 +449,7 @@ public class Parser implements CodeReader {
                 n++;
                 System.out.println("─ " + box.getBoxNumber() + "\t──────────────────────────────────────────────────────────────────────────");
                 System.out.println(box.getFullText(true));
-                if (box.isJumps())
+                if (box.isJumps() && !box.isReturns())
                     System.out.println(" Target label: " + box.connection.label + " @ box " + box.connection.getBoxNumber());
                 else if (!box.alert.isEmpty()) System.out.println("┌╼ " + box.alert);
                 System.out.println("────────────────────────────────────────────────────────────────────────────────");
@@ -380,6 +473,7 @@ public class Parser implements CodeReader {
         Vector2f location = new Vector2f(GeneralSettings.FLOWCHART_PAD_LEFT - 1, 0);
         List<FlowchartTextBox> textBoxes = new ArrayList<>();
         float max_right_width = -1000f;
+        float magic_number = -.1f;
         List<Vector2f> locations = new ArrayList<>();
         List<Vector2f> sizes = new ArrayList<>();
 
@@ -390,7 +484,7 @@ public class Parser implements CodeReader {
                 System.out.println("Starting @ line #" + box.getStartLine());
             }
 
-            flowchartWindowController.getFlowchartTextBoxController().add(new Vector2f(location.x, location.y), box.getTextLines(), box.getStartLine() + 1, box.getRegisters(), box.alert);
+            flowchartWindowController.getFlowchartTextBoxController().add(new Vector2f(location.x, location.y), box.getTextLines(), box.getStartLine() + 1, box.getRegisters(), box.alert, i, box.minimized, box.lineCount);
 //            FlowchartTextBox textBox = new FlowchartTextBox(new Vector2f(location), box.getTextLines(), box.getStartLine()+1, box.getRegisters(), box.alert);
 //            for(TextLine line : textBox.getTextLines()){
 //                flowchartWindowController.getTextLineController().add(line);
@@ -408,6 +502,10 @@ public class Parser implements CodeReader {
             locations.add(textBox.getPosition());
             sizes.add(textBox.getSize());
         }
+        //All boxes have been added to the flowchart window, unload boxes which are initially off of the screen
+
+        flowchartWindowController.unloadFlowchartBoxes();
+
         // Pass flowchart boxes out:
 //        flowchartWindowController.setFlowChartTextBoxList(textBoxes);
 
@@ -430,12 +528,8 @@ public class Parser implements CodeReader {
                 //second point: top of next box:
                 coordinates.add(new Vector2f((locations.get(index).x) + .05f, (locations.get(index + 1).y + sizes.get(index + 1).y)));
                 //if (verbose) System.out.println("from " + (locations.get(index).y) + " to " + (-1 + locations.get(index+1).y + sizes.get(index+1).y) + "\n");
-                Terminator terminator;
-                if (coordinates.get(coordinates.size() - 1).y < coordinates.get((coordinates.size() - 2)).y) {
-                    terminator = new ArrowHead(coordinates.get(coordinates.size() - 1), false);
-                } else {
-                    terminator = new ArrowHead(coordinates.get(coordinates.size() - 1), true);
-                }
+                Terminator terminator = new ArrowHead(coordinates.get(coordinates.size() - 1), GeneralSettings.ARROWHEAD_DOWN);
+
                 FlowchartLine line = new FlowchartLine(coordinates, terminator);
                 linesList.add(line);
                 //if (verbose) System.out.println();
@@ -444,7 +538,7 @@ public class Parser implements CodeReader {
             // If jump, draw line to target box:
 
             if (index < flowchart.size()) {
-                if (flowchart.get(index).isJumps()) {
+                if (flowchart.get(index).isJumps() && !flowchart.get(index).isReturns()) {
                     if (verbose) {
                         System.out.println("Adding jumping line from box " + index + " to box " + (flowchart.get(index).connection.getBoxNumber()));
                         System.out.println(Math.min(index, flowchart.get(index).connection.getBoxNumber()) + " -> " + Math.max(index, flowchart.get(index).connection.getBoxNumber()));
@@ -484,12 +578,8 @@ public class Parser implements CodeReader {
                     }
                     coordinates.add(new Vector2f((locations.get(index).x) + 2 * sizes.get(flowchart.get(index).connection.getBoxNumber() - 1).x / 3, (sizes.get(flowchart.get(index).connection.getBoxNumber() - 1).y + locations.get(flowchart.get(index).connection.getBoxNumber() - 1).y + (GeneralSettings.FLOWCHART_PAD_TOP / 3))));
                     coordinates.add(new Vector2f((locations.get(index).x) + 2 * sizes.get(flowchart.get(index).connection.getBoxNumber() - 1).x / 3, (sizes.get(flowchart.get(index).connection.getBoxNumber() - 1).y + locations.get(flowchart.get(index).connection.getBoxNumber() - 1).y)));
-                    Terminator terminator;
-                    if (coordinates.get(coordinates.size() - 1).y < coordinates.get((coordinates.size() - 2)).y) {
-                        terminator = new ArrowHead(coordinates.get(coordinates.size() - 1), false);
-                    } else {
-                        terminator = new ArrowHead(coordinates.get(coordinates.size() - 1), true);
-                    }
+                    Terminator terminator = new ArrowHead(coordinates.get(coordinates.size() - 1), GeneralSettings.ARROWHEAD_DOWN);
+
                     FlowchartLine line = new FlowchartLine(coordinates, terminator);
                     line.setColor(rainbow[jump_lines % rainbow.length]);
                     linesList.add(line);
@@ -513,10 +603,14 @@ public class Parser implements CodeReader {
         GeneralSettings.IMAGE_SIZE = new Vector2f(Math.abs(x_bound) + 1f, Math.abs(y_bound) + 1f + GeneralSettings.FLOWCHART_PAD_TOP);
         Matrix3f translation = new Matrix3f();
         translation.setIdentity();
-        translation.m00 = 2 / GeneralSettings.IMAGE_SIZE.x;
-        translation.m11 = 2 / GeneralSettings.IMAGE_SIZE.y;
-        translation.m20 = -.2f;
-        translation.m21 = -(y_bound * translation.m11) - .875f;
+        magic_number = -.875f;
+        translation.m00 = 2 / GeneralSettings.IMAGE_SIZE.x;         // X scaling
+        translation.m11 = 2 / GeneralSettings.IMAGE_SIZE.y;         // Y scale
+        translation.m20 = 0f - GeneralSettings.FLOWCHART_PAD_LEFT;//-.2f;                                     // X translation
+        translation.m21 = - (y_bound * translation.m11) + magic_number; // Y translation
+//        System.out.println(infile + ": " + translation.m00 + "," + translation.m11);
+//        System.out.println("y_bound: " + y_bound);
+//        System.out.println("m20 and m21" + ": " + translation.m20 + "," + translation.m21);
         GeneralSettings.IMAGE_TRANSLATION = translation;
         //Find line overlaps:
         for (FlowchartLine line1 : linesList) {
@@ -538,6 +632,8 @@ public class Parser implements CodeReader {
         }
 
         flowchartWindowController.setFlowchartLineList(linesList);
+        if (invalidFlag)
+            flowchartWindowController.locateAlert("invalid_label");
         return flowchartWindowController;
     }
 
@@ -566,10 +662,4 @@ public class Parser implements CodeReader {
         return flowchartWindowController;
     }
 
-    public boolean registerMatch(String s){
-        /*for (String r: registerNames) {
-            if(s.matches("^"+r+"(,)?")){ return true; }
-        }*/
-        return (s.matches("R[0-7](,)?"));
-    }
 }

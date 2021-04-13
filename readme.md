@@ -1,3 +1,5 @@
+
+![Icon](src/res/icon/alfatlogo2.png)
 # ALFAT
 Assembly Language Flowchart and Analysis Tool, developed by students at the University of Massachusetts Dartmouth.
 
@@ -19,4 +21,4 @@ To import and build in Eclipse, there is a step-by-step PDF [here](https://drive
 6. Highlight register usage: `Registers > (register name)`
 7. Highlight broken jump statements: `Analysis > Invalid Labels`
 
-![Flowchart output](demo.png)
+![Flowchart output](src/res/demo.png)

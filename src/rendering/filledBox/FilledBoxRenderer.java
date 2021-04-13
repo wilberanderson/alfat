@@ -11,14 +11,16 @@ import gui.buttons.Button;
 import gui.buttons.TextButton;
 import gui.textBoxes.FlowchartTextBox;
 import gui.textBoxes.TextBox;
+import gui.guiElements.GUIElement;
 import loaders.Loader;
+import main.EngineTester;
 import main.GeneralSettings;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
-import org.lwjgl.util.vector.Matrix2f;
-import org.lwjgl.util.vector.Matrix3f;
 import utils.Maths;
+
+import java.util.List;
 
 /**
  * Controls rendering {@link GUIFilledBox filled boxes}, such as those which appear
@@ -80,6 +82,10 @@ public class FilledBoxRenderer {
             //Render the text box behind the main text
             shader.color.loadVec3(codeWindowController.getCodeWindow().getGuiFilledBox().getColor());
             renderFilledBox(codeWindowController.getCodeWindow().getGuiFilledBox());
+            //Render the scrollbars
+            shader.color.loadVec3(codeWindowController.getVerticalScrollBar().getFilledBox().getColor());
+            renderFilledBox(codeWindowController.getVerticalScrollBar().getFilledBox());
+            renderFilledBox(codeWindowController.getHorizontalScrollBar().getFilledBox());
 
             //The flowchart window can only be open if the code window is open
             //Test to see if the flowchart window was also opened
@@ -92,7 +98,7 @@ public class FilledBoxRenderer {
                 shader.aspectRatio.loadMatrix(GeneralSettings.ASPECT_RATIO);
 
                 //For each text box in the flowchart text box controller
-                for (TextBox textBox : flowchartWindowController.getFlowchartTextBoxController().getTextBoxes()) {
+                for (TextBox textBox : flowchartWindowController.getFlowchartTextBoxController().getLoadedTextBoxes()) {
                     //If the text box is a flowchart text box render it's text boxes
                     if (textBox instanceof FlowchartTextBox) {
                         //Determine the color of the text boxes filled box
@@ -141,8 +147,14 @@ public class FilledBoxRenderer {
             //If the text box is a flowchart text box render it's text boxes
             if (textBox instanceof FlowchartTextBox) {
                 //Render the text box behind the main text
+//                if(textBox.isHighlighted()){
+//                    shader.color.loadVec3(FlowchartTextBoxController.getHighlightedColor());
+//                }else{
+                    shader.color.loadVec3(FlowchartTextBoxController.getBackgroundColor());
+//                }
                 renderFilledBox(textBox.getGuiFilledBox());
                 //Render the text box behind the line numbers
+                shader.color.loadVec3(FlowchartTextBoxController.getTextNumberBackgroundColor());
                 renderFilledBox(textBox.getTextNumberFilledBox());
             } else {
                 //Something is wrong with setup, print an error message
@@ -179,12 +191,43 @@ public class FilledBoxRenderer {
         //For each TextButton there is a filled box behind it
         for (Button button : ButtonController.getButtons()) {
             if (button instanceof TextButton) {
-                //Render the buttons filled box
-                shader.color.loadVec3(((TextButton) button).getGuiFilledBox().getColor());
-                renderFilledBox(((TextButton) button).getGuiFilledBox());
+                //This should only render filled boxes which are part of the main window
+                if(((TextButton) button).getWindow() == EngineTester.getWindow()) {
+                    //Render the buttons filled box
+                    shader.color.loadVec3(((TextButton) button).getGuiFilledBox().getColor());
+                    renderFilledBox(((TextButton) button).getGuiFilledBox());
+                }
             }
         }
 
+
+        //Perform per render call cleanup which is performed regardless of which rendering method is used
+        endRendering();
+    }
+
+    /**
+     * Renders all {@link GUIElement gui elements} contained in a {@link gui.windows.GUIWindow gui window}.
+     * @param elementList the list of elements which may contain a filled box to render
+     */
+    public void renderGUIElements(List<GUIElement> elementList){
+        //Perform setup which is performed regardless of which rendering method is used
+        prepare();
+
+
+        //None of these filled boxes will be moved by the aspect ratio,
+        //Load identity matrices and disable clipping
+        //TODO: Enable aspect ratio changes in GUIElements
+        shader.aspectRatio.loadMatrix(GeneralSettings.IDENTITY2);
+        shader.zoomTranslateMatrix.loadMatrix(GeneralSettings.IDENTITY3);
+        shader.doClipping.loadBoolean(false);
+
+        //For each element render it's filled box if it has one
+        for(GUIElement element : elementList){
+            if(element.getFilledBox() != null){
+                shader.color.loadVec3(element.getFilledBox().getColor());
+                renderFilledBox(element.getFilledBox());
+            }
+        }
 
         //Perform per render call cleanup which is performed regardless of which rendering method is used
         endRendering();

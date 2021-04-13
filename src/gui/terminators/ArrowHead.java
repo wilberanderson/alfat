@@ -7,29 +7,28 @@ import org.lwjgl.util.vector.Vector2f;
 
 public class ArrowHead extends Terminator{
 
-    private boolean upwards;
+    private int direction;
     private static RawModel model;
     private static final int renderMode = GL11.GL_TRIANGLES;
     private static final float[] VERTICES = {
-            -0.01f, -0.02f,
-            0.01f, -0.02f,
+            -0.01f, 0.02f,
+            0.01f, 0.02f,
             0f, 0f
     };
 
-    public ArrowHead(Vector2f position, boolean upwards){
+    public ArrowHead(Vector2f position, int direction){
         super(position);
-        this.upwards = upwards;
+        this.direction = direction;
         if(model == null){
             model = Loader.loadToVAO(VERTICES, 2);
         }
     }
 
-    public boolean isUpwards() {
-        return upwards;
+    public int getDirection() {
+        return direction;
     }
 
-    @Override
-    public RawModel getModel() {
+    public static RawModel getModel() {
         return model;
     }
 }

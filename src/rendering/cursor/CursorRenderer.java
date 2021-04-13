@@ -2,13 +2,18 @@ package rendering.cursor;
 
 import controllers.codeWindow.CursorController;
 import dataStructures.RawModel;
+import gui.guiElements.GUIElement;
+import gui.guiElements.TextField;
 import loaders.Loader;
 import main.GeneralSettings;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.util.vector.Matrix2f;
+import org.lwjgl.util.vector.Vector2f;
 import rendering.filledBox.FilledBoxShader;
+
+import java.util.List;
 
 /**
  * Controls rendering the {@link gui.Cursor cursor} which appears in the {@link gui.textBoxes.CodeWindow
@@ -49,7 +54,7 @@ public class CursorRenderer {
      * @param cursorController the {@link CursorController cursor controller} which contains
      *                         the cursor to be rendered.
      */
-    public void render(CursorController cursorController) {
+    public void render(CursorController cursorController, Vector2f codeWindowTranslation) {
         //Sets the OpenGL state to be appropriate for rendering the cursor
         prepare();
 
@@ -65,9 +70,10 @@ public class CursorRenderer {
         aspectRatio.m11 = cursorController.getAspectRatio().y;
         shader.aspectRatio.loadMatrix(aspectRatio);
 
-        //Load the cursors position and font height
-        shader.mousePosition.loadVec2(cursorController.getCursor().getPosition());
-        shader.fontHeight.loadFloat(GeneralSettings.FONT_SCALING_FACTOR * GeneralSettings.FONT_SIZE);
+        //Load the cursors position, color, and font height
+        shader.mousePosition.loadVec2(cursorController.getCursor().getPosition().x, cursorController.getCursor().getPosition().y);
+        shader.fontHeight.loadFloat(GeneralSettings.FONT_HEIGHT);
+        shader.color.loadVec3(cursorController.getCursor().getColor());
 
         //Load the position and size of the code window for clipping operations
         shader.isVisible.loadBoolean(cursorController.isVisible());
@@ -81,6 +87,41 @@ public class CursorRenderer {
 
         //Restore the OpenGL state which was modified
         endRendering();
+    }
+
+    public void renderGUIElements(List<GUIElement> guiElementList){
+        //Sets the OpenGL state to be appropriate for rendering the cursor
+        prepare();
+
+        //Bind the cursors model and enable the position to be used
+        GL30.glBindVertexArray(this.cursor.getVaoID());
+        GL20.glEnableVertexAttribArray(0);
+
+        //Load the cursors aspect ratio to the shader
+        shader.aspectRatio.loadMatrix(GeneralSettings.IDENTITY2);
+
+        //Load the position and size of the code window for clipping operations
+        shader.isVisible.loadBoolean(true);
+
+        for(GUIElement e : guiElementList){
+            if(e instanceof TextField){
+                //Load the cursors position and font height
+                shader.mousePosition.loadVec2(((TextField) e).getCursor().getPosition());
+                shader.fontHeight.loadFloat(-4*GeneralSettings.FONT_HEIGHT);
+                shader.color.loadVec3(((TextField) e).getCursor().getColor());
+
+                //Render the cursor
+                GL11.glDrawArrays(GL11.GL_LINES, 0, 2);
+            }
+        }
+
+        //Unbind the cursors model
+        GL20.glDisableVertexAttribArray(0);
+        GL30.glBindVertexArray(0);
+
+        //Restore the OpenGL state which was modified
+        endRendering();
+
     }
 
     /**

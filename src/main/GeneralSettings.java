@@ -74,7 +74,7 @@ public class GeneralSettings {
 
 
 	//**************Icons*******************
-	public static final String ICON_LOCATION = "/res/icon/icon.png";                                            //Stores the file location of the icon which displays in the task bar and on the window
+	public static final String ICON_LOCATION = "/res/icon/alfatlogo2.png";                                            //Stores the file location of the icon which displays in the task bar and on the window
 	public static final int ICON_WIDTH = 512;                                                                   //The width of the icon in pixels
 	public static final int ICON_HEIGHT = ICON_WIDTH;                                                           //The height of the icon in pixels. The icon is currently set to be a square.
 
@@ -95,10 +95,13 @@ public class GeneralSettings {
 	public static final MyFile FLOWCHART_FRAGMENT = new MyFile("/rendering/flowchartLine/flowchartLineFragment.glsl");
 	public static final MyFile TERMINATOR_VERTEX = new MyFile("/rendering/terminators/terminatorVertex.glsl");
 	public static final MyFile TERMINATOR_FRAGMENT = new MyFile("/rendering/terminators/terminatorFragment.glsl");
+	public static final MyFile RULER_VERTEX = new MyFile("/rendering/rulers/rulerVertex.glsl");
+	public static final MyFile RULER_FRAGMENT = new MyFile("/rendering/rulers/rulerFragment.glsl");
 
 	//***********************************Window settings*****************************************
 	public static final int DEFAULT_WIDTH = 1280;
 	public static final int DEFAULT_HEIGHT = 720;
+	public static final String WINDOW_TITLE = "ALFAT";
 
 
 	//*****************************Text editor settings********************************************
@@ -115,34 +118,60 @@ public class GeneralSettings {
 	public static final Vector3f FLOWCHART_LINE_COLOR = new Vector3f(1, 1, 1);                              //The color for lines connecting boxes in a flowchart
 	public static final float MIN_ZOOM = 0.1f;                                                              //The smallest amount of zoom that is allowed for the flowchart
 	public static final float FLOWCHART_PAD_TOP = .2f;                                                      //The vertical spacing between flowchart boxes
-	public static final float FLOWCHART_PAD_LEFT = FLOWCHART_PAD_TOP * (DEFAULT_WIDTH / DEFAULT_HEIGHT);    //The horizontal spacing between flowchart boxes
+	public static final float FLOWCHART_PAD_LEFT = .2f;    //The horizontal spacing between flowchart boxes
 	public static final float LINE_OFFSET = .05f;                                                           //The minmum distance between lines pathing in the same direction in the flowchart
 	public static final float FLOWCHART_TEXT_BOX_INTERNAL_PAD_RIGHT = 0.1f;
+	public static final int ARROWHEAD_RIGHT = 3;
+	public static final int ARROWHEAD_LEFT = 1;
+	public static final int ARROWHEAD_UP = 0;
+	public static final int ARROWHEAD_DOWN = 2;
+	public static final float DEFAULT_LINE_WIDTH = 1f;
+	public static final float HIGHLIGHTED_LINE_WIDTH = 3f;
+	public static final int TEXT_LINE_INSTANCED_DATA_LENGTH = 7;			//The number of floats making up the per instance data for a flowchart line
+	public static final int JUNCTION_INSTANCED_DATA_LENGTH = 5;
+	public static final int ARROW_HEAD_INSTANCED_DATA_LENGTH = 5;
+	public static final int RULER_INSTANCED_DATA_LENGTH = 7;
+
+	public static final float SCREENSHOT_PADDING_SIZE = .2f;
+
+	public static final int MAX_LINES = 1000;
+	public static boolean OPEN_PARTIAL_FILE = false;
+	public static String PARTIAL_FILE_TAG_TARGET = "";
+	public static String PARTIAL_FILE_TAG_ENDING = "";
+
+	public static float	PAGE_JUMP_AMOUNT = 1.8f;
+
+	public static char MINIMIZED_BOX_CHARACTER = '|';
 
 	//************************************************Text settings***********************************
 	public static final float FONT_SIZE = 1f;                                           //The default size for rendered text, individual texts may override this value
 	public static final float FONT_SCALING_FACTOR = 0.06f;                              //The amount that texts increase in size based on, cannot be modified
+	public static final float FONT_HEIGHT = FONT_SIZE * FONT_SCALING_FACTOR;
 	public static final float FONT_WIDTH = 0.5f;                                        //The alpha value on the distance field where a text will start falling off
 	public static final float FONT_EDGE = 0.1f;                                         //The alpha value greater than FONT_WIDTH where a text will finish falling off
 	public static final Vector3f TEXT_COLOR = base2;                                    //The default text color
 	public static FontType FONT;                                                        //The default font which is used by the majority of the text in the application
-	private static String DEFAULT_FONT_LOCATION = "/res/fonts/consolas/consolas";
+	public static String DEFAULT_FONT_LOCATION = "/res/fonts/consolas/consolas";
 
 	//*****************************GUI settings**************************************************
-	public static final Vector3f HIGHLIGHT_COLOR = base01;                                          //The color which a standard TextButton will turn it's background when the mouse is hovering over it
-	public static final Vector3f HEADER_COLOR = base03;                                             //The color of the header at the top of the screen
-	public static final float TEXT_BUTTON_PADDING = 0.005f;                                         //The space between the text on a TextButton and the edge of the button
+	public static final Vector3f HIGHLIGHT_COLOR = base01;                                          		//The color which a standard TextButton will turn it's background when the mouse is hovering over it
+	public static final Vector3f HEADER_COLOR = base03;                                             		//The color of the header at the top of the screen
+	public static final float TEXT_BUTTON_PADDING = 0.005f;                                         		//The space between the text on a TextButton and the edge of the button
 	public static final Vector3f TEXT_BUTTON_BACKGROUND_COLOR = new Vector3f(.05f, .05f, .05f);     //The starting background color of a TextButton
+	public static final Vector3f SCROLL_BAR_COLOR = new Vector3f(0.3f, 0.3f, 0.3f);				//The color of the scroll bars for the code window
 
 	//*****************************Image saving parameters*************************************
 	public static Matrix3f IMAGE_TRANSLATION;                              //The required translation to save the currently open flowchart centered in the screen
 	public static Vector2f IMAGE_SIZE;                                     //The size of the screenshot using the OpenGL coordinate system
-
+	public static float EXTRA = 0f;
 	//******************************File input/output fields**********************************
-	public static String FILE_PATH;                                             //A string used for holding the current file path of the file open in the text editor
-	public static String SYNTAX_PATH = "CodeSyntax/LC3.json";                   //The location of the syntax file for LC3
-	public static String TEMP_DIR = "temp";                                     //The directory where temporary files are saved
-
+	public static String FILE_PATH;                                              //A string used for holding the current file path of the file open in the text editor
+	public static String SYNTAX_PATH = "CodeSyntax/LC3.json";                    //The location of the default syntax at compile time
+	public static boolean IS_SYNTAX_PATH_CHANGED = true;                         //Toggle to tell whether the syntax file path has been changed and needs to be updated.
+	public static boolean FIXED_OR_FREE_FORM_MODE = false; 					     //Boolean to start program in free form mode if on first launch until the mode is set in the settings menu
+	public static String TEMP_DIR = "temp";                                      //The directory where temporary files are saved
+	public static final int TEMP_FILE_LIMIT = 5;								 //The number of temporary files to be saved at any time
+	public static final String PREF_FILE_TYPE = "asm;txt;asm,txt"; 				 //The default file extensions that the file dialog opens for
 
 	//****************************Syntax highlighting colors************************
 	public static final Vector3f labelColor = new Vector3f(0.8f, 0.8f, 0.8f);   //The color of a label either at the start of the line or as a destination for a jump statement
@@ -153,7 +182,7 @@ public class GeneralSettings {
 	public static final Vector3f registerColor = green;                                 //The color for a register such as R0 or R1
 	public static final Vector3f immediateColor = yellow;                               //The color for an immediate value such as #14 or 0xE
 	public static final Vector3f commentColor = base01;                                 //The color for any comments
-	public static final Vector3f defaultColor = new Vector3f(1, 1, 1);          //The color for any unparsed portions of a line such as the ',' between arguments
+	public static final Vector3f separatorColor = new Vector3f(1, 1, 1);          //The color for any unparsed portions of a line such as the ',' between arguments
 
 	//**************************Resizing parameters******************************
 	public static int DISPLAY_WIDTH = DEFAULT_WIDTH;                            //The current width of the display in pixels
@@ -167,6 +196,10 @@ public class GeneralSettings {
 	//************************Global identity matrices************************
 	public static final Matrix2f IDENTITY2 = new Matrix2f();
 	public static final Matrix3f IDENTITY3 = new Matrix3f();
+
+	//***********************Popup related*************************************
+	public static final int popupWidth = 400;
+	public static final int popupHeight = 200;
 
 	//*************************Useful methods**********************************
 
@@ -196,6 +229,12 @@ public class GeneralSettings {
 	 * Loads the default font for use in rendering texts.
 	 */
 	public static void initializeFonts() {
+		DEFAULT_FONT_LOCATION = USERPREF.getCurrentFontInUse(); //Sets the font path based on what is defined by the user
+		//IF the font path is not valid for some reason then we reset it back to whatever the default is (which should always be valid)
+		if(!USERPREF.isFontPathValid(DEFAULT_FONT_LOCATION)) {
+			USERPREF.resetCurrentFontPath();
+			DEFAULT_FONT_LOCATION = USERPREF.getCurrentFontInUse();
+		}
 		FONT = new FontType(Loader.loadTexture(new MyFile(DEFAULT_FONT_LOCATION + ".png")), new MyFile(DEFAULT_FONT_LOCATION + ".fnt"));
 	}
 }

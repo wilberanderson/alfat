@@ -1,6 +1,7 @@
 package controllers.gui;
 
 import controllers.ApplicationController;
+import gui.Mouse;
 import gui.buttons.Button;
 import gui.buttons.HeaderMenu;
 import gui.buttons.HighlightableButton;
@@ -22,32 +23,50 @@ public class ButtonController {
         buttons.add(b);
     }
 
+    /**
+     * Removes a button from the list
+     * @param b the button to be removed
+     */
     public static void remove(Button b){
         buttons.remove(b);
     }
 
-    public static void click(Vector2f position){
+    /**
+     * Processes each button to determine whether it should be clicked
+     * @param window the window the click was detected in
+     * @param position the position where the mouse is
+     */
+    public static void click(long window, Vector2f position){
 
         boolean buttonPressed = false;
         List<HeaderMenu> toClose = new ArrayList<>();
 
         for(int i = buttons.size()-1; i >= 0; i--){
             Button b = buttons.get(i);
-            if(position.x > b.getPosition().x && position.y > b.getPosition().y && position.x < b.getPosition().x + b.getSize().x && position.y < b.getPosition().y + b.getSize().y){
-                if (b instanceof HeaderMenu){
-                    if(openMenu != b && openMenu != null){
+            //If b was clicked
+            if (position.x > b.getPosition().x && position.y > b.getPosition().y && position.x < b.getPosition().x + b.getSize().x && position.y < b.getPosition().y + b.getSize().y) {
+                //If b is a header menu then it may have to close
+                if (b instanceof HeaderMenu) {
+                    //If b was a different menu than the currently open one add the open menu to toClose
+                    if (openMenu != b && openMenu != null) {
                         toClose.add(openMenu);
                     }
                     openMenu = (HeaderMenu) b;
-                } else {
+                }
+                //If a menu is open close it
+                else if(openMenu != null){
                     toClose.add(openMenu);
                     openMenu = null;
                 }
-                b.onPress();
-                buttonPressed = true;
+                //If the button is in the same window as the click was then do it's on press operations
+                if(b.getWindow() == window) {
+                    b.onPress();
+                    buttonPressed = true;
+                }
                 break;
             }
         }
+        //If no button was pressed close all header menus
         if (!buttonPressed){
             for(Button b : buttons){
                 if(b instanceof HeaderMenu){
@@ -57,21 +76,35 @@ public class ButtonController {
                 }
             }
         }
+        //Close any header menus asked to be closed
         for(HeaderMenu b : toClose){
             b.close();
         }
     }
 
-    public static void hover(Vector2f position){
+    /**
+     * Processes each button to determine whether it was hovered
+     * @param window
+     * @param position
+     */
+    public static void hover(long window, Vector2f position){
         for(int i = buttons.size()-1; i >= 0; i--){
             Button b = buttons.get(i);
-            if(b instanceof HighlightableButton) {
+            if(b.getWindow() == window) {
+                //If the cursor is hovering over the button
                 if (position.x > b.getPosition().x && position.y > b.getPosition().y && position.x < b.getPosition().x + b.getSize().x && position.y < b.getPosition().y + b.getSize().y) {
-                    if (!((HighlightableButton) b).isHighlighted()) {
+                    //Set an appropriate cursor icon
+                    //TODO: Consider which cursor icon should be used
+                    Mouse.setHand();
+                    //If the button is highlightable then perform highlight operations if it is not highlighted
+                    if (b instanceof HighlightableButton && !((HighlightableButton) b).isHighlighted()) {
                         ((HighlightableButton) b).highlight();
                     }
-                } else {
-                    if (((HighlightableButton) b).isHighlighted()){
+                }
+                //If the cursor is not hovering the button
+                else {
+                    //If the button is highlightable then perform unhighlight operations if it is highlighted
+                    if (b instanceof HighlightableButton && ((HighlightableButton) b).isHighlighted()) {
                         ((HighlightableButton) b).unhighlight();
                     }
                 }
@@ -79,9 +112,6 @@ public class ButtonController {
         }
     }
 
-    public static void init(ApplicationController controller){
-
-    }
 
     public static List<Button> getButtons(){
         return buttons;

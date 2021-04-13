@@ -1,21 +1,21 @@
 package gui.buttons;
 
+import gui.guiElements.GUIElement;
 import org.lwjgl.util.vector.Vector2f;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-public abstract class Button{
+public abstract class Button extends GUIElement {
 
     private Vector2f position;
     private Vector2f size;
+    private long window;
 
     public Button(Vector2f position, Vector2f size) {
         this.position = position;
         this.size = size;
     }
 
-    public Button(){
+    public Button(long window){
+        this.window = window;
     }
 
     public abstract void onPress();
@@ -34,5 +34,10 @@ public abstract class Button{
 
     public void setSize(Vector2f size) {
         this.size = size;
+    }
+
+
+    public long getWindow() {
+        return window;
     }
 }

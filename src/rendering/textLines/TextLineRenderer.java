@@ -13,6 +13,7 @@ import org.lwjgl.opengl.GL30;
 import org.lwjgl.util.vector.Matrix2f;
 import org.lwjgl.util.vector.Matrix3f;
 import org.lwjgl.util.vector.Vector2f;
+import utils.Printer;
 
 /**
  * Controls rendering lines of {@link FormattedTextLine "formatted text"}, such as inside {@link gui.textBoxes.FlowchartTextBox flowchart text boxes} and the {@link CodeWindow}'s TextBox.
@@ -32,37 +33,66 @@ public class TextLineRenderer {
 	 * Renders the formatted text lines used for lines of code
 	 * @param textLineController
 	 * @param flowChartWindowController
-	 * @param codeWindow
 	 */
 	public void renderToScreen(TextLineController textLineController, FlowchartWindowController flowChartWindowController, CodeWindowController codeWindowController) {
 		prepare();
 
 		shader.aspectRatio.loadMatrix(GeneralSettings.ASPECT_RATIO);
-
-
-
-		for (FormattedTextLine formattedTextLine : textLineController.getCodeWindowTextLines()) {
-			if (formattedTextLine.getWords().length > 0) {
-				GL13.glActiveTexture(GL13.GL_TEXTURE0);
-				GL11.glBindTexture(GL11.GL_TEXTURE_2D, formattedTextLine.getWords()[0].getFont().getTextureAtlas());
-				for (TextWord text : formattedTextLine.getWords()) {
-					if(text instanceof LineNumberWord){
-						renderText(text, codeWindowController.getCodeWindow().getPosition(), codeWindowController.getCodeWindow().getSize(), GeneralSettings.IDENTITY3);
-					}else{
-						renderText(text, codeWindowController.getCodeWindow().getCodeWindowPosition(), codeWindowController.getCodeWindow().getCodeWindowSize(), GeneralSettings.IDENTITY3);
+		for(FormattedTextLine line : textLineController.getLoadedTexts()){
+			if(line.getWords().length > 0) {
+				Matrix3f codeWindowTransformation = new Matrix3f();
+				codeWindowTransformation.setIdentity();
+				codeWindowTransformation.m00 = 1/codeWindowController.getAspectRatio().x*codeWindowController.getScaleFactor().x;
+				codeWindowTransformation.m11 = 1/codeWindowController.getAspectRatio().y*codeWindowController.getScaleFactor().y;
+				codeWindowTransformation.m20 = -codeWindowController.getContentsHorizontalPosition();
+				codeWindowTransformation.m21 = codeWindowController.getContentsVerticalPosition();
+				Matrix3f lineNumberTransformation = new Matrix3f();
+				lineNumberTransformation.setIdentity();
+				lineNumberTransformation.m00 = 1/codeWindowController.getAspectRatio().x * codeWindowController.getScaleFactor().x;
+				lineNumberTransformation.m11 = 1/codeWindowController.getAspectRatio().y * codeWindowController.getScaleFactor().y;
+				lineNumberTransformation.m20 = -codeWindowController.getMinHorizontalPosition();
+				lineNumberTransformation.m21 = codeWindowController.getContentsVerticalPosition();
+				if (line instanceof EditableFormattedTextLine) {
+					GL13.glActiveTexture(GL13.GL_TEXTURE0);
+					GL11.glBindTexture(GL11.GL_TEXTURE_2D, line.getWords()[0].getFont().getTextureAtlas());
+					for (TextWord text : line.getWords()) {
+						if (text instanceof LineNumberWord) {
+							renderText(text, codeWindowController.getCodeWindow().getPosition(), codeWindowController.getCodeWindow().getSize(), lineNumberTransformation);
+						} else {
+							renderText(text, codeWindowController.getCodeWindow().getCodeWindowPosition(), codeWindowController.getCodeWindow().getCodeWindowSize(), codeWindowTransformation);
+						}
+					}
+				} else {
+					GL13.glActiveTexture(GL13.GL_TEXTURE0);
+					GL11.glBindTexture(GL11.GL_TEXTURE_2D, line.getWords()[0].getFont().getTextureAtlas());
+					for (TextWord text : line.getWords()) {
+						renderText(text, flowChartWindowController.getPosition(), flowChartWindowController.getSize(), flowChartWindowController.getZoomTranslateMatrix());
 					}
 				}
 			}
 		}
-		for (FormattedTextLine formattedTextLine : textLineController.getFlowchartTextLines()) {
-			if (formattedTextLine.getWords().length > 0) {
-				GL13.glActiveTexture(GL13.GL_TEXTURE0);
-				GL11.glBindTexture(GL11.GL_TEXTURE_2D, formattedTextLine.getWords()[0].getFont().getTextureAtlas());
-				for (TextWord text : formattedTextLine.getWords()) {
-					renderText(text, flowChartWindowController.getPosition(), flowChartWindowController.getSize(), flowChartWindowController.getZoomTranslateMatrix());
-				}
-			}
-		}
+//		for (FormattedTextLine formattedTextLine : textLineController.getCodeWindowTextLines()) {
+//			if (formattedTextLine.getWords().length > 0) {
+//				GL13.glActiveTexture(GL13.GL_TEXTURE0);
+//				GL11.glBindTexture(GL11.GL_TEXTURE_2D, formattedTextLine.getWords()[0].getFont().getTextureAtlas());
+//				for (TextWord text : formattedTextLine.getWords()) {
+//					if(text instanceof LineNumberWord){
+//						renderText(text, codeWindowController.getCodeWindow().getPosition(), codeWindowController.getCodeWindow().getSize(), GeneralSettings.IDENTITY3);
+//					}else{
+//						renderText(text, codeWindowController.getCodeWindow().getCodeWindowPosition(), codeWindowController.getCodeWindow().getCodeWindowSize(), GeneralSettings.IDENTITY3);
+//					}
+//				}
+//			}
+//		}
+//		for (FormattedTextLine formattedTextLine : textLineController.getFlowchartTextLines()) {
+//			if (formattedTextLine.getWords().length > 0) {
+//				GL13.glActiveTexture(GL13.GL_TEXTURE0);
+//				GL11.glBindTexture(GL11.GL_TEXTURE_2D, formattedTextLine.getWords()[0].getFont().getTextureAtlas());
+//				for (TextWord text : formattedTextLine.getWords()) {
+//					renderText(text, flowChartWindowController.getPosition(), flowChartWindowController.getSize(), flowChartWindowController.getZoomTranslateMatrix());
+//				}
+//			}
+//		}
 		endRendering();
 	}
 
