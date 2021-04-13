@@ -141,6 +141,8 @@ public class GeneralSettings {
 
 	public static float	PAGE_JUMP_AMOUNT = 1.8f;
 
+	public static char MINIMIZED_BOX_CHARACTER = '|';
+
 	//************************************************Text settings***********************************
 	public static final float FONT_SIZE = 1f;                                           //The default size for rendered text, individual texts may override this value
 	public static final float FONT_SCALING_FACTOR = 0.06f;                              //The amount that texts increase in size based on, cannot be modified

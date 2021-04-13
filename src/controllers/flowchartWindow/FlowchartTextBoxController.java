@@ -105,7 +105,7 @@ public class FlowchartTextBoxController {
             String lastLine = Integer.toString(lineNumber+lineCount-1);
             String middle = "";
             for (int k = 0;k<lastLine.length();k++){
-                middle += " ";
+                middle += GeneralSettings.MINIMIZED_BOX_CHARACTER;
             }
             for (FormattedTextLine line : formattedTextLines) {
                 if (line.getLength() > greatestLength) {
