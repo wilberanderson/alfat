@@ -64,20 +64,27 @@ public class EditableFormattedTextLine extends FormattedTextLine {
                             }
                         }
                         //For each character in character edges save it to character edges
-
+                        for (int i = 0; i < word.getCharacterEdges().length-1; i++) {
+                            characterEdges[index] = word.getCharacterEdges()[i] + last;
+                            index++;
+                        }
                         //Update which character edge was last used
-                    }
-                    //For each character in character edges save it to character edges
-                    for (int i = 0; i < word.getCharacterEdges().length; i++) {
-                        characterEdges[index] = word.getCharacterEdges()[i] + last;
-                        index++;
-                    }
-                    //Update which character edge was last used
-                    last = characterEdges[index - 1];
+                        last = characterEdges[index - 1];
 
-                    //Update the number of characters
-                    numberOfCharacters += word.getCharacterEdges().length - 1;
+                        //Update the number of characters
+                        numberOfCharacters += word.getCharacterEdges().length - 1;
+                    }else {
+                        //For each character in character edges save it to character edges
+                        for (int i = 0; i < word.getCharacterEdges().length; i++) {
+                            characterEdges[index] = word.getCharacterEdges()[i] + last;
+                            index++;
+                        }
+                        //Update which character edge was last used
+                        last = characterEdges[index - 1];
 
+                        //Update the number of characters
+                        numberOfCharacters += word.getCharacterEdges().length - 1;
+                    }
                 }
             }
         }
