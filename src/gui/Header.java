@@ -4,6 +4,7 @@ import controllers.ApplicationController;
 import controllers.codeWindow.CodeWindowController;
 import controllers.gui.ButtonController;
 import gui.Notifications.AppEvents;
+import gui.Notifications.EventRegenerateEditor;
 import gui.Settings.SettingsMenu;
 import gui.TempFiles.FlowchartToPng;
 import gui.TempFiles.SaveToFile;
@@ -504,7 +505,9 @@ public class Header {
         ofd.saveFileWindow();
         String outFile = ofd.getFilePath();
 
+        System.out.println("Saving to image file. This may take some time...");
         if(outFile == null) {
+            System.out.println("Cancelled.");
             return; // no path or clicked cancel
         }
 
@@ -537,6 +540,7 @@ public class Header {
         FlowchartToPng flowchartToPng = new FlowchartToPng(GeneralSettings.USERPREF.getUserTempFileDirPath());
 
         flowchartToPng.startImageSlice(width, height, controller, outFile);
+        System.out.println("Done.");
     }
 
     /**
@@ -631,6 +635,8 @@ public class Header {
             }
         }
 
+        ApplicationController.notification.setEvent(AppEvents.REGENERATE_FROM_EDITOR);
+
     }
 
     /**
@@ -663,6 +669,8 @@ public class Header {
                 controller.flowchartView();
             }
         }
+
+        ApplicationController.notification.setEvent(AppEvents.REGENERATE_FROM_FILE);
     }
 
     /**

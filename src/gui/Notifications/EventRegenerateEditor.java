@@ -2,18 +2,18 @@ package gui.Notifications;
 
 import controllers.ApplicationController;
 
-public class EventFileOpenFailure extends Observer {
+public class EventRegenerateEditor extends Observer {
 
-    public EventFileOpenFailure(Notifications subject){
+    public EventRegenerateEditor(Notifications subject){
         this.subject = subject;
         this.subject.register(this);
     }
 
     @Override
     public void update() {
-        if (subject.getEvent() == AppEvents.OPEN_FILE_FAIL) {
+        if (subject.getEvent() == AppEvents.REGENERATE_FROM_EDITOR) {
 
-            ApplicationController.getHeader().setNotificationText("No file opened!");
+            ApplicationController.getHeader().setNotificationText("Flowchart regenerated from editor.");
 
             if (!subject.isClearTimerRunning()) {
                 subject.setClearTimer(true);
@@ -23,7 +23,7 @@ public class EventFileOpenFailure extends Observer {
                             public void run(){
                                 do {
                                     try {
-                                        Thread.sleep(3000);
+                                        Thread.sleep(1500);
                                     } catch (InterruptedException e) {
                                         e.printStackTrace();
                                     }
