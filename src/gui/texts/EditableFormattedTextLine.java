@@ -2,7 +2,6 @@ package gui.texts;
 
 import main.GeneralSettings;
 import org.lwjgl.util.vector.Vector2f;
-import utils.Printer;
 
 import java.util.List;
 
@@ -50,15 +49,15 @@ public class EditableFormattedTextLine extends FormattedTextLine {
                 if (!(word instanceof LineNumberWord) && word != null) {
                     //Determine space size to be used
                     float spaceSize = word.getFont().getSpaceSize();
-                    if (word instanceof SeparatorWord) {
-                        if (((SeparatorWord) word).getText().length() > 0) {
+                    if (word instanceof WhiteSpaceWord) {
+                        if (((WhiteSpaceWord) word).getText().length() > 0) {
                             //If the seperator is a space add one space size
-                            if (((SeparatorWord) word).getText().charAt(0) == ' ') {
+                            if (((WhiteSpaceWord) word).getText().charAt(0) == ' ') {
                                 last += spaceSize;
                                 numberOfCharacters++;
                             }
                             //Tabs align text, add space size appropriate to the number of tabs needed for alignment
-                            else if (((SeparatorWord) word).getText().charAt(0) == '\t') {
+                            else if (((WhiteSpaceWord) word).getText().charAt(0) == '\t') {
                                 last += spaceSize * (GeneralSettings.DEFAULT_TAB_WIDTH - numberOfCharacters % 4);//((numberOfCharacters % GeneralSettings.DEFAULT_TAB_WIDTH) == 0 ? GeneralSettings.DEFAULT_TAB_WIDTH : numberOfCharacters % GeneralSettings.DEFAULT_TAB_WIDTH);
                                 numberOfCharacters = 0;
                             }

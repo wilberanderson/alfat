@@ -12,17 +12,15 @@ import gui.windows.PopupWindow;
 import main.EngineTester;
 import main.GeneralSettings;
 import org.lwjgl.glfw.GLFW;
-import org.lwjgl.system.CallbackI;
 import org.lwjgl.util.vector.Matrix3f;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 import parser.LogicScripter.ParserLogicScripter;
-import parser.LogicScripter.TokenMatcher;
 
 import java.io.*;
 import java.util.*;
 
-public class Parser2  {
+public class Parser2 {
     public float x_bound = -10;
     public float y_bound = 10;
     // attributes
@@ -49,7 +47,7 @@ public class Parser2  {
 
     /**
      * Clears out clears out values of parser.
-     * */
+     */
     public void clear() {
         invalidFlag = false;
         flowchart.clear();
@@ -61,10 +59,10 @@ public class Parser2  {
      * Set the code syntax of parser
      * This also sets the SimpleTokenizer split string regex and comment regex.
      * Warning: This assumes that codeSyntax is valid and contains these...
-     * */
+     */
     public void setCodeSyntax(CodeSyntax codeSyntax) {
         this.syn = codeSyntax;
-        if(syn.getColumnLengths() != null) {
+        if (syn.getColumnLengths() != null) {
             simpleTokenizer.setColumnLength(syn.getColumnLengths().inner);
         } else {
             simpleTokenizer.setColumnLength(null);
@@ -80,13 +78,14 @@ public class Parser2  {
         this.openToTag = openToTag;
     }
 
-    public Parser2(){
+    public Parser2() {
         //default constructor, only use for helper functions.
         this.verbose = false;
     }
 
 
-    /**Read an input file. Parse the input file line by line, and store them in the arrayList of CodeLine objects.
+    /**
+     * Read an input file. Parse the input file line by line, and store them in the arrayList of CodeLine objects.
      *
      * @param infile The absolute or relative location of the file, as a string.
      */
@@ -97,8 +96,8 @@ public class Parser2  {
         boolean done = false;
         ArrayList<Integer> gotoList = new ArrayList<>();
 
-        if (openToTag){
-            this.targetFileTag = "[ \t]*"+ GeneralSettings.PARTIAL_FILE_TAG_TARGET + "\\b.*";
+        if (openToTag) {
+            this.targetFileTag = "[ \t]*" + GeneralSettings.PARTIAL_FILE_TAG_TARGET + "\\b.*";
             if (!GeneralSettings.PARTIAL_FILE_TAG_ENDING.isBlank()) {
                 this.closingFileTag = "[ \t]*" + GeneralSettings.PARTIAL_FILE_TAG_ENDING + "\\b.*";
             }
@@ -113,7 +112,7 @@ public class Parser2  {
             String line;
             while ((line = br.readLine()) != null) {
                 i++;    //line numbers start at 1
-                if (!ready){
+                if (!ready) {
                     ready = line.matches(this.targetFileTag);
                 }
                 if (ready && !done) {
@@ -140,10 +139,11 @@ public class Parser2  {
                     int codeBlock = 0;
 
 
-
                     //  arrLine = {"LABEL:", "JGZ", "R1", "R2", "FINISH"}
                     for (String fragment : arrLine) {
-                        if (verbose) {System.out.print("[" + fragment + "]");}
+                        if (verbose) {
+                            System.out.print("[" + fragment + "]");
+                        }
 
                         columnFragment = simpleTokenizer.getColumnFragment(columnFragmentIndex);
 
@@ -151,31 +151,29 @@ public class Parser2  {
                         //System.out.println("column Fragment:" + columnFragment);
 
                         // TODO: make regex matches
-                        if (parserLogicScripter.procedureStartmatcher.isMatch(fragment,columnFragment)){
+                        if (parserLogicScripter.procedureStartmatcher.isMatch(fragment, columnFragment)) {
                             // block start
                             codeBlock = 1;
-                        } else if (parserLogicScripter.procedureEndmatcher.isMatch(fragment,columnFragment)){
+                        } else if (parserLogicScripter.procedureEndmatcher.isMatch(fragment, columnFragment)) {
                             // block start
                             codeBlock = 2;
                         }
-                        if (parserLogicScripter.procedureEndmatcher.isMatch(fragment,columnFragment) || parserLogicScripter.procedureEndmatcher.isMatch(fragment,columnFragment)){
+                        if (parserLogicScripter.procedureEndmatcher.isMatch(fragment, columnFragment) || parserLogicScripter.procedureEndmatcher.isMatch(fragment, columnFragment)) {
                             first = false;
                         }
 
 
-
-
                         //grab each command in the line, if they exist:
-                        if (parserLogicScripter.commandMatcher.isMatch(fragment,columnFragment)) {
+                        if (parserLogicScripter.commandMatcher.isMatch(fragment, columnFragment)) {
                             comm = Optional.of(fragment);
                             formattedString.add(new CommandWord(comm.get(), new Vector2f(0f, 0)));
                             first = false;
-                        } else if (parserLogicScripter.controlMatcher.isMatch(fragment,columnFragment)) { //Control
+                        } else if (parserLogicScripter.controlMatcher.isMatch(fragment, columnFragment)) { //Control
                             comm = Optional.of(fragment);
                             formattedString.add(new BranchWord(comm.get(), new Vector2f(0f, 0)));
                             jump = true;
                             first = false;
-                        } else if (parserLogicScripter.registerMatcher.isMatch(fragment,columnFragment)) {  //register
+                        } else if (parserLogicScripter.registerMatcher.isMatch(fragment, columnFragment)) {  //register
                             if (fragment.contains(",")) {
                                 if (!registers.contains(fragment.substring(0, fragment.length() - 1))) {
                                     registers.add(fragment.substring(0, fragment.length() - 1));
@@ -189,12 +187,12 @@ public class Parser2  {
                                 formattedString.add(new RegisterWord(fragment, new Vector2f(0f, 0)));
                             }
                             first = false;
-                        } else if (parserLogicScripter.immediateMatcher.isMatch(fragment,columnFragment)) {
+                        } else if (parserLogicScripter.immediateMatcher.isMatch(fragment, columnFragment)) {
                             //immediate value, literal or trap
                             //just skip this for now
                             first = false;
                             formattedString.add(new ImmediateWord(fragment, new Vector2f(0f, 0)));
-                        } else if (jump && parserLogicScripter.labelMatcher.isMatch(fragment,columnFragment)) {   //jump statement, this matches a label
+                        } else if (jump && parserLogicScripter.labelMatcher.isMatch(fragment, columnFragment)) {   //jump statement, this matches a label
                             //if the line is a jump statement,
                             //this matches the label or labels pointed to by the command
                             //if the language supports having the label BEFORE the command,
@@ -203,39 +201,41 @@ public class Parser2  {
                             targetLabel = fragment;
                             formattedString.add(new LabelWord(fragment, new Vector2f(0f, 0)));
                             first = false;
-                        } else if (jump && parserLogicScripter.immediateMatcher.isMatch(fragment,columnFragment)) {
+                        } else if (jump && parserLogicScripter.immediateMatcher.isMatch(fragment, columnFragment)) {
                             // probably a goto label
                             gotoList.add(Integer.parseInt(fragment));
                             formattedString.add(new LabelWord(fragment, new Vector2f(0f, 0)));
                             targetLabel = fragment;
-                        } else if (parserLogicScripter.procedureEndmatcher.isMatch(fragment,columnFragment)) {
+                        } else if (parserLogicScripter.procedureEndmatcher.isMatch(fragment, columnFragment)) {
                             ret = true;
                             jump = true;
                             formattedString.add(new BranchWord(fragment, new Vector2f(0f, 0)));
                             first = false;
-                        } else if (first && parserLogicScripter.labelMatcher.isMatch(fragment,columnFragment)) {
+                        } else if (first && parserLogicScripter.labelMatcher.isMatch(fragment, columnFragment)) {
                             //this is the (optional) label for the line
                             label = fragment;
                             labelMap.put(label, i);
                             formattedString.add(new LabelWord(fragment, new Vector2f(0f, 0)));
                             first = false;
                             //} else if (!jump && fragment.matches("^[a-zA-Z0-9\\-_\"\\\\\\[\\]\\!<>]+")) {
-                        }else if (!jump && parserLogicScripter.labelMatcher.isMatch(fragment, columnFragment)
-                                && !parserLogicScripter.procedureEndmatcher.isMatch(fragment,columnFragment)
-                                && !parserLogicScripter.procedureStartmatcher.isMatch(fragment,columnFragment)) {
+                        } else if (!jump && parserLogicScripter.labelMatcher.isMatch(fragment, columnFragment)
+                                && !parserLogicScripter.procedureEndmatcher.isMatch(fragment, columnFragment)
+                                && !parserLogicScripter.procedureStartmatcher.isMatch(fragment, columnFragment)) {
                             //TODO: Regex again
                             //Checks if a label is a implicit goto label
                             jump = true;
                             targetLabel = fragment;
                             formattedString.add(new LabelWord(fragment, new Vector2f(0f, 0)));
                             first = false;
-                        } else if (!jump && parserLogicScripter.userDefinedMatcher.isMatch(fragment,columnFragment)) {
+                        } else if (!jump && parserLogicScripter.userDefinedMatcher.isMatch(fragment, columnFragment)) {
                             //the command isn't a jump statement, so the label must be a variable i.e. string, etc.
                             formattedString.add(new LabelWord(fragment, new Vector2f(0f, 0)));
-                        } else if (parserLogicScripter.commentMatcher.isMatch(fragment,columnFragment)) {
+                        } else if (parserLogicScripter.commentMatcher.isMatch(fragment, columnFragment)) {
                             formattedString.add(new CommentWord(fragment, new Vector2f(0f, 0)));
-                        } else if (parserLogicScripter.separatorMatcher.isMatch(fragment,columnFragment)) {
+                        } else if (parserLogicScripter.separatorMatcher.isMatch(fragment, columnFragment)) {
                             formattedString.add(new SeparatorWord(fragment, new Vector2f(0f, 0f)));
+                        } else if (parserLogicScripter.whitespaceMatcher.isMatch(fragment, columnFragment)) {
+                            formattedString.add(new WhiteSpaceWord(fragment, new Vector2f(0f, 0f)));
                         } else {
                             formattedString.add(new ErrorWord(fragment, new Vector2f(0f, 0f)));
                         }
@@ -267,14 +267,14 @@ public class Parser2  {
                 }
             }
             br.close();
-            if (!ready){
+            if (!ready) {
                 // Tag was never found
                 System.out.println("Invalid tag provided. Check the source file or the tag and try again.");
                 // TODO: throw popup here, probably.
             }
-            for (CodeLine l :lines){
-                for (Integer j : gotoList){
-                    if (l.getLineNumber() == j){
+            for (CodeLine l : lines) {
+                for (Integer j : gotoList) {
+                    if (l.getLineNumber() == j) {
                         l.setLabel(j.toString());
                     }
                 }
@@ -289,15 +289,13 @@ public class Parser2  {
     }
 
 
-
-
-
-    /** getFormattedLine(String line)
+    /**
+     * getFormattedLine(String line)
      *
      * @param line The line to be parsed
      * @return
      */
-    public EditableFormattedTextLine getFormattedLine(String line){
+    public EditableFormattedTextLine getFormattedLine(String line) {
         boolean first = true;
         //parse line:
 //        line = line.replace("\t", "    ");
@@ -325,22 +323,22 @@ public class Parser2  {
             columnFragmentIndex++;
 
             //grab each command in the line, if they exist:
-            if (parserLogicScripter.commandMatcher.isMatch(fragment,columnFragment)) {
+            if (parserLogicScripter.commandMatcher.isMatch(fragment, columnFragment)) {
                 comm = Optional.of(fragment);
                 formattedString.add(new CommandWord(comm.get(), new Vector2f(0f, 0)));
                 first = false;
-            } else if (parserLogicScripter.controlMatcher.isMatch(fragment,columnFragment)) {
+            } else if (parserLogicScripter.controlMatcher.isMatch(fragment, columnFragment)) {
                 comm = Optional.of(fragment);
                 formattedString.add(new BranchWord(comm.get(), new Vector2f(0f, 0)));
                 jump = true;
                 first = false;
-            } else if (parserLogicScripter.registerMatcher.isMatch(fragment,columnFragment)) {  //register
+            } else if (parserLogicScripter.registerMatcher.isMatch(fragment, columnFragment)) {  //register
 
                 if (fragment.contains(",")) {
                     if (!registers.contains(fragment.substring(0, fragment.length() - 1))) {
                         registers.add(fragment.substring(0, fragment.length() - 1));
                     }
-                    formattedString.add(new RegisterWord(fragment.substring(0, fragment.length()-1), new Vector2f(0f, 0)));
+                    formattedString.add(new RegisterWord(fragment.substring(0, fragment.length() - 1), new Vector2f(0f, 0)));
                     formattedString.add(new LabelWord(",", new Vector2f(0f, 0)));
                 } else {
                     if (!registers.contains(fragment)) {
@@ -349,13 +347,12 @@ public class Parser2  {
                     formattedString.add(new RegisterWord(fragment, new Vector2f(0f, 0)));
                 }
                 first = false;
-            } else if (parserLogicScripter.immediateMatcher.isMatch(fragment,columnFragment))
-             {
+            } else if (parserLogicScripter.immediateMatcher.isMatch(fragment, columnFragment)) {
                 //immediate value, literal or trap
                 //just skip this for now
                 first = false;
                 formattedString.add(new ImmediateWord(fragment, new Vector2f(0f, 0)));
-            } else if (jump && parserLogicScripter.labelMatcher.isMatch(fragment,columnFragment)) {   //jump statement, this matches a label
+            } else if (jump && parserLogicScripter.labelMatcher.isMatch(fragment, columnFragment)) {   //jump statement, this matches a label
                 //if the line is a jump statement,
                 //this matches the label or labels pointed to by the command
                 //if the language supports having the label BEFORE the command,
@@ -363,26 +360,25 @@ public class Parser2  {
                 targetLabel = fragment;
                 formattedString.add(new LabelWord(fragment, new Vector2f(0f, 0)));
                 first = false;
-            } else if (parserLogicScripter.commentMatcher.isMatch(fragment,columnFragment)) {
+            } else if (parserLogicScripter.commentMatcher.isMatch(fragment, columnFragment)) {
                 formattedString.add(new CommentWord(fragment, new Vector2f(0f, 0)));
-            }
-            else if (first && parserLogicScripter.labelMatcher.isMatch(fragment,columnFragment)) {
+            } else if (first && parserLogicScripter.labelMatcher.isMatch(fragment, columnFragment)) {
                 //this is the (optional) label for the line
                 label = fragment;
                 formattedString.add(new LabelWord(fragment, new Vector2f(0f, 0)));
                 first = false;
-            } else if (!jump && parserLogicScripter.userDefinedMatcher.isMatch(fragment,columnFragment))
-            {
+            } else if (!jump && parserLogicScripter.userDefinedMatcher.isMatch(fragment, columnFragment)) {
                 //the command isn't a jump statement, so the label must be a variable i.e. string, etc.
                 formattedString.add(new LabelWord(fragment, new Vector2f(0f, 0)));
+            } else if (parserLogicScripter.separatorMatcher.isMatch(fragment, columnFragment)) {
+                formattedString.add(new SeparatorWord(fragment, new Vector2f(0f, 0f)));
+            }  else if (parserLogicScripter.separatorMatcher.isMatch(fragment,columnFragment)) {
+                formattedString.add(new WhiteSpaceWord(fragment, new Vector2f(0f, 0f)));
             }
-            else if (parserLogicScripter.separatorMatcher.isMatch(fragment,columnFragment)){
-                formattedString.add(new SeparatorWord(fragment, new Vector2f(0f,0f)));
-            } else {
+            else {
                 formattedString.add(new ErrorWord(fragment, new Vector2f(0f, 0f)));
             }
         }
-
 
 
         //Put formatted text into an object
@@ -403,7 +399,7 @@ public class Parser2  {
     /**
      * Default formatted text line. Used when there is no valid syntax in use.
      * Defaults to making all text white.
-     * */
+     */
     public EditableFormattedTextLine getFormattedLineDefault(String line) {
         List<TextWord> formattedString = new ArrayList<>();
         formattedString.add(new LabelWord(line, new Vector2f(0f, 0)));
@@ -453,7 +449,7 @@ public class Parser2  {
             if (flowchart.get(flowchart.size() - 1).codeBlock == 0) {
                 // doesn't have blocking yet
                 flowchart.get(flowchart.size() - 1).codeBlock = line.getCodeBlock();
-            } else if (flowchart.get(flowchart.size() - 1).codeBlock == 1 && line.getCodeBlock() == 2){
+            } else if (flowchart.get(flowchart.size() - 1).codeBlock == 1 && line.getCodeBlock() == 2) {
                 // box is a single, enclosed codeBlock.
                 flowchart.get(flowchart.size() - 1).codeBlock = 3;
             }
@@ -510,7 +506,7 @@ public class Parser2  {
             }
             //System.out.println(box.codeBlock);
             // Link code block sections:
-            if ((codeBlocks.size() & 1) == 0){
+            if ((codeBlocks.size() & 1) == 0) {
                 // even or no block:
                 if (box.codeBlock == 1) {
 //                    System.out.println("Box starts, inserted");
@@ -532,15 +528,15 @@ public class Parser2  {
             i++;
         }
 
-        for (FlowChartObject obj : codeBlocks){
+        for (FlowChartObject obj : codeBlocks) {
             System.out.print(obj.boxNumber + ",");
         }
         System.out.println();
 
-        for (i = 0; i < codeBlocks.size() - codeBlocks.size()%2 ; i += 2){
+        for (i = 0; i < codeBlocks.size() - codeBlocks.size() % 2; i += 2) {
             // Key is end of box, value is start of box
-            codeBlockMap.put(codeBlocks.get(i+1),codeBlocks.get(i));
-            System.out.println("mapping box " + codeBlocks.get(i+1).boxNumber + " to box " + codeBlocks.get(i).boxNumber);
+            codeBlockMap.put(codeBlocks.get(i + 1), codeBlocks.get(i));
+            System.out.println("mapping box " + codeBlocks.get(i + 1).boxNumber + " to box " + codeBlocks.get(i).boxNumber);
         }
 
         if (verbose) {
@@ -665,7 +661,7 @@ public class Parser2  {
                         }
                     } else {
                         temp = -1f;
-                        for (Vector2f item : sizes.subList(flowchart.get(index).connection.getBoxNumber() - 1, index+1)) {
+                        for (Vector2f item : sizes.subList(flowchart.get(index).connection.getBoxNumber() - 1, index + 1)) {
                             if (item.x + GeneralSettings.FLOWCHART_PAD_LEFT - 1f > temp)
                                 temp = item.x + GeneralSettings.FLOWCHART_PAD_LEFT - 1f;
                         }
@@ -691,7 +687,7 @@ public class Parser2  {
             }
 
             // Code block drawing
-            if (index < flowchart.size() && codeBlockMap.containsKey(flowchart.get(index))){
+            if (index < flowchart.size() && codeBlockMap.containsKey(flowchart.get(index))) {
                 System.out.println("Adding codeBlock line ending @ box " + index + ", starting @ box " + (codeBlockMap.get(flowchart.get(index)).boxNumber));
 
                 List<Vector2f> coordinates = new ArrayList<>();
@@ -699,12 +695,12 @@ public class Parser2  {
                 // first point: bottom left of last box of the block
                 coordinates.add(locations.get(index));
                 // second point: same as ^ but .1 to the left
-                coordinates.add(new Vector2f(locations.get(index).x-.1f,locations.get(index).y));
+                coordinates.add(new Vector2f(locations.get(index).x - .1f, locations.get(index).y));
 
                 // third point: straight up from point 2, in line with the top of the first block box
-                coordinates.add(new Vector2f(locations.get(codeBlockMap.get(flowchart.get(index)).boxNumber-1).x -.1f,locations.get(codeBlockMap.get(flowchart.get(index)).boxNumber-1).y + sizes.get(codeBlockMap.get(flowchart.get(index)).boxNumber-1).y));
+                coordinates.add(new Vector2f(locations.get(codeBlockMap.get(flowchart.get(index)).boxNumber - 1).x - .1f, locations.get(codeBlockMap.get(flowchart.get(index)).boxNumber - 1).y + sizes.get(codeBlockMap.get(flowchart.get(index)).boxNumber - 1).y));
                 // last point: top left corner of first box in the block
-                coordinates.add(new Vector2f(locations.get(codeBlockMap.get(flowchart.get(index)).boxNumber-1).x,locations.get(codeBlockMap.get(flowchart.get(index)).boxNumber-1).y + sizes.get(codeBlockMap.get(flowchart.get(index)).boxNumber-1).y));
+                coordinates.add(new Vector2f(locations.get(codeBlockMap.get(flowchart.get(index)).boxNumber - 1).x, locations.get(codeBlockMap.get(flowchart.get(index)).boxNumber - 1).y + sizes.get(codeBlockMap.get(flowchart.get(index)).boxNumber - 1).y));
 
                 // terminators can't be null
                 Terminator terminator = new Junction(coordinates.get(coordinates.size() - 1));
@@ -727,22 +723,22 @@ public class Parser2  {
 //            y_bound = 0;
 //        }
 
-        for (Vector2f coordinate : locations){
-            bottomRight.x = Math.max(bottomRight.x,coordinate.x);
-            bottomRight.y = Math.min(bottomRight.y,coordinate.y);
-            topLeft.x = Math.min(topLeft.x,coordinate.x);
-            topLeft.y = Math.max(topLeft.y,coordinate.y);
+        for (Vector2f coordinate : locations) {
+            bottomRight.x = Math.max(bottomRight.x, coordinate.x);
+            bottomRight.y = Math.min(bottomRight.y, coordinate.y);
+            topLeft.x = Math.min(topLeft.x, coordinate.x);
+            topLeft.y = Math.max(topLeft.y, coordinate.y);
         }
 
-        for (FlowchartLine line : linesList){
-            for (Vector2f coordinate : line.getPositions()){
-                bottomRight.x = Math.max(bottomRight.x,coordinate.x);
-                bottomRight.y = Math.min(bottomRight.y,coordinate.y);
-                topLeft.x = Math.min(topLeft.x,coordinate.x);
-                topLeft.y = Math.max(topLeft.y,coordinate.y);
+        for (FlowchartLine line : linesList) {
+            for (Vector2f coordinate : line.getPositions()) {
+                bottomRight.x = Math.max(bottomRight.x, coordinate.x);
+                bottomRight.y = Math.min(bottomRight.y, coordinate.y);
+                topLeft.x = Math.min(topLeft.x, coordinate.x);
+                topLeft.y = Math.max(topLeft.y, coordinate.y);
             }
         }
-        Vector2f midpoint = new Vector2f((.5f * (bottomRight.x + topLeft.x)),(.5f * (bottomRight.y + topLeft.y)));
+        Vector2f midpoint = new Vector2f((.5f * (bottomRight.x + topLeft.x)), (.5f * (bottomRight.y + topLeft.y)));
 
         // Screenshotting helper commands
         if (verbose) {
@@ -788,7 +784,7 @@ public class Parser2  {
 
         GeneralSettings.IMAGE_SIZE =
                 new Vector2f(Math.abs(bottomRight.x) + Math.abs(topLeft.x) - GeneralSettings.SCREENSHOT_PADDING_SIZE,
-                Math.abs(bottomRight.y) + Math.abs(topLeft.y) - GeneralSettings.FLOWCHART_PAD_TOP);
+                        Math.abs(bottomRight.y) + Math.abs(topLeft.y) - GeneralSettings.FLOWCHART_PAD_TOP);
 
 
         Matrix3f translation = new Matrix3f();
@@ -797,11 +793,9 @@ public class Parser2  {
         translation.m00 = 1f;   // X scaling
         translation.m11 = 1f;   // Y scale
         translation.m20 = 0f;   // X translation
-        translation.m21 = - ((bottomRight.y + topLeft.y) *  translation.m11) + magic_number; // Y translation
+        translation.m21 = -((bottomRight.y + topLeft.y) * translation.m11) + magic_number; // Y translation
 
         GeneralSettings.EXTRA = 0;
-
-
 
 
 //        System.out.println(infile + ": " + translation.m00 + "," + translation.m11);
@@ -835,7 +829,7 @@ public class Parser2  {
         return flowchartWindowController;
     }
 
-    public FlowchartWindowController createFlowchart2(ApplicationController controller){
+    public FlowchartWindowController createFlowchart2(ApplicationController controller) {
         FlowchartWindowController flowchartWindowController = controller.getFlowchartWindowController();
         if (flowchartWindowController == null) {
             flowchartWindowController = new FlowchartWindowController(controller.getTextLineController());

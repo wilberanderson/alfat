@@ -15,7 +15,6 @@ import org.lwjgl.glfw.GLFW;
 import org.lwjgl.util.vector.Matrix3f;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
-import utils.Printer;
 
 import java.io.*;
 import java.util.*;
@@ -188,7 +187,7 @@ public class Parser  {
                         } else if (fragment.matches(syn.getKeywordPatterns().getCommentLine())) {
                             formattedString.add(new CommentWord(fragment, new Vector2f(0f, 0)));
                         } else if (fragment.matches("[ ,\t]")) {
-                            formattedString.add(new SeparatorWord(fragment, new Vector2f(0f, 0f)));
+                            formattedString.add(new WhiteSpaceWord(fragment, new Vector2f(0f, 0f)));
                         } else {
                             formattedString.add(new ErrorWord(fragment, new Vector2f(0f, 0f)));
                         }
@@ -319,7 +318,7 @@ public class Parser  {
                 formattedString.add(new LabelWord(fragment, new Vector2f(0f, 0)));
             }
             else if (fragment.matches("[ ,\t]")){
-                formattedString.add(new SeparatorWord(fragment, new Vector2f(0f,0f)));
+                formattedString.add(new WhiteSpaceWord(fragment, new Vector2f(0f,0f)));
             } else {
                 formattedString.add(new ErrorWord(fragment, new Vector2f(0f, 0f)));
             }

@@ -64,14 +64,14 @@ public class FormattedTextLine {
                 }
 
                 //If the word is a separator word the length may have multiple possible values
-                if(word instanceof SeparatorWord){
-                    if(((SeparatorWord) word).getText().length() > 0) {
+                if(word instanceof WhiteSpaceWord){
+                    if(((WhiteSpaceWord) word).getText().length() > 0) {
                         //If the word is a space length should be advanced by space size
-                        if (((SeparatorWord) word).getText().charAt(0) == ' ') {
+                        if (((WhiteSpaceWord) word).getText().charAt(0) == ' ') {
                             length += spaceSize;
                         }
                         //If the word is a tab then account for variable tab spacing
-                        else if (((SeparatorWord) word).getText().charAt(0) == '\t') {
+                        else if (((WhiteSpaceWord) word).getText().charAt(0) == '\t') {
                             length += spaceSize * (GeneralSettings.DEFAULT_TAB_WIDTH - numberOfCharacters % 4);//((numberOfCharacters % GeneralSettings.DEFAULT_TAB_WIDTH) == 0 ? GeneralSettings.DEFAULT_TAB_WIDTH : numberOfCharacters % GeneralSettings.DEFAULT_TAB_WIDTH);
                             numberOfCharacters = 0;
                         }

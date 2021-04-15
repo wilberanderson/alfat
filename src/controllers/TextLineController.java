@@ -5,8 +5,6 @@ import gui.texts.*;
 import main.GeneralSettings;
 import org.lwjgl.util.vector.Vector2f;
 import parser.GlobalParser;
-import parser.Parser;
-import utils.Printer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,15 +36,15 @@ public class TextLineController {
         //For each text word
         for (TextWord word : line.getWords()) {
             //If the text word is a separator
-            if(word instanceof SeparatorWord){
+            if(word instanceof WhiteSpaceWord){
                 float spaceSize = word.getFont().getSpaceSize()/64;
-                if(((SeparatorWord) word).getText().length() > 0) {
+                if(((WhiteSpaceWord) word).getText().length() > 0) {
                     //If the separator is a space add one space size
-                    if (((SeparatorWord) word).getText().charAt(0) == ' ') {
+                    if (((WhiteSpaceWord) word).getText().charAt(0) == ' ') {
                         offset += spaceSize;
                     }
                     //Tabs are used for alignment, add enough tabs to meet the currently used tab count
-                    else if (((SeparatorWord) word).getText().charAt(0) == '\t') {
+                    else if (((WhiteSpaceWord) word).getText().charAt(0) == '\t') {
                         offset += spaceSize * (GeneralSettings.DEFAULT_TAB_WIDTH - numberOfCharacters % 4);//((numberOfCharacters % GeneralSettings.DEFAULT_TAB_WIDTH) == 0 ? GeneralSettings.DEFAULT_TAB_WIDTH : numberOfCharacters % GeneralSettings.DEFAULT_TAB_WIDTH);
                         numberOfCharacters = 0;
                     }
@@ -93,15 +91,15 @@ public class TextLineController {
             }
 
             //If the text word is a separator
-            if(word instanceof SeparatorWord){
+            if(word instanceof WhiteSpaceWord){
                 float spaceSize = word.getFont().getSpaceSize()/64;
-                if(((SeparatorWord) word).getText().length() > 0) {
+                if(((WhiteSpaceWord) word).getText().length() > 0) {
                     //If the separator is a space add one space size
-                    if (((SeparatorWord) word).getText().charAt(0) == ' ') {
+                    if (((WhiteSpaceWord) word).getText().charAt(0) == ' ') {
                         offset += spaceSize;
                     }
                     //Tabs are used for alignment, add enough tabs to meet the currently used tab count
-                    else if (((SeparatorWord) word).getText().charAt(0) == '\t') {
+                    else if (((WhiteSpaceWord) word).getText().charAt(0) == '\t') {
                         offset += spaceSize * 128 * (GeneralSettings.DEFAULT_TAB_WIDTH - numberOfCharacters % 4);//((numberOfCharacters % GeneralSettings.DEFAULT_TAB_WIDTH) == 0 ? GeneralSettings.DEFAULT_TAB_WIDTH : numberOfCharacters % GeneralSettings.DEFAULT_TAB_WIDTH);
                         numberOfCharacters = 0;
                     }
@@ -271,15 +269,15 @@ public class TextLineController {
             }
 
             //If the text word is a separator
-            if(word instanceof SeparatorWord){
+            if(word instanceof WhiteSpaceWord){
                 float spaceSize = word.getFont().getSpaceSize()/64;
-                if(((SeparatorWord) word).getText().length() > 0) {
+                if(((WhiteSpaceWord) word).getText().length() > 0) {
                     //If the separator is a space add one space size
-                    if (((SeparatorWord) word).getText().charAt(0) == ' ') {
+                    if (((WhiteSpaceWord) word).getText().charAt(0) == ' ') {
                         offset += spaceSize;
                     }
                     //Tabs are used for alignment, add enough tabs to meet the currently used tab count
-                    else if (((SeparatorWord) word).getText().charAt(0) == '\t') {
+                    else if (((WhiteSpaceWord) word).getText().charAt(0) == '\t') {
                         offset += spaceSize * 128*(GeneralSettings.DEFAULT_TAB_WIDTH - numberOfCharacters % 4);//((numberOfCharacters % GeneralSettings.DEFAULT_TAB_WIDTH) == 0 ? GeneralSettings.DEFAULT_TAB_WIDTH : numberOfCharacters % GeneralSettings.DEFAULT_TAB_WIDTH);
                         numberOfCharacters = 0;
                     }

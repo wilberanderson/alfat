@@ -77,7 +77,7 @@ public class ApplicationController {
             LabelWord.setColor(GeneralSettings.USERPREF.getLabelColor3f());
             LineNumberWord.setColor(GeneralSettings.USERPREF.getLineNumberColor3f());
             RegisterWord.setColor(GeneralSettings.USERPREF.getRegisterColor3f());
-            SeparatorWord.setColor(GeneralSettings.USERPREF.getSeparatorColor3f());
+            WhiteSpaceWord.setColor(GeneralSettings.USERPREF.getSeparatorColor3f());
         }
 
         if(header != null) {

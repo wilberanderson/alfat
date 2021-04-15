@@ -137,7 +137,7 @@ public class ParserLogicScripter {
     /**
      * <pre>
      *    Anything that could be a separator token
-     *    e.g., white space, tab
+     *    e.g., commas or anything that is a non-white space non tab character.
      * </pre>
      * */
     public TokenMatcher separatorMatcher = new TokenMatcher() {
@@ -146,6 +146,23 @@ public class ParserLogicScripter {
             return token.matches(syn.getKeywordPatterns().getSeparator());
         }
     };
+
+
+    /**
+     * This is not defined from the CodeSyntax
+     * <pre>
+     *     Any white space character(s)
+     *     e.g., "   ", " ", "\t\t"
+     * </pre>
+     * */
+    public TokenMatcher whitespaceMatcher = new TokenMatcher() {
+        @Override
+        public boolean isMatch(String token, int column) {
+            return token.matches("(^([ \t\\s]+)([ \t\\s])$)|([ \t\\s])");
+        }
+    };
+
+
 
 
 
