@@ -40,7 +40,7 @@ public class Parser2 {
 
     //JsonReader jr = new JsonReader(new File("CodeSyntax/LC3.json"));
     //JsonReader jr = new JsonReader(new File("CodeSyntax/x86.json"));
-    private CodeSyntax syn = JsonReader.mapJsonToCodeSyntax(new File("CodeSyntax/LC3.json"));
+    private CodeSyntax syn;
 
     private ParserLogicScripter parserLogicScripter;
 
@@ -531,14 +531,14 @@ public class Parser2 {
         }
 
         for (FlowChartObject obj : codeBlocks) {
-            System.out.print(obj.boxNumber + ",");
+            if (verbose) System.out.print(obj.boxNumber + ",");
         }
-        System.out.println();
+        if (verbose) System.out.println();
 
         for (i = 0; i < codeBlocks.size() - codeBlocks.size() % 2; i += 2) {
             // Key is end of box, value is start of box
             codeBlockMap.put(codeBlocks.get(i + 1), codeBlocks.get(i));
-            System.out.println("mapping box " + codeBlocks.get(i + 1).boxNumber + " to box " + codeBlocks.get(i).boxNumber);
+            if (verbose) System.out.println("mapping box " + codeBlocks.get(i + 1).boxNumber + " to box " + codeBlocks.get(i).boxNumber);
         }
 
         if (verbose) {
@@ -690,7 +690,7 @@ public class Parser2 {
 
             // Code block drawing
             if (index < flowchart.size() && codeBlockMap.containsKey(flowchart.get(index))) {
-                System.out.println("Adding codeBlock line ending @ box " + index + ", starting @ box " + (codeBlockMap.get(flowchart.get(index)).boxNumber));
+                if (verbose) System.out.println("Adding codeBlock line ending @ box " + index + ", starting @ box " + (codeBlockMap.get(flowchart.get(index)).boxNumber));
 
                 List<Vector2f> coordinates = new ArrayList<>();
 
@@ -714,7 +714,7 @@ public class Parser2 {
                 codeBlockLines++;
             }
         }
-        System.out.println(bottomRight);
+        if (verbose) System.out.println(bottomRight);
 
         if (verbose) System.out.println("Lines added: " + linesList.size());
 
