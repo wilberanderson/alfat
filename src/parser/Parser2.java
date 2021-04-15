@@ -132,7 +132,11 @@ public class Parser2 {
                     Optional<String> comm = Optional.empty();
                     String label = "";
                     String targetLabel = "";
-                    List<String> registers = new ArrayList<>();
+
+                    // This can be added to from any fragment to make that fragment show up in searches;
+                    // Note that this is referred to as a list called "registers" everywhere else that it is referenced.
+                    // And the search function is also called locateRegisters(String);
+                    List<String> searchables = new ArrayList<>();
                     List<TextWord> formattedString = new ArrayList<>();
                     boolean jump = false;
                     boolean ret = false;
@@ -177,14 +181,14 @@ public class Parser2 {
                             first = false;
                         } else if (parserLogicScripter.registerMatcher.isMatch(fragment, columnFragment)) {  //register
                             if (fragment.contains(",")) {
-                                if (!registers.contains(fragment.substring(0, fragment.length() - 1))) {
-                                    registers.add(fragment.substring(0, fragment.length() - 1));
+                                if (!searchables.contains(fragment.substring(0, fragment.length() - 1))) {
+                                    searchables.add(fragment.substring(0, fragment.length() - 1));
                                 }
                                 formattedString.add(new RegisterWord(fragment.substring(0, fragment.length() - 1), new Vector2f(0f, 0)));
                                 formattedString.add(new LabelWord(",", new Vector2f(0f, 0)));
                             } else {
-                                if (!registers.contains(fragment)) {
-                                    registers.add(fragment);
+                                if (!searchables.contains(fragment)) {
+                                    searchables.add(fragment);
                                 }
                                 formattedString.add(new RegisterWord(fragment, new Vector2f(0f, 0)));
                             }
@@ -194,6 +198,9 @@ public class Parser2 {
                             //just skip this for now
                             first = false;
                             formattedString.add(new ImmediateWord(fragment, new Vector2f(0f, 0)));
+                            if (!searchables.contains(fragment)) {
+                                searchables.add(fragment);
+                            }
                         } else if (jump && parserLogicScripter.labelMatcher.isMatch(fragment, columnFragment)) {   //jump statement, this matches a label
                             //if the line is a jump statement,
                             //this matches the label or labels pointed to by the command
@@ -208,6 +215,9 @@ public class Parser2 {
                             gotoList.add(Integer.parseInt(fragment));
                             formattedString.add(new LabelWord(fragment, new Vector2f(0f, 0)));
                             targetLabel = fragment;
+                            if (!searchables.contains(fragment)) {
+                                searchables.add(fragment);
+                            }
                         } else if (parserLogicScripter.procedureEndmatcher.isMatch(fragment, columnFragment)) {
                             ret = true;
                             jump = true;
@@ -255,11 +265,11 @@ public class Parser2 {
                         if (!label.isEmpty()) System.out.println(" line label: \"" + label + "\"");
                         if (jump) System.out.println(" Line is a jump line (break, jump, etc.)");
                         if (jump) System.out.println(" jump targets: \"" + targetLabel + "\"");
-                        System.out.println(" registers used: " + registers);
+                        System.out.println(" searchables used: " + searchables);
                     }
 
                     //call constructor for TLine, then add the new object to the arraylist for the file
-                    lines.add(new CodeLine(line, comm, label, targetLabel, jump, registers, i, ret, codeBlock));
+                    lines.add(new CodeLine(line, comm, label, targetLabel, jump, searchables, i, ret, codeBlock));
                     // Assign formatted text object to the new Tline class
                     lines.get(lines.size() - 1).setTextLine(FormLine);
                 }
