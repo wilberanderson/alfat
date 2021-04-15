@@ -151,15 +151,17 @@ public class Parser2 {
                         //System.out.println("column Fragment:" + columnFragment);
 
                         // TODO: make regex matches
-                        if (parserLogicScripter.procedureStartmatcher.isMatch(fragment, columnFragment)) {
-                            // block start
-                            codeBlock = 1;
-                        } else if (parserLogicScripter.procedureEndmatcher.isMatch(fragment, columnFragment)) {
-                            // block start
-                            codeBlock = 2;
-                        }
-                        if (parserLogicScripter.procedureEndmatcher.isMatch(fragment, columnFragment) || parserLogicScripter.procedureEndmatcher.isMatch(fragment, columnFragment)) {
-                            first = false;
+                        if (parserLogicScripter.procedureMatching){
+                            if (parserLogicScripter.procedureStartmatcher.isMatch(fragment, columnFragment)) {
+                                // block start
+                                codeBlock = 1;
+                            } else if (parserLogicScripter.procedureEndmatcher.isMatch(fragment, columnFragment)) {
+                                // block start
+                                codeBlock = 2;
+                            }
+                            if (parserLogicScripter.procedureEndmatcher.isMatch(fragment, columnFragment) || parserLogicScripter.procedureEndmatcher.isMatch(fragment, columnFragment)) {
+                                first = false;
+                            }
                         }
 
 

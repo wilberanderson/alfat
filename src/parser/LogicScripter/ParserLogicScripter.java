@@ -12,6 +12,7 @@ import java.util.regex.Pattern;
 public class ParserLogicScripter {
     //Needs the syntax to assign matching
     private CodeSyntax syn;
+    public boolean procedureMatching = false;
 
     public ParserLogicScripter(CodeSyntax codeSyntax) {
         this.syn = codeSyntax;
@@ -172,7 +173,13 @@ public class ParserLogicScripter {
     private void buildMatchers() {
         //If the JSON provides a parser token logic we build them over using the default ones that are hard coded
         if(syn.getParserTokenLogic() != null) {
-           //CommandMatcher
+            // Procedure start/end boolean
+            if (syn.getKeywordPatterns().getProcedurestart().isBlank() || syn.getKeywordPatterns().getProcedureend().isBlank()){
+                procedureMatching = false;
+            }
+
+
+            //CommandMatcher
             if(syn.getParserTokenLogic().getCommand() != null) {
                 //Get the regexes from jsons
                 ArrayList<TokenMatchRegex> regexTempList = new ArrayList<TokenMatchRegex>();

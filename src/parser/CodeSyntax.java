@@ -119,7 +119,7 @@ public class CodeSyntax {
 
        if(this.parserTokenLogic != null) {
            result = isMatcherValid(parserTokenLogic.getCommand())
-                   &&  isMatcherValid(parserTokenLogic.getControl())
+                   && isMatcherValid(parserTokenLogic.getControl())
                    && isMatcherValid(parserTokenLogic.getRegister())
                    && isMatcherValid(parserTokenLogic.getImmediate())
                    && isMatcherValid(parserTokenLogic.getLabel())
