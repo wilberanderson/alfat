@@ -386,21 +386,23 @@ public class CodeWindowController {
      * @param key the GLFW key code indicating which key was pressed
      */
     public void keyPress(int key){
-        //Cursor movement keys
-        if(key == ControllerSettings.CURSOR_LEFT){
-            cursorController.moveLeft();
-        }else if(key == ControllerSettings.CURSOR_RIGHT){
-            cursorController.moveRight();
-        }else if(key == ControllerSettings.CURSOR_UP){
-            cursorController.moveUp();
-        }else if(key == ControllerSettings.CURSOR_DOWN){
-            cursorController.moveDown();
-        }
-        //Deletion keys
-        else if(key == ControllerSettings.CURSOR_BACKSPACE){
-            cursorController.backSpace();
-        }else if(key == ControllerSettings.CURSOR_DELETE){
-            cursorController.delete();
+        if(cursorController.isVisible()) {
+            //Cursor movement keys
+            if (key == ControllerSettings.CURSOR_LEFT) {
+                cursorController.moveLeft();
+            } else if (key == ControllerSettings.CURSOR_RIGHT) {
+                cursorController.moveRight();
+            } else if (key == ControllerSettings.CURSOR_UP) {
+                cursorController.moveUp();
+            } else if (key == ControllerSettings.CURSOR_DOWN) {
+                cursorController.moveDown();
+            }
+            //Deletion keys
+            else if (key == ControllerSettings.CURSOR_BACKSPACE) {
+                cursorController.backSpace();
+            } else if (key == ControllerSettings.CURSOR_DELETE) {
+                cursorController.delete();
+            }
         }
         //No other raw key presses are registered
     }
@@ -411,7 +413,9 @@ public class CodeWindowController {
      */
     public void type(char c){
         //Pass the type event to the cursor controller to process
-        cursorController.type(c);
+        if(cursorController.isVisible()) {
+            cursorController.type(c);
+        }
     }
 
     /**
@@ -608,6 +612,8 @@ public class CodeWindowController {
         verticalScrollBar.changeXPosition(change);
         //The horizontal scroll bar needs it's range adjusted
         horizontalScrollBar.changeWindowWidth(change);
+
+        cursorController.setVisible(false);
     }
 
     /**
