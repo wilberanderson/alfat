@@ -114,14 +114,14 @@ public class SettingsMenu extends Component {
         root.setVisible(true);
 
         //Listener to ensure only 1 settings menu can be opened at a time
-        root.addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent e) {
-                System.out.println("Window Closing");
-                OPENABLE = true;
-                //System.exit(0);
-            }
-        });
+//        root.addWindowListener(new WindowAdapter() {
+//            @Override
+//            public void windowClosing(WindowEvent e) {
+//                // System.out.println("Window Closing");
+//                OPENABLE = true;
+//                //System.exit(0);
+//            }
+//        });
 
 
     }

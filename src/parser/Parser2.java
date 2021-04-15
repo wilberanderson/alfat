@@ -509,9 +509,9 @@ public class Parser2 {
                     box.alert += "invalid_label";
                     // popup goes here
                     if (!invalidFlag) {
-                        // only show a single pop up for invalid labels.
-                        PopupWindow popup = new PopupWindow("Warning", "Invalid label found", "cancel", "continue");
-                        GLFW.glfwMakeContextCurrent(EngineTester.getWindow());
+                        // Show pop up for invalid label
+//                        PopupWindow popup = new PopupWindow("Warning", "Invalid label found", "cancel", "continue");
+//                        GLFW.glfwMakeContextCurrent(EngineTester.getWindow());
                         invalidFlag = true;
                     }
                 }

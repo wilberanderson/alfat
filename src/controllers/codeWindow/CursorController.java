@@ -380,7 +380,7 @@ public class CursorController {
         this.aspectRatio = new Vector2f(codeWindow.getAspectRatio());
         if(currentText != null) {
             updatePosition();
-            Printer.print("Position updated");
+            // Printer.print("Position updated");
         }
     }
 
