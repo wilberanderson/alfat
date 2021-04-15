@@ -19,7 +19,7 @@ import java.util.ArrayList;
 public class Ruler extends ArrayList<Float> {
     private final float MULTIPLIER = 2.f; // The default multiplier value
     private final float FONTSIZESAPCE = GeneralSettings.FONT.getSpaceSize(); // The default font size space
-    private ArrayList<Integer> jsonRulerColumns; //The list of ruler columns from the json
+    private ArrayList<Integer> jsonRulerColumns = new ArrayList<Integer>(); //The list of ruler columns from the json
     private float fontSizeSpace = FONTSIZESAPCE; //The font size
     private float multiplier = MULTIPLIER; //The multiplier
 

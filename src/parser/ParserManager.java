@@ -19,7 +19,9 @@ public class ParserManager {
     public ParserManager() {
         this.codeSyntax = null;
         parser = new Parser2();
+        makeEmptyRuler();
         updateSyntaxIfNeeded();
+
     }
 
     /**
@@ -57,9 +59,15 @@ public class ParserManager {
                 }
 
                 if(codeSyntax.isRulerValid() == true) {
-                    this.ruler = new Ruler(codeSyntax.getRuler().inner, true);
+                    //this.ruler = new Ruler(codeSyntax.getRuler().inner, true);
+                    ruler.setJsonRulerColumnsAndBuild(codeSyntax.getRuler().inner);
+                    //System.out.println(ruler);
                 } else {
-                    makeEmptyRuler();
+                   // makeEmptyRuler();
+                    ArrayList<Integer> foo = new ArrayList<Integer>();
+                    foo.add(0);
+                    ruler.setJsonRulerColumnsAndBuild(foo);
+                    //System.out.println(ruler);
                 }
 
 
