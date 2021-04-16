@@ -49,6 +49,7 @@ public class Header {
     ApplicationController controller;
     GUIText notificationText;
     private boolean isBtnOpenable = true;
+    private SettingsMenu settingsMenu = new SettingsMenu();
 
 
     public Header(Vector2f position, Vector2f size, ApplicationController controller){
@@ -547,7 +548,9 @@ public class Header {
      * Opens the settings menu
      */
     public void settings(){
-        SettingsMenu sMenu = new SettingsMenu();
+        //SettingsMenu.run();
+        settingsMenu.setVisible();
+
     }
 
     /**

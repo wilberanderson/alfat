@@ -50,6 +50,7 @@ public class Parser2 {
      */
     public void clear() {
         invalidFlag = false;
+        codeBlockMap.clear();
         flowchart.clear();
         labelMap.clear();
         lines.clear();
@@ -246,7 +247,10 @@ public class Parser2 {
                             formattedString.add(new CommentWord(fragment, new Vector2f(0f, 0)));
                         } else if (parserLogicScripter.separatorMatcher.isMatch(fragment, columnFragment)) {
                             formattedString.add(new SeparatorWord(fragment, new Vector2f(0f, 0f)));
-                        } else if (parserLogicScripter.whitespaceMatcher.isMatch(fragment, columnFragment)) {
+                        } else if (parserLogicScripter.tabMatcher.isMatch(fragment,columnFragment)) {
+                            formattedString.add(new WhiteSpaceWord(fragment, new Vector2f(0f, 0f)));
+                        }
+                        else if (parserLogicScripter.whitespaceMatcher.isMatch(fragment, columnFragment)) {
                             formattedString.add(new WhiteSpaceWord(fragment, new Vector2f(0f, 0f)));
                         } else {
                             formattedString.add(new ErrorWord(fragment, new Vector2f(0f, 0f)));
@@ -311,7 +315,7 @@ public class Parser2 {
         boolean first = true;
         //parse line:
 //        line = line.replace("\t", "    ");
-        simpleTokenizer.setVerbose(false);
+        simpleTokenizer.setVerbose(true);
         String[] arrLine = simpleTokenizer.tokenizeString(line);
 
 
@@ -384,7 +388,10 @@ public class Parser2 {
                 formattedString.add(new LabelWord(fragment, new Vector2f(0f, 0)));
             } else if (parserLogicScripter.separatorMatcher.isMatch(fragment, columnFragment)) {
                 formattedString.add(new SeparatorWord(fragment, new Vector2f(0f, 0f)));
-            }  else if (parserLogicScripter.separatorMatcher.isMatch(fragment,columnFragment)) {
+            }  else if (parserLogicScripter.tabMatcher.isMatch(fragment,columnFragment)) {
+                formattedString.add(new WhiteSpaceWord(fragment, new Vector2f(0f, 0f)));
+            }
+            else if (parserLogicScripter.separatorMatcher.isMatch(fragment,columnFragment)) {
                 formattedString.add(new WhiteSpaceWord(fragment, new Vector2f(0f, 0f)));
             }
             else {

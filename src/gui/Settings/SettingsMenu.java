@@ -1,5 +1,6 @@
 package gui.Settings;
 
+import controllers.ApplicationController;
 import gui.OpenFileDialog;
 import main.GeneralSettings;
 import org.lwjgl.util.vector.Vector3f;
@@ -88,30 +89,57 @@ public class SettingsMenu extends Component {
         root.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
 
+        //Just set window visible to false
+        root.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        root.addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+                root.setVisible(false);
+            }
+        });
+
+
 //Way to force everything to be removed
 //        root.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 //        //New close method
 //        root.addWindowListener(new java.awt.event.WindowAdapter() {
 //            @Override
 //            public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+//
+//                headerBtn = null;
+//                menuBtn = null;
+//                textEditorBtn = null;
+//                lineNumberBtn = null;
+//                scrollBtnVert = null;
+//                scrollBtnHoriz = null;
+//                flowchartBox1Bar = null;
+//                flowchartBox1Text = null;
+//
+//                branchTextColorBtn = null;
+//                commandTextColorBtn = null;
+//                commentTextColorBtn = null;
+//                errorTextColorBtn = null;
+//                immediateTextColorBtn = null;
+//                labelTextColorBtn = null;
+//                lineNumberTextColorBtn = null;
+//                registerTextColorBtn = null;
+//                separatorTextColorBtn = null;
+//
 //                fakeButtonscontent.removeAll(fakeButtonscontent);
 //                fakeButtonscontent = null;
 //                fakebutton.removeAll();
 //                fakebutton = null;
-//                mockGUIbackgroundColor = null;
-//                mockGUIflowchartBoxBGcolor= null;
-//                mockGUIfloatchartNumberlineBGcolor= null;
-//                mockGUItexteditorColor= null;
-//                mockGUItexteditorLinenumberBGColor= null;
-//                mockGUIheaderColor= null;
 //                root.dispose();
+//                gui = null;
 //                Runtime.getRuntime().gc();
+//                System.out.println("Dead");
 //            }
 //        });
 
         //Set icon
         root.setIconImage(Toolkit.getDefaultToolkit().getImage("src/res/icon/alfatlogo2.png"));
-        root.setVisible(true);
+        //root.setVisible(true);
+        root.setVisible(false);
 
         //Listener to ensure only 1 settings menu can be opened at a time
 //        root.addWindowListener(new WindowAdapter() {
@@ -126,8 +154,44 @@ public class SettingsMenu extends Component {
 
     }
 
+    public void setVisible() {
+        root.setVisible(true);
+    }
+
     public static void run()  {
         SettingsMenu gui = new SettingsMenu();
+
+
+
+//        Runnable myRunnable =
+//                new Runnable(){
+//            public void run(){
+//
+//                gui = new SettingsMenu();
+//
+//                try {
+//                    Thread.sleep(5000);
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
+//
+//
+//                root.setVisible(false);
+//
+//                try {
+//                    Thread.sleep(5000);
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
+//
+//                root.setVisible(true);
+//
+//            }
+//        };
+//        Thread thread = new Thread(myRunnable);
+//        thread.start();
+
+
     }
 
     //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

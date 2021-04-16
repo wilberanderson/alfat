@@ -153,7 +153,7 @@ public class ParserLogicScripter {
      * This is not defined from the CodeSyntax
      * <pre>
      *     Any white space character(s)
-     *     e.g., "   ", " ", "\t\t"
+     *     e.g., "   ", " ",
      * </pre>
      * */
     public TokenMatcher whitespaceMatcher = new TokenMatcher() {
@@ -164,7 +164,18 @@ public class ParserLogicScripter {
     };
 
 
-
+    /**
+     * This is not defined from the CodeSyntax
+     * <pre>
+     *     Any tab character e.g.,\t"
+     * </pre>
+     * */
+    public TokenMatcher tabMatcher = new TokenMatcher() {
+        @Override
+        public boolean isMatch(String token, int column) {
+            return token.matches("(^([\t]+)([\t])$)|([\t])");
+        }
+    };
 
 
     /**
