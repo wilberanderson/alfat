@@ -248,6 +248,7 @@ public class Parser2 {
                         } else if (parserLogicScripter.separatorMatcher.isMatch(fragment, columnFragment)) {
                             formattedString.add(new SeparatorWord(fragment, new Vector2f(0f, 0f)));
                         } else if (parserLogicScripter.tabMatcher.isMatch(fragment,columnFragment)) {
+                            fragment = " "; // should = 8 whitespace = 1 tab but it's 1 space whatever. TOBAD!
                             formattedString.add(new WhiteSpaceWord(fragment, new Vector2f(0f, 0f)));
                         }
                         else if (parserLogicScripter.whitespaceMatcher.isMatch(fragment, columnFragment)) {
@@ -389,6 +390,7 @@ public class Parser2 {
             } else if (parserLogicScripter.separatorMatcher.isMatch(fragment, columnFragment)) {
                 formattedString.add(new SeparatorWord(fragment, new Vector2f(0f, 0f)));
             }  else if (parserLogicScripter.tabMatcher.isMatch(fragment,columnFragment)) {
+                fragment = " "; // should = 8 whitespace = 1 tab but it's 1 space whatever. TOBAD!
                 formattedString.add(new WhiteSpaceWord(fragment, new Vector2f(0f, 0f)));
             }
             else if (parserLogicScripter.separatorMatcher.isMatch(fragment,columnFragment)) {
