@@ -77,6 +77,7 @@ public class CodeWindowController {
             0, -1
     };
     public RawModel ruler;
+    public int rulerCount;
 
     public CodeWindowController(Vector2f position, Vector2f size, Vector3f backgroundColor, Vector3f textColor, Vector3f borderColor, String content, FontType font, float fontSize, float thickness, float borderWidth, float border, float headerHeight, TextLineController textLineController){
         this.textLineController = textLineController;

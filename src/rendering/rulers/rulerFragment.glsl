@@ -16,5 +16,5 @@ void main(void){
 		}
 	//}
 	//Set the color to be the color loaded via uniform
-	out_color = vec4(pass_color, 0.25);
+	out_color = vec4(pass_color, 0.25); //0.25 is the alpha value of the rulers, 0 is fully transparent(invisible), 1 is fully opaque, negative numbers undefined
 }
