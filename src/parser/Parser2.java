@@ -125,6 +125,7 @@ public class Parser2 {
                     //line = line.replace("\t", "    ");
 
                     simpleTokenizer.setVerbose(false);
+                    line = line.replace("\t"," "); //YOU FOREVER LOSE TABS TOBAD!
                     String[] arrLine = simpleTokenizer.tokenizeString(line);
                     int columnFragmentIndex = 0; // The start index of the column fragment as a string fragment
                     int columnFragment = 0; // The actual fragment of the column
@@ -247,8 +248,8 @@ public class Parser2 {
                             formattedString.add(new CommentWord(fragment, new Vector2f(0f, 0)));
                         } else if (parserLogicScripter.separatorMatcher.isMatch(fragment, columnFragment)) {
                             formattedString.add(new SeparatorWord(fragment, new Vector2f(0f, 0f)));
-                        } else if (parserLogicScripter.tabMatcher.isMatch(fragment,columnFragment)) {
-                            fragment = " "; // should = 8 whitespace = 1 tab but it's 1 space whatever. TOBAD!
+                        }
+                        else if (parserLogicScripter.tabMatcher.isMatch(fragment,columnFragment)) {
                             formattedString.add(new WhiteSpaceWord(fragment, new Vector2f(0f, 0f)));
                         }
                         else if (parserLogicScripter.whitespaceMatcher.isMatch(fragment, columnFragment)) {
@@ -315,8 +316,8 @@ public class Parser2 {
     public EditableFormattedTextLine getFormattedLine(String line) {
         boolean first = true;
         //parse line:
-//        line = line.replace("\t", "    ");
-        simpleTokenizer.setVerbose(true);
+        simpleTokenizer.setVerbose(false);
+        line = line.replace("\t"," "); //YOU FOREVER LOSE TABS TOBAD!
         String[] arrLine = simpleTokenizer.tokenizeString(line);
 
 
@@ -387,16 +388,17 @@ public class Parser2 {
             } else if (!jump && parserLogicScripter.userDefinedMatcher.isMatch(fragment, columnFragment)) {
                 //the command isn't a jump statement, so the label must be a variable i.e. string, etc.
                 formattedString.add(new LabelWord(fragment, new Vector2f(0f, 0)));
-            } else if (parserLogicScripter.separatorMatcher.isMatch(fragment, columnFragment)) {
+            } else if (parserLogicScripter.separatorMatcher.isMatch(fragment,columnFragment)) {
                 formattedString.add(new SeparatorWord(fragment, new Vector2f(0f, 0f)));
-            }  else if (parserLogicScripter.tabMatcher.isMatch(fragment,columnFragment)) {
-                fragment = " "; // should = 8 whitespace = 1 tab but it's 1 space whatever. TOBAD!
+            } else if (parserLogicScripter.tabMatcher.isMatch(fragment,columnFragment)) {
+                //System.out.println("TAB["+fragment+"]");
                 formattedString.add(new WhiteSpaceWord(fragment, new Vector2f(0f, 0f)));
-            }
-            else if (parserLogicScripter.separatorMatcher.isMatch(fragment,columnFragment)) {
+            } else if (parserLogicScripter.whitespaceMatcher.isMatch(fragment,columnFragment)){
+                //System.out.println("WHITE SPACE["+fragment+"]");
                 formattedString.add(new WhiteSpaceWord(fragment, new Vector2f(0f, 0f)));
             }
             else {
+
                 formattedString.add(new ErrorWord(fragment, new Vector2f(0f, 0f)));
             }
         }

@@ -1,6 +1,5 @@
 package gui.Settings;
 
-import controllers.ApplicationController;
 import gui.OpenFileDialog;
 import main.GeneralSettings;
 import org.lwjgl.util.vector.Vector3f;
@@ -10,7 +9,6 @@ import java.awt.*;
 import java.awt.event.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -155,6 +153,8 @@ public class SettingsMenu extends Component {
     }
 
     public void setVisible() {
+        fakebutton.setSelectedIndex(0);
+        updateMenucontent(fakeButtonscontent.get(0).content);
         root.setVisible(true);
     }
 
@@ -205,6 +205,20 @@ public class SettingsMenu extends Component {
         updateMenucontent(fakeButtonscontent.get(index).content);
     }
 
+    /**A listener that changes the color of the selected list item*/
+    private static class OurJListCellRenderer extends DefaultListCellRenderer {
+        public Component getListCellRendererComponent( JList list, Object value, int index, boolean isSelected, boolean cellHasFocus ) {
+            Component c = super.getListCellRendererComponent( list, value, index, isSelected, cellHasFocus );
+            if(isSelected) {
+                c.setForeground(Color.decode(buttonTextColor));
+                c.setBackground(Color.decode(buttonBackgroundColor));
+            } else {
+                c.setBackground(Color.decode(panelBackgroundColor));
+            }
+            return c;
+        }
+    }
+
 
     /**
      * Builds the left pane of the JSplitPane and returns a JPanel
@@ -229,6 +243,26 @@ public class SettingsMenu extends Component {
                 clickButton(e.getPoint());
             }
         });
+        fakebutton.addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+
+            }
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+
+            }
+            @Override
+            public void keyReleased(KeyEvent e) {
+                int code = e.getKeyCode();
+                if(code == KeyEvent.VK_ENTER){
+                    fakebutton.setSelectedIndex(fakebutton.getSelectedIndex());
+                    updateMenucontent(fakeButtonscontent.get(fakebutton.getSelectedIndex()).content);
+                }
+            }
+        });
+        fakebutton.setCellRenderer(new OurJListCellRenderer());
 
         leftPanel.setPreferredSize(new Dimension(100, 100));
         //leftPanel.setMinimumSize(new Dimension(50, 50));
@@ -276,10 +310,10 @@ public class SettingsMenu extends Component {
     }
     //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     //                                                                          Swing Colors
-    String panelBackgroundColor = "#15202B";
-    String paneltextColor = "#FFFFFF";
-    String buttonTextColor = "#00acee";
-    String buttonBackgroundColor = "#22303C";
+    private static String panelBackgroundColor = "#15202B";
+    private static String paneltextColor = "#FFFFFF";
+    private static String buttonTextColor = "#00acee";
+    private static String buttonBackgroundColor = "#22303C";
 
     //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     //                                                                          Display Settings

@@ -159,7 +159,8 @@ public class ParserLogicScripter {
     public TokenMatcher whitespaceMatcher = new TokenMatcher() {
         @Override
         public boolean isMatch(String token, int column) {
-            return token.matches("(^([ \t\\s]+)([ \t\\s])$)|([ \t\\s])");
+            boolean result = token.matches("(^([ \t\\s]+)([ \t\\s])$)|([ \t\\s])");
+            return result;
         }
     };
 
@@ -173,7 +174,8 @@ public class ParserLogicScripter {
     public TokenMatcher tabMatcher = new TokenMatcher() {
         @Override
         public boolean isMatch(String token, int column) {
-            return token.matches("(^([\t]+)([\t])$)|([\t])");
+            boolean result = token.matches("(^([\t]+)([\t])$)|([\t])");
+            return result;
         }
     };
 
