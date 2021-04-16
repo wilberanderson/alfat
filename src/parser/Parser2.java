@@ -63,6 +63,7 @@ public class Parser2 {
      */
     public void setCodeSyntax(CodeSyntax codeSyntax) {
         this.syn = codeSyntax;
+
         if (syn.getColumnLengths() != null) {
             simpleTokenizer.setColumnLength(syn.getColumnLengths().inner);
         } else {

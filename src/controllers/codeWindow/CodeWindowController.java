@@ -164,6 +164,7 @@ public class CodeWindowController {
 
         //Generate the vao for the ruler
         ruler = Loader.loadToVAO(VERTICES, 2);
+        rulerCount= GlobalParser.PARSER_MANAGER.getRules().size()-1;
         populateVBO(GlobalParser.PARSER_MANAGER.getRules(), ruler.getVaoID());
 
         updateAspectRatio(aspectRatio, headerHeight);

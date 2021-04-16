@@ -4,6 +4,8 @@ import controllers.ApplicationController;
 import gui.Notifications.AppEvents;
 import gui.texts.EditableFormattedTextLine;
 import main.GeneralSettings;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL31;
 import parser.LogicScripter.Ruler;
 import utils.Printer;
 
@@ -35,7 +37,9 @@ public class ParserManager {
         //This is only ever set to true from startup in general settings or
         //the settings menu when the syntax path is changed
         if(GeneralSettings.IS_SYNTAX_PATH_CHANGED) {
+        //if(GeneralSettings.IS_SYNTAX_PATH_CHANGED) {
             setCodeSyntax(new File(GeneralSettings.USERPREF.getSyntaxPath()));
+
 
             if(codeSyntax != null) {
                 //Check if the columns Lengths is valid
@@ -54,20 +58,17 @@ public class ParserManager {
                 if(codeSyntax.isKeywordsPatternsValid() == false) {
                     codeSyntax = null; // kill it no good can't use
                     ApplicationController.notification.setEvent(AppEvents.INVALID_SYNTAX_FILE);
+
                 } else {
                     parser.setCodeSyntax(codeSyntax);
                 }
 
                 if(codeSyntax.isRulerValid() == true) {
-                    //this.ruler = new Ruler(codeSyntax.getRuler().inner, true);
+                    //System.out.println("Ruler sized changed: " + codeSyntax.getRuler().inner.size());
                     ruler.setJsonRulerColumnsAndBuild(codeSyntax.getRuler().inner);
-                    //System.out.println(ruler);
                 } else {
-                   // makeEmptyRuler();
-                    ArrayList<Integer> foo = new ArrayList<Integer>();
-                    foo.add(0);
-                    ruler.setJsonRulerColumnsAndBuild(foo);
-                    //System.out.println(ruler);
+                    //System.out.println("Ruler sized changed: is NULL so 1");
+                    makeEmptyRuler();
                 }
 
 
@@ -83,7 +84,11 @@ public class ParserManager {
     private void makeEmptyRuler() {
         ArrayList<Integer> foo = new ArrayList<Integer>();
         foo.add(0);
-        this.ruler = new Ruler(foo, true);
+        if(this.ruler == null) {
+            this.ruler = new Ruler(foo, true);
+        } else {
+            ruler.setJsonRulerColumnsAndBuild(foo);
+        }
     }
 
     /**
@@ -179,7 +184,6 @@ public class ParserManager {
     public Ruler getRules() {
         return ruler;
     }
-
 
 
 

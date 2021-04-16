@@ -38,6 +38,7 @@ public class RulerRenderer {
     /**
      * @param
      */
+
     public void renderToScreen(ApplicationController controller) {
         if(controller.getCodeWindowController() != null){
             prepare(controller.getCodeWindowController().ruler.getVaoID());
@@ -56,7 +57,9 @@ public class RulerRenderer {
 //            shader.color.loadVec3(1, 1, 1);
 //            shader.endPositions.loadVec4(-0.5f, -1, -0.5f, 1);
 
-            GL31.glDrawArraysInstanced(GL11.GL_LINES, 0, 2, GlobalParser.PARSER_MANAGER.getRules().size()-1);
+
+           // GL31.glDrawArraysInstanced(GL11.GL_LINES, 0, 2, GlobalParser.PARSER_MANAGER.getRules().size()-1);
+            GL31.glDrawArraysInstanced(GL11.GL_LINES, 0, 2, controller.getCodeWindowController().rulerCount);
 
 
             endRendering();
