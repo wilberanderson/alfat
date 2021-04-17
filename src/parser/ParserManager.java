@@ -32,7 +32,7 @@ public class ParserManager {
      * @see gui.Settings.SettingsMenu
      * @see GeneralSettings
      * */
-    private void updateSyntaxIfNeeded() {
+    public void updateSyntaxIfNeeded() {
         //If this is set to true then we need to update the syntax for the parser
         //This is only ever set to true from startup in general settings or
         //the settings menu when the syntax path is changed

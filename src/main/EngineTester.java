@@ -155,7 +155,31 @@ public class EngineTester {
 
         //************************************Open file**************************************************
         GlobalParser.init();
-        if(args.length == 1) {
+
+        if(args.length > 1) {
+            //-f for file, -s for code syntax file...
+            //if just a file treat like it's a file and run it
+            String FILE_FLAG = "-f";
+            String SYN_FLAG = "-s";
+            for (int i = 0; i < args.length; i++) {
+                String check = args[i];
+                if(FILE_FLAG.equals(check)){
+                    //add the file
+                    applicationController.getHeader().openFile(args[++i]);
+                } else if(SYN_FLAG.equals(check)){
+                    GeneralSettings.USERPREF.setSyntaxPath(args[++i]);
+                    GeneralSettings.IS_SYNTAX_PATH_CHANGED = true;
+                    GlobalParser.PARSER_MANAGER.updateSyntaxIfNeeded();
+                } else {
+                    i=args.length;//Something is not right move on
+                    System.out.println("Invalid arguments...");
+                    for (String in : args) {
+                        System.out.print(in + " ");
+                    }
+                }
+            }
+        }else if(args.length == 1) {
+            //Just a file as passed
             applicationController.getHeader().openFile(args[0]);
         }
 
