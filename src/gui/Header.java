@@ -328,8 +328,8 @@ public class Header {
      */
     public void openFile(){
         OpenFileDialog of = new OpenFileDialog();
-        of.openFileWindow();
         of.setFilterList(GeneralSettings.USERPREF.getPreferredFiletype());
+        of.openFileWindow();
         GeneralSettings.FILE_PATH = of.getFilePath();
 
 
@@ -479,13 +479,21 @@ public class Header {
         OpenFileDialog of = new OpenFileDialog();
         of.setFilterList(GeneralSettings.USERPREF.getPreferredFiletype());
         of.saveFileWindow();
-        System.out.println(of.getFilePath());
+        //System.out.println(of.getFilePath());
 
         //If the use saved a file
         if (of.getFilePath() != null) {
             SaveToFile stf = new SaveToFile(of.getFilePath());
             //Prevent crash if codeWindow doe not have anything in it
             if (controller.getCodeWindowController() != null) {
+                GeneralSettings.FILE_PATH = of.getFilePath();
+                if (GeneralSettings.FILE_PATH.contains("/")){
+                    windowTitle = "ALFAT – " + GeneralSettings.FILE_PATH.substring(GeneralSettings.FILE_PATH.lastIndexOf('/')+1);
+                    GLFW.glfwSetWindowTitle(EngineTester.getWindow(), "ALFAT – " + GeneralSettings.FILE_PATH.substring(GeneralSettings.FILE_PATH.lastIndexOf('/')+1));
+                } else {
+                    windowTitle = "ALFAT " + GeneralSettings.FILE_PATH;
+                    GLFW.glfwSetWindowTitle(EngineTester.getWindow(), "ALFAT " + GeneralSettings.FILE_PATH);
+                }
                 stf.save(controller.getCodeWindowController().getTexts());
             }
         }
