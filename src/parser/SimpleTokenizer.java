@@ -146,8 +146,9 @@ public class SimpleTokenizer {
         //Add either the last segment of a split or the smallest part
 
         //TODO: not sure if I need to call lfs here? Probably d0
-        numberColumnsIndexAdjusted.add(i);
-        out.add(temp[1]);
+//        numberColumnsIndexAdjusted.add(i);
+//        out.add(temp[1]);
+        lfs(temp[1],out,i);
         //lfs(temp[0],out,i);
     }
 
